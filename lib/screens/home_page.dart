@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
@@ -92,22 +93,67 @@ class _HomePageState extends State<HomePage> {
           showControls: true,
           zoomAndPan: true,
           playbackSpeeds: [0.5, 1.0, 1.5, 2.0],
-          materialProgressColors: ChewieProgressColors(
-            playedColor: Colors.red,
-            handleColor: Colors.redAccent,
-            backgroundColor: Colors.grey,
-            bufferedColor: Colors.lightGreen,
-          ),
+          additionalOptions: (context) {
+            return <OptionItem>[
+              OptionItem(
+                onTap: (_) {
+                  Navigator.pop(context);
+                  showModalBottomSheet(
+                    backgroundColor: Colors.white,
+                    context: context,
+                    builder: (_) {
+                      return _qualityModalSheet();
+                    },
+                  );
+                },
+                iconData: CupertinoIcons.slider_horizontal_3,
+                title: 'Choose Quality',
+              ),
+            ];
+          },
+          // optionsBuilder: (context, defaultOptions) async {
+          //   await showDialog<void>(
+          //     context: context,
+          //     builder: (ctx) {
+          //       return AlertDialog(
+          //         backgroundColor: Colors.white,
+          //         contentPadding: EdgeInsets.zero,
+          //         insetPadding: EdgeInsets.zero,
+          //         alignment: Alignment.bottomCenter,
+          //         content: SizedBox(
+          //           width: MediaQuery.of(context).size.width - 20,
+          //           child: SingleChildScrollView(
+          //             child: Column(
+          //               children: List.generate(
+          //                 defaultOptions.length,
+          //                 (i) => ActionChip(
+          //                   label: Text(defaultOptions[i].title),
+          //                   onPressed: () => defaultOptions[i].onTap(context),
+          //                 ),
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //       );
+          //     },
+          //   );
+          // },
+          // materialProgressColors: ChewieProgressColors(
+          //   playedColor: Colors.red,
+          //   handleColor: Colors.redAccent,
+          //   backgroundColor: Colors.grey,
+          //   bufferedColor: Colors.lightGreen,
+          // ),
         );
       });
     });
   }
 
-  void _changeQuality(String url, String quality) async {
+  void _changeQuality(String url) async {
     final currentPosition = _videoPlayerController.value.position;
     final wasPlaying = _videoPlayerController.value.isPlaying;
 
-    _videoPlayerController.pause(); // Pause before switching
+    _videoPlayerController.dispose(); // Pause before switching
 
     _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
     await _videoPlayerController.initialize();
@@ -118,7 +164,6 @@ class _HomePageState extends State<HomePage> {
     }
 
     setState(() {
-      currentQuality = quality;
       _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController,
         autoPlay: false,
@@ -128,12 +173,24 @@ class _HomePageState extends State<HomePage> {
         showControls: true,
         zoomAndPan: true,
         playbackSpeeds: [0.5, 1.0, 1.5, 2.0],
-        materialProgressColors: ChewieProgressColors(
-          playedColor: Colors.red,
-          handleColor: Colors.redAccent,
-          backgroundColor: Colors.grey,
-          bufferedColor: Colors.lightGreen,
-        ),
+        additionalOptions: (context) {
+          return <OptionItem>[
+            OptionItem(
+              onTap: (_) {
+                Navigator.pop(context);
+                showModalBottomSheet(
+                  backgroundColor: Colors.white,
+                  context: context,
+                  builder: (_) {
+                    return _qualityModalSheet();
+                  },
+                );
+              },
+              iconData: CupertinoIcons.slider_horizontal_3,
+              title: 'Choose Quality',
+            ),
+          ];
+        },
       );
     });
   }
@@ -148,7 +205,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Chewie Video Player")),
+      appBar: AppBar(title: const Text("Video Player")),
       body: Center(
         child:
             _chewieController != null &&
@@ -156,42 +213,92 @@ class _HomePageState extends State<HomePage> {
                 ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    AspectRatio(
-                      aspectRatio: _videoPlayerController.value.aspectRatio,
+                    Container(
+                      height: 230,
+                      width: double.infinity,
+                      color: Colors.black,
                       child: Chewie(controller: _chewieController!),
-                    ),
-                    const SizedBox(height: 10),
-                    DropdownButton<String>(
-                      value: currentQuality,
-                      onChanged: (value) {
-                        if (value != null) {
-                          if (value == 'Auto') {
-                            _changeQuality(m3u8Url, value);
-                          } else {
-                            String selectedUrl =
-                                qualityOptions.firstWhere(
-                                  (element) => element['quality'] == value,
-                                )['url']!;
-                            _changeQuality(selectedUrl, value);
-                          }
-                        }
-                      },
-                      items: [
-                        const DropdownMenuItem(
-                          value: "Auto",
-                          child: Text("Auto"),
-                        ),
-                        ...qualityOptions.map((quality) {
-                          return DropdownMenuItem(
-                            value: quality['quality'],
-                            child: Text(quality['quality']!),
-                          );
-                        }).toList(),
-                      ],
                     ),
                   ],
                 )
                 : const CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  Widget _qualityModalSheet() {
+    return Container(
+      margin: EdgeInsets.all(16),
+      height: null,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text(
+              'Choose Quality',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+
+            ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.only(top: 16),
+              shrinkWrap: true,
+              itemCount: qualityOptions.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: SizedBox(
+                      height: 35,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                          _changeQuality(m3u8Url);
+                        },
+                        child: Center(
+                          child: Text(
+                            'Auto',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                int qualityIndex = index - 1;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                      String selectedUrl =
+                          qualityOptions.firstWhere(
+                            (element) =>
+                                element['quality'] ==
+                                qualityOptions[qualityIndex]['quality'],
+                          )['url']!;
+                      _changeQuality(selectedUrl);
+                    },
+                    child: SizedBox(
+                      height: 35,
+                      child: Center(
+                        child: Text(
+                          qualityOptions[qualityIndex]['quality'] ?? '',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
