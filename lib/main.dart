@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/screens/home_page.dart';
+import 'package:movie_obs/screens/video_player.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MovieOBS());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => VideoPlayerState()),
+    ],
+    child: const MovieOBS()));
 }
 
 class MovieOBS extends StatelessWidget {
@@ -14,10 +20,12 @@ class MovieOBS extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red, primary: Colors.amber),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.red,
+          primary: Colors.amber,
+        ),
       ),
       home: HomePage(),
     );
   }
 }
-

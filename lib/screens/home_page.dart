@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:http/http.dart' as http;
@@ -11,13 +12,16 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+VideoPlayerController? _videoPlayerController;
+ChewieController? _chewieController;
+bool _isFullScreen = false;
+
 class _HomePageState extends State<HomePage> {
-  late VideoPlayerController _videoPlayerController;
-  ChewieController? _chewieController;
   String currentQuality = "Auto";
+  bool isLoading = false;
   List<Map<String, String>> qualityOptions = [];
   String m3u8Url =
-      'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Mvoie+1/master.m3u8';
+      'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8';
 
   @override
   void initState() {
@@ -25,7 +29,6 @@ class _HomePageState extends State<HomePage> {
     _fetchQualityOptions();
   }
 
-  /// Fetch and parse M3U8 file to extract quality options
   /// Fetch and parse M3U8 file to extract quality options
   Future<void> _fetchQualityOptions() async {
     try {
@@ -82,16 +85,18 @@ class _HomePageState extends State<HomePage> {
   /// Initialize video player
   void _initializeVideo(String url) {
     _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
-    _videoPlayerController.initialize().then((_) {
+    _videoPlayerController?.initialize().then((_) {
       setState(() {
         _chewieController = ChewieController(
-          videoPlayerController: _videoPlayerController,
+          videoPlayerController: _videoPlayerController!,
           autoPlay: false,
           looping: false,
-          allowFullScreen: true,
+          allowFullScreen: false,
           allowMuting: true,
           showControls: true,
+          fullScreenByDefault: false,
           zoomAndPan: true,
+          hideControlsTimer: Duration(seconds: 5),
           playbackSpeeds: [0.5, 1.0, 1.5, 2.0],
           additionalOptions: (context) {
             return <OptionItem>[
@@ -138,40 +143,47 @@ class _HomePageState extends State<HomePage> {
           //     },
           //   );
           // },
-          // materialProgressColors: ChewieProgressColors(
-          //   playedColor: Colors.red,
-          //   handleColor: Colors.redAccent,
-          //   backgroundColor: Colors.grey,
-          //   bufferedColor: Colors.lightGreen,
-          // ),
+          materialProgressColors: ChewieProgressColors(
+            playedColor: Colors.red,
+            handleColor: Colors.redAccent,
+            backgroundColor: Colors.grey,
+            bufferedColor: Colors.white,
+          ),
         );
       });
     });
   }
 
   void _changeQuality(String url) async {
-    final currentPosition = _videoPlayerController.value.position;
-    final wasPlaying = _videoPlayerController.value.isPlaying;
+    final currentPosition = _videoPlayerController?.value.position;
+    final wasPlaying = _videoPlayerController?.value.isPlaying;
 
-    _videoPlayerController.dispose(); // Pause before switching
-
+    _videoPlayerController?.pause();
+    setState(() {});
+    // Pause before switching
     _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
-    await _videoPlayerController.initialize();
-    _videoPlayerController.seekTo(currentPosition); // Restore position
 
-    if (wasPlaying) {
-      _videoPlayerController.play(); // Resume playback
+    await _videoPlayerController?.initialize();
+    _videoPlayerController?.seekTo(currentPosition!); // Restore position
+
+    if (wasPlaying!) {
+      setState(() {
+        _videoPlayerController?.play();
+        // Resume playback
+      });
     }
 
+    // // Update ChewieController
     setState(() {
       _chewieController = ChewieController(
-        videoPlayerController: _videoPlayerController,
+        videoPlayerController: _videoPlayerController!,
         autoPlay: false,
         looping: false,
-        allowFullScreen: true,
-        allowMuting: true,
+        allowFullScreen: false,
         showControls: true,
-        zoomAndPan: true,
+        allowMuting: true,
+        hideControlsTimer: Duration(seconds: 5),
+        fullScreenByDefault: false, // Keep it false for manual control
         playbackSpeeds: [0.5, 1.0, 1.5, 2.0],
         additionalOptions: (context) {
           return <OptionItem>[
@@ -191,37 +203,98 @@ class _HomePageState extends State<HomePage> {
             ),
           ];
         },
+        materialProgressColors: ChewieProgressColors(
+          playedColor: Colors.red,
+          handleColor: Colors.redAccent,
+          backgroundColor: Colors.grey,
+          bufferedColor: Colors.white,
+        ),
       );
     });
   }
 
+  void _toggleFullScreen() {
+    setState(() {
+      _isFullScreen = !_isFullScreen;
+    });
+
+    if (_isFullScreen) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+      ]);
+    } else {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    }
+  }
+
   @override
   void dispose() {
-    _videoPlayerController.dispose();
+    _videoPlayerController?.dispose();
     _chewieController?.dispose();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Video Player")),
+      backgroundColor: _isFullScreen ? Colors.black : Colors.white,
+      appBar:
+          _isFullScreen == true
+              ? null
+              : AppBar(title: const Text("Video Player")),
       body: Center(
         child:
-            _chewieController != null &&
-                    _chewieController!.videoPlayerController.value.isInitialized
-                ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+            _videoPlayerController?.value.isInitialized ?? true
+                ? Stack(
                   children: [
                     Container(
-                      height: 230,
-                      width: double.infinity,
                       color: Colors.black,
+                      height:
+                          _isFullScreen == true
+                              ? MediaQuery.of(context).size.height - 20
+                              : 250,
+                      width:
+                          _isFullScreen == true
+                              ? MediaQuery.of(context).size.width - 20
+                              : MediaQuery.of(context).size.width,
                       child: Chewie(controller: _chewieController!),
+                    ),
+
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      child: InkWell(
+                        onTap: () => _toggleFullScreen(),
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                            horizontal: 5,
+                            vertical: 5,
+                          ),
+                          height: _isFullScreen ? 42 : 28,
+                          width: _isFullScreen ? 50 : 46,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey.withValues(alpha: 0.2),
+                          ),
+                          child: Icon(
+                            Icons.fullscreen,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 )
-                : const CircularProgressIndicator(),
+                : Container(),
       ),
     );
   }

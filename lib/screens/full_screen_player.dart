@@ -1,33 +1,42 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:http/http.dart' as http;
 
-class VideoPlayerState with ChangeNotifier {
+class FullScreenPlayer extends StatefulWidget {
+  const FullScreenPlayer({super.key, required this.url});
+  final String url;
+
+  @override
+  State<FullScreenPlayer> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<FullScreenPlayer> {
   late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
   String currentQuality = "Auto";
   bool isLoading = false;
   List<Map<String, String>> qualityOptions = [];
   String m3u8Url =
-      'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8';
+      'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Mvoie+1/master.m3u8';
 
-  VideoPlayerController get videoPlayerController => _videoPlayerController;
-  ChewieController? get chewieController => _chewieController;
+  @override
+  void initState() {
+    super.initState();
 
-  VideoPlayerState() {
     _fetchQualityOptions();
-    _initializeVideo(m3u8Url);
   }
 
+  /// Fetch and parse M3U8 file to extract quality options
+  /// Fetch and parse M3U8 file to extract quality options
   Future<void> _fetchQualityOptions() async {
     try {
       final response = await http.get(Uri.parse(m3u8Url));
       if (response.statusCode == 200) {
         String m3u8Content = response.body;
 
+        // Extract quality options using regex
         List<Map<String, String>> qualities = [];
         final regex = RegExp(
           r'#EXT-X-STREAM-INF:.*?RESOLUTION=(\d+)x(\d+).*?\n(.*)',
@@ -35,11 +44,15 @@ class VideoPlayerState with ChangeNotifier {
         );
 
         for (final match in regex.allMatches(m3u8Content)) {
-          int height = int.parse(match.group(2)!);
+          int height = int.parse(
+            match.group(2)!,
+          ); // Get video height (e.g., 1080)
           String url = match.group(3) ?? '';
 
+          // Convert resolution height to readable format
           String qualityLabel = _getQualityLabel(height);
 
+          // Convert relative URLs to absolute
           if (!url.startsWith('http')) {
             Uri masterUri = Uri.parse(m3u8Url);
             url = Uri.parse(masterUri.resolve(url).toString()).toString();
@@ -48,19 +61,18 @@ class VideoPlayerState with ChangeNotifier {
           qualities.add({'quality': qualityLabel, 'url': url});
         }
 
-        qualityOptions = qualities;
-        _initializeVideo(m3u8Url);
-        notifyListeners();
-
-        print('success');
+        setState(() {
+          qualityOptions = qualities;
+          _initializeVideo(widget.url);
+        });
       }
     } catch (e) {
-      print("Error fetching M3U8: $e");
-      _initializeVideo(m3u8Url);
-      notifyListeners();
+      debugPrint("Error fetching M3U8: $e");
+      // _initializeVideo(m3u8Url);
     }
   }
 
+  /// Convert resolution height to standard quality labels
   String _getQualityLabel(int height) {
     if (height >= 1080) return "1080p";
     if (height >= 720) return "720p";
@@ -70,18 +82,77 @@ class VideoPlayerState with ChangeNotifier {
     return "Low";
   }
 
+  /// Initialize video player
   void _initializeVideo(String url) {
     _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
     _videoPlayerController.initialize().then((_) {
+      setState(() {
+        _chewieController = ChewieController(
+          videoPlayerController: _videoPlayerController,
+          autoPlay: false,
+          looping: false,
+          allowFullScreen: false,
+          allowMuting: true,
+          showControls: true,
+          fullScreenByDefault: true,
+          zoomAndPan: true,
+          playbackSpeeds: [0.5, 1.0, 1.5, 2.0],
+          additionalOptions: (context) {
+            return <OptionItem>[
+              OptionItem(
+                onTap: (_) {
+                  Navigator.pop(context);
+                  showModalBottomSheet(
+                    backgroundColor: Colors.white,
+                    context: context,
+                    builder: (_) {
+                      return _qualityModalSheet();
+                    },
+                  );
+                },
+                iconData: CupertinoIcons.slider_horizontal_3,
+                title: 'Choose Quality',
+              ),
+            ];
+          },
+
+          materialProgressColors: ChewieProgressColors(
+            playedColor: Colors.red,
+            handleColor: Colors.redAccent,
+            backgroundColor: Colors.grey,
+            bufferedColor: Colors.white,
+          ),
+        );
+      });
+    });
+    
+  }
+
+  void _changeQuality(String url) async {
+    final currentPosition = _videoPlayerController.value.position;
+    final wasPlaying = _videoPlayerController.value.isPlaying;
+
+    // Check if in fullscreen mode
+
+    _videoPlayerController.pause(); // Pause before switching
+    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
+    await _videoPlayerController.initialize();
+    _videoPlayerController.seekTo(currentPosition); // Restore position
+
+    if (wasPlaying) {
+      _videoPlayerController.play(); // Resume playback
+    }
+
+    // Update ChewieController
+    setState(() {
       _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController,
-        autoPlay: true,
+        autoPlay: false,
         looping: false,
-        allowFullScreen: true,
-        allowMuting: true,
+        allowFullScreen: false,
         showControls: true,
-        fullScreenByDefault: false,
-        zoomAndPan: true,
+        allowMuting: true,
+        fullScreenByDefault: true, // Keep it false for manual control
         playbackSpeeds: [0.5, 1.0, 1.5, 2.0],
         additionalOptions: (context) {
           return <OptionItem>[
@@ -108,69 +179,38 @@ class VideoPlayerState with ChangeNotifier {
           bufferedColor: Colors.white,
         ),
       );
-      notifyListeners();
     });
   }
 
-  void _changeQuality(String url) async {
-    final currentPosition = _videoPlayerController.value.position;
-    final wasPlaying = _videoPlayerController.value.isPlaying;
-
-    bool isFullScreen = _chewieController?.isFullScreen ?? false;
-
-    // if (isFullScreen) {
-    //   _chewieController?.exitFullScreen();
-    //   await Future.delayed(Duration(milliseconds: 200));
-    // }
-
-    _videoPlayerController.pause();
-    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
-    await _videoPlayerController.initialize();
-    _videoPlayerController.seekTo(currentPosition);
-
-    if (wasPlaying) {
-      _videoPlayerController.play();
-     
-    }
-
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
-      autoPlay: false,
-      looping: false,
-      allowFullScreen: true,
-      showControls: true,
-      allowMuting: true,
-      fullScreenByDefault: false,
-      playbackSpeeds: [0.5, 1.0, 1.5, 2.0],
-      additionalOptions: (context) {
-        return <OptionItem>[
-          OptionItem(
-            onTap: (_) {
-              Navigator.pop(context);
-              showModalBottomSheet(
-                backgroundColor: Colors.white,
-                context: context,
-                builder: (_) {
-                  return _qualityModalSheet();
-                },
-              );
-            },
-            iconData: CupertinoIcons.slider_horizontal_3,
-            title: 'Choose Quality',
-          ),
-        ];
-      },
-      materialProgressColors: ChewieProgressColors(
-        playedColor: Colors.red,
-        handleColor: Colors.redAccent,
-        backgroundColor: Colors.grey,
-        bufferedColor: Colors.white,
-      ),
-    );
-    notifyListeners();
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+    _chewieController?.dispose();
+    super.dispose();
   }
 
-  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body:
+          _chewieController != null &&
+                  _chewieController!.videoPlayerController.value.isInitialized
+              ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 230,
+                    width: double.infinity,
+                    color: Colors.black,
+                    child: Stack(
+                      children: [Chewie(controller: _chewieController!)],
+                    ),
+                  ),
+                ],
+              )
+              : const CircularProgressIndicator(),
+    );
+  }
 
   Widget _qualityModalSheet() {
     return Container(
@@ -183,6 +223,7 @@ class VideoPlayerState with ChangeNotifier {
               'Choose Quality',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
+
             ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               padding: EdgeInsets.only(top: 16),
@@ -196,8 +237,8 @@ class VideoPlayerState with ChangeNotifier {
                       height: 35,
                       child: InkWell(
                         onTap: () {
-                          _changeQuality(m3u8Url);
                           Navigator.pop(context);
+                          _changeQuality(m3u8Url);
                         },
                         child: Center(
                           child: Text(
@@ -217,6 +258,7 @@ class VideoPlayerState with ChangeNotifier {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: InkWell(
                     onTap: () {
+                      Navigator.pop(context);
                       String selectedUrl =
                           qualityOptions.firstWhere(
                             (element) =>
@@ -224,7 +266,6 @@ class VideoPlayerState with ChangeNotifier {
                                 qualityOptions[qualityIndex]['quality'],
                           )['url']!;
                       _changeQuality(selectedUrl);
-                      Navigator.pop(context);
                     },
                     child: SizedBox(
                       height: 35,
