@@ -5,8 +5,7 @@ import 'package:chewie/chewie.dart';
 import 'package:http/http.dart' as http;
 
 class FullScreenPlayer extends StatefulWidget {
-  const FullScreenPlayer({super.key, required this.url});
-  final String url;
+  const FullScreenPlayer({super.key});
 
   @override
   State<FullScreenPlayer> createState() => _HomePageState();
@@ -63,12 +62,12 @@ class _HomePageState extends State<FullScreenPlayer> {
 
         setState(() {
           qualityOptions = qualities;
-          _initializeVideo(widget.url);
+          _initializeVideo(m3u8Url);
         });
       }
     } catch (e) {
       debugPrint("Error fetching M3U8: $e");
-      // _initializeVideo(m3u8Url);
+       _initializeVideo(m3u8Url);
     }
   }
 
@@ -125,7 +124,6 @@ class _HomePageState extends State<FullScreenPlayer> {
         );
       });
     });
-    
   }
 
   void _changeQuality(String url) async {

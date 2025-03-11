@@ -4,11 +4,12 @@ import 'package:movie_obs/screens/video_player.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (_) => VideoPlayerState()),
-    ],
-    child: const MovieOBS()));
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => VideoPlayerState())],
+      child: const MovieOBS(),
+    ),
+  );
 }
 
 class MovieOBS extends StatelessWidget {
