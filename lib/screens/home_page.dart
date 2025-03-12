@@ -14,7 +14,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-final ValueNotifier<bool> showControl = ValueNotifier(false);
+final ValueNotifier<bool> showControl = ValueNotifier(true);
+final ValueNotifier<bool> loadingOverlay = ValueNotifier(false);
 
 class _HomePageState extends State<HomePage> {
   late VideoPlayerController _videoPlayerController;
@@ -22,12 +23,16 @@ class _HomePageState extends State<HomePage> {
   bool _isFullScreen = false;
   bool hasPrinted = false;
   Timer? _hideControlTimer;
+  double _manualSeekProgress = 0.0;
+  bool _isSeeking = false;
+  Timer? _seekUpdateTimer;
   String currentQuality = "Auto";
   int selectedInde = -1;
+  // double _lastBufferedProgress = 0.0;
   bool isLoading = false;
   List<Map<String, String>> qualityOptions = [];
   String m3u8Url =
-      'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Mvoie+1/master.m3u8';
+      'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8';
 
   @override
   void initState() {
@@ -117,12 +122,13 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  ///
   void _resetControlVisibility() {
     showControl.value = true;
 
     // Cancel the previous timer before creating a new one
     _hideControlTimer?.cancel();
-    _hideControlTimer = Timer(const Duration(seconds: 5), () {
+    _hideControlTimer = Timer(const Duration(seconds: 3), () {
       if (_videoPlayerController.value.isPlaying == true) {
         showControl.value = false;
       } else {
@@ -131,11 +137,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  //quality change
   void _changeQuality(String url) async {
+    loadingOverlay.value = true;
+
     final currentPosition = _videoPlayerController.value.position;
     final wasPlaying = _videoPlayerController.value.isPlaying;
 
-    await _videoPlayerController.pause();
+    await _videoPlayerController.dispose();
 
     _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
 
@@ -155,8 +164,16 @@ class _HomePageState extends State<HomePage> {
         showControls: false,
       );
     });
+
+    _videoPlayerController.seekTo(currentPosition).whenComplete(() {
+      loadingOverlay.value = false;
+      _videoPlayerController.play();
+      _resetControlVisibility();
+      // _lastBufferedProgress = 0.0;
+    });
   }
 
+  //toggle
   void _toggleFullScreen() {
     setState(() {
       _isFullScreen = !_isFullScreen;
@@ -500,7 +517,7 @@ class _HomePageState extends State<HomePage> {
                                         );
                                       },
                                     ),
-                                    // Video Progress Bar
+
                                     ValueListenableBuilder(
                                       valueListenable: _videoPlayerController,
                                       builder: (
@@ -511,44 +528,130 @@ class _HomePageState extends State<HomePage> {
                                         final duration = value.duration;
                                         final position = value.position;
 
+                                        // Actual video progress tracking
                                         double progress =
-                                            duration.inMilliseconds > 0
+                                            (duration.inMilliseconds > 0 &&
+                                                    !_isSeeking)
                                                 ? position.inMilliseconds /
                                                     duration.inMilliseconds
-                                                : 0;
+                                                : _manualSeekProgress;
+
+                                        // Get buffered progress
+                                        double bufferedProgress = 0.0;
+                                        if (value.buffered.isNotEmpty) {
+                                          bufferedProgress =
+                                              value
+                                                  .buffered
+                                                  .last
+                                                  .end
+                                                  .inMilliseconds /
+                                              duration.inMilliseconds;
+                                        }
+
+                                        // ✅ Ensure buffer progress doesn't reset when seeking
+                                        // if (bufferedProgress >
+                                        //     _lastBufferedProgress) {
+                                        //   _lastBufferedProgress =
+                                        //       bufferedProgress;
+                                        // } else {
+                                        //   bufferedProgress =
+                                        //       _lastBufferedProgress;
+                                        // }
 
                                         return Expanded(
-                                          child: Slider(
-                                            value: progress,
-                                            onChanged: (newValue) {
-                                              final newPosition = Duration(
-                                                milliseconds:
-                                                    (duration.inMilliseconds *
-                                                            newValue)
-                                                        .toInt(),
-                                              );
-                                              Future.delayed(
-                                                Duration(milliseconds: 50),
-                                                () {
-                                                  _videoPlayerController.seekTo(
-                                                    newPosition,
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            onChangeStart: (value) {
-                                              _videoPlayerController.pause();
-                                              _resetControlVisibility();
-                                              // Optionally, handle behavior when user starts changing
-                                            },
-                                            onChangeEnd: (value) {
-                                              
-                                              _resetControlVisibility();
-                                              // Optionally, handle behavior when user finishes changing
-                                            },
-                                            activeColor: Colors.red,
-                                            inactiveColor: Colors.white,
-                                            // Optionally, you can adjust the slider's appearance further
+                                          child: SliderTheme(
+                                            data: SliderTheme.of(
+                                              context,
+                                            ).copyWith(
+                                              trackHeight:
+                                                  3.0, // Adjust height for better visibility
+                                              inactiveTrackColor: Colors.white
+                                                  .withValues(
+                                                    alpha: 0.5,
+                                                  ), // Default track
+                                              activeTrackColor:
+                                                  Colors
+                                                      .red, // Playback progress color
+                                              thumbColor:
+                                                  Colors.red, 
+                                             
+                                              thumbShape: RoundSliderThumbShape(
+                                                enabledThumbRadius: 6.0,
+                                              ),
+                                            ),
+                                            child: Stack(
+                                              children: [
+                                                // Buffered Progress (Placed behind the actual progress)
+                                                Positioned.fill(
+                                                  child: SliderTheme(
+                                                    data: SliderTheme.of(
+                                                      context,
+                                                    ).copyWith(
+                                                      trackHeight: 3.0,
+                                                      activeTrackColor: Colors
+                                                          .white
+                                                          .withValues(
+                                                            alpha: 0.5,
+                                                          ), // Buffer color
+                                                      inactiveTrackColor:
+                                                          Colors
+                                                              .transparent, // Hide inactive part
+                                                      thumbShape:
+                                                          RoundSliderThumbShape(
+                                                            enabledThumbRadius:
+                                                                0.0,
+                                                          ), // Hide thumb
+                                                    ),
+                                                    child: Slider(
+                                                      value: bufferedProgress,
+                                                      onChanged:
+                                                          (
+                                                            _,
+                                                          ) {}, // Disabled, only for display
+                                                    ),
+                                                  ),
+                                                ),
+                                                // Actual Seekable Progress Bar
+                                                Slider(
+                                                  value: progress,
+                                                  onChanged: (newValue) async {
+                                                    _resetControlVisibility();
+                                                    setState(() {
+                                                      _isSeeking = true;
+                                                      _manualSeekProgress =
+                                                          newValue; // Instantly update UI
+                                                    });
+                                                  },
+                                                  onChangeStart: (value) {
+                                                    _startSeekUpdateLoop();
+
+                                                    _resetControlVisibility();
+                                                  },
+                                                  onChangeEnd: (value) async {
+                                                    _seekUpdateTimer
+                                                        ?.cancel(); // Stop the update loop
+
+                                                    final newPosition = Duration(
+                                                      milliseconds:
+                                                          (duration.inMilliseconds *
+                                                                  value)
+                                                              .toInt(),
+                                                    );
+
+                                                    await _videoPlayerController
+                                                        .seekTo(newPosition);
+
+                                                    setState(() {
+                                                      _isSeeking = false;
+                                                    });
+
+                                                    _videoPlayerController
+                                                        .play();
+                                                    _resetControlVisibility();
+                                                  },
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         );
                                       },
@@ -559,11 +662,55 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                     ),
+
+                    ///loading overlay
+                    ValueListenableBuilder(
+                      valueListenable: loadingOverlay,
+                      builder: (
+                        BuildContext context,
+                        bool value,
+                        Widget? child,
+                      ) {
+                        if (value == false) return SizedBox();
+                        return Container(
+                          color: Colors.black,
+                          height:
+                              _isFullScreen == true
+                                  ? MediaQuery.of(context).size.height - 40
+                                  : 250,
+                          width:
+                              _isFullScreen == true
+                                  ? MediaQuery.of(context).size.width - 20
+                                  : MediaQuery.of(context).size.width,
+                          child: Center(
+                            child: SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 )
-                : SizedBox(),
+                : SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: CircularProgressIndicator(),
+                ),
       ),
     );
+  }
+
+  void _startSeekUpdateLoop() {
+    _seekUpdateTimer?.cancel(); // Ensure old timers are cleared
+    _seekUpdateTimer = Timer.periodic(Duration(milliseconds: 50), (timer) {
+      if (!_isSeeking) {
+        timer.cancel();
+      }
+      setState(() {}); // Force UI update every 50ms
+    });
   }
 
   /// Helper Function to Format Duration
@@ -586,7 +733,7 @@ class _HomePageState extends State<HomePage> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 20,),
+            SizedBox(height: 20),
             Text(
               'Choose Quality',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -651,7 +798,7 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
-            SizedBox(height: 20,),
+            SizedBox(height: 20),
           ],
         ),
       ),
