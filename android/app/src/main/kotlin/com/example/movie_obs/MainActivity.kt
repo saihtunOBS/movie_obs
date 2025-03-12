@@ -1,4 +1,4 @@
-package com.example.movie_obs
+package com.obs.movie
 
 import io.flutter.embedding.android.FlutterActivity
 
