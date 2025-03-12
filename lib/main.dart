@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:movie_obs/screens/home_page.dart';
 
-void main() {
-  runApp(
-    const MovieOBS(),
-  );
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  runApp(const MovieOBS());
 }
 
 class MovieOBS extends StatelessWidget {
