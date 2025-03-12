@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/screens/home_page.dart';
-import 'package:movie_obs/screens/video_player.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   runApp(
-    MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => VideoPlayerState())],
-      child: const MovieOBS(),
-    ),
+    const MovieOBS(),
   );
 }
 

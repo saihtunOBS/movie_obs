@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = false;
   List<Map<String, String>> qualityOptions = [];
   String m3u8Url =
-      'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8';
+      'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Mvoie+1/master.m3u8';
 
   @override
   void initState() {
@@ -148,15 +148,9 @@ class _HomePageState extends State<HomePage> {
 
     _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
 
-    await _videoPlayerController.initialize();
-    await Future.delayed(Duration(milliseconds: 300));
-    _videoPlayerController.seekTo(currentPosition); // Restore position
-
-    if (wasPlaying) {
-      setState(() {
-        _videoPlayerController.play();
-      });
-    }
+    await _videoPlayerController.initialize().whenComplete(() {
+      _videoPlayerController.seekTo(currentPosition); // Restore position
+    });
 
     //reinitialized player
     setState(() {
@@ -167,8 +161,15 @@ class _HomePageState extends State<HomePage> {
     });
 
     _videoPlayerController.seekTo(currentPosition).whenComplete(() {
-      loadingOverlay.value = false;
-      _videoPlayerController.play();
+      Future.delayed(Duration(seconds: 2), () {
+        loadingOverlay.value = false;
+        if (wasPlaying == true) {
+          _videoPlayerController.play();
+        } else {
+          _videoPlayerController.pause();
+        }
+      });
+
       _resetControlVisibility();
       // _lastBufferedProgress = 0.0;
     });
