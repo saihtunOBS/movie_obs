@@ -149,6 +149,7 @@ class _HomePageState extends State<HomePage> {
     _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
 
     await _videoPlayerController.initialize();
+    await Future.delayed(Duration(milliseconds: 300));
     _videoPlayerController.seekTo(currentPosition); // Restore position
 
     if (wasPlaying) {
@@ -481,7 +482,7 @@ class _HomePageState extends State<HomePage> {
                                     51,
                                     51,
                                   ).withValues(alpha: 0.5),
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Row(
                                   children: [
@@ -572,9 +573,9 @@ class _HomePageState extends State<HomePage> {
                                               activeTrackColor:
                                                   Colors
                                                       .red, // Playback progress color
-                                              thumbColor:
-                                                  Colors.red, 
-                                             
+
+                                              thumbColor: Colors.red,
+
                                               thumbShape: RoundSliderThumbShape(
                                                 enabledThumbRadius: 6.0,
                                               ),
@@ -587,7 +588,7 @@ class _HomePageState extends State<HomePage> {
                                                     data: SliderTheme.of(
                                                       context,
                                                     ).copyWith(
-                                                      trackHeight: 3.0,
+                                                      trackHeight: 2.0,
                                                       activeTrackColor: Colors
                                                           .white
                                                           .withValues(
