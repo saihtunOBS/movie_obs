@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/screens/home_page.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  WakelockPlus.enable();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MovieOBS());
 }
