@@ -23,8 +23,7 @@ ValueNotifier<ChewieController>? _chewieControllerNotifier;
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool _wasScreenOff = false;
-  bool isMuted = false; // Track mute/unmute state
-
+  bool isMuted = false;
   bool _isFullScreen = false;
   bool hasPrinted = false;
   Timer? _hideControlTimer;
@@ -32,7 +31,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool _isSeeking = false;
   Timer? _seekUpdateTimer;
 
-  // double _lastBufferedProgress = 0.0;
   bool isLoading = false;
   List<Map<String, String>> qualityOptions = [];
   String m3u8Url =
@@ -63,8 +61,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     _initializeVideo(m3u8Url);
     super.initState();
   }
-  //https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8
-  //https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Mvoie+1/master.m3u8
 
   /// Fetch and parse M3U8 file to extract quality options
   Future<void> _fetchQualityOptions() async {
@@ -155,7 +151,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
   }
 
-  ///
+  ///reset play state (android only)
   void _resetControlVisibility() {
     showControl.value = true;
 
@@ -172,12 +168,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   //quality change
   void _changeQuality(String url, [String? quality]) async {
-    selectedQuality = quality ?? selectedQuality; // Update selected quality
+    selectedQuality = quality ?? selectedQuality;
     currentUrl = url;
     final currentPosition = _videoPlayerController.value.position;
     final wasPlaying = _videoPlayerController.value.isPlaying;
 
-    // Instead of disposing, update the data source
     await _videoPlayerController.dispose();
 
     _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
@@ -189,8 +184,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       } else {
         _videoPlayerController.pause();
       }
-    }); // Restore position
-
+    });
     _chewieControllerNotifier?.value = ChewieController(
       videoPlayerController: _videoPlayerController,
       showControls: false,
@@ -307,7 +301,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     onPressed: () {
                                       _resetControlVisibility();
 
-                                      // Ensure the video is initialized before seeking
                                       if (_videoPlayerController
                                           .value
                                           .isInitialized) {
@@ -654,30 +647,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                         ? 1.0
                                                         : bufferedProgress);
                                           }
-                                          // ✅ Ensure buffer progress doesn't reset when seeking
-                                          // if (bufferedProgress >
-                                          //     _lastBufferedProgress) {
-                                          //   _lastBufferedProgress =
-                                          //       bufferedProgress;
-                                          // } else {
-                                          //   bufferedProgress =
-                                          //       _lastBufferedProgress;
-                                          // }
-
                                           return Expanded(
                                             child: SliderTheme(
                                               data: SliderTheme.of(
                                                 context,
                                               ).copyWith(
-                                                trackHeight:
-                                                    3.0, // Adjust height for better visibility
+                                                trackHeight: 3.0,
                                                 inactiveTrackColor: Colors.white
                                                     .withValues(
                                                       alpha: 0.5,
                                                     ), // Default track
-                                                activeTrackColor:
-                                                    Colors
-                                                        .red, // Playback progress color
+                                                activeTrackColor: Colors.red,
 
                                                 thumbColor: Colors.red,
 
@@ -688,7 +668,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                               ),
                                               child: Stack(
                                                 children: [
-                                                  // Buffered Progress (Placed behind the actual progress)
                                                   Positioned.fill(
                                                     child: SliderTheme(
                                                       data: SliderTheme.of(
@@ -701,8 +680,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                               alpha: 0.5,
                                                             ), // Buffer color
                                                         inactiveTrackColor:
-                                                            Colors
-                                                                .transparent, // Hide inactive part
+                                                            Colors.transparent,
                                                         thumbShape:
                                                             RoundSliderThumbShape(
                                                               enabledThumbRadius:
@@ -712,12 +690,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                       child: Slider(
                                                         value: bufferedProgress,
                                                         onChanged:
-                                                            (
-                                                              _,
-                                                            ) {}, // Disabled, only for display
+                                                            (double value) {},
                                                       ),
                                                     ),
                                                   ),
+
                                                   // Actual Seekable Progress Bar
                                                   Slider(
                                                     value: progress,
@@ -728,7 +705,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                       setState(() {
                                                         _isSeeking = true;
                                                         _manualSeekProgress =
-                                                            newValue; // Instantly update UI
+                                                            newValue;
                                                       });
                                                     },
                                                     onChangeStart: (value) {
@@ -773,36 +750,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             ),
                           ),
                     ),
-
-                    //loading overlay
-                    // ValueListenableBuilder(
-                    //   valueListenable: loadingOverlay,
-                    //   builder: (
-                    //     BuildContext context,
-                    //     bool value,
-                    //     Widget? child,
-                    //   ) {
-                    //     if (value == false) return SizedBox();
-                    //     return Container(
-                    //       color: Colors.black,
-                    //       height:
-                    //           _isFullScreen == true
-                    //               ? MediaQuery.of(context).size.height - 40
-                    //               : 250,
-                    //       width:
-                    //           _isFullScreen == true
-                    //               ? MediaQuery.of(context).size.width - 20
-                    //               : MediaQuery.of(context).size.width,
-                    //       child: Center(
-                    //         child: SizedBox(
-                    //           width: 30,
-                    //           height: 30,
-                    //           child: CircularProgressIndicator(),
-                    //         ),
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
                   ],
                 ),
       ),
