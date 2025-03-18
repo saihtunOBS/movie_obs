@@ -5,11 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/screens/home_page.dart';
 import 'package:provider/provider.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  WakelockPlus.enable();
   await SystemChrome.setPreferredOrientations([]);
   await GetStorage.init();
   runApp(

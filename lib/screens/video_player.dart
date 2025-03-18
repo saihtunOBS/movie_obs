@@ -1152,3 +1152,107 @@
 //     );
 //   }
 // }
+
+// SizedBox(height: 20),
+//                   GestureDetector(
+//                     behavior: HitTestBehavior.opaque,
+//                     onTap: () {
+//                       Navigator.pop(context);
+//                       bloc.showControl.value = false;
+//                       bloc.isLockScreen = true;
+//                       bloc.showLock.value = true;
+//                       bloc.playPlayer();
+//                       bloc.updateListener();
+//                       if (bloc.isFullScreen == true) return;
+//                       bloc.toggleFullScreen(isLock: true);
+//                     },
+//                     child: _buildAdditionalRow(
+//                       'Lock Screen',
+//                       '',
+//                       CupertinoIcons.lock_circle,
+//                     ),
+//                   ),
+
+
+//  ValueListenableBuilder(
+//                                                               valueListenable:
+//                                                                   bloc.showLock,
+//                                                               builder:
+//                                                                   (
+//                                                                     context,
+//                                                                     value,
+//                                                                     child,
+//                                                                   ) => Positioned(
+//                                                                     bottom: 20,
+//                                                                     child: AnimatedOpacity(
+//                                                                       opacity:
+//                                                                           value
+//                                                                               ? 1
+//                                                                               : 0,
+//                                                                       duration: Duration(
+//                                                                         milliseconds:
+//                                                                             200,
+//                                                                       ),
+//                                                                       child: InkWell(
+//                                                                         onTap: () {
+//                                                                           bloc.showLock.value =
+//                                                                               false;
+//                                                                           bloc.isLockScreen =
+//                                                                               false;
+//                                                                           bloc.showControl.value =
+//                                                                               true;
+//                                                                           bloc.resetControlVisibility();
+//                                                                         },
+//                                                                         child: Container(
+//                                                                           height:
+//                                                                               30,
+//                                                                           padding: EdgeInsets.symmetric(
+//                                                                             horizontal:
+//                                                                                 10,
+//                                                                           ),
+//                                                                           decoration: BoxDecoration(
+//                                                                             borderRadius: BorderRadius.circular(
+//                                                                               20,
+//                                                                             ),
+//                                                                             color:
+//                                                                                 Colors.white,
+//                                                                             boxShadow: [
+//                                                                               BoxShadow(
+//                                                                                 blurRadius:
+//                                                                                     4,
+//                                                                                 color: const Color.fromARGB(
+//                                                                                   255,
+//                                                                                   195,
+//                                                                                   195,
+//                                                                                   195,
+//                                                                                 ),
+//                                                                               ),
+//                                                                             ],
+//                                                                           ),
+//                                                                           child: Row(
+//                                                                             spacing:
+//                                                                                 5,
+//                                                                             children: [
+//                                                                               Icon(
+//                                                                                 CupertinoIcons.lock,
+//                                                                                 color:
+//                                                                                     Colors.black,
+//                                                                                 size:
+//                                                                                     20,
+//                                                                               ),
+//                                                                               Text(
+//                                                                                 'Tap to unlock.',
+//                                                                                 style: TextStyle(
+//                                                                                   fontSize:
+//                                                                                       14,
+//                                                                                   fontWeight:
+//                                                                                       FontWeight.w400,
+//                                                                                 ),
+//                                                                               ),
+//                                                                             ],
+//                                                                           ),
+//                                                                         ),
+//                                                                       ),
+//                                                                     ),
+//                                                                   ),
+//                                                             ),
