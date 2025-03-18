@@ -102,6 +102,26 @@
 //     }
 //   }
 
+// } else if (state == AppLifecycleState.paused) {
+//         _wasScreenOff = true;
+
+//         bloc.pausedPlayer();
+//         bloc.changeQuality(bloc.currentUrl);
+//         bloc.chewieControllerNotifier?.value.pause();
+//         bloc.updateListener();
+//       } else if (state == AppLifecycleState.inactive) {
+//         if (_timer == null) {
+//           _startTimer();
+//         }
+//         if (bloc.chewieControllerNotifier?.value.isPlaying ?? true) {
+//           bloc.chewieControllerNotifier?.value.play();
+//         } else {
+//           bloc.chewieControllerNotifier?.value.pause();
+//         }
+//         bloc.updateListener();
+//       }
+//     } el
+
 //   @override
 //   void initState() {
 //     WidgetsBinding.instance.addObserver(this);
@@ -1146,3 +1166,68 @@
 //     );
 //   }
 // }
+// ValueListenableBuilder(
+//                             valueListenable: bloc.showVolume,
+//                             builder:
+//                                 (context, value, child) => Positioned(
+//                                   right: 10,
+//                                   child: Visibility(
+//                                     visible: value == true ? true : false,
+//                                     child: Row(
+//                                       children: [
+//                                         SizedBox(
+//                                           height:
+//                                               bloc.isFullScreen
+//                                                   ? MediaQuery.sizeOf(
+//                                                         context,
+//                                                       ).height /
+//                                                       1.5
+//                                                   : 170,
+//                                           child: RotatedBox(
+//                                             quarterTurns:
+//                                                 3, // Rotate the slider by 90 degrees (clockwise)
+//                                             child: SliderTheme(
+//                                               data: SliderTheme.of(
+//                                                 context,
+//                                               ).copyWith(
+//                                                 trackHeight:
+//                                                     2.0, // Set the thickness of the slider's track
+//                                                 thumbShape:
+//                                                     RoundSliderThumbShape(
+//                                                       enabledThumbRadius: 7,
+//                                                     ),
+//                                               ),
+//                                               child: Slider(
+//                                                 value: bloc.volume,
+//                                                 min: 0.0,
+//                                                 max: 1.0,
+
+//                                                 divisions:
+//                                                     10, // Optional: Divides the slider into intervals
+//                                                 onChanged: (newVolume) {
+//                                                   bloc.showControl.value =
+//                                                       false;
+//                                                   setState(() {
+//                                                     bloc.volume = newVolume;
+//                                                     bloc.videoPlayerController
+//                                                         .setVolume(newVolume);
+//                                                   });
+//                                                 },
+//                                                 onChangeEnd: (value) {
+//                                                   bloc.showVolume.value = false;
+//                                                 },
+//                                                 activeColor:
+//                                                     Colors
+//                                                         .blue, // Color of the active part of the slider
+//                                                 inactiveColor:
+//                                                     Colors
+//                                                         .grey, // Color of the inactive part of the slider
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                   ),
+//                                 ),
+//                           ),

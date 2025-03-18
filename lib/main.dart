@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/screens/home_page.dart';
 import 'package:provider/provider.dart';
@@ -8,11 +10,8 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   WakelockPlus.enable();
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-   
-  ]);
+  await SystemChrome.setPreferredOrientations([]);
+  await GetStorage.init();
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => VideoBloc())],
@@ -28,12 +27,14 @@ class MovieOBS extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'ZLan Movie Player',
+
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.red,
           primary: Colors.amber,
         ),
+        fontFamily: GoogleFonts.poppins().fontFamily,
       ),
       home: HomePage(),
     );

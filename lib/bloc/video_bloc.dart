@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_orientation/auto_orientation.dart' show AutoOrientation;
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,8 +11,8 @@ String selectedQuality = 'Auto';
 
 class VideoBloc extends ChangeNotifier {
   final ValueNotifier<bool> showControl = ValueNotifier(true);
-  final ValueNotifier<bool> userAction = ValueNotifier(false);
   final ValueNotifier<bool> showVolume = ValueNotifier(false);
+  final ValueNotifier<bool> showLock = ValueNotifier(false);
 
   ValueNotifier<bool> isHoveringLeft = ValueNotifier(false);
   ValueNotifier<bool> isHoveringRight = ValueNotifier(false);
@@ -36,6 +37,9 @@ class VideoBloc extends ChangeNotifier {
   double bufferedProgress = 0.0;
   double progress = 0.0;
   double volume = 0.5;
+  double videoCurrentSpeed = 1.0;
+  bool isLockScreen = false;
+  int isQualityClick = 0;
 
   bool isLoading = false;
   List<Map<String, String>> qualityOptions = [];
@@ -50,6 +54,9 @@ class VideoBloc extends ChangeNotifier {
   final double minScale = 1.0;
   final double maxScale = 2.0; // Set a reasonable maximum zoom level
 
+  int seekCount = 0;
+  Timer? seekTimer;
+
   VideoBloc() {
     initializeVideo(m3u8Url);
   }
@@ -59,22 +66,32 @@ class VideoBloc extends ChangeNotifier {
     initialScale = scale; // Save the initial scale when drag starts
   }
 
+  void toggleLockScreen() {
+    showLock.value = !showLock.value;
+    notifyListeners();
+  }
+
+  void onVerticalDragUpdateFullScreen(DragUpdateDetails details) {
+    if (isLockScreen == true) return;
+
+    notifyListeners();
+  }
+
   void onVerticalDragUpdate(DragUpdateDetails details) {
+    if (isLockScreen == true) return;
     // Calculate the difference in the drag position
     double dragDifference = details.localPosition.dy - initialPosition;
-
     // Adjust the scale based on the drag difference
     double scaleChange =
         dragDifference / 200; // Adjust this value for sensitivity
 
-    // Update the scale and clamp it within the allowed range
     scale = (initialScale - scaleChange).clamp(minScale, maxScale);
 
-    // Notify listeners to trigger a redraw of the widget
     notifyListeners();
   }
 
   void onVerticalDragEnd(DragEndDetails details) {
+    if (isLockScreen == true) return;
     initialScale = scale;
     if (initialScale == 1.0) return;
     toggleFullScreen();
@@ -88,18 +105,20 @@ class VideoBloc extends ChangeNotifier {
 
   void playPlayer() {
     videoPlayerController.play();
-    isSeeking = false;
+    // isSeeking = false;
     notifyListeners();
   }
 
-  void updateUserAction(bool value) {
-    userAction.value = value;
-    notifyListeners();
-  }
-
-  // void updateOrientation(Orientation orientation) {
-  //   isFullScreen = orientation == Orientation.landscape;
+  // void updateUserAction(bool value) {
+  //   userAction.value = value;
+  //   notifyListeners();
   // }
+
+  void updateSpeed(double value) {
+    videoCurrentSpeed = value;
+    videoPlayerController.setPlaybackSpeed(value);
+    notifyListeners();
+  }
 
   void playPauseVideoPlayer() {
     if (videoPlayerController.value.isPlaying) {
@@ -184,6 +203,12 @@ class VideoBloc extends ChangeNotifier {
           showControls: false,
           allowedScreenSleep: false,
           autoInitialize: true,
+          deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
+          deviceOrientationsOnEnterFullScreen: [
+            DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight,
+          ],
+          
         ),
       );
       _fetchQualityOptions();
@@ -191,12 +216,14 @@ class VideoBloc extends ChangeNotifier {
 
     videoPlayerController.addListener(() {
       if (videoPlayerController.value.isPlaying) return;
-      showControl.value = true;
+      if (videoPlayerController.value.isCompleted) {
+        showControl.value = true;
+        showLock.value = false;
+      }
       notifyListeners();
     });
   }
 
-  ///reset play state (android only)
   void resetControlVisibility({bool isSeek = false}) {
     if (!videoPlayerController.value.isPlaying || isSeek == true) {
       showControl.value = true;
@@ -218,22 +245,18 @@ class VideoBloc extends ChangeNotifier {
 
   //quality change
   void changeQuality(String url, [String? quality]) async {
-    userAction.value = true;
-    notifyListeners();
     selectedQuality = quality ?? selectedQuality;
     currentUrl = url;
     final currentPosition = videoPlayerController.value.position;
     final wasPlaying = videoPlayerController.value.isPlaying;
 
+    await videoPlayerController.pause();
     await videoPlayerController.dispose();
 
     videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
 
     await videoPlayerController.initialize();
-    videoPlayerController.seekTo(currentPosition).then((_) {
-      userAction.value = false;
-      notifyListeners();
-    });
+    videoPlayerController.seekTo(currentPosition);
     chewieControllerNotifier?.value = ChewieController(
       videoPlayerController: videoPlayerController,
       showControls: false,
@@ -245,13 +268,11 @@ class VideoBloc extends ChangeNotifier {
       videoPlayerController.pause();
     }
     videoPlayerController.setVolume(isMuted ? 0.0 : 1.0);
-    notifyListeners();
-
-    resetControlVisibility(isSeek: true);
   }
 
   //toggle full screen
-  void toggleFullScreen({Orientation? orientation}) {
+  void toggleFullScreen({bool? isLock}) {
+    isLockScreen = isLock ?? false;
     isFullScreen = !isFullScreen;
     initialPosition = 0.0;
     scale = 1.0;
@@ -267,43 +288,30 @@ class VideoBloc extends ChangeNotifier {
     });
 
     if (isFullScreen == true) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeRight,
-        DeviceOrientation.landscapeLeft,
-      ]);
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+      AutoOrientation.landscapeRightMode();
+      AutoOrientation.landscapeLeftMode();
     } else {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      AutoOrientation.portraitUpMode();
     }
+    // Future.delayed(
+    //   Duration(seconds: 10),
+    //   () => SystemChrome.setPreferredOrientations([]),
+    // );
 
     notifyListeners();
-    resetControlVisibility();
+    if (isLock == true) return;
+    // resetControlVisibility();
   }
 
   // Function to toggle mute/unmute
   void toggleMute() {
     isMuted = !isMuted;
     videoPlayerController.setVolume(isMuted ? 0.0 : 1.0);
-    resetControlVisibility();
+    resetControlVisibility(isSeek: true);
     notifyListeners();
   }
 
-  void seekBackward() {
-    final currentPosition = videoPlayerController.value.position;
-    final seekDuration = Duration(seconds: 10);
-    final newPosition = currentPosition - seekDuration;
-
-    if (newPosition > Duration.zero) {
-      videoPlayerController.seekTo(newPosition);
-    } else {
-      videoPlayerController.seekTo(
-        Duration.zero,
-      ); // Don't seek past the start of the video
-    }
+  updateListener() {
     notifyListeners();
   }
 
@@ -315,19 +323,47 @@ class VideoBloc extends ChangeNotifier {
     return "$minutes:$seconds";
   }
 
-  void seekForward() {
-    final currentPosition = videoPlayerController.value.position;
-    final seekDuration = Duration(seconds: 10);
-    final newPosition = currentPosition + seekDuration;
+  void seekForward({bool? isDoubleTag}) {
+    if (!videoPlayerController.value.isInitialized || isLockScreen) return;
+    final newPosition =
+        videoPlayerController.value.position + Duration(seconds: 10);
+    smoothSeek(
+      newPosition < videoPlayerController.value.duration
+          ? newPosition
+          : videoPlayerController.value.duration,
+      isDoubleTag ?? false,
+    );
+  }
 
-    if (newPosition < videoPlayerController.value.duration) {
-      videoPlayerController.seekTo(newPosition);
-    } else {
-      videoPlayerController.seekTo(
-        videoPlayerController.value.duration,
-      ); // Don't seek past the end of the video
+  void seekBackward({bool? isDoubleTag}) {
+    if (!videoPlayerController.value.isInitialized || isLockScreen) return;
+
+    final newPosition =
+        videoPlayerController.value.position - Duration(seconds: 10);
+    smoothSeek(newPosition, isDoubleTag ?? false);
+  }
+
+  Future<void> smoothSeek(Duration targetPosition, bool isDoubleTag) async {
+    // // Pause video before seeking to prevent lag
+    seekCount++;
+    seekTimer?.cancel();
+    seekTimer = Timer(Duration(milliseconds: 300), () {
+      seekCount = 0;
+      videoPlayerController.play();
+      if (isDoubleTag == true) return;
+      resetControlVisibility(isSeek: true);
+      notifyListeners();
+    });
+
+    // Ensure the target position is within valid bounds
+    if (targetPosition < Duration.zero) {
+      targetPosition = Duration.zero;
+    } else if (targetPosition > videoPlayerController.value.duration) {
+      targetPosition = videoPlayerController.value.duration;
     }
-    notifyListeners();
+
+    // Seek to the new position in one go
+    await videoPlayerController.seekTo(targetPosition);
   }
 
   void startSeekUpdateLoop() {
@@ -346,6 +382,7 @@ class VideoBloc extends ChangeNotifier {
     chewieControllerNotifier?.dispose();
     hideControlTimer?.cancel();
     toggleTimer?.cancel();
+    seekTimer?.cancel();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
