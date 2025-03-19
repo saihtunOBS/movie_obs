@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
-import 'package:movie_obs/screens/home_page.dart';
+import 'package:movie_obs/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -28,13 +28,16 @@ class MovieOBS extends StatelessWidget {
       title: 'ZLan Movie Player',
 
       theme: ThemeData(
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          color: Colors.green, // Change the default progress indicator color
+        ),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.red,
           primary: Colors.amber,
         ),
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      home: HomePage(),
+      home: SplashScreen(),
     );
   }
 }

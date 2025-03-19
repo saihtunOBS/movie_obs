@@ -21,6 +21,9 @@ dependencies:
   google_fonts: ^6.2.1
   get_storage: ^2.1.1
   auto_orientation_v2: ^2.3.6
+  flick_video_player: ^0.9.0
+  animations: ^2.0.11
+  dismissible_page: ^1.0.2
 
 dev_dependencies:
   flutter_test:

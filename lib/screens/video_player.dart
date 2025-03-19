@@ -1256,3 +1256,78 @@
 //                                                                     ),
 //                                                                   ),
 //                                                             ),
+
+//bool _wasScreenOff = false;
+
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   if (Platform.isAndroid) {
+  //     if (state == AppLifecycleState.resumed) {
+  //       if (_elapsedSeconds > 60) {
+  //         bloc.changeQuality(bloc.currentUrl);
+  //         bloc.updateListener();
+  //       }
+  //       _stopTimer();
+  //       if (_wasScreenOff) {
+  //         bloc.isLockScreen = false;
+  //         bloc.showLock.value = false;
+  //         if (chewieControllerNotifier?.value.isPlaying ?? true) {
+  //           chewieControllerNotifier?.value.play();
+  //         } else {
+  //           chewieControllerNotifier?.value.pause();
+  //         }
+  //         bloc.updateListener();
+  //       }
+  //       _wasScreenOff = false;
+  //     } else if (state == AppLifecycleState.paused) {
+  //       _wasScreenOff = true;
+
+  //       bloc.pausedPlayer();
+  //       bloc.changeQuality(bloc.currentUrl);
+  //       chewieControllerNotifier?.value.pause();
+  //       bloc.updateListener();
+  //       setState(() {});
+  //     } else if (state == AppLifecycleState.inactive) {
+  //       if (_timer == null) {
+  //         _startTimer();
+  //       }
+  //       if (chewieControllerNotifier?.value.isPlaying ?? true) {
+  //         chewieControllerNotifier?.value.play();
+  //       } else {
+  //         chewieControllerNotifier?.value.pause();
+  //       }
+  //       _wasScreenOff = true;
+  //       bloc.updateListener();
+  //       setState(() {});
+  //     }
+  //   } else {
+  //     if (state == AppLifecycleState.resumed) {
+  //       bloc.isLockScreen = false;
+  //       bloc.showLock.value = false;
+  //       bloc.updateListener();
+  //       setState(() {});
+  //     } else {
+  //       bloc.pausedPlayer();
+  //       bloc.updateListener();
+  //     }
+  //   }
+  // }
+
+  // void _startTimer() {
+  //   if (_timer != null) {
+  //     return;
+  //   }
+
+  //   _elapsedSeconds = 0;
+
+  //   _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+  //     _elapsedSeconds++;
+  //   });
+  // }
+
+  // void _stopTimer() {
+  //   if (_timer != null) {
+  //     _timer?.cancel();
+  //     _timer = null;
+  //   }
+  // }

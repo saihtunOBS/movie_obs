@@ -5,26 +5,25 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:movie_obs/screens/home_page.dart';
 import 'package:video_player/video_player.dart';
 
 bool showMiniControl = false;
-bool showVisibleMiniControl = true;
+final ValueNotifier<bool> showVisibleMiniControl = ValueNotifier(true);
 
 final ValueNotifier<bool> showMiniControlVisible = ValueNotifier(false);
-
+late VideoPlayerController videoPlayerController;
+ValueNotifier<ChewieController>? chewieControllerNotifier;
+final ValueNotifier<bool> showControl = ValueNotifier(true);
 String selectedQuality = 'Auto';
 
 class VideoBloc extends ChangeNotifier {
-  final ValueNotifier<bool> showControl = ValueNotifier(true);
-
   final ValueNotifier<bool> showVolume = ValueNotifier(false);
   final ValueNotifier<bool> showLock = ValueNotifier(false);
 
   ValueNotifier<bool> isHoveringLeft = ValueNotifier(false);
   ValueNotifier<bool> isHoveringRight = ValueNotifier(false);
 
-  late VideoPlayerController videoPlayerController;
-  ValueNotifier<ChewieController>? chewieControllerNotifier;
   bool wasScreenOff = false;
   bool isMuted = false;
   bool isFullScreen = false;
@@ -66,6 +65,7 @@ class VideoBloc extends ChangeNotifier {
   Timer? seekTimer;
 
   VideoBloc() {
+    
     initializeVideo(m3u8Url);
   }
 
@@ -208,9 +208,9 @@ class VideoBloc extends ChangeNotifier {
       chewieControllerNotifier = ValueNotifier(
         ChewieController(
           videoPlayerController: videoPlayerController,
-          showControls: false,
           allowedScreenSleep: false,
           autoInitialize: true,
+          customControls: Container(),
           deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
           deviceOrientationsOnEnterFullScreen: [
             DeviceOrientation.landscapeLeft,
@@ -224,12 +224,13 @@ class VideoBloc extends ChangeNotifier {
 
     videoPlayerController.addListener(() {
       if (videoPlayerController.value.isCompleted) {
+        isPlay.value = false;
         if (showMiniControl == true) {
           showControl.value = false;
         } else {
           showControl.value = true;
         }
-        //showLock.value = false;
+        
       }
       notifyListeners();
     });
@@ -251,12 +252,12 @@ class VideoBloc extends ChangeNotifier {
   }
 
   void resetMiniControlVisibility() {
-    showVisibleMiniControl = !showVisibleMiniControl;
+    showVisibleMiniControl.value = true;
 
     // Cancel the previous timer before creating a new one
     hideMiniControlTimer?.cancel();
-    hideMiniControlTimer = Timer(const Duration(seconds: 3), () {
-      showVisibleMiniControl = false;
+    hideMiniControlTimer = Timer(const Duration(seconds: 2), () {
+      showVisibleMiniControl.value = false;
     });
     notifyListeners();
   }
@@ -273,36 +274,28 @@ class VideoBloc extends ChangeNotifier {
     final wasPlaying = videoPlayerController.value.isPlaying;
 
     await videoPlayerController.pause();
-    await videoPlayerController.dispose();
+    // await videoPlayerController.dispose();
 
     videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
 
     await videoPlayerController.initialize().then((_) async {
       await videoPlayerController.seekTo(currentPosition);
 
-      if (Platform.isAndroid) {
-        Future.delayed(Duration(milliseconds: 700),(){
-          isLoading = false;
-          notifyListeners();
-        } );
-      }else {
-        isLoading = false;
+      if (wasPlaying) {
+        videoPlayerController.play();
+        notifyListeners();
+      } else {
+        videoPlayerController.pause();
         notifyListeners();
       }
-      
-      
+      isLoading = false;
     });
 
     chewieControllerNotifier?.value = ChewieController(
       videoPlayerController: videoPlayerController,
-      showControls: false,
+      customControls: Container(),
       allowedScreenSleep: false,
     );
-    if (wasPlaying) {
-      videoPlayerController.play();
-    } else {
-      videoPlayerController.pause();
-    }
     videoPlayerController.setVolume(isMuted ? 0.0 : 1.0);
     showMiniControl = false;
     notifyListeners();
@@ -373,10 +366,10 @@ class VideoBloc extends ChangeNotifier {
     if (!videoPlayerController.value.isInitialized || isLockScreen) return;
     final newPosition =
         videoPlayerController.value.position + Duration(seconds: 10);
+    
+    if(newPosition> videoPlayerController.value.duration) return;
     smoothSeek(
-      newPosition < videoPlayerController.value.duration
-          ? newPosition
-          : videoPlayerController.value.duration,
+     newPosition,
       isDoubleTag ?? false,
     );
   }
