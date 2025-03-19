@@ -274,7 +274,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                                         CupertinoIcons
                                             .arrow_counterclockwise,
                                       )
-                                      : Icon(
+                                      : bloc.seekCount != 0 ? Icon(CupertinoIcons.pause,size: 28,) : Icon(
                                         videoPlayerController.value.isPlaying
                                             ? CupertinoIcons.pause
                                             : CupertinoIcons.play,

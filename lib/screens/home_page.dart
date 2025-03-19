@@ -67,9 +67,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Make sure to initialize the video controller only if it's not already initialized
     if (chewieControllerNotifier?.value == null) {
-      // Use addPostFrameCallback to delay the initialization until after the build phase
       WidgetsBinding.instance.addPostFrameCallback((_) {
         bloc.initializeVideo(bloc.m3u8Url);
       });
@@ -115,8 +113,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     height: 230,
                     width: double.infinity,
                     color: Colors.black,
-                    child: CircularProgressIndicator.adaptive(
-                      backgroundColor: Colors.amber,
+                    child: Center(
+                      child: CircularProgressIndicator.adaptive(
+                        backgroundColor: Colors.amber,
+                      ),
                     ),
                   )
                   : Column(
@@ -133,6 +133,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               IconButton(
                                 onPressed: () {
                                   Navigator.pop(context);
+                                  videoPlayerController.pause();
+                                  videoPlayerController.seekTo(Duration.zero);
                                 },
                                 icon: Icon(CupertinoIcons.chevron_back),
                               ),
@@ -551,6 +553,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                             ? Icon(
                                                               CupertinoIcons
                                                                   .arrow_counterclockwise,
+                                                            )
+                                                            : bloc.seekCount !=
+                                                                0
+                                                            ? Icon(
+                                                              CupertinoIcons
+                                                                  .pause,
+                                                              size: 30,
                                                             )
                                                             : Icon(
                                                               videoPlayerController

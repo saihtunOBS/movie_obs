@@ -29,7 +29,7 @@ class MovieOBS extends StatelessWidget {
 
       theme: ThemeData(
         progressIndicatorTheme: ProgressIndicatorThemeData(
-          color: Colors.green, // Change the default progress indicator color
+          color: Colors.white, // Change the default progress indicator color
         ),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.red,

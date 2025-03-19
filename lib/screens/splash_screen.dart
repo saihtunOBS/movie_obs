@@ -22,12 +22,12 @@ class SplashScreen extends StatelessWidget {
             return GestureDetector(
               onTap: action,
               child: Container(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.amber,
                 ),
-                child: Text('Video'),
+                child: Text('Play Video'),
               ),
             );
           }),

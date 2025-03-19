@@ -46,6 +46,9 @@ class VideoBloc extends ChangeNotifier {
   bool isLockScreen = false;
   int isQualityClick = 0;
 
+  Timer? _timer;
+  int _elapsedSeconds = 0;
+
   bool isLoading = false;
   List<Map<String, String>> qualityOptions = [];
   String m3u8Url =
@@ -65,7 +68,6 @@ class VideoBloc extends ChangeNotifier {
   Timer? seekTimer;
 
   VideoBloc() {
-    
     initializeVideo(m3u8Url);
   }
 
@@ -230,7 +232,6 @@ class VideoBloc extends ChangeNotifier {
         } else {
           showControl.value = true;
         }
-        
       }
       notifyListeners();
     });
@@ -326,16 +327,15 @@ class VideoBloc extends ChangeNotifier {
       }
     } else {
       if (Platform.isAndroid) {
-        AutoOrientation.fullAutoMode(forceSensor: true);
+        AutoOrientation.portraitAutoMode(forceSensor: true);
       } else {
         AutoOrientation.portraitUpMode();
       }
     }
     if (Platform.isAndroid) {
-      Future.delayed(
-        Duration(seconds: 5),
-        () => AutoOrientation.fullAutoMode(),
-      );
+      _startTimer();
+
+      //AutoOrientation.fullAutoMode(forceSensor: true);
     }
     resetControlVisibility(isSeek: true);
 
@@ -366,12 +366,9 @@ class VideoBloc extends ChangeNotifier {
     if (!videoPlayerController.value.isInitialized || isLockScreen) return;
     final newPosition =
         videoPlayerController.value.position + Duration(seconds: 10);
-    
-    if(newPosition> videoPlayerController.value.duration) return;
-    smoothSeek(
-     newPosition,
-      isDoubleTag ?? false,
-    );
+
+    if (newPosition > videoPlayerController.value.duration) return;
+    smoothSeek(newPosition, isDoubleTag ?? false);
   }
 
   void seekBackward({bool? isDoubleTag}) {
@@ -414,6 +411,28 @@ class VideoBloc extends ChangeNotifier {
       }
       notifyListeners();
     });
+  }
+
+  void _startTimer() {
+    if (_timer != null) {
+      return;
+    }
+    _elapsedSeconds = 0;
+
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      _elapsedSeconds++;
+      if (_elapsedSeconds >= 5) {
+        AutoOrientation.fullAutoMode();
+        _stopTimer();
+      }
+    });
+  }
+
+  void _stopTimer() {
+    if (_timer != null) {
+      _timer?.cancel();
+      _timer = null;
+    }
   }
 
   @override
