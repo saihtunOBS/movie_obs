@@ -1,39 +1,56 @@
-import 'package:animations/animations.dart';
+import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/screens/home_page.dart';
 
-class SplashScreen extends StatelessWidget {
+import '../bloc/video_bloc.dart';
+
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen>
+    with WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
+      videoPlayerController.pause();
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: OpenContainer(
-          useRootNavigator: true,
-          closedElevation: 0.0,
-          closedColor: Colors.white30,
-          openElevation: 0.0,
-          closedShape: const RoundedRectangleBorder(),
-          openShape: const RoundedRectangleBorder(),
-          transitionDuration: const Duration(milliseconds: 400),
-          closedBuilder: ((context, action) {
-            return GestureDetector(
-              onTap: action,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.amber,
-                ),
-                child: Text('Play Video'),
-              ),
-            );
-          }),
-          openBuilder: ((context, action) {
-            return HomePage();
-          }),
+        child: GestureDetector(
+          onTap: () {
+            context.pushTransparentRoute(HomePage());
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.amber,
+            ),
+            child: Text('Play Video'),
+          ),
         ),
       ),
     );

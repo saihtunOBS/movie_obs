@@ -1,4 +1,4 @@
-import 'package:animations/animations.dart';
+import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
@@ -56,10 +56,11 @@ class MiniVideoPlayer {
   }
 }
 
-class _MiniPlayerOverlay extends StatefulWidget {
+class _MiniPlayerOverlay extends StatefulWidget  {
   @override
   __MiniPlayerOverlayState createState() => __MiniPlayerOverlayState();
 }
+
 
 class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
     with SingleTickerProviderStateMixin {
@@ -205,26 +206,11 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                           Positioned(
                             right: 0,
                             left: 0,
-                            bottom: 45,
-                            child: OpenContainer(
-                              useRootNavigator: true,
-                              closedElevation: 0.0,
-                              closedColor: Colors.transparent,
-                              openElevation: 0.0,
-                              closedShape: const RoundedRectangleBorder(),
-                              openShape: const RoundedRectangleBorder(),
-                              transitionDuration: const Duration(
-                                milliseconds: 400,
-                              ),
-                              closedBuilder: ((context, action) {
-                                return SizedBox(height: 230);
-                              }),
-                              openBuilder: (
-                                BuildContext context,
-                                void Function({Object? returnValue}) action,
-                              ) {
-                                return HomePage();
+                            child: InkWell(
+                              onTap: () {
+                                context.pushTransparentRoute(HomePage());
                               },
+                              child: SizedBox(height: 230),
                             ),
                           ),
                           Positioned(
@@ -252,13 +238,14 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                               onPressed: () {
                                 bloc.seekBackward();
                               },
-                              icon: Icon(CupertinoIcons.gobackward_10,color: Colors.white),
+                              icon: Icon(
+                                CupertinoIcons.gobackward_10,
+                                color: Colors.white,
+                              ),
                             ),
                             IconButton(
                               onPressed: () {
-                                if (videoPlayerController
-                                    .value
-                                    .isPlaying) {
+                                if (videoPlayerController.value.isPlaying) {
                                   videoPlayerController.pause();
                                   bloc.updateListener();
                                   isPlay.value = true;
@@ -271,14 +258,21 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                               icon:
                                   videoPlayerController.value.isCompleted
                                       ? Icon(
-                                        CupertinoIcons
-                                            .arrow_counterclockwise,
+                                        CupertinoIcons.arrow_counterclockwise,
+                                        color: Colors.white,
                                       )
-                                      : bloc.seekCount != 0 ? Icon(CupertinoIcons.pause,size: 28,color: Colors.white,) : Icon(
+                                      : bloc.seekCount != 0
+                                      ? Icon(
+                                        CupertinoIcons.pause,
+                                        size: 28,
+                                        color: Colors.white,
+                                      )
+                                      : Icon(
                                         videoPlayerController.value.isPlaying
                                             ? CupertinoIcons.pause
                                             : CupertinoIcons.play,
-                                        size: 28,color: Colors.white
+                                        size: 28,
+                                        color: Colors.white,
                                       ),
                             ),
                             IconButton(
@@ -286,7 +280,10 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                               onPressed: () {
                                 bloc.seekForward();
                               },
-                              icon: Icon(CupertinoIcons.goforward_10,color: Colors.white),
+                              icon: Icon(
+                                CupertinoIcons.goforward_10,
+                                color: Colors.white,
+                              ),
                             ),
                           ],
                         ),

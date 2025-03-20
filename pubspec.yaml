@@ -13,7 +13,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.8
   chewie: ^1.11.0
   video_player: ^2.9.3
   http: ^1.3.0
@@ -24,6 +23,7 @@ dependencies:
   flick_video_player: ^0.9.0
   animations: ^2.0.11
   dismissible_page: ^1.0.2
+  wakelock_plus: ^1.2.10
 
 dev_dependencies:
   flutter_test:

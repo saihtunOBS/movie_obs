@@ -428,7 +428,7 @@ class VideoBloc extends ChangeNotifier {
 
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       _elapsedSeconds++;
-      if (_elapsedSeconds >= 7) {
+      if (_elapsedSeconds >= 5) {
         AutoOrientation.fullAutoMode();
         _stopTimer();
       }

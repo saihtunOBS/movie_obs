@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([]);
+  WakelockPlus.enable();
   await GetStorage.init();
   runApp(
     MultiProvider(
@@ -21,7 +21,6 @@ void main() async {
 class MovieOBS extends StatelessWidget {
   const MovieOBS({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
