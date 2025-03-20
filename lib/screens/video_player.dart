@@ -1330,4 +1330,55 @@
   //     _timer?.cancel();
   //     _timer = null;
   //   }
+
+
+
+
+  // onVerticalDragUpdate: (details) {
+                  //   if (bloc.isLockScreen == true) return;
+                  //   if (bloc.isFullScreen) {
+                  //     double newDragOffset =
+                  //         bloc.dragOffset + details.delta.dy;
+                  //     double maxDragOffset = 0;
+                  //     double minDragOffset = bloc.dragThreshold;
+
+                  //     bloc.dragOffset = newDragOffset.clamp(
+                  //       maxDragOffset,
+                  //       minDragOffset,
+                  //     );
+
+                  //     if (bloc.dragOffset == 0.0 || bloc.dragOffset < 10) {
+                  //     } else {
+                  //       bloc.onVerticalDragUpdateFullScreen(details);
+                  //     }
+                  //   } else {
+                  //     bloc.onVerticalDragUpdate(details);
+                  //   }
+                  // },
+                  // onVerticalDragEnd: (details) {
+                  //   if (bloc.isLockScreen == true) return;
+                  //   if (bloc.isFullScreen) {
+                  //     if (bloc.dragOffset >= bloc.dragThreshold) {
+                  //       bloc.toggleFullScreen(); // Exit fullscreen if dragged enough
+                  //     } else {
+                  //       bloc.scale = 1.0;
+                  //       bloc.dragOffset =
+                  //           0.0; // Reset position if not dragged enough
+                  //       bloc.updateListener();
+                  //     }
+                  //   } else {
+                  //     bloc.onVerticalDragEnd(details);
+                  //   }
+                  // },
+
+                  // onPanStart: (details) {
+                  //   if (bloc.isLockScreen == true) return;
+
+                  //   bloc.initialPosition =
+                  //       details
+                  //           .localPosition
+                  //           .dy; // Capture initial drag position
+                  //   bloc.initialScale = bloc.scale;
+                  // },
+
   // }

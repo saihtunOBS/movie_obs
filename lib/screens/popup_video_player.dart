@@ -149,7 +149,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
     final screenSize = MediaQuery.of(context).size;
 
     if (_position == Offset(20, 0)) {
-      _position = Offset(20, screenSize.height - _height - 80);
+      _position = Offset(20, screenSize.height - _height - 93);
     }
 
     return Consumer<VideoBloc>(
@@ -241,7 +241,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                         ],
                       ),
                       Container(
-                        color: Colors.black26,
+                        color: Colors.black54,
                         height: 43,
                         width: 180,
                         child: Row(
@@ -252,7 +252,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                               onPressed: () {
                                 bloc.seekBackward();
                               },
-                              icon: Icon(CupertinoIcons.gobackward_10),
+                              icon: Icon(CupertinoIcons.gobackward_10,color: Colors.white),
                             ),
                             IconButton(
                               onPressed: () {
@@ -274,11 +274,11 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                                         CupertinoIcons
                                             .arrow_counterclockwise,
                                       )
-                                      : bloc.seekCount != 0 ? Icon(CupertinoIcons.pause,size: 28,) : Icon(
+                                      : bloc.seekCount != 0 ? Icon(CupertinoIcons.pause,size: 28,color: Colors.white,) : Icon(
                                         videoPlayerController.value.isPlaying
                                             ? CupertinoIcons.pause
                                             : CupertinoIcons.play,
-                                        size: 28,
+                                        size: 28,color: Colors.white
                                       ),
                             ),
                             IconButton(
@@ -286,7 +286,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                               onPressed: () {
                                 bloc.seekForward();
                               },
-                              icon: Icon(CupertinoIcons.goforward_10),
+                              icon: Icon(CupertinoIcons.goforward_10,color: Colors.white),
                             ),
                           ],
                         ),

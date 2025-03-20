@@ -14,7 +14,7 @@ final ValueNotifier<bool> showVisibleMiniControl = ValueNotifier(true);
 final ValueNotifier<bool> showMiniControlVisible = ValueNotifier(false);
 late VideoPlayerController videoPlayerController;
 ValueNotifier<ChewieController>? chewieControllerNotifier;
-final ValueNotifier<bool> showControl = ValueNotifier(true);
+final ValueNotifier<bool> showControl = ValueNotifier(false);
 String selectedQuality = 'Auto';
 
 class VideoBloc extends ChangeNotifier {
@@ -199,6 +199,8 @@ class VideoBloc extends ChangeNotifier {
 
   /// Initialize video player
   void initializeVideo(String url) {
+    isLoading = true;
+    notifyListeners();
     videoPlayerController = VideoPlayerController.networkUrl(
       Uri.parse(url),
       videoPlayerOptions: VideoPlayerOptions(
@@ -222,6 +224,10 @@ class VideoBloc extends ChangeNotifier {
       );
       _fetchQualityOptions();
     });
+
+    isLoading = false;
+    notifyListeners();
+
     resetControlVisibility();
 
     videoPlayerController.addListener(() {
@@ -305,6 +311,9 @@ class VideoBloc extends ChangeNotifier {
   //toggle full screen
   void toggleFullScreen({bool? isLock}) {
     //isLockScreen = isLock ?? false;
+    if (Platform.isAndroid) {
+      _stopTimer();
+    }
     isFullScreen = !isFullScreen;
     initialPosition = 0.0;
     scale = 1.0;
@@ -334,8 +343,6 @@ class VideoBloc extends ChangeNotifier {
     }
     if (Platform.isAndroid) {
       _startTimer();
-
-      //AutoOrientation.fullAutoMode(forceSensor: true);
     }
     resetControlVisibility(isSeek: true);
 
@@ -421,7 +428,7 @@ class VideoBloc extends ChangeNotifier {
 
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       _elapsedSeconds++;
-      if (_elapsedSeconds >= 5) {
+      if (_elapsedSeconds >= 7) {
         AutoOrientation.fullAutoMode();
         _stopTimer();
       }

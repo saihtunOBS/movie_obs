@@ -13,7 +13,7 @@ class SplashScreen extends StatelessWidget {
         child: OpenContainer(
           useRootNavigator: true,
           closedElevation: 0.0,
-          closedColor: Colors.white,
+          closedColor: Colors.white30,
           openElevation: 0.0,
           closedShape: const RoundedRectangleBorder(),
           openShape: const RoundedRectangleBorder(),
