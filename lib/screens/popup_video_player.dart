@@ -2,6 +2,7 @@ import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
+import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/screens/home_page.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
@@ -56,11 +57,10 @@ class MiniVideoPlayer {
   }
 }
 
-class _MiniPlayerOverlay extends StatefulWidget  {
+class _MiniPlayerOverlay extends StatefulWidget {
   @override
   __MiniPlayerOverlayState createState() => __MiniPlayerOverlayState();
 }
-
 
 class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
     with SingleTickerProviderStateMixin {
@@ -88,6 +88,20 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
       vsync: this,
       duration: Duration(milliseconds: 300), // Smooth transition time
     );
+
+    videoPlayerController.addListener(() {
+      if (videoPlayerController.value.isPlaying) {
+        saveVideoProgress([
+          VideoProgress(
+            videoId: '1',
+            position: videoPlayerController.value.position,
+          ),
+        ]);
+      } else if (videoPlayerController.value.isCompleted) {
+        isPlay.value = false;
+        showControl.value = true;
+      }
+    });
   }
 
   void _snapToNearestCorner(Size screenSize) {
@@ -208,7 +222,9 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                             left: 0,
                             child: InkWell(
                               onTap: () {
-                                context.pushTransparentRoute(HomePage());
+                                context.pushTransparentRoute(
+                                  HomePage(url: '', isFirstTime: false),
+                                );
                               },
                               child: SizedBox(height: 230),
                             ),
@@ -224,8 +240,51 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                                   ),
                             ),
                           ),
+                          ValueListenableBuilder(
+                            valueListenable: videoPlayerController,
+                            builder: (context, value, child) {
+                              final duration = value.duration;
+
+                              final position = value.position;
+
+                              if (videoPlayerController.value.isInitialized) {
+                                if (duration.inMilliseconds > 0 &&
+                                    !bloc.isSeeking) {
+                                  progress = (position.inMilliseconds /
+                                          duration.inMilliseconds)
+                                      .clamp(0.0, 1.0);
+                                } else {
+                                  // Use manual progress while dragging
+                                  progress = bloc.manualSeekProgress;
+                                }
+                              }
+                              return Positioned(
+                                bottom: -23,
+                                right: -23,
+                                left: -23,
+                                child: IgnorePointer(
+                                  ignoring: true,
+                                  child: SliderTheme(
+                                    data: SliderTheme.of(context).copyWith(
+                                      trackHeight: 1.0,
+                                      thumbShape: RoundSliderThumbShape(
+                                        enabledThumbRadius: 1.0,
+                                      ),
+                                      inactiveTrackColor: Colors.transparent,
+                                    ),
+                                    child: Slider(
+                                      value: progress,
+                                      onChanged: (_) {},
+                                      activeColor: Colors.red,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ],
                       ),
+
                       Container(
                         color: Colors.black54,
                         height: 43,

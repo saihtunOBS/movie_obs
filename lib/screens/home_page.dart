@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
+import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/screens/popup_video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
@@ -15,7 +16,15 @@ import 'package:video_player/video_player.dart';
 final ValueNotifier<bool> isPlay = ValueNotifier(false);
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({
+    super.key,
+    this.url,
+    this.videoId,
+    required this.isFirstTime,
+  });
+  final String? url;
+  final String? videoId;
+  final bool isFirstTime;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -24,6 +33,8 @@ class HomePage extends StatefulWidget {
 double previousBufferedProgress = 0.0;
 double progress = 0.0;
 Orientation? _lastOrientation;
+bool isNewView = false;
+VideoProgress? savedVideo;
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   late final VideoBloc bloc;
@@ -69,7 +80,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     if (chewieControllerNotifier?.value == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        bloc.initializeVideo(bloc.m3u8Url);
+        bloc.initializeVideo(widget.url ?? '');
       });
     }
   }
@@ -81,12 +92,40 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     bloc = Provider.of<VideoBloc>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      bloc.currentUrl = widget.url ?? '';
+      // if (widget.videoId == '1') {
+      // } else {
+      //   videoPlayerController.dispose();
+      //   bloc.currentUrl = widget.url ?? '';
+      //   bloc.initializeVideo(widget.url ?? '');
+      // }
       bloc.updateListener();
-      bloc.resetControlVisibility();
       MiniVideoPlayer.removeMiniPlayer();
       isPlay.value = true;
+      if (widget.isFirstTime == true) {
+        _loadCurrentPosition();
+      }
     });
     super.initState();
+  }
+
+  void _loadCurrentPosition() async {
+    final savedProgressList = await loadVideoProgress();
+    savedVideo = savedProgressList.firstWhere(
+      (progress) => progress.videoId == '1',
+      orElse:
+          () => VideoProgress(
+            videoId: '1',
+            position: Duration.zero,
+          ), // Return a default VideoProgress if not found
+    );
+
+    if ((savedVideo?.position)! > Duration.zero) {
+      selectedQuality = 'Auto';
+
+      bloc.changeQuality(widget.url ?? '', savedVideo?.position);
+      bloc.updateListener();
+    }
   }
 
   @override
@@ -110,7 +149,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           backgroundColor: Colors.black12.withValues(alpha: dragOpacity),
           body: DismissiblePage(
             disabled: bloc.isFullScreen ? true : false,
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.black,
             direction: DismissiblePageDismissDirection.down,
             onDismissed: () {
               Navigator.pop(context);
@@ -120,7 +159,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 isPlay.value,
               );
             },
-            dragSensitivity: 2.0,
+            dragSensitivity: 1.8,
             onDragUpdate: (value) {
               dragOpacity = value.opacity;
               setState(() {});
@@ -130,14 +169,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             child: Column(
               children: [
                 //player view
-                chewieControllerNotifier == null
+                chewieControllerNotifier == null ||
+                        !videoPlayerController.value.isInitialized
                     ? Container(
                       margin: EdgeInsets.only(top: bloc.isFullScreen ? 0 : 60),
                       color: Colors.black,
-                      height:
-                          bloc.isFullScreen == true
-                              ? MediaQuery.of(context).size.height
-                              : 230,
+                      height: 230,
                       width: MediaQuery.of(context).size.width,
                       child: Center(
                         child: CircularProgressIndicator.adaptive(
@@ -151,6 +188,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         margin: EdgeInsets.only(
                           top: bloc.isFullScreen ? 0 : 60,
                         ),
+
                         decoration: BoxDecoration(
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(10),
@@ -174,11 +212,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 final screenWidth =
                                     MediaQuery.of(context).size.width;
                                 final tapPosition = details.localPosition.dx;
-                      
+
                                 double tapThreshold =
                                     screenWidth *
                                     0.1; // 10% margin from the edges
-                      
+
                                 if (tapPosition <
                                     screenWidth / 2 - tapThreshold) {
                                   bloc.seekBackward(isDoubleTag: true);
@@ -192,31 +230,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   bloc.isHoveringLeft.value = false;
                                   isPlay.value = false;
                                 }
-                                Future.delayed(
-                                  Duration(milliseconds: 300),
-                                  () {
-                                    bloc.isHoveringLeft.value = false;
-                                    bloc.isHoveringRight.value = false;
-                                  },
-                                );
+                                Future.delayed(Duration(milliseconds: 300), () {
+                                  bloc.isHoveringLeft.value = false;
+                                  bloc.isHoveringRight.value = false;
+                                });
                               },
-                      
+
                               onDoubleTap: () {
                                 if (!videoPlayerController
                                     .value
                                     .isInitialized) {
                                   return;
                                 }
-                                Future.delayed(
-                                  Duration(milliseconds: 100),
-                                  () {
-                                    bloc.isHoveringRight.value = false;
-                                    bloc.isHoveringLeft.value = false;
-                                  },
-                                );
+                                Future.delayed(Duration(milliseconds: 100), () {
+                                  bloc.isHoveringRight.value = false;
+                                  bloc.isHoveringLeft.value = false;
+                                });
                               },
                               onTap: () {
-                                if (showMiniControl) return;
+                                if (bloc.isLoading == true) return;
                                 bloc.resetControlVisibility();
                                 bloc.showVolume.value = false;
                               },
@@ -229,9 +261,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                             ),
                                       )
                                       : ClipRRect(
-                                        borderRadius: BorderRadius.circular(
-                                          10,
-                                        ),
+                                        borderRadius: BorderRadius.circular(10),
                                         child: ValueListenableBuilder(
                                           valueListenable:
                                               chewieControllerNotifier!,
@@ -262,8 +292,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                           absorbing: true,
                                                           child: SizedBox(
                                                             width:
-                                                                double
-                                                                    .infinity,
+                                                                double.infinity,
                                                             child: Chewie(
                                                               controller:
                                                                   value!,
@@ -287,11 +316,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                                     hoveringLeft
                                                                         ? 0.3
                                                                         : 0,
-                                                                duration:
-                                                                    Duration(
-                                                                      milliseconds:
-                                                                          300,
-                                                                    ),
+                                                                duration: Duration(
+                                                                  milliseconds:
+                                                                      300,
+                                                                ),
                                                                 child: Align(
                                                                   alignment:
                                                                       Alignment
@@ -302,7 +330,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                                           context,
                                                                         ).width *
                                                                         0.3,
-                      
+
                                                                     decoration: BoxDecoration(
                                                                       color:
                                                                           bloc.isLockScreen ==
@@ -356,11 +384,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                                     hoverRight
                                                                         ? 0.3
                                                                         : 0,
-                                                                duration:
-                                                                    Duration(
-                                                                      milliseconds:
-                                                                          300,
-                                                                    ),
+                                                                duration: Duration(
+                                                                  milliseconds:
+                                                                      300,
+                                                                ),
                                                                 child: Align(
                                                                   alignment:
                                                                       Alignment
@@ -371,7 +398,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                                           context,
                                                                         ).width *
                                                                         0.3,
-                      
+
                                                                     decoration: BoxDecoration(
                                                                       color:
                                                                           bloc.isLockScreen ==
@@ -445,7 +472,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                         ),
                                       ),
                             ),
-                      
+
                             ///play pause view
                             AnimatedOpacity(
                               duration: Duration(milliseconds: 200),
@@ -461,12 +488,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       duration: Duration(milliseconds: 300),
                                       opacity: value ? 1 : 0,
                                       child: IgnorePointer(
-                                        ignoring:
-                                            !value ||
-                                            !videoPlayerController
-                                                    .value
-                                                    .isInitialized ==
-                                                true,
+                                        ignoring: !value,
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           spacing: 12,
@@ -480,7 +502,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                 bloc.resetControlVisibility(
                                                   isSeek: true,
                                                 );
-                      
+
                                                 if (videoPlayerController
                                                     .value
                                                     .isInitialized) {
@@ -497,44 +519,38 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                         .grey, // Change the background color
                                               ),
                                             ),
-                      
+
                                             // Play/Pause Button
                                             IconButton.filled(
                                               onPressed: () {
-                                                if (!videoPlayerController
+                                                if (videoPlayerController
                                                     .value
-                                                    .isInitialized) {
-                                                  return;
+                                                    .isCompleted) {
+                                                  // If the video is completed, restart from the beginning
+                                                  videoPlayerController
+                                                      .seekTo(Duration.zero)
+                                                      .then((_) {
+                                                        videoPlayerController
+                                                            .play();
+                                                        isPlay.value = true;
+                                                      });
                                                 } else {
                                                   if (videoPlayerController
                                                       .value
-                                                      .isCompleted) {
-                                                    // If the video is completed, restart from the beginning
+                                                      .isPlaying) {
                                                     videoPlayerController
-                                                        .seekTo(Duration.zero)
-                                                        .then((_) {
-                                                          videoPlayerController
-                                                              .play();
-                                                          isPlay.value = true;
-                                                        });
+                                                        .pause();
+                                                    isPlay.value = false;
                                                   } else {
-                                                    if (videoPlayerController
-                                                        .value
-                                                        .isPlaying) {
-                                                      videoPlayerController
-                                                          .pause();
-                                                      isPlay.value = false;
-                                                    } else {
-                                                      videoPlayerController
-                                                          .play();
-                                                      isPlay.value = true;
-                                                    }
+                                                    videoPlayerController
+                                                        .play();
+                                                    isPlay.value = true;
                                                   }
-                      
-                                                  bloc.resetControlVisibility(
-                                                    isSeek: true,
-                                                  );
                                                 }
+
+                                                bloc.resetControlVisibility(
+                                                  isSeek: true,
+                                                );
                                               },
                                               icon: ValueListenableBuilder(
                                                 valueListenable: isPlay,
@@ -577,7 +593,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                 },
                                               ),
                                             ),
-                      
+
                                             IconButton.filled(
                                               highlightColor: Colors.amber,
                                               onPressed: () {
@@ -607,7 +623,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     ),
                               ),
                             ),
-                      
+
                             ///full screen view
                             ValueListenableBuilder(
                               valueListenable: showControl,
@@ -645,7 +661,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                             .isPlaying
                                                         ? isPlay.value = false
                                                         : isPlay.value = true;
-                      
+
                                                     showControl.value = false;
                                                     bloc.updateListener();
                                                     Navigator.pop(context);
@@ -693,7 +709,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     ),
                                   ),
                             ),
-                      
+
                             ///setting view
                             ValueListenableBuilder(
                               valueListenable: showControl,
@@ -722,11 +738,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                   bloc.toggleMute();
                                                 },
                                                 child: Container(
-                                                  margin:
-                                                      EdgeInsets.symmetric(
-                                                        horizontal: 5,
-                                                        vertical: 5,
-                                                      ),
+                                                  margin: EdgeInsets.symmetric(
+                                                    horizontal: 5,
+                                                    vertical: 5,
+                                                  ),
                                                   height:
                                                       bloc.isFullScreen
                                                           ? 42
@@ -740,15 +755,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                         BorderRadius.circular(
                                                           5,
                                                         ),
-                                                    color:
-                                                        const Color.fromARGB(
-                                                          255,
-                                                          51,
-                                                          51,
-                                                          51,
-                                                        ).withValues(
-                                                          alpha: 0.5,
-                                                        ),
+                                                    color: const Color.fromARGB(
+                                                      255,
+                                                      51,
+                                                      51,
+                                                      51,
+                                                    ).withValues(alpha: 0.5),
                                                   ),
                                                   child: Icon(
                                                     !bloc.isMuted
@@ -756,13 +768,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                             .speaker_3_fill
                                                         : CupertinoIcons
                                                             .speaker_slash,
-                      
+
                                                     color: Colors.white,
                                                     size: 20,
                                                   ),
                                                 ),
                                               ),
-                      
+
                                               //setting
                                               InkWell(
                                                 onTap: () {
@@ -771,7 +783,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                     backgroundColor:
                                                         Colors.transparent,
                                                     context: context,
-                      
+
                                                     builder: (_) {
                                                       return _buildAdditionalOptions();
                                                     },
@@ -786,8 +798,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                       ),
                                                       () async => await showModalBottomSheet(
                                                         backgroundColor:
-                                                            Colors
-                                                                .transparent,
+                                                            Colors.transparent,
                                                         context: context,
                                                         builder: (builder) {
                                                           return bloc.isQualityClick ==
@@ -804,11 +815,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                   });
                                                 },
                                                 child: Container(
-                                                  margin:
-                                                      EdgeInsets.symmetric(
-                                                        horizontal: 5,
-                                                        vertical: 5,
-                                                      ),
+                                                  margin: EdgeInsets.symmetric(
+                                                    horizontal: 5,
+                                                    vertical: 5,
+                                                  ),
                                                   height:
                                                       bloc.isFullScreen
                                                           ? 42
@@ -822,15 +832,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                         BorderRadius.circular(
                                                           5,
                                                         ),
-                                                    color:
-                                                        const Color.fromARGB(
-                                                          255,
-                                                          51,
-                                                          51,
-                                                          51,
-                                                        ).withValues(
-                                                          alpha: 0.5,
-                                                        ),
+                                                    color: const Color.fromARGB(
+                                                      255,
+                                                      51,
+                                                      51,
+                                                      51,
+                                                    ).withValues(alpha: 0.5),
                                                   ),
                                                   child: Icon(
                                                     Icons.settings,
@@ -846,7 +853,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     ),
                                   ),
                             ),
-                      
+
                             ///slider
                             ValueListenableBuilder(
                               valueListenable: showControl,
@@ -869,10 +876,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                         child: IgnorePointer(
                                           ignoring: !value,
                                           child: Padding(
-                                            padding:
-                                                const EdgeInsets.symmetric(
-                                                  horizontal: 10,
-                                                ),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 10,
+                                            ),
                                             child: Row(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
@@ -883,8 +889,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                   builder:
                                                       (
                                                         BuildContext context,
-                                                        VideoPlayerValue
-                                                        value,
+                                                        VideoPlayerValue value,
                                                         Widget? child,
                                                       ) => Padding(
                                                         padding:
@@ -894,14 +899,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                         child: Text(
                                                           "${bloc.formatDuration(value.position)} / ${bloc.formatDuration(value.duration)}",
                                                           style: TextStyle(
-                                                            color:
-                                                                Colors.white,
+                                                            color: Colors.white,
                                                             fontSize: 12,
                                                           ),
                                                         ),
                                                       ),
                                                 ),
-                      
+
                                                 Expanded(
                                                   child: SliderTheme(
                                                     data: SliderTheme.of(
@@ -915,8 +919,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                           ), // Default track
                                                       activeTrackColor:
                                                           Colors.red,
-                                                      overlayColor: Colors
-                                                          .grey
+                                                      overlayColor: Colors.grey
                                                           .withValues(
                                                             alpha: 0.5,
                                                           ),
@@ -926,7 +929,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                                   .transparent
                                                               : Colors.white,
                                                       thumbColor: Colors.red,
-                      
+
                                                       thumbShape:
                                                           RoundSliderThumbShape(
                                                             enabledThumbRadius:
@@ -938,23 +941,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                           videoPlayerController,
                                                       builder: (
                                                         BuildContext context,
-                                                        VideoPlayerValue
-                                                        value,
+                                                        VideoPlayerValue value,
                                                         Widget? child,
                                                       ) {
                                                         final duration =
                                                             value.duration;
-                      
+
                                                         final position =
                                                             value.position;
-                      
+
                                                         if (videoPlayerController
                                                             .value
                                                             .isInitialized) {
                                                           if (duration.inMilliseconds >
                                                                   0 &&
-                                                              !bloc
-                                                                  .isSeeking) {
+                                                              !bloc.isSeeking) {
                                                             progress = (position
                                                                         .inMilliseconds /
                                                                     duration
@@ -974,14 +975,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                               value
                                                                       .buffered
                                                                       .isNotEmpty
-                                                                  ? (value.buffered.last.end.inMilliseconds /
-                                                                          duration.inMilliseconds)
+                                                                  ? (value
+                                                                              .buffered
+                                                                              .last
+                                                                              .end
+                                                                              .inMilliseconds /
+                                                                          duration
+                                                                              .inMilliseconds)
                                                                       .clamp(
                                                                         0.0,
                                                                         1.0,
                                                                       )
                                                                   : 0.0;
-                      
+
                                                           // If the video restarted, reset buffer progress
                                                           if (previousBufferedProgress >
                                                               newBufferedProgress) {
@@ -996,15 +1002,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                                     0.1;
                                                           }
                                                         }
-                      
+
                                                         return Slider(
                                                           value: progress,
-                                                          secondaryTrackValue:
-                                                              max(
-                                                                progress,
-                                                                previousBufferedProgress,
-                                                              ),
-                      
+                                                          secondaryTrackValue: max(
+                                                            progress,
+                                                            previousBufferedProgress,
+                                                          ),
+
                                                           onChanged: (
                                                             newValue,
                                                           ) async {
@@ -1033,7 +1038,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                             });
                                                             bloc.seekUpdateTimer
                                                                 ?.cancel(); // Stop the update loop
-                      
+
                                                             final newPosition = Duration(
                                                               milliseconds:
                                                                   (duration.inMilliseconds *
@@ -1044,12 +1049,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                                 .seekTo(
                                                                   newPosition,
                                                                 );
-                      
+
                                                             bloc.playPlayer();
-                      
+
                                                             bloc.isSeeking =
                                                                 false;
-                      
+
                                                             bloc.resetControlVisibility();
                                                           },
                                                         );
@@ -1075,6 +1080,62 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     ),
                                   ),
                             ),
+
+                            // ///continue to watch view
+                            // ValueListenableBuilder(
+                            //   valueListenable: showControl,
+                            //   builder: (
+                            //     BuildContext context,
+                            //     dynamic value,
+                            //     Widget? child,
+                            //   ) {
+                            //     return Positioned(
+                            //       bottom: 45,
+                            //       left: 20,
+                            //       child: Visibility(
+                            //         visible: !isNewView,
+                            //         child: AnimatedOpacity(
+                            //           duration: Duration.zero,
+                            //           opacity: bloc.toggleCount == 0 ? 1 : 0,
+                            //           child: AnimatedOpacity(
+                            //             duration: Duration(milliseconds: 300),
+                            //             alwaysIncludeSemantics: true,
+                            //             opacity: value ? 1 : 0,
+                            //             child: InkWell(
+                            //               onTap: () {
+                            //                 bloc.changeQuality(
+                            //                   widget.url ?? '',
+                            //                   savedVideo?.position,
+                            //                 );
+                            //                 isNewView = !isNewView;
+                            //                 setState(() {});
+                            //               },
+                            //               child: Container(
+                            //                 height: 25,
+                            //                 padding: EdgeInsets.symmetric(
+                            //                   horizontal: 10,
+                            //                 ),
+                            //                 decoration: BoxDecoration(
+                            //                   color: Colors.black38,
+                            //                   borderRadius:
+                            //                       BorderRadius.circular(20),
+                            //                 ),
+                            //                 child: Center(
+                            //                   child: Text(
+                            //                     'Continue to watch?',
+                            //                     style: TextStyle(
+                            //                       color: Colors.white,
+                            //                     ),
+                            //                   ),
+                            //                 ),
+                            //               ),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
                           ],
                         ),
                       ),
@@ -1087,11 +1148,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       opacity: dragOpacity < 0.9 ? 0 : 1,
                       duration: Duration(milliseconds: 300),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 20,
-                        ),
-                        child: SizedBox(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          color: Colors.black,
                           width: MediaQuery.of(context).size.width,
                           child: SingleChildScrollView(
                             child: Column(
@@ -1241,7 +1300,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               onTap: () {
                                 Navigator.pop(context);
                                 if (selectedQuality == 'Auto') return;
-                                bloc.changeQuality(bloc.m3u8Url, 'Auto');
+                                bloc.changeQuality(
+                                  widget.url ?? '',
+                                  null,
+                                  'Auto',
+                                );
                               },
                               child: Row(
                                 children: [
@@ -1289,6 +1352,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
                             bloc.changeQuality(
                               selectedUrl,
+                              null,
                               bloc.qualityOptions[qualityIndex]['quality'] ??
                                   '',
                             );

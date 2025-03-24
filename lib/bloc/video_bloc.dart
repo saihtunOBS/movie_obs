@@ -5,15 +5,16 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/screens/home_page.dart';
 import 'package:video_player/video_player.dart';
 
 bool showMiniControl = false;
 final ValueNotifier<bool> showVisibleMiniControl = ValueNotifier(true);
-
-final ValueNotifier<bool> showMiniControlVisible = ValueNotifier(false);
 late VideoPlayerController videoPlayerController;
 ValueNotifier<ChewieController>? chewieControllerNotifier;
+
+final ValueNotifier<bool> showMiniControlVisible = ValueNotifier(false);
 final ValueNotifier<bool> showControl = ValueNotifier(false);
 String selectedQuality = 'Auto';
 
@@ -51,10 +52,8 @@ class VideoBloc extends ChangeNotifier {
 
   bool isLoading = false;
   List<Map<String, String>> qualityOptions = [];
-  String m3u8Url =
-      'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8';
-  String currentUrl =
-      'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8';
+
+  String currentUrl = '';
 
   double scale = 1.0;
   double initialScale = 1.0;
@@ -68,7 +67,7 @@ class VideoBloc extends ChangeNotifier {
   Timer? seekTimer;
 
   VideoBloc() {
-    initializeVideo(m3u8Url);
+    initializeVideo(currentUrl);
   }
 
   void igNorePointerToggle() {
@@ -143,7 +142,7 @@ class VideoBloc extends ChangeNotifier {
   /// Fetch and parse M3U8 file to extract quality options
   Future<void> _fetchQualityOptions() async {
     try {
-      final response = await http.get(Uri.parse(m3u8Url));
+      final response = await http.get(Uri.parse(currentUrl));
       if (response.statusCode == 200) {
         String m3u8Content = response.body;
 
@@ -164,7 +163,7 @@ class VideoBloc extends ChangeNotifier {
 
           // Convert relative URLs to absolute
           if (!url.startsWith('http')) {
-            Uri masterUri = Uri.parse(m3u8Url);
+            Uri masterUri = Uri.parse(currentUrl);
             url = Uri.parse(masterUri.resolve(url).toString()).toString();
           }
 
@@ -228,18 +227,21 @@ class VideoBloc extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
 
-    resetControlVisibility();
-
     videoPlayerController.addListener(() {
-      if (videoPlayerController.value.isCompleted) {
+      if (videoPlayerController.value.isPlaying) {
+        saveVideoProgress([
+          VideoProgress(
+            videoId: '1',
+            position: videoPlayerController.value.position,
+          ),
+        ]);
+        notifyListeners();
+      } else if (videoPlayerController.value.isCompleted) {
         isPlay.value = false;
-        if (showMiniControl == true) {
-          showControl.value = false;
-        } else {
-          showControl.value = true;
-        }
+        showControl.value = true;
+
+        notifyListeners();
       }
-      notifyListeners();
     });
   }
 
@@ -258,19 +260,12 @@ class VideoBloc extends ChangeNotifier {
     notifyListeners();
   }
 
-  void resetMiniControlVisibility() {
-    showVisibleMiniControl.value = true;
-
-    // Cancel the previous timer before creating a new one
-    hideMiniControlTimer?.cancel();
-    hideMiniControlTimer = Timer(const Duration(seconds: 2), () {
-      showVisibleMiniControl.value = false;
-    });
-    notifyListeners();
-  }
-
   //quality change
-  void changeQuality(String url, [String? quality]) async {
+  void changeQuality(
+    String url,
+    Duration? currentDuration, [
+    String? quality,
+  ]) async {
     showMiniControl = true;
     isLoading = true;
 
@@ -286,7 +281,7 @@ class VideoBloc extends ChangeNotifier {
     videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
 
     await videoPlayerController.initialize().then((_) async {
-      await videoPlayerController.seekTo(currentPosition);
+      await videoPlayerController.seekTo(currentDuration ?? currentPosition);
 
       if (wasPlaying) {
         videoPlayerController.play();
@@ -305,6 +300,23 @@ class VideoBloc extends ChangeNotifier {
     );
     videoPlayerController.setVolume(isMuted ? 0.0 : 1.0);
     showMiniControl = false;
+
+    videoPlayerController.addListener(() {
+      if (videoPlayerController.value.isPlaying) {
+        saveVideoProgress([
+          VideoProgress(
+            videoId: '1',
+            position: videoPlayerController.value.position,
+          ),
+        ]);
+        notifyListeners();
+      } else if (videoPlayerController.value.isCompleted) {
+        isPlay.value = false;
+        showControl.value = true;
+
+        notifyListeners();
+      }
+    });
     notifyListeners();
   }
 
@@ -370,11 +382,15 @@ class VideoBloc extends ChangeNotifier {
   }
 
   void seekForward({bool? isDoubleTag}) {
-    if (!videoPlayerController.value.isInitialized || isLockScreen) return;
+    if (!videoPlayerController.value.isInitialized || isLockScreen) {
+      return;
+    }
     final newPosition =
         videoPlayerController.value.position + Duration(seconds: 10);
 
-    if (newPosition > videoPlayerController.value.duration) return;
+    if (newPosition > videoPlayerController.value.duration) {
+      return;
+    }
     smoothSeek(newPosition, isDoubleTag ?? false);
   }
 
