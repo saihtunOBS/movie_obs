@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:auto_orientation_v2/auto_orientation_v2.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +8,7 @@ import 'package:movie_obs/screens/home_page.dart';
 import 'package:video_player/video_player.dart';
 
 bool showMiniControl = false;
+bool isFullScreen = false;
 final ValueNotifier<bool> showVisibleMiniControl = ValueNotifier(true);
 late VideoPlayerController videoPlayerController;
 ValueNotifier<ChewieController>? chewieControllerNotifier;
@@ -27,7 +26,7 @@ class VideoBloc extends ChangeNotifier {
 
   bool wasScreenOff = false;
   bool isMuted = false;
-  bool isFullScreen = false;
+
   bool hasPrinted = false;
   Timer? hideControlTimer;
   Timer? hideMiniControlTimer;
@@ -214,17 +213,18 @@ class VideoBloc extends ChangeNotifier {
           allowedScreenSleep: false,
           autoInitialize: true,
           customControls: Container(),
-          deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
           deviceOrientationsOnEnterFullScreen: [
             DeviceOrientation.landscapeLeft,
             DeviceOrientation.landscapeRight,
           ],
+          deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
         ),
       );
       _fetchQualityOptions();
     });
 
     isLoading = false;
+    resetControlVisibility();
     notifyListeners();
 
     videoPlayerController.addListener(() {
@@ -238,7 +238,7 @@ class VideoBloc extends ChangeNotifier {
         notifyListeners();
       } else if (videoPlayerController.value.isCompleted) {
         isPlay.value = false;
-        showControl.value = true;
+        //showControl.value = true;
 
         notifyListeners();
       }
@@ -246,7 +246,7 @@ class VideoBloc extends ChangeNotifier {
   }
 
   void resetControlVisibility({bool isSeek = false}) {
-    if (!videoPlayerController.value.isPlaying || isSeek == true) {
+    if (isSeek == true) {
       showControl.value = true;
     } else {
       showControl.value = !showControl.value;
@@ -254,7 +254,7 @@ class VideoBloc extends ChangeNotifier {
 
     // Cancel the previous timer before creating a new one
     hideControlTimer?.cancel();
-    hideControlTimer = Timer(const Duration(seconds: 3), () {
+    hideControlTimer = Timer(const Duration(seconds: 4), () {
       showControl.value = false;
     });
     notifyListeners();
@@ -284,13 +284,16 @@ class VideoBloc extends ChangeNotifier {
       await videoPlayerController.seekTo(currentDuration ?? currentPosition);
 
       if (wasPlaying) {
+        showControl.value = false;
         videoPlayerController.play();
         notifyListeners();
       } else {
+        resetControlVisibility();
         videoPlayerController.pause();
         notifyListeners();
       }
       isLoading = false;
+      
     });
 
     chewieControllerNotifier?.value = ChewieController(
@@ -321,11 +324,10 @@ class VideoBloc extends ChangeNotifier {
   }
 
   //toggle full screen
-  void toggleFullScreen({bool? isLock}) {
+  void toggleFullScreen({bool? isLock}) async {
     //isLockScreen = isLock ?? false;
-    if (Platform.isAndroid) {
-      _stopTimer();
-    }
+    _stopTimer();
+
     isFullScreen = !isFullScreen;
     initialPosition = 0.0;
     scale = 1.0;
@@ -341,21 +343,18 @@ class VideoBloc extends ChangeNotifier {
     });
 
     if (isFullScreen == true) {
-      if (Platform.isAndroid) {
-        AutoOrientation.landscapeAutoMode(forceSensor: true);
-      } else {
-        AutoOrientation.landscapeRightMode();
-      }
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+      ]);
     } else {
-      if (Platform.isAndroid) {
-        AutoOrientation.portraitAutoMode(forceSensor: true);
-      } else {
-        AutoOrientation.portraitUpMode();
-      }
+      
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
     }
-    if (Platform.isAndroid) {
-      _startTimer();
-    }
+     _startTimer();
+
     resetControlVisibility(isSeek: true);
 
     notifyListeners();
@@ -445,7 +444,7 @@ class VideoBloc extends ChangeNotifier {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       _elapsedSeconds++;
       if (_elapsedSeconds >= 5) {
-        AutoOrientation.fullAutoMode();
+        SystemChrome.setPreferredOrientations([]);
         _stopTimer();
       }
     });
@@ -465,10 +464,6 @@ class VideoBloc extends ChangeNotifier {
     hideControlTimer?.cancel();
     toggleTimer?.cancel();
     seekTimer?.cancel();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     super.dispose();
   }
 }

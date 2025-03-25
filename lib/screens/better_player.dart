@@ -284,7 +284,7 @@
   //   _lastOrientation = newOrientation;
 
   //   // ✅ Prevent auto-switching when already in fullscreen mode
-  //   if (bloc.isFullScreen && newOrientation == Orientation.landscape) return;
+  //   if (isFullScreen && newOrientation == Orientation.landscape) return;
 
   //   bloc.updateOrientation(_lastOrientation!);
   // }
@@ -1177,7 +1177,7 @@
 //                                       children: [
 //                                         SizedBox(
 //                                           height:
-//                                               bloc.isFullScreen
+//                                               isFullScreen
 //                                                   ? MediaQuery.sizeOf(
 //                                                         context,
 //                                                       ).height /

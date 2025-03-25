@@ -345,7 +345,7 @@
 //                   duration: Duration(milliseconds: 300),
 //                   color: Colors.black,
 //                   height:
-//                       bloc.isFullScreen == true
+//                       isFullScreen == true
 //                           ? MediaQuery.of(context).size.height
 //                           : 250,
 //                   width: MediaQuery.of(context).size.width,
@@ -373,7 +373,7 @@
             
 //                         onVerticalDragUpdate: (details) {
 //                           bloc.onVerticalDragUpdate(details);
-//                           if (bloc.isFullScreen && details.delta.dy > 0) {
+//                           if (isFullScreen && details.delta.dy > 0) {
 //                             setState(() {
 //                               bloc.dragOffset +=
 //                                   details.delta.dy; // Move video down
@@ -381,7 +381,7 @@
 //                           }
 //                         },
 //                         onVerticalDragEnd: (details) {
-//                           if (bloc.isFullScreen) {
+//                           if (isFullScreen) {
 //                             if (bloc.dragOffset > bloc.dragThreshold) {
 //                               bloc.toggleFullScreen();
 //                             } else {
@@ -470,7 +470,7 @@
 //                                                                   .transparent,
 //                                                       borderRadius: BorderRadius.only(
 //                                                         topRight: Radius.circular(
-//                                                           bloc.isFullScreen
+//                                                           isFullScreen
 //                                                               ? MediaQuery.sizeOf(
 //                                                                     context,
 //                                                                   ).width /
@@ -479,7 +479,7 @@
 //                                                         ),
 //                                                         bottomRight:
 //                                                             Radius.circular(
-//                                                               bloc.isFullScreen
+//                                                               isFullScreen
 //                                                                   ? MediaQuery.sizeOf(
 //                                                                         context,
 //                                                                       ).width /
@@ -529,7 +529,7 @@
 //                                                                   .transparent,
 //                                                       borderRadius: BorderRadius.only(
 //                                                         bottomLeft: Radius.circular(
-//                                                           bloc.isFullScreen
+//                                                           isFullScreen
 //                                                               ? MediaQuery.sizeOf(
 //                                                                     context,
 //                                                                   ).width /
@@ -537,7 +537,7 @@
 //                                                               : 125,
 //                                                         ),
 //                                                         topLeft: Radius.circular(
-//                                                           bloc.isFullScreen
+//                                                           isFullScreen
 //                                                               ? MediaQuery.sizeOf(
 //                                                                     context,
 //                                                                   ).width /
@@ -671,8 +671,8 @@
 //                                             horizontal: 5,
 //                                             vertical: 5,
 //                                           ),
-//                                           height: bloc.isFullScreen ? 42 : 29.5,
-//                                           width: bloc.isFullScreen ? 50 : 46,
+//                                           height: isFullScreen ? 42 : 29.5,
+//                                           width: isFullScreen ? 50 : 46,
 //                                           decoration: BoxDecoration(
 //                                             borderRadius: BorderRadius.circular(
 //                                               5,
@@ -725,8 +725,8 @@
 //                                             horizontal: 5,
 //                                             vertical: 5,
 //                                           ),
-//                                           height: bloc.isFullScreen ? 42 : 29.5,
-//                                           width: bloc.isFullScreen ? 50 : 46,
+//                                           height: isFullScreen ? 42 : 29.5,
+//                                           width: isFullScreen ? 50 : 46,
 //                                           decoration: BoxDecoration(
 //                                             borderRadius: BorderRadius.circular(
 //                                               5,
@@ -765,8 +765,8 @@
 //                                             horizontal: 5,
 //                                             vertical: 5,
 //                                           ),
-//                                           height: bloc.isFullScreen ? 42 : 29.5,
-//                                           width: bloc.isFullScreen ? 50 : 46,
+//                                           height: isFullScreen ? 42 : 29.5,
+//                                           width: isFullScreen ? 50 : 46,
 //                                           decoration: BoxDecoration(
 //                                             borderRadius: BorderRadius.circular(
 //                                               5,
@@ -1163,7 +1163,7 @@
 //                       bloc.showLock.value = true;
 //                       bloc.playPlayer();
 //                       bloc.updateListener();
-//                       if (bloc.isFullScreen == true) return;
+//                       if (isFullScreen == true) return;
 //                       bloc.toggleFullScreen(isLock: true);
 //                     },
 //                     child: _buildAdditionalRow(
@@ -1336,7 +1336,7 @@
 
   // onVerticalDragUpdate: (details) {
                   //   if (bloc.isLockScreen == true) return;
-                  //   if (bloc.isFullScreen) {
+                  //   if (isFullScreen) {
                   //     double newDragOffset =
                   //         bloc.dragOffset + details.delta.dy;
                   //     double maxDragOffset = 0;
@@ -1357,7 +1357,7 @@
                   // },
                   // onVerticalDragEnd: (details) {
                   //   if (bloc.isLockScreen == true) return;
-                  //   if (bloc.isFullScreen) {
+                  //   if (isFullScreen) {
                   //     if (bloc.dragOffset >= bloc.dragThreshold) {
                   //       bloc.toggleFullScreen(); // Exit fullscreen if dragged enough
                   //     } else {
@@ -1388,7 +1388,7 @@
 
                         // onVerticalDragUpdate: (details) {
                         //   if (bloc.isLockScreen == true) return;
-                        //   if (bloc.isFullScreen) {
+                        //   if (isFullScreen) {
                         //     double newDragOffset =
                         //         bloc.dragOffset + details.delta.dy;
                         //     double maxDragOffset = 0;
@@ -1410,7 +1410,7 @@
                         // },
                         // onVerticalDragEnd: (details) {
                         //   if (bloc.isLockScreen == true) return;
-                        //   if (bloc.isFullScreen) {
+                        //   if (isFullScreen) {
                         //     if (bloc.dragOffset >= bloc.dragThreshold) {
                         //       bloc.toggleFullScreen();
                         //     } else {
@@ -1434,3 +1434,140 @@
                         // },
 
   // }
+
+
+                            // ///continue to watch view
+                            // ValueListenableBuilder(
+                            //   valueListenable: showControl,
+                            //   builder: (
+                            //     BuildContext context,
+                            //     dynamic value,
+                            //     Widget? child,
+                            //   ) {
+                            //     return Positioned(
+                            //       bottom: 45,
+                            //       left: 20,
+                            //       child: Visibility(
+                            //         visible: !isNewView,
+                            //         child: AnimatedOpacity(
+                            //           duration: Duration.zero,
+                            //           opacity: bloc.toggleCount == 0 ? 1 : 0,
+                            //           child: AnimatedOpacity(
+                            //             duration: Duration(milliseconds: 300),
+                            //             alwaysIncludeSemantics: true,
+                            //             opacity: value ? 1 : 0,
+                            //             child: InkWell(
+                            //               onTap: () {
+                            //                 bloc.changeQuality(
+                            //                   widget.url ?? '',
+                            //                   savedVideo?.position,
+                            //                 );
+                            //                 isNewView = !isNewView;
+                            //                 setState(() {});
+                            //               },
+                            //               child: Container(
+                            //                 height: 25,
+                            //                 padding: EdgeInsets.symmetric(
+                            //                   horizontal: 10,
+                            //                 ),
+                            //                 decoration: BoxDecoration(
+                            //                   color: Colors.black38,
+                            //                   borderRadius:
+                            //                       BorderRadius.circular(20),
+                            //                 ),
+                            //                 child: Center(
+                            //                   child: Text(
+                            //                     'Continue to watch?',
+                            //                     style: TextStyle(
+                            //                       color: Colors.white,
+                            //                     ),
+                            //                   ),
+                            //                 ),
+                            //               ),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
+
+
+              //                Visibility(
+              //   visible: !isFullScreen,
+              //   child: AnimatedOpacity(
+              //     opacity: dragOpacity < 1 ? 0 : 1,
+              //     duration: Duration(milliseconds: 200),
+              //     child: Padding(
+              //       padding: EdgeInsets.only(
+              //         top: 300,
+              //         left: 16,
+              //         right: 16,
+              //         bottom: 20,
+              //       ),
+              //       child: Stack(
+              //         children: [
+              //           Positioned(
+              //             child: Container(
+              //               color: Colors.black,
+              //               child: SingleChildScrollView(
+              //                 physics: ClampingScrollPhysics(),
+              //                 child: Column(
+              //                   crossAxisAlignment: CrossAxisAlignment.start,
+              //                   children: [
+              //                     Text(
+              //                       'ZLan Video Player',
+              //                       style: TextStyle(
+              //                         fontSize: 20,
+              //                         color: Colors.white,
+              //                       ),
+              //                     ),
+              //                     SizedBox(height: 10),
+              //                     Text(
+              //                       'Video insertion of audio narrated descriptions of a television program key visual elements into natural pauses in the program dialogue, which makes video programming more accessible to individuals who are blind or visually impaired.',
+              //                       style: TextStyle(color: Colors.white),
+              //                     ),
+              //                     SizedBox(height: 20),
+              //                     GridView.builder(
+              //                       padding: EdgeInsets.zero,
+              //                       shrinkWrap: true,
+              //                       gridDelegate:
+              //                           SliverGridDelegateWithFixedCrossAxisCount(
+              //                             crossAxisCount: 2,
+              //                             crossAxisSpacing: 10,
+              //                             mainAxisSpacing: 10,
+              //                           ),
+              //                       itemCount: 5,
+              //                       physics: NeverScrollableScrollPhysics(),
+              //                       itemBuilder: (context, index) {
+              //                         return Container(
+              //                           decoration: BoxDecoration(
+              //                             color: Colors.grey.withValues(
+              //                               alpha: 0.2,
+              //                             ),
+              //                             borderRadius: BorderRadius.circular(
+              //                               10,
+              //                             ),
+              //                           ),
+              //                           child: Center(
+              //                             child: Text(
+              //                               'placeholder',
+              //                               style: TextStyle(
+              //                                 color: Colors.grey,
+              //                               ),
+              //                             ),
+              //                           ),
+              //                         );
+              //                       },
+              //                     ),
+              //                     SizedBox(height: 20),
+              //                   ],
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ),

@@ -63,7 +63,7 @@ class _MiniPlayerOverlay extends StatefulWidget {
 }
 
 class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   Offset _position = Offset(20, 0);
   final double _width = 180;
   final double _height = 110;
@@ -77,7 +77,20 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
   late final VideoBloc bloc; // Declare provider outside build
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
+      videoPlayerController.pause();
+      setState(() {
+      });
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
+
     bloc = Provider.of<VideoBloc>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showMiniControlVisible.value = true;
@@ -155,6 +168,8 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+
     _controller.dispose();
     super.dispose();
   }

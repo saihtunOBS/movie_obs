@@ -1,6 +1,6 @@
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/bloc/video_bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:movie_obs/screens/home_page.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -10,29 +10,7 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with WidgetsBindingObserver {
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.paused) {
-      videoPlayerController.pause();
-    }
-    super.didChangeAppLifecycleState(state);
-  }
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addObserver(this);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,13 +22,20 @@ class _SplashScreenState extends State<SplashScreen>
           children: [
             GestureDetector(
               onTap: () {
-                context.pushTransparentRoute(
-                  HomePage(
-                    isFirstTime: true,
-                    url:
-                        'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
-                  ),
-                );
+                context
+                    .pushTransparentRoute(
+                      HomePage(
+                        isFirstTime: true,
+                        url:
+                            'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
+                      ),
+                    )
+                    .whenComplete(() {
+                      SystemChrome.setPreferredOrientations([
+                        DeviceOrientation.portraitUp,
+                        DeviceOrientation.portraitDown,
+                      ]);
+                    });
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
