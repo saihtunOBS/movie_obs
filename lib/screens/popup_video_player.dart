@@ -9,50 +9,60 @@ import 'package:chewie/chewie.dart';
 
 class MiniVideoPlayer {
   static OverlayEntry? _overlayEntry;
+  static late AnimationController _animationController;
+  static late Animation<double> _fadeAnimation;
+  static late Animation<Offset> _slideAnimation;
 
   static void showMiniPlayer(
     BuildContext context,
     String videoUrl,
     bool isPlaying,
-  ) async {
+  ) {
     if (_overlayEntry != null) return;
 
-    chewieControllerNotifier?.value = ChewieController(
-      videoPlayerController: videoPlayerController,
-      autoPlay: false,
-      looping: false,
-      allowFullScreen: false,
-      allowMuting: false,
-      draggableProgressBar: false,
-      aspectRatio: 16 / 9,
-      showControls: false,
-      showOptions: false,
-      allowPlaybackSpeedChanging: false,
+    final TickerProvider ticker = Navigator.of(context);
+    _animationController = AnimationController(
+      vsync: ticker,
+      duration: Duration(milliseconds: 300),
     );
 
-    _overlayEntry = OverlayEntry(builder: (context) => _MiniPlayerOverlay());
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: Offset(0, 1),
+      end: Offset(0, 0),
+    ).animate(_animationController);
+
+    _overlayEntry = OverlayEntry(
+      builder:
+          (context) => Stack(
+            children: [
+              FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: _MiniPlayerOverlay(),
+                ),
+              ),
+            ],
+          ),
+    );
+
     Overlay.of(context).insert(_overlayEntry!);
+    _animationController.forward();
   }
 
   static void removeMiniPlayer({bool? isClose}) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showMiniControlVisible.value = false;
-      _overlayEntry?.remove();
+    if (_overlayEntry == null) return;
+    _animationController.reverse().then((_) {
       if (isClose == true) {
         videoPlayerController.pause();
-        videoPlayerController.initialize();
-        videoPlayerController.seekTo(Duration.zero);
-      } else {
-        if (videoPlayerController.value.isPlaying) {
-          videoPlayerController.play();
-          chewieControllerNotifier?.value.play();
-        } else {
-          videoPlayerController.pause();
-          chewieControllerNotifier?.value.pause();
-        }
       }
+      _overlayEntry?.remove();
       _overlayEntry = null;
-      showMiniControl = false;
+      _animationController.dispose();
     });
   }
 }
@@ -73,16 +83,14 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
   double _dragStartX = 0;
   bool _isDraggingDown = false;
   bool _pendingDismiss = false;
-  bool hasPrinted = false;
-  late final VideoBloc bloc; // Declare provider outside build
+  late final VideoBloc bloc;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused) {
       videoPlayerController.pause();
-      setState(() {
-      });
+      setState(() {});
     }
     super.didChangeAppLifecycleState(state);
   }
@@ -90,7 +98,6 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-
     bloc = Provider.of<VideoBloc>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showMiniControlVisible.value = true;
@@ -99,7 +106,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 300), // Smooth transition time
+      duration: Duration(milliseconds: 300),
     );
 
     videoPlayerController.addListener(() {
@@ -112,7 +119,6 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
         ]);
       } else if (videoPlayerController.value.isCompleted) {
         isPlay.value = false;
-        showControl.value = true;
       }
     });
   }
@@ -149,17 +155,12 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
   void _onDragEnd(DragEndDetails details) {
     final screenSize = MediaQuery.of(context).size;
 
-    // If dragging downward and beyond the threshold, dismiss the player
     if (_isDraggingDown && _position.dy > screenSize.height * 0.9) {
       if (!_pendingDismiss) {
         _pendingDismiss = true;
-        Future.delayed(Duration(milliseconds: 200), () {
-          if (_isDraggingDown) {
-            MiniVideoPlayer.removeMiniPlayer();
-          }
-          _pendingDismiss = false;
-          showMiniControl = false;
-        });
+        MiniVideoPlayer.removeMiniPlayer();
+        _pendingDismiss = false;
+        showMiniControl = false;
       }
     } else {
       _snapToNearestCorner(screenSize);
@@ -169,7 +170,6 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-
     _controller.dispose();
     super.dispose();
   }
@@ -182,192 +182,125 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
       _position = Offset(20, screenSize.height - _height - 93);
     }
 
-    return Consumer<VideoBloc>(
-      builder:
-          (context, value, child) => Positioned(
-            left: _position.dx,
-            top: _position.dy,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onPanStart: (details) {
-                _dragStartY = details.globalPosition.dy;
-                _dragStartX = details.globalPosition.dx;
-              },
-              onPanUpdate: (details) {
-                double deltaX = details.globalPosition.dx - _dragStartX;
-                double deltaY = details.globalPosition.dy - _dragStartY;
+    return Stack(
+      children: [
+        Positioned(
+          left: _position.dx,
+          top: _position.dy,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onPanStart: (details) {
+              _dragStartY = details.globalPosition.dy;
+              _dragStartX = details.globalPosition.dx;
+            },
+            onPanUpdate: (details) {
+              double deltaX = details.globalPosition.dx - _dragStartX;
+              double deltaY = details.globalPosition.dy - _dragStartY;
 
-                setState(() {
-                  _position = Offset(
-                    _position.dx + details.delta.dx,
-                    _position.dy + details.delta.dy,
-                  );
-
-                  _isDraggingDown = deltaY > 0 && deltaY.abs() > deltaX.abs();
-                });
-              },
-
-              onPanEnd: _onDragEnd,
-              child: Material(
-                elevation: 3,
+              setState(() {
+                _position = Offset(
+                  _position.dx + details.delta.dx,
+                  _position.dy + details.delta.dy,
+                );
+                _isDraggingDown = deltaY > 0 && deltaY.abs() > deltaX.abs();
+              });
+            },
+            onPanEnd: _onDragEnd,
+            child: Material(
+              elevation: 3,
+              borderRadius: BorderRadius.circular(10),
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Column(
-                    children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          IgnorePointer(
-                            ignoring: true,
-                            child: ValueListenableBuilder(
-                              valueListenable: chewieControllerNotifier!,
-                              builder:
-                                  (context, value, child) => Container(
-                                    color: Colors.black,
-                                    width: _width,
-                                    height: _height,
-                                    child: Chewie(controller: value),
-                                  ),
+                child: Column(
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        IgnorePointer(
+                          ignoring: true,
+                          child: Container(
+                            color: Colors.black,
+                            width: _width,
+                            height: _height,
+                            child: Chewie(
+                              controller: chewieControllerNotifier!,
                             ),
                           ),
-
-                          Positioned(
-                            right: 0,
-                            left: 0,
-                            child: InkWell(
-                              onTap: () {
-                                context.pushTransparentRoute(
-                                  HomePage(url: '', isFirstTime: false),
-                                );
-                              },
-                              child: SizedBox(height: 230),
-                            ),
-                          ),
-                          Positioned(
-                            right: 0,
-                            top: 0,
-                            child: IconButton(
-                              icon: Icon(Icons.close, color: Colors.white),
-                              onPressed:
-                                  () => MiniVideoPlayer.removeMiniPlayer(
-                                    isClose: true,
-                                  ),
-                            ),
-                          ),
-                          ValueListenableBuilder(
-                            valueListenable: videoPlayerController,
-                            builder: (context, value, child) {
-                              final duration = value.duration;
-
-                              final position = value.position;
-
-                              if (videoPlayerController.value.isInitialized) {
-                                if (duration.inMilliseconds > 0 &&
-                                    !bloc.isSeeking) {
-                                  progress = (position.inMilliseconds /
-                                          duration.inMilliseconds)
-                                      .clamp(0.0, 1.0);
-                                } else {
-                                  // Use manual progress while dragging
-                                  progress = bloc.manualSeekProgress;
-                                }
-                              }
-                              return Positioned(
-                                bottom: -23,
-                                right: -23,
-                                left: -23,
-                                child: IgnorePointer(
-                                  ignoring: true,
-                                  child: SliderTheme(
-                                    data: SliderTheme.of(context).copyWith(
-                                      trackHeight: 1.0,
-                                      thumbShape: RoundSliderThumbShape(
-                                        enabledThumbRadius: 1.0,
-                                      ),
-                                      inactiveTrackColor: Colors.transparent,
-                                    ),
-                                    child: Slider(
-                                      value: progress,
-                                      onChanged: (_) {},
-                                      activeColor: Colors.red,
-                                    ),
-                                  ),
-                                ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          left: 0,
+                          child: InkWell(
+                            onTap: () {
+                              context.pushTransparentRoute(
+                                HomePage(url: '', isFirstTime: false),
                               );
                             },
+                            child: SizedBox(height: 230),
+                          ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: IconButton(
+                            icon: Icon(Icons.close, color: Colors.white),
+                            onPressed:
+                                () => MiniVideoPlayer.removeMiniPlayer(
+                                  isClose: true,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      color: Colors.black54,
+                      height: 43,
+                      width: 180,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            iconSize: 18,
+                            onPressed: bloc.seekBackward,
+                            icon: Icon(
+                              CupertinoIcons.gobackward_10,
+                              color: Colors.white,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              videoPlayerController.value.isPlaying
+                                  ? videoPlayerController.pause()
+                                  : videoPlayerController.play();
+                              bloc.updateListener();
+                              isPlay.value = !isPlay.value;
+                            },
+                            icon: Icon(
+                              videoPlayerController.value.isPlaying
+                                  ? CupertinoIcons.pause
+                                  : CupertinoIcons.play,
+                              size: 28,
+                              color: Colors.white,
+                            ),
+                          ),
+                          IconButton(
+                            iconSize: 18,
+                            onPressed: bloc.seekForward,
+                            icon: Icon(
+                              CupertinoIcons.goforward_10,
+                              color: Colors.white,
+                            ),
                           ),
                         ],
                       ),
-
-                      Container(
-                        color: Colors.black54,
-                        height: 43,
-                        width: 180,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              iconSize: 18,
-                              onPressed: () {
-                                bloc.seekBackward();
-                              },
-                              icon: Icon(
-                                CupertinoIcons.gobackward_10,
-                                color: Colors.white,
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                if (videoPlayerController.value.isPlaying) {
-                                  videoPlayerController.pause();
-                                  bloc.updateListener();
-                                  isPlay.value = true;
-                                } else {
-                                  videoPlayerController.play();
-                                  bloc.updateListener();
-                                  isPlay.value = false;
-                                }
-                              },
-                              icon:
-                                  videoPlayerController.value.isCompleted
-                                      ? Icon(
-                                        CupertinoIcons.arrow_counterclockwise,
-                                        color: Colors.white,
-                                      )
-                                      : bloc.seekCount != 0
-                                      ? Icon(
-                                        CupertinoIcons.pause,
-                                        size: 28,
-                                        color: Colors.white,
-                                      )
-                                      : Icon(
-                                        videoPlayerController.value.isPlaying
-                                            ? CupertinoIcons.pause
-                                            : CupertinoIcons.play,
-                                        size: 28,
-                                        color: Colors.white,
-                                      ),
-                            ),
-                            IconButton(
-                              iconSize: 18,
-                              onPressed: () {
-                                bloc.seekForward();
-                              },
-                              icon: Icon(
-                                CupertinoIcons.goforward_10,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
+        ),
+      ],
     );
   }
 }

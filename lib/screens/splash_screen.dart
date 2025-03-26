@@ -12,6 +12,11 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
+  void initState() {
+   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -20,22 +25,17 @@ class _SplashScreenState extends State<SplashScreen> {
           spacing: 20,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            GestureDetector(
+            InkWell(
               onTap: () {
                 context
                     .pushTransparentRoute(
                       HomePage(
-                        isFirstTime: true,
                         url:
                             'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
+                        isFirstTime: true,
                       ),
                     )
-                    .whenComplete(() {
-                      SystemChrome.setPreferredOrientations([
-                        DeviceOrientation.portraitUp,
-                        DeviceOrientation.portraitDown,
-                      ]);
-                    });
+                    .whenComplete(() {});
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),

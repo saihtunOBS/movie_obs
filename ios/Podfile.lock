@@ -1,4 +1,6 @@
 PODS:
+  - auto_orientation_v2 (2.3.6):
+    - Flutter
   - Flutter (1.0.0)
   - package_info_plus (0.4.5):
     - Flutter
@@ -15,6 +17,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - auto_orientation_v2 (from `.symlinks/plugins/auto_orientation_v2/ios`)
   - Flutter (from `Flutter`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
@@ -23,6 +26,8 @@ DEPENDENCIES:
   - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
 
 EXTERNAL SOURCES:
+  auto_orientation_v2:
+    :path: ".symlinks/plugins/auto_orientation_v2/ios"
   Flutter:
     :path: Flutter
   package_info_plus:
@@ -37,6 +42,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/wakelock_plus/ios"
 
 SPEC CHECKSUMS:
+  auto_orientation_v2: f74c2808e5ef369ad291f3b79c1345888b511e16
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564

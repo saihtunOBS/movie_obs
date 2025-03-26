@@ -10,11 +10,13 @@ import 'package:video_player/video_player.dart';
 bool showMiniControl = false;
 bool isFullScreen = false;
 final ValueNotifier<bool> showVisibleMiniControl = ValueNotifier(true);
+final ValueNotifier<bool> onStartDrag = ValueNotifier(true);
+
 late VideoPlayerController videoPlayerController;
-ValueNotifier<ChewieController>? chewieControllerNotifier;
+ChewieController? chewieControllerNotifier;
 
 final ValueNotifier<bool> showMiniControlVisible = ValueNotifier(false);
-final ValueNotifier<bool> showControl = ValueNotifier(false);
+
 String selectedQuality = 'Auto';
 
 class VideoBloc extends ChangeNotifier {
@@ -26,7 +28,7 @@ class VideoBloc extends ChangeNotifier {
 
   bool wasScreenOff = false;
   bool isMuted = false;
-
+  bool showControl = false;
   bool hasPrinted = false;
   Timer? hideControlTimer;
   Timer? hideMiniControlTimer;
@@ -46,9 +48,6 @@ class VideoBloc extends ChangeNotifier {
   bool isLockScreen = false;
   int isQualityClick = 0;
 
-  Timer? _timer;
-  int _elapsedSeconds = 0;
-
   bool isLoading = false;
   List<Map<String, String>> qualityOptions = [];
 
@@ -65,16 +64,12 @@ class VideoBloc extends ChangeNotifier {
   int seekCount = 0;
   Timer? seekTimer;
 
-  VideoBloc() {
-    initializeVideo(currentUrl);
-  }
-
   void igNorePointerToggle() {
     igNorePointer = !igNorePointer;
     notifyListeners();
   }
 
-  void onVerticalDragStart(DragStartDetails details) {
+  void onVerticalDragStart(ForcePressDetails details) {
     initialPosition = details.localPosition.dy;
     initialScale = scale;
   }
@@ -201,31 +196,28 @@ class VideoBloc extends ChangeNotifier {
     notifyListeners();
     videoPlayerController = VideoPlayerController.networkUrl(
       Uri.parse(url),
-      videoPlayerOptions: VideoPlayerOptions(
-        allowBackgroundPlayback: true,
-        mixWithOthers: true,
-      ),
+      videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: true),
     );
     videoPlayerController.initialize().then((_) {
-      chewieControllerNotifier = ValueNotifier(
-        ChewieController(
-          videoPlayerController: videoPlayerController,
-          allowedScreenSleep: false,
-          autoInitialize: true,
-          customControls: Container(),
-          deviceOrientationsOnEnterFullScreen: [
-            DeviceOrientation.landscapeLeft,
-            DeviceOrientation.landscapeRight,
-          ],
-          deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
-        ),
+      chewieControllerNotifier = ChewieController(
+        videoPlayerController: videoPlayerController,
+        showControls: false,
+        aspectRatio: 16 / 9,
+        useRootNavigator: false,
+        allowFullScreen: false,
+        draggableProgressBar: false,
+        deviceOrientationsOnEnterFullScreen: [
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ],
+        deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
       );
+
       _fetchQualityOptions();
     });
 
     isLoading = false;
     resetControlVisibility();
-    notifyListeners();
 
     videoPlayerController.addListener(() {
       if (videoPlayerController.value.isPlaying) {
@@ -235,11 +227,9 @@ class VideoBloc extends ChangeNotifier {
             position: videoPlayerController.value.position,
           ),
         ]);
-        notifyListeners();
       } else if (videoPlayerController.value.isCompleted) {
         isPlay.value = false;
         //showControl.value = true;
-
         notifyListeners();
       }
     });
@@ -247,15 +237,16 @@ class VideoBloc extends ChangeNotifier {
 
   void resetControlVisibility({bool isSeek = false}) {
     if (isSeek == true) {
-      showControl.value = true;
+      showControl = true;
     } else {
-      showControl.value = !showControl.value;
+      showControl = !showControl;
     }
 
     // Cancel the previous timer before creating a new one
     hideControlTimer?.cancel();
     hideControlTimer = Timer(const Duration(seconds: 4), () {
-      showControl.value = false;
+      showControl = false;
+      notifyListeners();
     });
     notifyListeners();
   }
@@ -284,22 +275,18 @@ class VideoBloc extends ChangeNotifier {
       await videoPlayerController.seekTo(currentDuration ?? currentPosition);
 
       if (wasPlaying) {
-        showControl.value = false;
         videoPlayerController.play();
         notifyListeners();
       } else {
-        resetControlVisibility();
         videoPlayerController.pause();
         notifyListeners();
       }
       isLoading = false;
-      
     });
 
-    chewieControllerNotifier?.value = ChewieController(
+    chewieControllerNotifier = ChewieController(
       videoPlayerController: videoPlayerController,
-      customControls: Container(),
-      allowedScreenSleep: false,
+      showControls: false,
     );
     videoPlayerController.setVolume(isMuted ? 0.0 : 1.0);
     showMiniControl = false;
@@ -315,7 +302,7 @@ class VideoBloc extends ChangeNotifier {
         notifyListeners();
       } else if (videoPlayerController.value.isCompleted) {
         isPlay.value = false;
-        showControl.value = true;
+        showControl = true;
 
         notifyListeners();
       }
@@ -326,7 +313,6 @@ class VideoBloc extends ChangeNotifier {
   //toggle full screen
   void toggleFullScreen({bool? isLock}) async {
     //isLockScreen = isLock ?? false;
-    _stopTimer();
 
     isFullScreen = !isFullScreen;
     initialPosition = 0.0;
@@ -348,13 +334,12 @@ class VideoBloc extends ChangeNotifier {
         DeviceOrientation.landscapeLeft,
       ]);
     } else {
-      
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
-      ]);
+      ]).then((_) {
+        SystemChrome.setPreferredOrientations([]);
+      });
     }
-     _startTimer();
-
     resetControlVisibility(isSeek: true);
 
     notifyListeners();
@@ -433,28 +418,6 @@ class VideoBloc extends ChangeNotifier {
       }
       notifyListeners();
     });
-  }
-
-  void _startTimer() {
-    if (_timer != null) {
-      return;
-    }
-    _elapsedSeconds = 0;
-
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      _elapsedSeconds++;
-      if (_elapsedSeconds >= 5) {
-        SystemChrome.setPreferredOrientations([]);
-        _stopTimer();
-      }
-    });
-  }
-
-  void _stopTimer() {
-    if (_timer != null) {
-      _timer?.cancel();
-      _timer = null;
-    }
   }
 
   @override

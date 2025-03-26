@@ -1,10 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
-import 'dart:math';
-import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
@@ -15,6 +12,8 @@ import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
 
 final ValueNotifier<bool> isPlay = ValueNotifier(false);
+double progress = 0.0;
+double bufferedProgress = 0.0;
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -31,19 +30,20 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-double previousBufferedProgress = 0.0;
-double progress = 0.0;
-Orientation? _lastOrientation;
-VideoProgress? savedVideo;
-
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   late final VideoBloc bloc;
+  double _dragOffset = 1.0;
+  double _newDragOffset = 0.0;
+  Orientation? _lastOrientation;
+  VideoProgress? _savedVideo;
+  final _playerKey = GlobalKey();
+  bool isLock = false;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       bloc.resetControlVisibility(isSeek: true);
-    } else if (state == AppLifecycleState.paused ) {
+    } else if (state == AppLifecycleState.paused) {
       videoPlayerController.pause();
       bloc.updateListener();
     }
@@ -52,9 +52,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   void _checkOrientation() {
-    final Size screenSize =
+    final screenSize =
         WidgetsBinding.instance.platformDispatcher.views.first.physicalSize;
-    final Orientation newOrientation =
+    final newOrientation =
         screenSize.width > screenSize.height
             ? Orientation.landscape
             : Orientation.portrait;
@@ -64,9 +64,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     } else {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
-
     if (_lastOrientation == newOrientation) return;
-
     _lastOrientation = newOrientation;
 
     if (isFullScreen && newOrientation == Orientation.landscape) return;
@@ -75,16 +73,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void didChangeMetrics() {
-    super.didChangeMetrics();
     _checkOrientation();
+    super.didChangeMetrics();
   }
 
   @override
   void didChangeDependencies() {
+    
     super.didChangeDependencies();
-
-    if (chewieControllerNotifier?.value == null) {
+    if (chewieControllerNotifier == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        //  if(widget.isFirstTime == false) return;
         bloc.initializeVideo(widget.url ?? '');
       });
     }
@@ -93,17 +92,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([]);
-
+    onStartDrag.value = true;
     WidgetsBinding.instance.addObserver(this);
     bloc = Provider.of<VideoBloc>(context, listen: false);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       bloc.currentUrl = widget.url ?? '';
-      // if (widget.videoId == '1') {
-      // } else {
-      //   videoPlayerController.dispose();
-      //   bloc.currentUrl = widget.url ?? '';
-      //   bloc.initializeVideo(widget.url ?? '');
-      // }
       bloc.updateListener();
       MiniVideoPlayer.removeMiniPlayer();
       isPlay.value = true;
@@ -116,1147 +110,592 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
   }
 
-  void _loadCurrentPosition() async {
+  Future<void> _loadCurrentPosition() async {
     final savedProgressList = await loadVideoProgress();
-    savedVideo = savedProgressList.firstWhere(
+    _savedVideo = savedProgressList.firstWhere(
       (progress) => progress.videoId == '1',
-      orElse:
-          () => VideoProgress(
-            videoId: '1',
-            position: Duration.zero,
-          ), // Return a default VideoProgress if not found
+      orElse: () => VideoProgress(videoId: '1', position: Duration.zero),
     );
 
-    if ((savedVideo?.position)! > Duration.zero) {
+    if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
       selectedQuality = 'Auto';
-
-      bloc.changeQuality(widget.url ?? '', savedVideo?.position);
-
-      bloc.updateListener();
+      bloc.changeQuality(widget.url ?? '', _savedVideo?.position);
+      bloc.resetControlVisibility(isSeek: true);
+    } else {
+      bloc.initializeVideo(widget.url ?? '');
     }
   }
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
-
-  double dragOpacity = 1.0;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<VideoBloc>(
       builder: (context, value, child) {
-        return Scaffold(
-          backgroundColor: Colors.grey.withValues(alpha: dragOpacity),
-          body: Stack(
+        return Material(
+          color: Colors.black.withValues(alpha: _dragOffset),
+          child: Column(
             children: [
-              DismissiblePage(
-                disabled: isFullScreen ? true : false,
-                backgroundColor: Colors.black,
-                direction: DismissiblePageDismissDirection.down,
-                dragStartBehavior: DragStartBehavior.down,
-                onDismissed: () {
-                  Navigator.pop(context);
-                  MiniVideoPlayer.showMiniPlayer(
-                    context,
-                    bloc.currentUrl,
-                    isPlay.value,
-                  );
-                },
-                dragSensitivity: 1,
-                onDragUpdate: (value) {
-                  dragOpacity = value.opacity;
-                  setState(() {});
-                },
-                minScale: 0.2,
-                key: Key('value'),
-                child: Column(
-                  children: [
-                    //player view
-                    chewieControllerNotifier == null ||
-                            !videoPlayerController.value.isInitialized
-                        ? Container(
-                          margin: EdgeInsets.only(top: isFullScreen ? 0 : 60),
-                          color: Colors.black,
-                          height:
-                              isFullScreen == true
-                                  ? MediaQuery.of(context).size.height
-                                  : 230,
-                          width: MediaQuery.of(context).size.width,
-                          child: Center(
-                            child: CircularProgressIndicator.adaptive(
-                              backgroundColor: Colors.amber,
-                            ),
-                          ),
-                        )
-                        : ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            margin: EdgeInsets.only(top: isFullScreen ? 0 : 60),
-
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            height:
-                                isFullScreen == true
-                                    ? MediaQuery.of(context).size.height
-                                    : 230,
-                            width: MediaQuery.of(context).size.width,
-                            child: Stack(
-                              fit: StackFit.expand,
-                              alignment: Alignment.center,
-                              children: [
-                                GestureDetector(
-                                  behavior: HitTestBehavior.opaque,
-                                  onDoubleTapDown: (details) {
-                                    if (!videoPlayerController
-                                        .value
-                                        .isInitialized) {
-                                      return;
-                                    }
-                                    final screenWidth =
-                                        MediaQuery.of(context).size.width;
-                                    final tapPosition =
-                                        details.localPosition.dx;
-
-                                    double tapThreshold =
-                                        screenWidth *
-                                        0.1; // 10% margin from the edges
-
-                                    if (tapPosition <
-                                        screenWidth / 2 - tapThreshold) {
-                                      bloc.seekBackward(isDoubleTag: true);
-                                      bloc.isHoveringLeft.value = true;
-                                      bloc.isHoveringRight.value = false;
-                                      isPlay.value = false;
-                                    } else if (tapPosition >
-                                        screenWidth / 2 + tapThreshold) {
-                                      bloc.seekForward(isDoubleTag: true);
-                                      bloc.isHoveringRight.value = true;
-                                      bloc.isHoveringLeft.value = false;
-                                      isPlay.value = false;
-                                    }
-                                    Future.delayed(
-                                      Duration(milliseconds: 300),
-                                      () {
-                                        bloc.isHoveringLeft.value = false;
-                                        bloc.isHoveringRight.value = false;
-                                      },
-                                    );
-                                  },
-
-                                  onDoubleTap: () {
-                                    if (!videoPlayerController
-                                        .value
-                                        .isInitialized) {
-                                      return;
-                                    }
-                                    Future.delayed(
-                                      Duration(milliseconds: 100),
-                                      () {
-                                        bloc.isHoveringRight.value = false;
-                                        bloc.isHoveringLeft.value = false;
-                                      },
-                                    );
-                                  },
-                                  onTap: () {
-                                    if (bloc.isLoading == true) return;
-                                    bloc.resetControlVisibility();
-                                    bloc.showVolume.value = false;
-                                  },
-                                  child:
-                                      bloc.isLoading
-                                          ? Center(
-                                            child:
-                                                CircularProgressIndicator.adaptive(
-                                                  backgroundColor: Colors.amber,
-                                                ),
-                                          )
-                                          : ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                            child: ValueListenableBuilder(
-                                              valueListenable:
-                                                  chewieControllerNotifier!,
-                                              builder:
-                                                  (
-                                                    BuildContext context,
-                                                    ChewieController? value,
-                                                    Widget? child,
-                                                  ) => Center(
-                                                    child: Transform.scale(
-                                                      scale: bloc.scale,
-                                                      child: AnimatedContainer(
-                                                        transform:
-                                                            Matrix4.translationValues(
-                                                              0,
-                                                              bloc.dragOffset,
-                                                              0,
-                                                            ),
-                                                        duration: Duration(
-                                                          milliseconds: 100,
-                                                        ),
-                                                        child: Stack(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          children: [
-                                                            //player
-                                                            AbsorbPointer(
-                                                              absorbing: true,
-                                                              child: SizedBox(
-                                                                width:
-                                                                    double
-                                                                        .infinity,
-                                                                child: Chewie(
-                                                                  controller:
-                                                                      value!,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            //hover left
-                                                            Positioned(
-                                                              child: ValueListenableBuilder<
-                                                                bool
-                                                              >(
-                                                                valueListenable:
-                                                                    bloc.isHoveringLeft,
-                                                                builder: (
-                                                                  context,
-                                                                  hoveringLeft,
-                                                                  child,
-                                                                ) {
-                                                                  return AnimatedOpacity(
-                                                                    opacity:
-                                                                        hoveringLeft
-                                                                            ? 0.3
-                                                                            : 0,
-                                                                    duration: Duration(
-                                                                      milliseconds:
-                                                                          300,
-                                                                    ),
-                                                                    child: Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .centerLeft,
-                                                                      child: Container(
-                                                                        width:
-                                                                            MediaQuery.sizeOf(
-                                                                              context,
-                                                                            ).width *
-                                                                            0.3,
-
-                                                                        decoration: BoxDecoration(
-                                                                          color:
-                                                                              bloc.isLockScreen ==
-                                                                                      true
-                                                                                  ? Colors.transparent
-                                                                                  : hoveringLeft
-                                                                                  ? Colors.blue.withValues(
-                                                                                    alpha:
-                                                                                        0.9,
-                                                                                  )
-                                                                                  : Colors.transparent,
-                                                                          borderRadius: BorderRadius.only(
-                                                                            topRight: Radius.circular(
-                                                                              isFullScreen
-                                                                                  ? MediaQuery.sizeOf(
-                                                                                        context,
-                                                                                      ).width /
-                                                                                      3
-                                                                                  : 125,
-                                                                            ),
-                                                                            bottomRight: Radius.circular(
-                                                                              isFullScreen
-                                                                                  ? MediaQuery.sizeOf(
-                                                                                        context,
-                                                                                      ).width /
-                                                                                      3
-                                                                                  : 125,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  );
-                                                                },
-                                                              ),
-                                                            ),
-                                                            //hover right
-                                                            Positioned(
-                                                              child: ValueListenableBuilder<
-                                                                bool
-                                                              >(
-                                                                valueListenable:
-                                                                    bloc.isHoveringRight,
-                                                                builder: (
-                                                                  context,
-                                                                  hoverRight,
-                                                                  child,
-                                                                ) {
-                                                                  return AnimatedOpacity(
-                                                                    opacity:
-                                                                        hoverRight
-                                                                            ? 0.3
-                                                                            : 0,
-                                                                    duration: Duration(
-                                                                      milliseconds:
-                                                                          300,
-                                                                    ),
-                                                                    child: Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .centerRight,
-                                                                      child: Container(
-                                                                        width:
-                                                                            MediaQuery.sizeOf(
-                                                                              context,
-                                                                            ).width *
-                                                                            0.3,
-
-                                                                        decoration: BoxDecoration(
-                                                                          color:
-                                                                              bloc.isLockScreen ==
-                                                                                      true
-                                                                                  ? Colors.transparent
-                                                                                  : hoverRight
-                                                                                  ? Colors.blue.withValues(
-                                                                                    alpha:
-                                                                                        0.8,
-                                                                                  )
-                                                                                  : Colors.transparent,
-                                                                          borderRadius: BorderRadius.only(
-                                                                            bottomLeft: Radius.circular(
-                                                                              isFullScreen
-                                                                                  ? MediaQuery.sizeOf(
-                                                                                        context,
-                                                                                      ).width /
-                                                                                      3
-                                                                                  : 125,
-                                                                            ),
-                                                                            topLeft: Radius.circular(
-                                                                              isFullScreen
-                                                                                  ? MediaQuery.sizeOf(
-                                                                                        context,
-                                                                                      ).width /
-                                                                                      3
-                                                                                  : 125,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  );
-                                                                },
-                                                              ),
-                                                            ),
-                                                            //overlay
-                                                            ValueListenableBuilder(
-                                                              valueListenable:
-                                                                  showControl,
-                                                              builder:
-                                                                  (
-                                                                    context,
-                                                                    value,
-                                                                    child,
-                                                                  ) => Container(
-                                                                    color:
-                                                                        value
-                                                                            ? Colors.black54
-                                                                            : Colors.transparent,
-                                                                    height:
-                                                                        isFullScreen ==
-                                                                                true
-                                                                            ? MediaQuery.of(
-                                                                              context,
-                                                                            ).size.height
-                                                                            : 230,
-                                                                    width:
-                                                                        MediaQuery.of(
-                                                                          context,
-                                                                        ).size.width,
-                                                                  ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                            ),
-                                          ),
-                                ),
-
-                                ///play pause view
-                                AnimatedOpacity(
-                                  duration: Duration(milliseconds: 200),
-                                  opacity: bloc.toggleCount == 0 ? 1 : 0,
-                                  child: ValueListenableBuilder(
-                                    valueListenable: showControl,
-                                    builder:
-                                        (
-                                          BuildContext context,
-                                          bool value,
-                                          Widget? child,
-                                        ) => AnimatedOpacity(
-                                          duration: Duration(milliseconds: 300),
-                                          opacity: value ? 1 : 0,
-                                          child: IgnorePointer(
-                                            ignoring: !value,
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              spacing: 12,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                // Seek Backward Button
-                                                IconButton.filled(
-                                                  onPressed: () {
-                                                    bloc.resetControlVisibility(
-                                                      isSeek: true,
-                                                    );
-
-                                                    if (videoPlayerController
-                                                        .value
-                                                        .isInitialized) {
-                                                      bloc.seekBackward();
-                                                    }
-                                                    isPlay.value = false;
-                                                  },
-                                                  icon: Icon(
-                                                    CupertinoIcons
-                                                        .gobackward_10,
-                                                  ),
-                                                  style: IconButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors
-                                                            .black45, // Change the background color
-                                                  ),
-                                                ),
-
-                                                // Play/Pause Button
-                                                IconButton.filled(
-                                                  onPressed: () {
-                                                    if (videoPlayerController
-                                                        .value
-                                                        .isCompleted) {
-                                                      // If the video is completed, restart from the beginning
-                                                      videoPlayerController
-                                                          .seekTo(Duration.zero)
-                                                          .then((_) {
-                                                            videoPlayerController
-                                                                .play();
-                                                            isPlay.value = true;
-                                                          });
-                                                    } else {
-                                                      if (videoPlayerController
-                                                          .value
-                                                          .isPlaying) {
-                                                        videoPlayerController
-                                                            .pause();
-                                                        isPlay.value = false;
-                                                      } else {
-                                                        videoPlayerController
-                                                            .play();
-                                                        isPlay.value = true;
-                                                      }
-                                                    }
-
-                                                    bloc.resetControlVisibility(
-                                                      isSeek: true,
-                                                    );
-                                                  },
-                                                  icon: ValueListenableBuilder(
-                                                    valueListenable: isPlay,
-                                                    builder: (
-                                                      context,
-                                                      value,
-                                                      child,
-                                                    ) {
-                                                      return Padding(
-                                                        padding:
-                                                            const EdgeInsets.all(
-                                                              5.0,
-                                                            ),
-                                                        child:
-                                                            videoPlayerController
-                                                                    .value
-                                                                    .isCompleted
-                                                                ? Icon(
-                                                                  CupertinoIcons
-                                                                      .arrow_counterclockwise,
-                                                                )
-                                                                : bloc.seekCount !=
-                                                                    0
-                                                                ? Icon(
-                                                                  CupertinoIcons
-                                                                      .pause,
-                                                                  size: 30,
-                                                                )
-                                                                : Icon(
-                                                                  videoPlayerController
-                                                                          .value
-                                                                          .isPlaying
-                                                                      ? CupertinoIcons
-                                                                          .pause
-                                                                      : CupertinoIcons
-                                                                          .play,
-                                                                  size: 30,
-                                                                ),
-                                                      );
-                                                    },
-                                                  ),
-                                                  style: IconButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors
-                                                            .black45, // Change the background color
-                                                  ),
-                                                ),
-
-                                                IconButton.filled(
-                                                  onPressed: () {
-                                                    bloc.resetControlVisibility(
-                                                      isSeek: true,
-                                                    );
-                                                    // Ensure the video is initialized before seeking
-                                                    if (videoPlayerController
-                                                        .value
-                                                        .isInitialized) {
-                                                      bloc.seekForward();
-                                                    }
-                                                    isPlay.value = false;
-                                                  },
-                                                  icon: Icon(
-                                                    CupertinoIcons.goforward_10,
-                                                  ),
-                                                  style: IconButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors
-                                                            .black45, // Change the background color
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                  ),
-                                ),
-
-                                ///full screen view
-                                ValueListenableBuilder(
-                                  valueListenable: showControl,
-                                  builder:
-                                      (
-                                        BuildContext context,
-                                        bool value,
-                                        Widget? child,
-                                      ) => Positioned(
-                                        top: isFullScreen ? 20 : 10,
-                                        left: isFullScreen ? 20 : 10,
-                                        child: AnimatedOpacity(
-                                          duration: Duration.zero,
-                                          opacity:
-                                              bloc.toggleCount == 0 ? 1 : 0,
-                                          child: AnimatedOpacity(
-                                            duration: Duration(
-                                              milliseconds: 300,
-                                            ),
-                                            alwaysIncludeSemantics: true,
-                                            opacity: value ? 1 : 0,
-                                            child: IgnorePointer(
-                                              ignoring: !value,
-                                              child: Row(
-                                                children: [
-                                                  if (!isFullScreen)
-                                                    InkWell(
-                                                      onTap: () {
-                                                        showMiniControl = true;
-                                                        if (!videoPlayerController
-                                                            .value
-                                                            .isPlaying) {
-                                                          showVisibleMiniControl
-                                                              .value = true;
-                                                        }
-                                                        videoPlayerController
-                                                                .value
-                                                                .isPlaying
-                                                            ? isPlay.value =
-                                                                false
-                                                            : isPlay.value =
-                                                                true;
-
-                                                        showControl.value =
-                                                            false;
-                                                        bloc.updateListener();
-                                                        Navigator.pop(context);
-                                                        MiniVideoPlayer.showMiniPlayer(
-                                                          context,
-                                                          bloc.currentUrl,
-                                                          isPlay.value,
-                                                        );
-                                                      },
-                                                      child: Container(
-                                                        margin:
-                                                            EdgeInsets.symmetric(
-                                                              horizontal: 5,
-                                                              vertical: 5,
-                                                            ),
-                                                        height: 30,
-                                                        width: 35,
-                                                        decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                5,
-                                                              ),
-                                                          color:
-                                                              const Color.fromARGB(
-                                                                255,
-                                                                51,
-                                                                51,
-                                                                51,
-                                                              ).withValues(
-                                                                alpha: 0.5,
-                                                              ),
-                                                        ),
-                                                        child: Icon(
-                                                          CupertinoIcons
-                                                              .chevron_down,
-                                                          color: Colors.white,
-                                                          size: 20,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                ),
-
-                                ///setting view
-                                ValueListenableBuilder(
-                                  valueListenable: showControl,
-                                  builder:
-                                      (
-                                        BuildContext context,
-                                        bool value,
-                                        Widget? child,
-                                      ) => Positioned(
-                                        top: isFullScreen ? 20 : 10,
-                                        right: isFullScreen ? 20 : 10,
-                                        child: AnimatedOpacity(
-                                          duration: Duration.zero,
-                                          opacity:
-                                              bloc.toggleCount == 0 ? 1 : 0,
-                                          child: AnimatedOpacity(
-                                            duration: Duration(
-                                              milliseconds: 300,
-                                            ),
-                                            alwaysIncludeSemantics: true,
-                                            opacity: value ? 1 : 0,
-                                            child: IgnorePointer(
-                                              ignoring: !value,
-                                              child: Row(
-                                                children: [
-                                                  //mute
-                                                  InkWell(
-                                                    onTap: () {
-                                                      bloc.toggleMute();
-                                                    },
-                                                    child: Container(
-                                                      margin:
-                                                          EdgeInsets.symmetric(
-                                                            horizontal: 5,
-                                                            vertical: 5,
-                                                          ),
-                                                      height:
-                                                          isFullScreen
-                                                              ? 42
-                                                              : 30,
-                                                      width:
-                                                          isFullScreen
-                                                              ? 50
-                                                              : 46,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              5,
-                                                            ),
-                                                        color:
-                                                            const Color.fromARGB(
-                                                              255,
-                                                              51,
-                                                              51,
-                                                              51,
-                                                            ).withValues(
-                                                              alpha: 0.5,
-                                                            ),
-                                                      ),
-                                                      child: Icon(
-                                                        !bloc.isMuted
-                                                            ? CupertinoIcons
-                                                                .speaker_3_fill
-                                                            : CupertinoIcons
-                                                                .speaker_slash,
-
-                                                        color: Colors.white,
-                                                        size: 20,
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                  //setting
-                                                  InkWell(
-                                                    onTap: () {
-                                                      showControl.value = true;
-                                                      showModalBottomSheet(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        context: context,
-
-                                                        builder: (_) {
-                                                          return _buildAdditionalOptions();
-                                                        },
-                                                      ).whenComplete(() async {
-                                                        if (bloc.isQualityClick ==
-                                                            0) {
-                                                          return;
-                                                        }
-                                                        Future.delayed(
-                                                          Duration(
-                                                            milliseconds: 400,
-                                                          ),
-                                                          () async => await showModalBottomSheet(
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            context: context,
-                                                            builder: (builder) {
-                                                              return bloc.isQualityClick ==
-                                                                      1
-                                                                  ? _qualityModalSheet()
-                                                                  : _buildPlaybackModalSheet(); // Your second modal content
-                                                            },
-                                                          ).whenComplete(
-                                                            () =>
-                                                                bloc.isQualityClick =
-                                                                    0,
-                                                          ),
-                                                        );
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      margin:
-                                                          EdgeInsets.symmetric(
-                                                            horizontal: 5,
-                                                            vertical: 5,
-                                                          ),
-                                                      height:
-                                                          isFullScreen
-                                                              ? 42
-                                                              : 30,
-                                                      width:
-                                                          isFullScreen
-                                                              ? 50
-                                                              : 46,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              5,
-                                                            ),
-                                                        color:
-                                                            const Color.fromARGB(
-                                                              255,
-                                                              51,
-                                                              51,
-                                                              51,
-                                                            ).withValues(
-                                                              alpha: 0.5,
-                                                            ),
-                                                      ),
-                                                      child: Icon(
-                                                        Icons.settings,
-                                                        color: Colors.white,
-                                                        size: 20,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                ),
-
-                                ///slider
-                                ValueListenableBuilder(
-                                  valueListenable: showControl,
-                                  builder:
-                                      (
-                                        BuildContext context,
-                                        bool value,
-                                        Widget? child,
-                                      ) => Positioned(
-                                        bottom: isFullScreen ? 20 : 0,
-                                        left: 0,
-                                        right: 0,
-                                        child: AnimatedOpacity(
-                                          duration: Duration.zero,
-                                          opacity:
-                                              bloc.toggleCount == 0 ? 1 : 0,
-                                          child: AnimatedOpacity(
-                                            duration: Duration(
-                                              milliseconds: 300,
-                                            ),
-                                            alwaysIncludeSemantics: true,
-                                            opacity: value ? 1 : 0,
-                                            child: IgnorePointer(
-                                              ignoring: !value,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                    ),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    ValueListenableBuilder(
-                                                      valueListenable:
-                                                          videoPlayerController,
-                                                      builder:
-                                                          (
-                                                            BuildContext
-                                                            context,
-                                                            VideoPlayerValue
-                                                            value,
-                                                            Widget? child,
-                                                          ) => Padding(
-                                                            padding:
-                                                                const EdgeInsets.only(
-                                                                  left: 10,
-                                                                ),
-                                                            child: Text(
-                                                              "${bloc.formatDuration(value.position)} / ${bloc.formatDuration(value.duration)}",
-                                                              style: TextStyle(
-                                                                color:
-                                                                    Colors
-                                                                        .white,
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                    ),
-
-                                                    Expanded(
-                                                      child: SliderTheme(
-                                                        data: SliderTheme.of(
-                                                          context,
-                                                        ).copyWith(
-                                                          allowedInteraction:
-                                                              SliderInteraction
-                                                                  .slideOnly,
-                                                          trackHeight: 2.0,
-
-                                                          inactiveTrackColor: Colors
-                                                              .white
-                                                              .withValues(
-                                                                alpha: 0.5,
-                                                              ), // Default track
-                                                          activeTrackColor:
-                                                              Colors.red,
-                                                          overlayColor: Colors
-                                                              .grey
-                                                              .withValues(
-                                                                alpha: 0.5,
-                                                              ),
-                                                          secondaryActiveTrackColor:
-                                                              bloc.isSeeking
-                                                                  ? Colors
-                                                                      .transparent
-                                                                  : Colors
-                                                                      .white,
-                                                          thumbColor:
-                                                              Colors.red,
-                                                          trackShape:
-                                                              RoundedRectSliderTrackShape(),
-                                                          thumbShape:
-                                                              RoundSliderThumbShape(
-                                                                enabledThumbRadius:
-                                                                    6.0,
-                                                              ),
-                                                        ),
-                                                        child: ValueListenableBuilder(
-                                                          valueListenable:
-                                                              videoPlayerController,
-                                                          builder: (
-                                                            BuildContext
-                                                            context,
-                                                            VideoPlayerValue
-                                                            value,
-                                                            Widget? child,
-                                                          ) {
-                                                            final duration =
-                                                                value.duration;
-
-                                                            final position =
-                                                                value.position;
-
-                                                            if (videoPlayerController
-                                                                .value
-                                                                .isInitialized) {
-                                                              if (duration.inMilliseconds >
-                                                                      0 &&
-                                                                  !bloc
-                                                                      .isSeeking) {
-                                                                progress = (position
-                                                                            .inMilliseconds /
-                                                                        duration
-                                                                            .inMilliseconds)
-                                                                    .clamp(
-                                                                      0.0,
-                                                                      1.0,
-                                                                    );
-                                                              } else {
-                                                                // Use manual progress while dragging
-                                                                progress =
-                                                                    bloc.manualSeekProgress;
-                                                              }
-                                                              // Current buffered progress
-                                                              double
-                                                              newBufferedProgress =
-                                                                  value
-                                                                          .buffered
-                                                                          .isNotEmpty
-                                                                      ? (value.buffered.last.end.inMilliseconds /
-                                                                              duration.inMilliseconds)
-                                                                          .clamp(
-                                                                            0.0,
-                                                                            1.0,
-                                                                          )
-                                                                      : 0.0;
-
-                                                              // If the video restarted, reset buffer progress
-                                                              if (previousBufferedProgress >
-                                                                  newBufferedProgress) {
-                                                                previousBufferedProgress =
-                                                                    0.0;
-                                                              } else {
-                                                                // Smooth interpolation
-                                                                previousBufferedProgress =
-                                                                    previousBufferedProgress +
-                                                                    (newBufferedProgress -
-                                                                            previousBufferedProgress) *
-                                                                        0.1;
-                                                              }
-                                                            }
-
-                                                            return Slider(
-                                                              value: progress,
-                                                              secondaryTrackValue:
-                                                                  max(
-                                                                    progress,
-                                                                    previousBufferedProgress,
-                                                                  ),
-
-                                                              onChanged: (
-                                                                newValue,
-                                                              ) async {
-                                                                bloc.resetControlVisibility(
-                                                                  isSeek: true,
-                                                                );
-                                                                bloc.isSeeking =
-                                                                    true;
-                                                                bloc.manualSeekProgress =
-                                                                    newValue;
-                                                                previousBufferedProgress =
-                                                                    newValue;
-                                                                bloc.throttleSliderUpdate();
-                                                              },
-                                                              onChangeStart: (
-                                                                value,
-                                                              ) {
-                                                                bloc.pausedPlayer();
-                                                                bloc.startSeekUpdateLoop();
-                                                                bloc.resetControlVisibility(
-                                                                  isSeek: true,
-                                                                );
-                                                              },
-                                                              onChangeEnd: (
-                                                                value,
-                                                              ) async {
-                                                                setState(() {
-                                                                  isPlay.value =
-                                                                      false;
-                                                                });
-                                                                bloc.seekUpdateTimer
-                                                                    ?.cancel(); // Stop the update loop
-
-                                                                final newPosition = Duration(
-                                                                  milliseconds:
-                                                                      (duration.inMilliseconds *
-                                                                              value)
-                                                                          .toInt(),
-                                                                );
-
-                                                                await videoPlayerController
-                                                                    .seekTo(
-                                                                      newPosition,
-                                                                    );
-                                                                bloc.isSeeking =
-                                                                    false;
-
-                                                                bloc.resetControlVisibility(
-                                                                  isSeek: true,
-                                                                );
-
-                                                                if (newPosition ==
-                                                                    videoPlayerController
-                                                                        .value
-                                                                        .duration) {
-                                                                  return;
-                                                                }
-                                                                bloc.playPlayer();
-                                                              },
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    InkWell(
-                                                      onTap:
-                                                          () =>
-                                                              bloc.toggleFullScreen(),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.only(
-                                                              right: 5,
-                                                            ),
-                                                        child: Icon(
-                                                          Icons.fullscreen,
-                                                          color: Colors.white,
-                                                          size: 26,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                  ],
-                ),
-              ),
-
-              AnimatedOpacity(
-                duration: Duration(milliseconds: 200),
-                opacity: isFullScreen ? 0 : 1,
-                child: Visibility(
-                  visible: !isFullScreen,
-                  child: AnimatedOpacity(
-                    opacity: dragOpacity < 0.95 ? 0 : 1,
-                    duration: Duration(milliseconds: 200),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        top: 300,
-                        left: 0,
-                        right: 0,
-                        bottom: 20,
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              color: Colors.black,
-                              child: SingleChildScrollView(
-                                physics: ClampingScrollPhysics(),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'ZLan Video Player',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      'Video insertion of audio narrated descriptions of a television program key visual elements into natural pauses in the program dialogue, which makes video programming more accessible to individuals who are blind or visually impaired.which makes video  more accessible to individuals who are blind or visually impaired.which makes video  more accessible to individuals who are blind or visually impaired.which makes video programming more accessible to individuals who are blind or visually impaired.',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    SizedBox(height: 20),
-                                    GridView.builder(
-                                      padding: EdgeInsets.zero,
-                                      shrinkWrap: true,
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2,
-                                            crossAxisSpacing: 10,
-                                            mainAxisSpacing: 10,
-                                          ),
-                                      itemCount: 5,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemBuilder: (context, index) {
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey.withValues(
-                                              alpha: 0.2,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                          child: Center(
-                                            child: SizedBox(
-                                              width: 150,
-                                              height: 100,
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                child: Image.network(
-                                                  'https://cdna.artstation.com/p/assets/images/images/017/022/542/large/amirhosein-naseri-desktop-screenshot-2019-04-03-18-17-47-11.jpg?1554338571',
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    SizedBox(height: 20),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              _buildVideoPlayerSection(),
+              if (!isFullScreen) Flexible(child: _buildContentSection()),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildVideoPlayerSection() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: isFullScreen ? MediaQuery.of(context).size.height : 300,
+      child:
+          chewieControllerNotifier == null ||
+                  !videoPlayerController.value.isInitialized ||
+                  bloc.isLoading
+              ? _buildLoadingIndicator()
+              : _buildVideoPlayer(),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Container(
+      margin: EdgeInsets.only(top: isFullScreen ? 0 : 60),
+      color: Colors.transparent,
+      child: const Center(
+        child: CircularProgressIndicator.adaptive(
+          backgroundColor: Colors.amber,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVideoPlayer() {
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Dismissible(
+      direction:
+          isFullScreen || bloc.isLoading == true
+              ? DismissDirection.none
+              : DismissDirection.down,
+      dismissThresholds: const {DismissDirection.down: 0.8},
+      movementDuration: const Duration(milliseconds: 300),
+      onDismissed: (direction) async {
+        if (!mounted) return;
+        Future.delayed(Duration(milliseconds: 10), () {
+          if (mounted) {
+            Navigator.of(context).pop();
+            MiniVideoPlayer.showMiniPlayer(
+              context,
+              bloc.currentUrl,
+              isPlay.value,
+            );
+          }
+        });
+      },
+      onUpdate: (details) {
+        bloc.showControl = false;
+        onStartDrag.value = details.progress <= 0.0;
+        setState(() {
+          // Calculate offset based on screen height but maintain padding
+          _newDragOffset =
+              details.progress *
+              (screenHeight * 0.26); // Adjust multiplier as needed
+          _dragOffset = 1.0 - details.progress;
+        });
+      },
+      key: const Key('video_player_dismissible'),
+      child: Transform.translate(
+        offset: Offset(0, _newDragOffset),
+        child: Padding(
+          padding: EdgeInsets.only(
+            right: _newDragOffset == 0 ? 0 : _newDragOffset,
+            left: _newDragOffset == 0 ? 0 : 20,
+          ),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onDoubleTapDown: _handleDoubleTapDown,
+            onDoubleTap: _handleDoubleTap,
+            onTap: () {
+              if (!bloc.isLoading) bloc.resetControlVisibility();
+            },
+            child: Container(
+              margin: EdgeInsets.only(top: isFullScreen ? 0 : 60),
+              child: Stack(
+                key: _playerKey,
+                children: [
+                  IgnorePointer(ignoring: true, child: Player(bloc: bloc)),
+                  _buildPlayPauseControls(),
+                  _buildTopLeftControls(),
+                  _buildTopRightControls(),
+                  _buildProgressBar(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleDoubleTapDown(TapDownDetails details) {
+    if (!videoPlayerController.value.isInitialized) return;
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final tapPosition = details.localPosition.dx;
+    final tapThreshold = screenWidth * 0.1;
+
+    if (tapPosition < screenWidth / 2 - tapThreshold) {
+      bloc.seekBackward(isDoubleTag: true);
+      bloc.isHoveringLeft.value = true;
+      bloc.isHoveringRight.value = false;
+      isPlay.value = false;
+    } else if (tapPosition > screenWidth / 2 + tapThreshold) {
+      bloc.seekForward(isDoubleTag: true);
+      bloc.isHoveringRight.value = true;
+      bloc.isHoveringLeft.value = false;
+      isPlay.value = false;
+    }
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      bloc.isHoveringLeft.value = false;
+      bloc.isHoveringRight.value = false;
+    });
+  }
+
+  void _handleDoubleTap() {
+    if (!videoPlayerController.value.isInitialized) return;
+    Future.delayed(const Duration(milliseconds: 100), () {
+      bloc.isHoveringRight.value = false;
+      bloc.isHoveringLeft.value = false;
+    });
+  }
+
+  Widget _buildPlayPauseControls() {
+    return Align(
+      alignment: Alignment.center,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 200),
+        child: bloc.showControl ? _buildControlButtons() : const SizedBox(),
+      ),
+    );
+  }
+
+  Widget _buildControlButtons() {
+    return IgnorePointer(
+      ignoring: !bloc.showControl,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildSeekButton(
+            icon: CupertinoIcons.gobackward_10,
+            onPressed: () {
+              bloc.resetControlVisibility(isSeek: true);
+              if (videoPlayerController.value.isInitialized) {
+                bloc.seekBackward();
+              }
+              isPlay.value = false;
+            },
+          ),
+          _buildPlayPauseButton(),
+          _buildSeekButton(
+            icon: CupertinoIcons.goforward_10,
+            onPressed: () {
+              bloc.resetControlVisibility(isSeek: true);
+              if (videoPlayerController.value.isInitialized) {
+                bloc.seekForward();
+              }
+              isPlay.value = false;
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSeekButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return IconButton.filled(
+      onPressed: onPressed,
+      icon: Icon(icon),
+      style: IconButton.styleFrom(backgroundColor: Colors.black45),
+    );
+  }
+
+  Widget _buildPlayPauseButton() {
+    return IconButton.filled(
+      onPressed: _togglePlayPause,
+      icon: ValueListenableBuilder(
+        valueListenable: isPlay,
+        builder: (context, value, child) {
+          return Padding(
+            padding: const EdgeInsets.all(5.0),
+            child:
+                videoPlayerController.value.isCompleted
+                    ? const Icon(CupertinoIcons.arrow_counterclockwise)
+                    : bloc.seekCount != 0
+                    ? const Icon(CupertinoIcons.pause, size: 30)
+                    : Icon(
+                      videoPlayerController.value.isPlaying
+                          ? CupertinoIcons.pause
+                          : CupertinoIcons.play,
+                      size: 30,
+                    ),
+          );
+        },
+      ),
+      style: IconButton.styleFrom(backgroundColor: Colors.black45),
+    );
+  }
+
+  void _togglePlayPause() {
+    if (videoPlayerController.value.isCompleted) {
+      videoPlayerController.seekTo(Duration.zero).then((_) {
+        videoPlayerController.play();
+        isPlay.value = true;
+      });
+    } else {
+      if (videoPlayerController.value.isPlaying) {
+        videoPlayerController.pause();
+        isPlay.value = false;
+      } else {
+        videoPlayerController.play();
+        isPlay.value = true;
+      }
+    }
+    bloc.resetControlVisibility(isSeek: true);
+  }
+
+  Widget _buildTopLeftControls() {
+    return Positioned(
+      top: isFullScreen ? 20 : 10,
+      left: isFullScreen ? 20 : 10,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: bloc.showControl ? _buildExitButton() : const SizedBox(),
+      ),
+    );
+  }
+
+  Widget _buildExitButton() {
+    if (isFullScreen) return const SizedBox();
+
+    return IgnorePointer(
+      ignoring: !bloc.showControl,
+      child: InkWell(
+        onTap: () {
+          showMiniControl = true;
+          if (!videoPlayerController.value.isPlaying) {
+            showVisibleMiniControl.value = true;
+          }
+          isPlay.value = !videoPlayerController.value.isPlaying;
+          bloc.showControl = false;
+          bloc.updateListener();
+          Navigator.pop(context);
+          MiniVideoPlayer.showMiniPlayer(
+            context,
+            bloc.currentUrl,
+            isPlay.value,
+          );
+        },
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+          height: 30,
+          width: 35,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.black45,
+          ),
+          child: const Icon(
+            CupertinoIcons.chevron_down,
+            color: Colors.white,
+            size: 20,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopRightControls() {
+    return Positioned(
+      top: isFullScreen ? 20 : 10,
+      right: isFullScreen ? 20 : 10,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: bloc.showControl ? _buildSettingsButtons() : const SizedBox(),
+      ),
+    );
+  }
+
+  Widget _buildSettingsButtons() {
+    return IgnorePointer(
+      ignoring: !bloc.showControl,
+      child: Row(children: [_buildMuteButton(), _buildSettingsButton()]),
+    );
+  }
+
+  Widget _buildMuteButton() {
+    return InkWell(
+      onTap: () => bloc.toggleMute(),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        height: isFullScreen ? 42 : 30,
+        width: isFullScreen ? 50 : 46,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.black45,
+        ),
+        child: Icon(
+          !bloc.isMuted
+              ? CupertinoIcons.speaker_3_fill
+              : CupertinoIcons.speaker_slash,
+          color: Colors.white,
+          size: 20,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsButton() {
+    return InkWell(
+      onTap: () {
+        bloc.showControl = true;
+        showModalBottomSheet(
+          backgroundColor: Colors.transparent,
+          context: context,
+          builder: (_) => _buildAdditionalOptions(),
+        ).whenComplete(() async {
+          if (bloc.isQualityClick == 0) return;
+          await Future.delayed(const Duration(milliseconds: 400), () {
+            showModalBottomSheet(
+              backgroundColor: Colors.transparent,
+              context: context,
+              builder: (builder) {
+                return bloc.isQualityClick == 1
+                    ? _qualityModalSheet()
+                    : _buildPlaybackModalSheet();
+              },
+            ).whenComplete(() => bloc.isQualityClick = 0);
+          });
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        height: isFullScreen ? 42 : 30,
+        width: isFullScreen ? 50 : 46,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.black45,
+        ),
+        child: const Icon(Icons.settings, color: Colors.white, size: 20),
+      ),
+    );
+  }
+
+  Widget _buildProgressBar() {
+    return Positioned(
+      bottom: isFullScreen ? 20 : 0,
+      left: 0,
+      right: 0,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: bloc.showControl ? _buildProgressBarContent() : const SizedBox(),
+      ),
+    );
+  }
+
+  Widget _buildProgressBarContent() {
+    return IgnorePointer(
+      ignoring: !bloc.showControl,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          children: [
+            _buildTimeDisplay(),
+            Expanded(child: _buildSlider()),
+            _buildFullscreenButton(),
+            const SizedBox(width: 10),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimeDisplay() {
+    return ValueListenableBuilder(
+      valueListenable: videoPlayerController,
+      builder: (context, VideoPlayerValue value, child) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: Text(
+            "${bloc.formatDuration(value.position)} / ${bloc.formatDuration(value.duration)}",
+            style: const TextStyle(color: Colors.white, fontSize: 12),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSlider() {
+    return SliderTheme(
+      data: SliderTheme.of(context).copyWith(
+        allowedInteraction: SliderInteraction.slideOnly,
+        trackHeight: 2.0,
+        inactiveTrackColor: Colors.white.withValues(alpha: 0.5),
+        activeTrackColor: Colors.red,
+        overlayColor: Colors.grey.withValues(alpha: 0.5),
+        secondaryActiveTrackColor:
+            bloc.isSeeking ? Colors.transparent : Colors.white,
+        thumbColor: Colors.red,
+        trackShape: const RoundedRectSliderTrackShape(),
+        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
+      ),
+      child: ValueListenableBuilder(
+        valueListenable: videoPlayerController,
+        builder: (context, VideoPlayerValue value, child) {
+          if (value.isInitialized) {
+            final duration = value.duration;
+            final position = value.position;
+
+            if (duration.inMilliseconds > 0 && !bloc.isSeeking) {
+              progress = (position.inMilliseconds / duration.inMilliseconds)
+                  .clamp(0.0, 1.0);
+            } else {
+              progress = bloc.manualSeekProgress;
+            }
+
+            if (value.buffered.isNotEmpty) {
+              bufferedProgress = (value.buffered.last.end.inMilliseconds /
+                      duration.inMilliseconds)
+                  .clamp(0.0, 1.0);
+            }
+          }
+
+          return Slider(
+            value: progress,
+            secondaryTrackValue: bufferedProgress,
+            onChanged: (newValue) {
+              bloc.resetControlVisibility(isSeek: true);
+              bloc.isSeeking = true;
+              bloc.manualSeekProgress = newValue;
+              bloc.throttleSliderUpdate();
+            },
+            onChangeStart: (value) {
+              bloc.pausedPlayer();
+              bloc.startSeekUpdateLoop();
+              bloc.resetControlVisibility(isSeek: true);
+            },
+            onChangeEnd: (value) async {
+              isPlay.value = false;
+              bloc.seekUpdateTimer?.cancel();
+
+              final newPosition = Duration(
+                milliseconds:
+                    (videoPlayerController.value.duration.inMilliseconds *
+                            value)
+                        .toInt(),
+              );
+
+              await videoPlayerController.seekTo(newPosition);
+              bloc.isSeeking = false;
+              bloc.resetControlVisibility(isSeek: true);
+
+              if (newPosition != videoPlayerController.value.duration) {
+                bloc.playPlayer();
+              }
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFullscreenButton() {
+    return InkWell(
+      onTap: () => bloc.toggleFullScreen(),
+      child: const Padding(
+        padding: EdgeInsets.only(right: 5),
+        child: Icon(Icons.fullscreen, color: Colors.white, size: 26),
+      ),
+    );
+  }
+
+  Widget _buildContentSection() {
+    return ValueListenableBuilder(
+      valueListenable: onStartDrag,
+      builder: (context, value, child) {
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: value ? _buildContent() : const SizedBox(),
+        );
+      },
+    );
+  }
+
+  Widget _buildContent() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        color: Colors.black,
+        child: SingleChildScrollView(
+          physics: ClampingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'ZLan Video Player',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Video insertion of audio narrated descriptions of a television program key visual elements into natural pauses in the program dialogue, which makes video programming more accessible to individuals who are blind or visually impaired.',
+                style: TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 20),
+              GridView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: 5,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: SizedBox(
+                        width: 150,
+                        height: 100,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            'https://cdna.artstation.com/p/assets/images/images/017/022/542/large/amirhosein-naseri-desktop-screenshot-2019-04-03-18-17-47-11.jpg?1554338571',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -1560,5 +999,91 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             ),
           ),
     );
+  }
+}
+
+class Player extends StatelessWidget {
+  const Player({super.key, required this.bloc});
+
+  final VideoBloc bloc;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.expand(
+      child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: AspectRatio(
+                aspectRatio: videoPlayerController.value.aspectRatio,
+                child: Chewie(controller: chewieControllerNotifier!),
+              ),
+            ),
+          ),
+          _buildHoverEffect(Alignment.centerLeft, bloc.isHoveringLeft),
+          _buildHoverEffect(Alignment.centerRight, bloc.isHoveringRight),
+          if (bloc.showControl) _buildOverlay(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHoverEffect(
+    Alignment alignment,
+    ValueNotifier<bool> hoveringNotifier,
+  ) {
+    return Align(
+      alignment: alignment,
+      child: ValueListenableBuilder<bool>(
+        valueListenable: hoveringNotifier,
+        builder: (context, hovering, child) {
+          return AnimatedOpacity(
+            opacity: hovering ? 0.3 : 0,
+            duration: const Duration(milliseconds: 300),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.3,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color:
+                    bloc.isLockScreen
+                        ? Colors.transparent
+                        : hovering
+                        ? Colors.blue.withValues(alpha: 0.9)
+                        : Colors.transparent,
+                borderRadius: _getBorderRadius(alignment, context),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  BorderRadius _getBorderRadius(Alignment alignment, BuildContext context) {
+    if (alignment == Alignment.centerLeft) {
+      return BorderRadius.only(
+        topRight: Radius.circular(
+          isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
+        ),
+        bottomRight: Radius.circular(
+          isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
+        ),
+      );
+    } else {
+      return BorderRadius.only(
+        bottomLeft: Radius.circular(
+          isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
+        ),
+        topLeft: Radius.circular(
+          isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
+        ),
+      );
+    }
+  }
+
+  Widget _buildOverlay() {
+    return Positioned.fill(child: Container(color: Colors.black45));
   }
 }
