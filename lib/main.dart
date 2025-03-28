@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/screens/splash_screen.dart';
@@ -25,18 +24,6 @@ class MovieOBS extends StatefulWidget {
 }
 
 class _MovieOBSState extends State<MovieOBS> {
-  static const EventChannel eventChannel = EventChannel('auto_rotate_listener');
-  bool isAutoRotateEnabled = false;
-
-  @override
-  void initState() {
-    eventChannel.receiveBroadcastStream().listen((event) {
-      setState(() {
-        isAutoRotateEnabled = event as bool;
-      });
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

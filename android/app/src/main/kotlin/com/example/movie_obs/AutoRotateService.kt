@@ -20,10 +20,13 @@ class AutoRotateService(private val context: Context) : EventChannel.StreamHandl
         }
 
         val filter = IntentFilter(Settings.ACTION_SETTINGS)
-        context.registerReceiver(receiver, filter)
+        
+        // ✅ Fix: Specify RECEIVER_NOT_EXPORTED to prevent crash on Android 13+
+        context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
     }
 
     override fun onCancel(arguments: Any?) {
         context.unregisterReceiver(receiver)
     }
 }
+

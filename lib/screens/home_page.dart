@@ -79,7 +79,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void didChangeDependencies() {
-    
     super.didChangeDependencies();
     if (chewieControllerNotifier == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -279,7 +278,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return Align(
       alignment: Alignment.center,
       child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 100),
         child: bloc.showControl ? _buildControlButtons() : const SizedBox(),
       ),
     );
@@ -289,6 +288,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return IgnorePointer(
       ignoring: !bloc.showControl,
       child: Row(
+        spacing: 10,
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildSeekButton(
@@ -338,7 +338,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             padding: const EdgeInsets.all(5.0),
             child:
                 videoPlayerController.value.isCompleted
-                    ? const Icon(CupertinoIcons.arrow_counterclockwise)
+                    ? const Icon(
+                      CupertinoIcons.arrow_counterclockwise,
+                      size: 30,
+                    )
                     : bloc.seekCount != 0
                     ? const Icon(CupertinoIcons.pause, size: 30)
                     : Icon(
@@ -385,7 +388,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Widget _buildExitButton() {
     if (isFullScreen) return const SizedBox();
-
     return IgnorePointer(
       ignoring: !bloc.showControl,
       child: InkWell(
@@ -401,7 +403,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           MiniVideoPlayer.showMiniPlayer(
             context,
             bloc.currentUrl,
-            isPlay.value,
+            videoPlayerController.value.isPlaying
+                ? isPlay.value = true
+                : isPlay.value = false,
           );
         },
         child: Container(

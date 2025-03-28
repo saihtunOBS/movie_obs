@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:auto_orientation_v2/auto_orientation_v2.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -329,15 +331,21 @@ class VideoBloc extends ChangeNotifier {
     });
 
     if (isFullScreen == true) {
-      await SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeRight,
-        DeviceOrientation.landscapeLeft,
-      ]);
+      Platform.isAndroid
+          ? await AutoOrientation.landscapeAutoMode(forceSensor: false).then((
+            _,
+          ) {
+            // Future.delayed(Duration(seconds: 5), () {
+            //   AutoOrientation.fullAutoMode(forceSensor: true);
+            // });
+          })
+          : await AutoOrientation.landscapeRightMode();
     } else {
-      await SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-      ]).then((_) {
-        SystemChrome.setPreferredOrientations([]);
+      await AutoOrientation.portraitAutoMode().then((_) {
+        if (Platform.isIOS) return;
+        Future.delayed(Duration(seconds: 5), () {
+          AutoOrientation.fullAutoMode(forceSensor: false);
+        });
       });
     }
     resetControlVisibility(isSeek: true);

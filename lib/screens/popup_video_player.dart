@@ -119,6 +119,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
         ]);
       } else if (videoPlayerController.value.isCompleted) {
         isPlay.value = false;
+        setState(() {});
       }
     });
   }
@@ -132,7 +133,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
         screenWidth - _width - 20 - MediaQuery.of(context).padding.right;
     double top = 60;
     double bottom =
-        screenHeight - _height - 60 - MediaQuery.of(context).padding.bottom;
+        screenHeight - _height - 70 - MediaQuery.of(context).padding.bottom;
 
     double newX = (_position.dx < screenWidth / 2) ? left : right;
     double newY = (_position.dy < screenHeight / 2) ? top : bottom;
@@ -155,10 +156,11 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
   void _onDragEnd(DragEndDetails details) {
     final screenSize = MediaQuery.of(context).size;
 
-    if (_isDraggingDown && _position.dy > screenSize.height * 0.9) {
+    if (_isDraggingDown && _position.dy > screenSize.height * 0.85) {
       if (!_pendingDismiss) {
         _pendingDismiss = true;
         MiniVideoPlayer.removeMiniPlayer();
+        videoPlayerController.pause();
         _pendingDismiss = false;
         showMiniControl = false;
       }
@@ -179,7 +181,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
     final screenSize = MediaQuery.of(context).size;
 
     if (_position == Offset(20, 0)) {
-      _position = Offset(20, screenSize.height - _height - 93);
+      _position = Offset(20, screenSize.height - _height - 90);
     }
 
     return Stack(
@@ -269,17 +271,32 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                           ),
                           IconButton(
                             onPressed: () {
-                              videoPlayerController.value.isPlaying
-                                  ? videoPlayerController.pause()
-                                  : videoPlayerController.play();
-                              bloc.updateListener();
-                              isPlay.value = !isPlay.value;
+                              if (videoPlayerController.value.isCompleted) {
+                                videoPlayerController
+                                    .seekTo(Duration.zero)
+                                    .then((_) {
+                                      videoPlayerController.play();
+                                      isPlay.value = true;
+                                    });
+                              } else {
+                                if (videoPlayerController.value.isPlaying) {
+                                  videoPlayerController.pause();
+                                  isPlay.value = false;
+                                } else {
+                                  videoPlayerController.play();
+                                  isPlay.value = true;
+                                }
+                              }
+                              setState(() {
+                              });
                             },
                             icon: Icon(
-                              videoPlayerController.value.isPlaying
+                              videoPlayerController.value.isCompleted
+                                  ? CupertinoIcons.arrow_clockwise
+                                  : isPlay.value
                                   ? CupertinoIcons.pause
                                   : CupertinoIcons.play,
-                              size: 28,
+                              size: 25,
                               color: Colors.white,
                             ),
                           ),
