@@ -1205,7 +1205,7 @@
 //                                                 divisions:
 //                                                     10, // Optional: Divides the slider into intervals
 //                                                 onChanged: (newVolume) {
-//                                                   bloc.showControl.value =
+//                                                   showControl.value =
 //                                                       false;
 //                                                   setState(() {
 //                                                     bloc.volume = newVolume;

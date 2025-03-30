@@ -14,6 +14,8 @@ import 'package:video_player/video_player.dart';
 final ValueNotifier<bool> isPlay = ValueNotifier(false);
 double progress = 0.0;
 double bufferedProgress = 0.0;
+bool showControl = false;
+
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -197,7 +199,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         });
       },
       onUpdate: (details) {
-        bloc.showControl = false;
+        showControl = false;
         onStartDrag.value = details.progress <= 0.0;
         setState(() {
           // Calculate offset based on screen height but maintain padding
@@ -279,16 +281,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       alignment: Alignment.center,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: bloc.showControl ? _buildControlButtons() : const SizedBox(),
+        child: showControl ? _buildControlButtons() : const SizedBox(),
       ),
     );
   }
 
   Widget _buildControlButtons() {
     return IgnorePointer(
-      ignoring: !bloc.showControl,
+      ignoring: !showControl,
       child: Row(
-        spacing: 10,
+        spacing: 15,
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildSeekButton(
@@ -381,7 +383,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       left: isFullScreen ? 20 : 10,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: bloc.showControl ? _buildExitButton() : const SizedBox(),
+        child: showControl ? _buildExitButton() : const SizedBox(),
       ),
     );
   }
@@ -389,7 +391,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget _buildExitButton() {
     if (isFullScreen) return const SizedBox();
     return IgnorePointer(
-      ignoring: !bloc.showControl,
+      ignoring: !showControl,
       child: InkWell(
         onTap: () {
           showMiniControl = true;
@@ -397,7 +399,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             showVisibleMiniControl.value = true;
           }
           isPlay.value = !videoPlayerController.value.isPlaying;
-          bloc.showControl = false;
+          showControl = false;
           bloc.updateListener();
           Navigator.pop(context);
           MiniVideoPlayer.showMiniPlayer(
@@ -432,14 +434,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       right: isFullScreen ? 20 : 10,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: bloc.showControl ? _buildSettingsButtons() : const SizedBox(),
+        child: showControl ? _buildSettingsButtons() : const SizedBox(),
       ),
     );
   }
 
   Widget _buildSettingsButtons() {
     return IgnorePointer(
-      ignoring: !bloc.showControl,
+      ignoring: !showControl,
       child: Row(children: [_buildMuteButton(), _buildSettingsButton()]),
     );
   }
@@ -469,7 +471,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget _buildSettingsButton() {
     return InkWell(
       onTap: () {
-        bloc.showControl = true;
+        showControl = true;
         showModalBottomSheet(
           backgroundColor: Colors.transparent,
           context: context,
@@ -509,14 +511,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       right: 0,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: bloc.showControl ? _buildProgressBarContent() : const SizedBox(),
+        child: showControl ? _buildProgressBarContent() : const SizedBox(),
       ),
     );
   }
 
   Widget _buildProgressBarContent() {
     return IgnorePointer(
-      ignoring: !bloc.showControl,
+      ignoring: !showControl,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
@@ -1028,7 +1030,7 @@ class Player extends StatelessWidget {
           ),
           _buildHoverEffect(Alignment.centerLeft, bloc.isHoveringLeft),
           _buildHoverEffect(Alignment.centerRight, bloc.isHoveringRight),
-          if (bloc.showControl) _buildOverlay(),
+          if (showControl) _buildOverlay(),
         ],
       ),
     );

@@ -3,11 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  WakelockPlus.enable();
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => VideoBloc())],
@@ -24,7 +22,6 @@ class MovieOBS extends StatefulWidget {
 }
 
 class _MovieOBSState extends State<MovieOBS> {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

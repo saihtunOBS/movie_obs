@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:auto_orientation_v2/auto_orientation_v2.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,7 +28,6 @@ class VideoBloc extends ChangeNotifier {
 
   bool wasScreenOff = false;
   bool isMuted = false;
-  bool showControl = false;
   bool hasPrinted = false;
   Timer? hideControlTimer;
   Timer? hideMiniControlTimer;
@@ -49,6 +46,9 @@ class VideoBloc extends ChangeNotifier {
   double videoCurrentSpeed = 1.0;
   bool isLockScreen = false;
   int isQualityClick = 0;
+
+  Timer? _timer;
+  int _elapsedSeconds = 0;
 
   bool isLoading = false;
   List<Map<String, String>> qualityOptions = [];
@@ -315,7 +315,7 @@ class VideoBloc extends ChangeNotifier {
   //toggle full screen
   void toggleFullScreen({bool? isLock}) async {
     //isLockScreen = isLock ?? false;
-
+    _stopTimer();
     isFullScreen = !isFullScreen;
     initialPosition = 0.0;
     scale = 1.0;
@@ -325,32 +325,52 @@ class VideoBloc extends ChangeNotifier {
     notifyListeners();
 
     toggleTimer?.cancel();
-    toggleTimer = Timer(Duration(milliseconds: 800), () {
+    toggleTimer = Timer(Duration(seconds: 1), () {
       toggleCount = 0;
       notifyListeners();
     });
 
     if (isFullScreen == true) {
-      Platform.isAndroid
-          ? await AutoOrientation.landscapeAutoMode(forceSensor: false).then((
-            _,
-          ) {
-            // Future.delayed(Duration(seconds: 5), () {
-            //   AutoOrientation.fullAutoMode(forceSensor: true);
-            // });
-          })
-          : await AutoOrientation.landscapeRightMode();
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+      ]);
+      // Platform.isAndroid
+      //     ? await AutoOrientation.landscapeAutoMode(
+      //       forceSensor: false,
+      //     ).then((_) {})
+      //     : await AutoOrientation.landscapeRightMode();
     } else {
-      await AutoOrientation.portraitAutoMode().then((_) {
-        if (Platform.isIOS) return;
-        Future.delayed(Duration(seconds: 5), () {
-          AutoOrientation.fullAutoMode(forceSensor: false);
-        });
-      });
+      _startTimer();
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
     }
     resetControlVisibility(isSeek: true);
 
     notifyListeners();
+  }
+
+  _startTimer() {
+    _elapsedSeconds = 0;
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      _elapsedSeconds++;
+      if (_elapsedSeconds >= 3) {
+         _stopTimer();
+        if (isFullScreen) {
+          _stopTimer();
+        } else {
+          SystemChrome.setPreferredOrientations([]);
+          _stopTimer();
+        }
+      }
+    });
+  }
+
+  _stopTimer() {
+    _timer?.cancel();
+    _timer = null;
+    _elapsedSeconds = 0;
   }
 
   // Function to toggle mute/unmute
@@ -435,6 +455,7 @@ class VideoBloc extends ChangeNotifier {
     hideControlTimer?.cancel();
     toggleTimer?.cancel();
     seekTimer?.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 }
