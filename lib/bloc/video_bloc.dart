@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:auto_orientation_v2/auto_orientation_v2.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -330,22 +332,30 @@ class VideoBloc extends ChangeNotifier {
       notifyListeners();
     });
 
-    if (isFullScreen == true) {
-      await SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeRight,
-        DeviceOrientation.landscapeLeft,
-      ]);
-      // Platform.isAndroid
-      //     ? await AutoOrientation.landscapeAutoMode(
-      //       forceSensor: false,
-      //     ).then((_) {})
-      //     : await AutoOrientation.landscapeRightMode();
+    if (isFullScreen) {
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      if (Platform.isAndroid) {
+        await SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeRight,
+          DeviceOrientation.landscapeLeft,
+        ]);
+      } else {
+        AutoOrientation.landscapeRightMode();
+      }
     } else {
-      _startTimer();
-      await SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-      ]);
+      if (Platform.isAndroid) {
+        await SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+        ]);
+      } else {
+        AutoOrientation.portraitUpMode();
+      }
+
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
+
+    if (Platform.isAndroid) _startTimer();
+
     resetControlVisibility(isSeek: true);
 
     notifyListeners();
@@ -356,13 +366,12 @@ class VideoBloc extends ChangeNotifier {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       _elapsedSeconds++;
       if (_elapsedSeconds >= 3) {
-         _stopTimer();
-        if (isFullScreen) {
-          _stopTimer();
-        } else {
+        _stopTimer();
+        if (isAutoRotateEnabled == true) {
           SystemChrome.setPreferredOrientations([]);
-          _stopTimer();
         }
+
+        _stopTimer();
       }
     });
   }

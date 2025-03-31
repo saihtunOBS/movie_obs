@@ -1,12 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:io';
+import 'package:auto_orientation_v2/auto_orientation_v2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/screens/popup_video_player.dart';
+import 'package:movie_obs/utils/rotation_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
@@ -15,7 +18,7 @@ final ValueNotifier<bool> isPlay = ValueNotifier(false);
 double progress = 0.0;
 double bufferedProgress = 0.0;
 bool showControl = false;
-
+bool isAutoRotateEnabled = true;
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -41,13 +44,28 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final _playerKey = GlobalKey();
   bool isLock = false;
 
+  StreamSubscription<bool>? _subscription;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       bloc.resetControlVisibility(isSeek: true);
+      if (Platform.isIOS) {
+        //AutoOrientation.setScreenOrientationUser();
+        SystemChrome.setPreferredOrientations([]);
+      }
     } else if (state == AppLifecycleState.paused) {
       videoPlayerController.pause();
       bloc.updateListener();
+      if (Platform.isIOS) {
+        if (isFullScreen == true) {
+          SystemChrome.setPreferredOrientations([
+            DeviceOrientation.landscapeRight,
+          ]);
+        } else {
+          AutoOrientation.portraitUpMode();
+        }
+      }
     }
 
     super.didChangeAppLifecycleState(state);
@@ -97,6 +115,31 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     bloc = Provider.of<VideoBloc>(context, listen: false);
 
+    _subscription = RotationDetector.onRotationLockChanged.listen((isEnabled) {
+      if (mounted) {
+        setState(() {
+          isAutoRotateEnabled = isEnabled;
+
+          if (Platform.isAndroid) {
+            if (isAutoRotateEnabled == true) {
+              SystemChrome.setPreferredOrientations([]);
+            } else {
+              if (isFullScreen == true) {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.landscapeLeft,
+                  DeviceOrientation.landscapeRight,
+                ]);
+              } else {
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.portraitUp,
+                ]);
+              }
+            }
+          }
+        });
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       bloc.currentUrl = widget.url ?? '';
       bloc.updateListener();
@@ -130,6 +173,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _subscription?.cancel();
     super.dispose();
   }
 
@@ -185,8 +229,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               : DismissDirection.down,
       dismissThresholds: const {DismissDirection.down: 0.8},
       movementDuration: const Duration(milliseconds: 300),
-      onDismissed: (direction) async {
-        if (!mounted) return;
+      onDismissed: (direction) async {},
+      confirmDismiss: (direction) async {
         Future.delayed(Duration(milliseconds: 10), () {
           if (mounted) {
             Navigator.of(context).pop();
@@ -197,16 +241,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             );
           }
         });
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        return true;
       },
       onUpdate: (details) {
         showControl = false;
         onStartDrag.value = details.progress <= 0.0;
         setState(() {
           // Calculate offset based on screen height but maintain padding
-          _newDragOffset =
-              details.progress *
-              (screenHeight * 0.26); // Adjust multiplier as needed
-          _dragOffset = 1.0 - details.progress;
+          if (mounted) {
+            _newDragOffset = details.progress * (screenHeight * 0.26);
+            _dragOffset = 1.0 - details.progress;
+          }
         });
       },
       key: const Key('video_player_dismissible'),
