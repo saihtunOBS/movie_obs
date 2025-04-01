@@ -6,12 +6,14 @@ import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/screens/home_page.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
+import 'package:video_player/video_player.dart';
 
 class MiniVideoPlayer {
   static OverlayEntry? _overlayEntry;
   static late AnimationController _animationController;
   static late Animation<double> _fadeAnimation;
   static late Animation<Offset> _slideAnimation;
+  static late bool isPlay;
 
   static void showMiniPlayer(
     BuildContext context,
@@ -52,6 +54,7 @@ class MiniVideoPlayer {
 
     Overlay.of(context).insert(_overlayEntry!);
     _animationController.forward();
+    isPlay = isPlaying;
   }
 
   static void removeMiniPlayer({bool? isClose}) {
@@ -117,9 +120,6 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
             position: videoPlayerController.value.position,
           ),
         ]);
-      } else if (videoPlayerController.value.isCompleted) {
-        isPlay.value = false;
-        setState(() {});
       }
     });
   }
@@ -263,46 +263,59 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                         children: [
                           IconButton(
                             iconSize: 18,
-                            onPressed: bloc.seekBackward,
+                            onPressed: (){
+                              bloc.seekBackward();
+                              MiniVideoPlayer.isPlay = true;
+                            },
                             icon: Icon(
                               CupertinoIcons.gobackward_10,
                               color: Colors.white,
                             ),
                           ),
-                          IconButton(
-                            onPressed: () {
-                              if (videoPlayerController.value.isCompleted) {
-                                videoPlayerController
-                                    .seekTo(Duration.zero)
-                                    .then((_) {
-                                      videoPlayerController.play();
-                                      isPlay.value = true;
+                          ValueListenableBuilder(
+                            valueListenable: videoPlayerController,
+                            builder:
+                                (
+                                  BuildContext context,
+                                  VideoPlayerValue value,
+                                  Widget? child,
+                                ) => IconButton(
+                                  onPressed: () {
+                                    if (value.isCompleted) {
+                                      videoPlayerController
+                                          .seekTo(Duration.zero)
+                                          .then((_) {
+                                            videoPlayerController.play();
+                                          });
+                                    } else {
+                                      if (value.isPlaying) {
+                                        videoPlayerController.pause();
+                                        MiniVideoPlayer.isPlay = false;
+                                      } else {
+                                        videoPlayerController.play();
+                                        MiniVideoPlayer.isPlay = true;
+                                      }
+                                    }
+                                    setState(() {
                                     });
-                              } else {
-                                if (videoPlayerController.value.isPlaying) {
-                                  videoPlayerController.pause();
-                                  isPlay.value = false;
-                                } else {
-                                  videoPlayerController.play();
-                                  isPlay.value = true;
-                                }
-                              }
-                              setState(() {
-                              });
-                            },
-                            icon: Icon(
-                              videoPlayerController.value.isCompleted
-                                  ? CupertinoIcons.arrow_clockwise
-                                  : isPlay.value
-                                  ? CupertinoIcons.pause
-                                  : CupertinoIcons.play,
-                              size: 25,
-                              color: Colors.white,
-                            ),
+                                  },
+                                  icon: Icon(
+                                    value.isCompleted
+                                        ? CupertinoIcons.arrow_clockwise
+                                        : MiniVideoPlayer.isPlay 
+                                        ? CupertinoIcons.pause
+                                        : CupertinoIcons.play,
+                                    size: 25,
+                                    color: Colors.white,
+                                  ),
+                                ),
                           ),
                           IconButton(
                             iconSize: 18,
-                            onPressed: bloc.seekForward,
+                            onPressed: (){
+                              bloc.seekForward();
+                              MiniVideoPlayer.isPlay = true;
+                            },
                             icon: Icon(
                               CupertinoIcons.goforward_10,
                               color: Colors.white,

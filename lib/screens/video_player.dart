@@ -4,7 +4,7 @@ import 'package:video_player/video_player.dart';
 
 final videoPlayerController = VideoPlayerController.networkUrl(
   Uri.parse(
-    'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
+    'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
   ),
 );
 

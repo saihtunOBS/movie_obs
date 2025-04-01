@@ -18,7 +18,7 @@ final ValueNotifier<bool> isPlay = ValueNotifier(false);
 double progress = 0.0;
 double bufferedProgress = 0.0;
 bool showControl = false;
-bool isAutoRotateEnabled = true;
+bool isAutoRotateEnabled = false;
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -41,7 +41,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   double _newDragOffset = 0.0;
   Orientation? _lastOrientation;
   VideoProgress? _savedVideo;
-  final _playerKey = GlobalKey();
   bool isLock = false;
 
   StreamSubscription<bool>? _subscription;
@@ -51,11 +50,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       bloc.resetControlVisibility(isSeek: true);
       if (Platform.isIOS) {
-        //AutoOrientation.setScreenOrientationUser();
         SystemChrome.setPreferredOrientations([]);
       }
     } else if (state == AppLifecycleState.paused) {
-      videoPlayerController.pause();
       bloc.updateListener();
       if (Platform.isIOS) {
         if (isFullScreen == true) {
@@ -66,6 +63,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           AutoOrientation.portraitUpMode();
         }
       }
+    } else if (state == AppLifecycleState.inactive) {
+      //videoPlayerController.pause();
     }
 
     super.didChangeAppLifecycleState(state);
@@ -263,25 +262,29 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             right: _newDragOffset == 0 ? 0 : _newDragOffset,
             left: _newDragOffset == 0 ? 0 : 20,
           ),
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onDoubleTapDown: _handleDoubleTapDown,
-            onDoubleTap: _handleDoubleTap,
-            onTap: () {
-              if (!bloc.isLoading) bloc.resetControlVisibility();
-            },
-            child: Container(
-              margin: EdgeInsets.only(top: isFullScreen ? 0 : 60),
-              child: Stack(
-                key: _playerKey,
-                children: [
-                  IgnorePointer(ignoring: true, child: Player(bloc: bloc)),
-                  _buildPlayPauseControls(),
-                  _buildTopLeftControls(),
-                  _buildTopRightControls(),
-                  _buildProgressBar(),
-                ],
-              ),
+          child: Container(
+            margin: EdgeInsets.only(top: isFullScreen ? 0 : 60),
+            child: Stack(
+              key: PageStorageKey('value'),
+              children: [
+                Stack(
+                  children: [
+                    GestureDetector(
+                      onDoubleTap: _handleDoubleTap,
+                      onDoubleTapDown: _handleDoubleTapDown,
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        if (!bloc.isLoading) bloc.resetControlVisibility();
+                      },
+                      child: Player(bloc: bloc),
+                    ),
+                    _buildPlayPauseControls(),
+                    _buildTopLeftControls(),
+                    _buildTopRightControls(),
+                    _buildProgressBar(),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -308,7 +311,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       isPlay.value = false;
     }
 
-    Future.delayed(const Duration(milliseconds: 300), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
       bloc.isHoveringLeft.value = false;
       bloc.isHoveringRight.value = false;
     });
@@ -325,10 +328,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget _buildPlayPauseControls() {
     return Align(
       alignment: Alignment.center,
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 100),
-        child: showControl ? _buildControlButtons() : const SizedBox(),
-      ),
+      child: showControl ? _buildControlButtons() : const SizedBox(),
     );
   }
 
@@ -427,10 +427,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return Positioned(
       top: isFullScreen ? 20 : 10,
       left: isFullScreen ? 20 : 10,
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: showControl ? _buildExitButton() : const SizedBox(),
-      ),
+      child: showControl ? _buildExitButton() : const SizedBox(),
     );
   }
 
@@ -478,10 +475,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return Positioned(
       top: isFullScreen ? 20 : 10,
       right: isFullScreen ? 20 : 10,
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: showControl ? _buildSettingsButtons() : const SizedBox(),
-      ),
+      child: showControl ? _buildSettingsButtons() : const SizedBox(),
     );
   }
 
@@ -555,10 +549,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       bottom: isFullScreen ? 20 : 0,
       left: 0,
       right: 0,
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: showControl ? _buildProgressBarContent() : const SizedBox(),
-      ),
+      child: showControl ? _buildProgressBarContent() : const SizedBox(),
     );
   }
 
@@ -702,7 +693,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'ZLan Video Player',
+                'Tuutu TV',
                 style: TextStyle(fontSize: 20, color: Colors.white),
               ),
               const SizedBox(height: 10),
@@ -1070,12 +1061,15 @@ class Player extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               child: AspectRatio(
                 aspectRatio: videoPlayerController.value.aspectRatio,
-                child: Chewie(controller: chewieControllerNotifier!),
+                child: IgnorePointer(
+                  child: Chewie(controller: chewieControllerNotifier!),
+                ),
               ),
             ),
           ),
           _buildHoverEffect(Alignment.centerLeft, bloc.isHoveringLeft),
           _buildHoverEffect(Alignment.centerRight, bloc.isHoveringRight),
+
           if (showControl) _buildOverlay(),
         ],
       ),
@@ -1102,7 +1096,7 @@ class Player extends StatelessWidget {
                     bloc.isLockScreen
                         ? Colors.transparent
                         : hovering
-                        ? Colors.blue.withValues(alpha: 0.9)
+                        ? Colors.black54
                         : Colors.transparent,
                 borderRadius: _getBorderRadius(alignment, context),
               ),
