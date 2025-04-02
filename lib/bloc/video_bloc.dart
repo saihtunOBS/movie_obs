@@ -248,7 +248,7 @@ class VideoBloc extends ChangeNotifier {
 
     // Cancel the previous timer before creating a new one
     hideControlTimer?.cancel();
-    hideControlTimer = Timer(const Duration(seconds: 4), () {
+    hideControlTimer = Timer(const Duration(seconds: 6), () {
       showControl = false;
       notifyListeners();
     });

@@ -23,6 +23,7 @@ dependencies:
   shared_preferences: ^2.5.2
   animations: ^2.0.11
   auto_orientation_v2: ^2.3.6
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
