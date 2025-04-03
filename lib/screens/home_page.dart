@@ -57,8 +57,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       if (Platform.isIOS) {
         if (isFullScreen == true) {
           SystemChrome.setPreferredOrientations([
+            DeviceOrientation.landscapeLeft,
             DeviceOrientation.landscapeRight,
           ]);
+
         } else {
           AutoOrientation.portraitUpMode();
         }
