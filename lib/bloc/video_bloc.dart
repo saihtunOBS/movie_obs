@@ -10,7 +10,6 @@ import 'package:movie_obs/screens/home_page.dart';
 import 'package:video_player/video_player.dart';
 
 bool showMiniControl = false;
-bool isFullScreen = false;
 final ValueNotifier<bool> showVisibleMiniControl = ValueNotifier(true);
 final ValueNotifier<bool> onStartDrag = ValueNotifier(true);
 
@@ -27,6 +26,7 @@ class VideoBloc extends ChangeNotifier {
 
   ValueNotifier<bool> isHoveringLeft = ValueNotifier(false);
   ValueNotifier<bool> isHoveringRight = ValueNotifier(false);
+  bool isFullScreen = false;
 
   bool wasScreenOff = false;
   bool isMuted = false;
@@ -210,11 +210,7 @@ class VideoBloc extends ChangeNotifier {
         useRootNavigator: false,
         allowFullScreen: false,
         draggableProgressBar: false,
-        deviceOrientationsOnEnterFullScreen: [
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight,
-        ],
-        deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
+        fullScreenByDefault: isFullScreen,
       );
 
       _fetchQualityOptions();
@@ -291,6 +287,7 @@ class VideoBloc extends ChangeNotifier {
     chewieControllerNotifier = ChewieController(
       videoPlayerController: videoPlayerController,
       showControls: false,
+      fullScreenByDefault: isFullScreen,
     );
     videoPlayerController.setVolume(isMuted ? 0.0 : 1.0);
     showMiniControl = false;
@@ -343,6 +340,7 @@ class VideoBloc extends ChangeNotifier {
         AutoOrientation.landscapeRightMode();
       }
     } else {
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       if (Platform.isAndroid) {
         await SystemChrome.setPreferredOrientations([
           DeviceOrientation.portraitUp,
@@ -350,8 +348,6 @@ class VideoBloc extends ChangeNotifier {
       } else {
         AutoOrientation.portraitUpMode();
       }
-
-      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
 
     if (Platform.isAndroid) _startTimer();

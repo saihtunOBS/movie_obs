@@ -26,7 +26,7 @@ class _MovieOBSState extends State<MovieOBS> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ZLan Movie Player',
-
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         progressIndicatorTheme: ProgressIndicatorThemeData(
           color: Colors.white, // Change the default progress indicator color

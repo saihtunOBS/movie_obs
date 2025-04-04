@@ -55,12 +55,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.paused) {
       bloc.updateListener();
       if (Platform.isIOS) {
-        if (isFullScreen == true) {
+        if (bloc.isFullScreen == true) {
           SystemChrome.setPreferredOrientations([
             DeviceOrientation.landscapeLeft,
             DeviceOrientation.landscapeRight,
           ]);
-
         } else {
           AutoOrientation.portraitUpMode();
         }
@@ -88,8 +87,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (_lastOrientation == newOrientation) return;
     _lastOrientation = newOrientation;
 
-    if (isFullScreen && newOrientation == Orientation.landscape) return;
-    isFullScreen = _lastOrientation == Orientation.landscape;
+    if (bloc.isFullScreen && newOrientation == Orientation.landscape) return;
+    bloc.isFullScreen = _lastOrientation == Orientation.landscape;
   }
 
   @override
@@ -125,7 +124,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             if (isAutoRotateEnabled == true) {
               SystemChrome.setPreferredOrientations([]);
             } else {
-              if (isFullScreen == true) {
+              if (bloc.isFullScreen == true) {
                 SystemChrome.setPreferredOrientations([
                   DeviceOrientation.landscapeLeft,
                   DeviceOrientation.landscapeRight,
@@ -187,7 +186,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           child: Column(
             children: [
               _buildVideoPlayerSection(),
-              if (!isFullScreen) Flexible(child: _buildContentSection()),
+              if (!bloc.isFullScreen) Flexible(child: _buildContentSection()),
             ],
           ),
         );
@@ -196,21 +195,27 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Widget _buildVideoPlayerSection() {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: isFullScreen ? MediaQuery.of(context).size.height : 300,
-      child:
-          chewieControllerNotifier == null ||
-                  !videoPlayerController.value.isInitialized ||
-                  bloc.isLoading
-              ? _buildLoadingIndicator()
-              : _buildVideoPlayer(),
+    return LayoutBuilder(
+      builder:
+          (BuildContext context, BoxConstraints constraints) => ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight:
+                  bloc.isFullScreen ? MediaQuery.of(context).size.height : 300,
+              maxWidth: MediaQuery.of(context).size.width,
+            ),
+            child:
+                chewieControllerNotifier == null ||
+                        !videoPlayerController.value.isInitialized ||
+                        bloc.isLoading
+                    ? _buildLoadingIndicator()
+                    : _buildVideoPlayer(),
+          ),
     );
   }
 
   Widget _buildLoadingIndicator() {
     return Container(
-      margin: EdgeInsets.only(top: isFullScreen ? 0 : 60),
+      margin: EdgeInsets.only(top: bloc.isFullScreen ? 0 : 60),
       color: Colors.transparent,
       child: const Center(
         child: CircularProgressIndicator.adaptive(
@@ -225,7 +230,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     return Dismissible(
       direction:
-          isFullScreen || bloc.isLoading == true
+          bloc.isFullScreen || bloc.isLoading == true
               ? DismissDirection.none
               : DismissDirection.down,
       dismissThresholds: const {DismissDirection.down: 0.8},
@@ -265,7 +270,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             left: _newDragOffset == 0 ? 0 : 20,
           ),
           child: Container(
-            margin: EdgeInsets.only(top: isFullScreen ? 0 : 60),
+            margin: EdgeInsets.only(top: bloc.isFullScreen ? 0 : 60),
             child: Stack(
               key: PageStorageKey('value'),
               children: [
@@ -427,14 +432,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Widget _buildTopLeftControls() {
     return Positioned(
-      top: isFullScreen ? 20 : 10,
-      left: isFullScreen ? 20 : 10,
+      top: bloc.isFullScreen ? 20 : 10,
+      left: bloc.isFullScreen ? 20 : 10,
       child: showControl ? _buildExitButton() : const SizedBox(),
     );
   }
 
   Widget _buildExitButton() {
-    if (isFullScreen) return const SizedBox();
+    if (bloc.isFullScreen) return const SizedBox();
     return IgnorePointer(
       ignoring: !showControl,
       child: InkWell(
@@ -456,17 +461,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           );
         },
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+          //margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           height: 30,
           width: 35,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: Colors.black45,
+            color: Colors.transparent,
           ),
           child: const Icon(
             CupertinoIcons.chevron_down,
             color: Colors.white,
-            size: 20,
+            size: 22,
           ),
         ),
       ),
@@ -475,8 +480,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Widget _buildTopRightControls() {
     return Positioned(
-      top: isFullScreen ? 20 : 10,
-      right: isFullScreen ? 20 : 10,
+      top: bloc.isFullScreen ? 20 : 10,
+      right: bloc.isFullScreen ? 20 : 10,
       child: showControl ? _buildSettingsButtons() : const SizedBox(),
     );
   }
@@ -492,19 +497,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return InkWell(
       onTap: () => bloc.toggleMute(),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-        height: isFullScreen ? 42 : 30,
-        width: isFullScreen ? 50 : 46,
+        //margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        height: bloc.isFullScreen ? 42 : 30,
+        width: bloc.isFullScreen ? 50 : 46,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
-          color: Colors.black45,
+          color: Colors.transparent,
         ),
         child: Icon(
           !bloc.isMuted
               ? CupertinoIcons.speaker_3_fill
               : CupertinoIcons.speaker_slash,
           color: Colors.white,
-          size: 20,
+          size: 22,
         ),
       ),
     );
@@ -534,21 +539,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         });
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-        height: isFullScreen ? 42 : 30,
-        width: isFullScreen ? 50 : 46,
+        // margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        height: bloc.isFullScreen ? 42 : 30,
+        width: bloc.isFullScreen ? 50 : 46,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
-          color: Colors.black45,
+          color: Colors.transparent,
         ),
-        child: const Icon(Icons.settings, color: Colors.white, size: 20),
+        child: const Icon(Icons.settings, color: Colors.white, size: 22),
       ),
     );
   }
 
   Widget _buildProgressBar() {
     return Positioned(
-      bottom: isFullScreen ? 20 : 0,
+      bottom: bloc.isFullScreen ? 20 : 0,
       left: 0,
       right: 0,
       child: showControl ? _buildProgressBarContent() : const SizedBox(),
@@ -565,7 +570,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             _buildTimeDisplay(),
             Expanded(child: _buildSlider()),
             _buildFullscreenButton(),
-            const SizedBox(width: 10),
+            SizedBox(width: 15),
           ],
         ),
       ),
@@ -664,9 +669,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget _buildFullscreenButton() {
     return InkWell(
       onTap: () => bloc.toggleFullScreen(),
-      child: const Padding(
-        padding: EdgeInsets.only(right: 5),
-        child: Icon(Icons.fullscreen, color: Colors.white, size: 26),
+      child: SizedBox(
+        height: bloc.isFullScreen ? 42 : 30,
+        width: bloc.isFullScreen ? 40 : 20,
+        child: Icon(Icons.fullscreen, color: Colors.white, size: 24),
       ),
     );
   }
@@ -1113,19 +1119,19 @@ class Player extends StatelessWidget {
     if (alignment == Alignment.centerLeft) {
       return BorderRadius.only(
         topRight: Radius.circular(
-          isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
+          bloc.isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
         ),
         bottomRight: Radius.circular(
-          isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
+          bloc.isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
         ),
       );
     } else {
       return BorderRadius.only(
         bottomLeft: Radius.circular(
-          isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
+          bloc.isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
         ),
         topLeft: Radius.circular(
-          isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
+          bloc.isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
         ),
       );
     }

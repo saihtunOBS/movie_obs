@@ -32,7 +32,7 @@
 // class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 //   bool _wasScreenOff = false;
 //   bool isMuted = false;
-//   bool _isFullScreen = false;
+//   bool _bloc.isFullScreen = false;
 //   bool hasPrinted = false;
 //   Timer? _hideControlTimer;
 //   double _manualSeekProgress = 0.0;
@@ -284,7 +284,7 @@
   //   _lastOrientation = newOrientation;
 
   //   // ✅ Prevent auto-switching when already in fullscreen mode
-  //   if (isFullScreen && newOrientation == Orientation.landscape) return;
+  //   if (bloc.isFullScreen && newOrientation == Orientation.landscape) return;
 
   //   bloc.updateOrientation(_lastOrientation!);
   // }
@@ -298,14 +298,14 @@
 //   //toggle full screen
 //   void _toggleFullScreen() {
 //     setState(() {
-//       _isFullScreen = !_isFullScreen;
+//       _bloc.isFullScreen = !_bloc.isFullScreen;
 //       _initialPosition = 0.0;
 //       _scale = 1.0;
 //       _initialScale = 1.0;
 //       _dragOffset = 0.0;
 //     });
 
-//     if (_isFullScreen) {
+//     if (_bloc.isFullScreen) {
 //       // Lock in landscape mode
 //       SystemChrome.setPreferredOrientations([
 //         DeviceOrientation.landscapeRight,
@@ -389,7 +389,7 @@
 //                 duration: Duration(milliseconds: 300),
 //                 color: Colors.black,
 //                 height:
-//                     _isFullScreen == true
+//                     _bloc.isFullScreen == true
 //                         ? MediaQuery.of(context).size.height
 //                         : 250,
 //                 width: MediaQuery.of(context).size.width,
@@ -417,14 +417,14 @@
           
 //                       onVerticalDragUpdate: (details) {
 //                         _onVerticalDragUpdate(details);
-//                         if (_isFullScreen && details.delta.dy > 0) {
+//                         if (_bloc.isFullScreen && details.delta.dy > 0) {
 //                           setState(() {
 //                             _dragOffset += details.delta.dy; // Move video down
 //                           });
 //                         }
 //                       },
 //                       onVerticalDragEnd: (details) {
-//                         if (_isFullScreen) {
+//                         if (_bloc.isFullScreen) {
 //                           if (_dragOffset > _dragThreshold) {
 //                             _toggleFullScreen();
 //                           } else {
@@ -507,7 +507,7 @@
 //                                                           : Colors.transparent,
 //                                                   borderRadius: BorderRadius.only(
 //                                                     topRight: Radius.circular(
-//                                                       _isFullScreen
+//                                                       _bloc.isFullScreen
 //                                                           ? MediaQuery.sizeOf(
 //                                                                 context,
 //                                                               ).width /
@@ -515,7 +515,7 @@
 //                                                           : 125,
 //                                                     ),
 //                                                     bottomRight: Radius.circular(
-//                                                       _isFullScreen
+//                                                       _bloc.isFullScreen
 //                                                           ? MediaQuery.sizeOf(
 //                                                                 context,
 //                                                               ).width /
@@ -563,7 +563,7 @@
 //                                                                 .transparent,
 //                                                     borderRadius: BorderRadius.only(
 //                                                       bottomLeft: Radius.circular(
-//                                                         _isFullScreen
+//                                                         _bloc.isFullScreen
 //                                                             ? MediaQuery.sizeOf(
 //                                                                   context,
 //                                                                 ).width /
@@ -571,7 +571,7 @@
 //                                                             : 125,
 //                                                       ),
 //                                                       topLeft: Radius.circular(
-//                                                         _isFullScreen
+//                                                         _bloc.isFullScreen
 //                                                             ? MediaQuery.sizeOf(
 //                                                                   context,
 //                                                                 ).width /
@@ -698,8 +698,8 @@
 //                                           horizontal: 5,
 //                                           vertical: 5,
 //                                         ),
-//                                         height: _isFullScreen ? 42 : 29.5,
-//                                         width: _isFullScreen ? 50 : 46,
+//                                         height: _bloc.isFullScreen ? 42 : 29.5,
+//                                         width: _bloc.isFullScreen ? 50 : 46,
 //                                         decoration: BoxDecoration(
 //                                           borderRadius: BorderRadius.circular(
 //                                             5,
@@ -752,8 +752,8 @@
 //                                           horizontal: 5,
 //                                           vertical: 5,
 //                                         ),
-//                                         height: _isFullScreen ? 42 : 29.5,
-//                                         width: _isFullScreen ? 50 : 46,
+//                                         height: _bloc.isFullScreen ? 42 : 29.5,
+//                                         width: _bloc.isFullScreen ? 50 : 46,
 //                                         decoration: BoxDecoration(
 //                                           borderRadius: BorderRadius.circular(
 //                                             5,
@@ -791,8 +791,8 @@
 //                                           horizontal: 5,
 //                                           vertical: 5,
 //                                         ),
-//                                         height: _isFullScreen ? 42 : 29.5,
-//                                         width: _isFullScreen ? 50 : 46,
+//                                         height: _bloc.isFullScreen ? 42 : 29.5,
+//                                         width: _bloc.isFullScreen ? 50 : 46,
 //                                         decoration: BoxDecoration(
 //                                           borderRadius: BorderRadius.circular(
 //                                             5,
@@ -1177,7 +1177,7 @@
 //                                       children: [
 //                                         SizedBox(
 //                                           height:
-//                                               isFullScreen
+//                                               bloc.isFullScreen
 //                                                   ? MediaQuery.sizeOf(
 //                                                         context,
 //                                                       ).height /
