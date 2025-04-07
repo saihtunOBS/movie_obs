@@ -64,8 +64,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           AutoOrientation.portraitUpMode();
         }
       }
-    } else if (state == AppLifecycleState.inactive) {
-      //videoPlayerController.pause();
+    } else if (state == AppLifecycleState.hidden) {
+      videoPlayerController.pause();
     }
 
     super.didChangeAppLifecycleState(state);
@@ -163,6 +163,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
       selectedQuality = 'Auto';
+      bloc.fetchQualityOptions();
       bloc.changeQuality(widget.url ?? '', _savedVideo?.position);
       bloc.resetControlVisibility(isSeek: true);
     } else {
@@ -195,33 +196,39 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Widget _buildVideoPlayerSection() {
-    return LayoutBuilder(
-      builder:
-          (BuildContext context, BoxConstraints constraints) => ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight:
-                  bloc.isFullScreen ? MediaQuery.of(context).size.height : 300,
-              maxWidth: MediaQuery.of(context).size.width,
-            ),
-            child:
-                chewieControllerNotifier == null ||
-                        !videoPlayerController.value.isInitialized ||
-                        bloc.isLoading
-                    ? _buildLoadingIndicator()
-                    : _buildVideoPlayer(),
+    return SizedBox(
+      height: bloc.isFullScreen ? MediaQuery.of(context).size.height : 270,
+      width: MediaQuery.of(context).size.width,
+
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          bloc.resetControlVisibility();
+        },
+        child: Container(
+          margin: EdgeInsets.only(top: bloc.isFullScreen ? 0 : 40),
+          child: Stack(
+            children: [
+              chewieControllerNotifier == null ||
+                      !videoPlayerController.value.isInitialized ||
+                      bloc.isLoading
+                  ? _buildLoadingIndicator()
+                  : _buildVideoPlayer(),
+
+              bloc.isLoading ? SizedBox() : _buildPlayPauseControls(),
+              _buildTopLeftControls(),
+              _buildTopRightControls(),
+              _buildProgressBar(),
+            ],
           ),
+        ),
+      ),
     );
   }
 
   Widget _buildLoadingIndicator() {
-    return Container(
-      margin: EdgeInsets.only(top: bloc.isFullScreen ? 0 : 60),
-      color: Colors.transparent,
-      child: const Center(
-        child: CircularProgressIndicator.adaptive(
-          backgroundColor: Colors.amber,
-        ),
-      ),
+    return const Center(
+      child: CircularProgressIndicator(backgroundColor: Colors.amber),
     );
   }
 
@@ -269,30 +276,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             right: _newDragOffset == 0 ? 0 : _newDragOffset,
             left: _newDragOffset == 0 ? 0 : 20,
           ),
-          child: Container(
-            margin: EdgeInsets.only(top: bloc.isFullScreen ? 0 : 60),
-            child: Stack(
-              key: PageStorageKey('value'),
-              children: [
-                Stack(
-                  children: [
-                    GestureDetector(
-                      onDoubleTap: _handleDoubleTap,
-                      onDoubleTapDown: _handleDoubleTapDown,
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        if (!bloc.isLoading) bloc.resetControlVisibility();
-                      },
+          child: Stack(
+            children: [
+              Stack(
+                children: [
+                  GestureDetector(
+                    onDoubleTap: _handleDoubleTap,
+                    onDoubleTapDown: _handleDoubleTapDown,
+                    behavior: HitTestBehavior.opaque,
+                    child: IgnorePointer(
+                      ignoring: true,
                       child: Player(bloc: bloc),
                     ),
-                    _buildPlayPauseControls(),
-                    _buildTopLeftControls(),
-                    _buildTopRightControls(),
-                    _buildProgressBar(),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

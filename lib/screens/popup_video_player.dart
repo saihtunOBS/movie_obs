@@ -90,9 +90,9 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.hidden) {
       videoPlayerController.pause();
+      MiniVideoPlayer.isPlay = false;
       setState(() {});
     }
     super.didChangeAppLifecycleState(state);
@@ -120,6 +120,8 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
             position: videoPlayerController.value.position,
           ),
         ]);
+      } else if (!videoPlayerController.value.isPlaying) {
+        MiniVideoPlayer.isPlay = false;
       }
     });
   }
@@ -263,7 +265,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                         children: [
                           IconButton(
                             iconSize: 18,
-                            onPressed: (){
+                            onPressed: () {
                               bloc.seekBackward();
                               MiniVideoPlayer.isPlay = true;
                             },
@@ -296,13 +298,12 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                                         MiniVideoPlayer.isPlay = true;
                                       }
                                     }
-                                    setState(() {
-                                    });
+                                    setState(() {});
                                   },
                                   icon: Icon(
                                     value.isCompleted
                                         ? CupertinoIcons.arrow_clockwise
-                                        : MiniVideoPlayer.isPlay 
+                                        : MiniVideoPlayer.isPlay
                                         ? CupertinoIcons.pause
                                         : CupertinoIcons.play,
                                     size: 25,
@@ -312,7 +313,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                           ),
                           IconButton(
                             iconSize: 18,
-                            onPressed: (){
+                            onPressed: () {
                               bloc.seekForward();
                               MiniVideoPlayer.isPlay = true;
                             },

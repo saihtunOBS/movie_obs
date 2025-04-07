@@ -138,7 +138,7 @@ class VideoBloc extends ChangeNotifier {
   }
 
   /// Fetch and parse M3U8 file to extract quality options
-  Future<void> _fetchQualityOptions() async {
+  Future<void> fetchQualityOptions() async {
     try {
       final response = await http.get(Uri.parse(currentUrl));
       if (response.statusCode == 200) {
@@ -157,7 +157,7 @@ class VideoBloc extends ChangeNotifier {
           // Get video height (e.g., 1080)
           String url = match.group(3) ?? '';
 
-          String qualityLabel = _getQualityLabel(height);
+          String qualityLabel = getQualityLabel(height);
 
           // Convert relative URLs to absolute
           if (!url.startsWith('http')) {
@@ -177,7 +177,7 @@ class VideoBloc extends ChangeNotifier {
   }
 
   /// Convert resolution height to standard quality labels
-  String _getQualityLabel(int height) {
+  String getQualityLabel(int height) {
     if (height >= 1080) return "1080p";
     if (height >= 720) return "720p";
     if (height >= 480) return "480p";
@@ -210,10 +210,9 @@ class VideoBloc extends ChangeNotifier {
         useRootNavigator: false,
         allowFullScreen: false,
         draggableProgressBar: false,
-        fullScreenByDefault: isFullScreen,
       );
 
-      _fetchQualityOptions();
+      fetchQualityOptions();
     });
 
     isLoading = false;
@@ -257,7 +256,7 @@ class VideoBloc extends ChangeNotifier {
     Duration? currentDuration, [
     String? quality,
   ]) async {
-    showMiniControl = true;
+    // showMiniControl = true;
     isLoading = true;
 
     updateListener();
@@ -267,7 +266,7 @@ class VideoBloc extends ChangeNotifier {
     final wasPlaying = videoPlayerController.value.isPlaying;
 
     await videoPlayerController.pause();
-    // await videoPlayerController.dispose();
+    await videoPlayerController.dispose();
 
     videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
 
@@ -276,21 +275,21 @@ class VideoBloc extends ChangeNotifier {
 
       if (wasPlaying) {
         videoPlayerController.play();
+        isLoading = false;
         notifyListeners();
       } else {
         videoPlayerController.pause();
+        isLoading = false;
         notifyListeners();
       }
-      isLoading = false;
     });
 
     chewieControllerNotifier = ChewieController(
       videoPlayerController: videoPlayerController,
       showControls: false,
-      fullScreenByDefault: isFullScreen,
     );
     videoPlayerController.setVolume(isMuted ? 0.0 : 1.0);
-    showMiniControl = false;
+    // showMiniControl = false;
 
     videoPlayerController.addListener(() {
       if (videoPlayerController.value.isPlaying) {
