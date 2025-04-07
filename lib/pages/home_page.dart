@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/data/videoPlayer/video_player.dart';
-import 'package:movie_obs/screens/popup_video_player.dart';
+import 'package:movie_obs/pages/popup_video_player.dart';
 import 'package:movie_obs/utils/rotation_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';

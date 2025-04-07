@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
-import 'package:movie_obs/screens/splash_screen.dart';
+import 'package:movie_obs/pages/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
