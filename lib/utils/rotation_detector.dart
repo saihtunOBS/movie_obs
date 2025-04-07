@@ -7,13 +7,14 @@ class RotationDetector {
   static Stream<bool>? _stream;
 
   static Stream<bool> get onRotationLockChanged {
-    _stream ??= _eventChannel.receiveBroadcastStream()
-        .map((event) => event as bool)
-        .handleError((error) {
-          print('Rotation detection error: $error');
-          return false;
-        })
-        .asBroadcastStream();
+    _stream ??=
+        _eventChannel
+            .receiveBroadcastStream()
+            .map((event) => event as bool)
+            .handleError((error) {
+              return false;
+            })
+            .asBroadcastStream();
     return _stream!;
   }
 }

@@ -115,30 +115,36 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     bloc = Provider.of<VideoBloc>(context, listen: false);
 
-    _subscription = RotationDetector.onRotationLockChanged.listen((isEnabled) {
-      if (mounted) {
-        setState(() {
-          isAutoRotateEnabled = isEnabled;
 
-          if (Platform.isAndroid) {
-            if (isAutoRotateEnabled == true) {
-              SystemChrome.setPreferredOrientations([]);
-            } else {
-              if (bloc.isFullScreen == true) {
-                SystemChrome.setPreferredOrientations([
-                  DeviceOrientation.landscapeLeft,
-                  DeviceOrientation.landscapeRight,
-                ]);
+    //listen for device orientation (android only with native code)
+    if (Platform.isAndroid) {
+      _subscription = RotationDetector.onRotationLockChanged.listen((
+        isEnabled,
+      ) {
+        if (mounted) {
+          setState(() {
+            isAutoRotateEnabled = isEnabled;
+
+            if (Platform.isAndroid) {
+              if (isAutoRotateEnabled == true) {
+                SystemChrome.setPreferredOrientations([]);
               } else {
-                SystemChrome.setPreferredOrientations([
-                  DeviceOrientation.portraitUp,
-                ]);
+                if (bloc.isFullScreen == true) {
+                  SystemChrome.setPreferredOrientations([
+                    DeviceOrientation.landscapeLeft,
+                    DeviceOrientation.landscapeRight,
+                  ]);
+                } else {
+                  SystemChrome.setPreferredOrientations([
+                    DeviceOrientation.portraitUp,
+                  ]);
+                }
               }
             }
-          }
-        });
-      }
-    });
+          });
+        }
+      });
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       bloc.currentUrl = widget.url ?? '';
@@ -227,9 +233,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Widget _buildLoadingIndicator() {
-    return const Center(
-      child: CircularProgressIndicator(strokeWidth: 1,),
-    );
+    return const Center(child: CircularProgressIndicator(strokeWidth: 1));
   }
 
   Widget _buildVideoPlayer() {
