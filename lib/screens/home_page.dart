@@ -228,7 +228,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Widget _buildLoadingIndicator() {
     return const Center(
-      child: CircularProgressIndicator(backgroundColor: Colors.amber),
+      child: CircularProgressIndicator(strokeWidth: 1,),
     );
   }
 
@@ -506,7 +506,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         child: Icon(
           !bloc.isMuted
               ? CupertinoIcons.speaker_3_fill
-              : CupertinoIcons.speaker_slash,
+              : CupertinoIcons.speaker_slash_fill,
           color: Colors.white,
           size: 22,
         ),
