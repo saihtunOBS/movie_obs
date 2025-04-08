@@ -24,6 +24,17 @@ dependencies:
   animations: ^2.0.11
   auto_orientation_v2: ^2.3.6
   cupertino_icons: ^1.0.8
+  rxdart: ^0.28.0
+  dio: ^5.7.0
+  json_annotation: ^4.9.0
+  build_runner: ^2.4.14
+  loading_indicator: ^3.1.1
+  equatable: ^2.0.7
+  retrofit: ^4.4.1
+  retrofit_generator: ^9.1.5
+  json_serializable: ^6.9.0
+  pinput: ^5.0.0
+
 
 dev_dependencies:
   flutter_test:
