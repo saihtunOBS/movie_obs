@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie_obs/data/videoPlayer/video_player.dart';
-import 'package:movie_obs/pages/home_page.dart';
+import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:video_player/video_player.dart';
 
 bool showMiniControl = false;

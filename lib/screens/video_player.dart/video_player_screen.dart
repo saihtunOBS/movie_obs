@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/data/videoPlayer/video_player.dart';
-import 'package:movie_obs/pages/popup_video_player.dart';
+import 'package:movie_obs/screens/video_player.dart/popup_video_player.dart';
 import 'package:movie_obs/utils/rotation_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
@@ -20,8 +20,8 @@ double bufferedProgress = 0.0;
 bool showControl = false;
 bool isAutoRotateEnabled = false;
 
-class HomePage extends StatefulWidget {
-  const HomePage({
+class VideoPlayerScreen extends StatefulWidget {
+  const VideoPlayerScreen({
     super.key,
     this.url,
     this.videoId,
@@ -32,10 +32,11 @@ class HomePage extends StatefulWidget {
   final bool isFirstTime;
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+class _VideoPlayerScreenState extends State<VideoPlayerScreen>
+    with WidgetsBindingObserver {
   late final VideoBloc bloc;
   double _dragOffset = 1.0;
   double _newDragOffset = 0.0;
@@ -114,7 +115,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     onStartDrag.value = true;
     WidgetsBinding.instance.addObserver(this);
     bloc = Provider.of<VideoBloc>(context, listen: false);
-
 
     //listen for device orientation (android only with native code)
     if (Platform.isAndroid) {

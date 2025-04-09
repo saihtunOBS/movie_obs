@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/data/videoPlayer/video_player.dart';
-import 'package:movie_obs/pages/home_page.dart';
+import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
@@ -237,7 +237,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                           child: InkWell(
                             onTap: () {
                               context.pushTransparentRoute(
-                                HomePage(url: '', isFirstTime: false),
+                                VideoPlayerScreen(url: '', isFirstTime: false),
                               );
                             },
                             child: SizedBox(height: 230),

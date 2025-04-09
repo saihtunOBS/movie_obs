@@ -1,7 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
-import 'package:movie_obs/pages/splash_screen.dart';
+import 'package:movie_obs/screens/auth/ads_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -28,6 +29,10 @@ class _MovieOBSState extends State<MovieOBS> {
       title: 'ZLan Movie Player',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        actionIconTheme: ActionIconThemeData(
+          backButtonIconBuilder:
+              (BuildContext context) => Icon(CupertinoIcons.arrow_left),
+        ),
         progressIndicatorTheme: ProgressIndicatorThemeData(
           color: Colors.white, // Change the default progress indicator color
         ),
@@ -37,7 +42,7 @@ class _MovieOBSState extends State<MovieOBS> {
         ),
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      home: SplashScreen(),
+      home: AdsScreen(),
     );
   }
 }
