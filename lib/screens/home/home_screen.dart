@@ -1,9 +1,12 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
+import 'package:movie_obs/widgets/banner_image_animation.dart';
+import 'package:movie_obs/screens/home/movie_type_screen.dart';
+import 'package:movie_obs/screens/home/new_release_screen.dart';
+import 'package:movie_obs/screens/home/top_trending_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 
@@ -46,9 +49,14 @@ class _HomeScreenState extends State<HomeScreen> {
       body: CustomScrollView(
         physics: ClampingScrollPhysics(),
         slivers: [
+          SliverToBoxAdapter(child: Container(height: 15, color: kWhiteColor)),
           //carousel
-          SliverToBoxAdapter(child: _buildCarousel()),
+          SliverToBoxAdapter(child: Container(
+            height: 250,
+            color: kWhiteColor,
+            child: BannerImageAnimation())),
 
+          SliverToBoxAdapter(child: SizedBox(height: 10)),
           //options
           SliverToBoxAdapter(child: _buildOptions()),
 
@@ -56,34 +64,27 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverToBoxAdapter(
             child: _buildMovieOptions('Free Movie & Series', () {}),
           ),
-          SliverToBoxAdapter(child: SizedBox(height: 17,),),
+          SliverToBoxAdapter(child: SizedBox(height: 17)),
           //top trending
           SliverToBoxAdapter(
-            child: _buildMovieOptions('Top Trending', () {}),
+            child: _buildMovieOptions('Top Trending', () {
+              PageNavigator(ctx: context).nextPage(page: TopTrendingScreen());
+            }),
           ),
-          SliverToBoxAdapter(child: SizedBox(height: 17,),),
+          SliverToBoxAdapter(child: SizedBox(height: 17)),
           //new release
           SliverToBoxAdapter(
-            child: _buildMovieOptions('New Releases', () {}),
+            child: _buildMovieOptions('New Releases', () {
+              PageNavigator(ctx: context).nextPage(page: NewReleaseScreen());
+            }),
           ),
-          SliverToBoxAdapter(child: SizedBox(height: 17,),),
+          SliverToBoxAdapter(child: SizedBox(height: 17)),
         ],
       ),
     );
   }
 
-  Widget _buildCarousel() {
-    final CarouselSliderController controller = CarouselSliderController();
-
-    return CarouselSlider(
-      carouselController: controller,
-      items:
-          imageArray.map((value) {
-            return Container(color: Colors.black54);
-          }).toList(),
-      options: CarouselOptions(),
-    );
-  }
+  
 
   Widget _buildOptions() {
     return Padding(
@@ -103,7 +104,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.black12,
                   borderRadius: BorderRadius.circular(kMarginMedium + 5),
                 ),
-                child: Center(child: Icon(CupertinoIcons.dot_radiowaves_left_right)),
+                child: Center(
+                  child: Icon(CupertinoIcons.dot_radiowaves_left_right),
+                ),
               ),
               Text('Live'),
             ],
@@ -162,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 IconButton(
                   onPressed: onPress,
-                  icon: Icon(CupertinoIcons.arrow_right,size: 20,),
+                  icon: Icon(CupertinoIcons.arrow_right, size: 20),
                 ),
               ],
             ),
@@ -174,9 +177,14 @@ class _HomeScreenState extends State<HomeScreen> {
               scrollDirection: Axis.horizontal,
               itemCount: 5,
               itemBuilder: (context, index) {
-                return SizedBox(
-                  width: 180,
-                  child: movieListItem());
+                return GestureDetector(
+                  onTap: () {
+                    PageNavigator(
+                      ctx: context,
+                    ).nextPage(page: MovieTypeScreen());
+                  },
+                  child: SizedBox(width: 180, child: movieListItem()),
+                );
               },
             ),
           ),

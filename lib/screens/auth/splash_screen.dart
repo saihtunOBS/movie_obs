@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(Duration(milliseconds: 1500), () {
       // ignore: use_build_context_synchronously
       PageNavigator(ctx: context).nextPageOnly(page: AuthScreen());
     });

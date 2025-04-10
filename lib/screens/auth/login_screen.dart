@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
@@ -120,8 +119,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
-
-            30.vGap,
+            20.vGap
           ],
         ),
       ),

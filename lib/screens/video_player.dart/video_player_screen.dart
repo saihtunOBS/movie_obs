@@ -116,7 +116,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     WidgetsBinding.instance.addObserver(this);
     bloc = Provider.of<VideoBloc>(context, listen: false);
 
-    //listen for device orientation (android only with native code)
     if (Platform.isAndroid) {
       _subscription = RotationDetector.onRotationLockChanged.listen((
         isEnabled,
@@ -172,8 +171,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       bloc.fetchQualityOptions();
       bloc.changeQuality(widget.url ?? '', _savedVideo?.position);
       bloc.resetControlVisibility(isSeek: true);
+      bloc.updateListener();
     } else {
       bloc.initializeVideo(widget.url ?? '');
+      bloc.updateListener();
     }
   }
 
@@ -221,7 +222,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                   ? _buildLoadingIndicator()
                   : _buildVideoPlayer(),
 
-              bloc.isLoading ? SizedBox() : _buildPlayPauseControls(),
+              !videoPlayerController.value.isInitialized
+                  ? SizedBox()
+                  : _buildPlayPauseControls(),
               _buildTopLeftControls(),
               _buildTopRightControls(),
               _buildProgressBar(),
@@ -241,7 +244,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
     return Dismissible(
       direction:
-          bloc.isFullScreen || bloc.isLoading == true
+          bloc.isFullScreen ||
+                  bloc.isLoading == true ||
+                  !videoPlayerController.value.isInitialized
               ? DismissDirection.none
               : DismissDirection.down,
       dismissThresholds: const {DismissDirection.down: 0.8},
@@ -447,21 +452,23 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       ignoring: !showControl,
       child: InkWell(
         onTap: () {
-          showMiniControl = true;
-          if (!videoPlayerController.value.isPlaying) {
-            showVisibleMiniControl.value = true;
+          if (videoPlayerController.value.isInitialized) {
+            showMiniControl = true;
+            if (!videoPlayerController.value.isPlaying) {
+              showVisibleMiniControl.value = true;
+            }
+            isPlay.value = !videoPlayerController.value.isPlaying;
+            showControl = false;
+            bloc.updateListener();
+            Navigator.pop(context);
+            MiniVideoPlayer.showMiniPlayer(
+              context,
+              bloc.currentUrl,
+              videoPlayerController.value.isPlaying
+                  ? isPlay.value = true
+                  : isPlay.value = false,
+            );
           }
-          isPlay.value = !videoPlayerController.value.isPlaying;
-          showControl = false;
-          bloc.updateListener();
-          Navigator.pop(context);
-          MiniVideoPlayer.showMiniPlayer(
-            context,
-            bloc.currentUrl,
-            videoPlayerController.value.isPlaying
-                ? isPlay.value = true
-                : isPlay.value = false,
-          );
         },
         child: Container(
           //margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
@@ -572,7 +579,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           children: [
             _buildTimeDisplay(),
             Expanded(child: _buildSlider()),
-            _buildFullscreenButton(),
+            _buildFullScreenButton(),
             SizedBox(width: 15),
           ],
         ),
@@ -669,7 +676,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     );
   }
 
-  Widget _buildFullscreenButton() {
+  Widget _buildFullScreenButton() {
     return InkWell(
       onTap: () => bloc.toggleFullScreen(),
       child: SizedBox(
@@ -694,7 +701,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Widget _buildContent() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: 20, top: 16),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         color: Colors.black,

@@ -114,9 +114,8 @@ class _OTPScreenState extends State<OTPScreen> {
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
-            margin: EdgeInsets.symmetric(
-              horizontal: kMarginMedium2,
-              vertical: kMarginMedium2 + 10,
+            margin: EdgeInsets.only(
+              left: kMarginMedium2,right: kMarginMedium2,bottom: 27
             ),
             child: customButton(
               onPress: () {
@@ -156,6 +155,7 @@ class _OTPScreenState extends State<OTPScreen> {
         child: Pinput(
           controller: pinController,
           length: 6,
+          autofocus: true,
           focusNode: focusNode,
           defaultPinTheme: defaultPinTheme,
           submittedPinTheme: submittedPinTheme,

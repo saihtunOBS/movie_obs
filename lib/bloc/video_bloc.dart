@@ -52,7 +52,7 @@ class VideoBloc extends ChangeNotifier {
   Timer? _timer;
   int _elapsedSeconds = 0;
 
-  bool isLoading = false;
+  bool isLoading = true;
   List<Map<String, String>> qualityOptions = [];
 
   String currentUrl = '';
@@ -67,6 +67,10 @@ class VideoBloc extends ChangeNotifier {
 
   int seekCount = 0;
   Timer? seekTimer;
+
+  VideoBloc() {
+    initializeVideo(currentUrl);
+  }
 
   void igNorePointerToggle() {
     igNorePointer = !igNorePointer;

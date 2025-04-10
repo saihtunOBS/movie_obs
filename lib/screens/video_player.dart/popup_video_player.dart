@@ -183,7 +183,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
     final screenSize = MediaQuery.of(context).size;
 
     if (_position == Offset(20, 0)) {
-      _position = Offset(20, screenSize.height - _height - 90);
+      _position = Offset(20, screenSize.height - _height - 105);
     }
 
     return Stack(

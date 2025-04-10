@@ -10,12 +10,13 @@ Widget customButton({
   Color? textColor,
   Color? borderColor,
   bool? isOnlyBorder,
+  double? height,
   required BuildContext? context,
 }) {
   return GestureDetector(
     onTap: onPress,
     child: Container(
-      height: 50,
+      height: height ?? 50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(kMarginMedium2),
         color: backgroundColor,

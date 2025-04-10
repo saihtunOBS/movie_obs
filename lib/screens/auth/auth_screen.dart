@@ -66,7 +66,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   effect: ExpandingDotsEffect(
                     dotHeight: kMarginMedium,
                     dotWidth: kMarginMedium,
-                    activeDotColor: kWhiteColor,
+                    activeDotColor: kBlackColor,
+                    dotColor: kWhiteColor
                   ),
                   activeIndex: value,
                   count: imageArray.length,
