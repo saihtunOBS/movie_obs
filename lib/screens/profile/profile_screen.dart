@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
+import 'package:movie_obs/screens/profile/promotion_screen.dart';
 import 'package:movie_obs/screens/profile/user_profile_screen.dart';
+import 'package:movie_obs/screens/profile/watch_list_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/custom_button.dart';
@@ -66,6 +69,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               PageNavigator(
                                 ctx: context,
                               ).nextPage(page: UserProfileScreen());
+                            case 1:
+                             PageNavigator(
+                                ctx: context,
+                              ).nextPage(page: PromotionScreen());
+                            case 2: 
+                             PageNavigator(
+                                ctx: context,
+                              ).nextPage(page: WatchListScreen());
                             case 7:
                               showDialog(
                                 useRootNavigator: true,
@@ -81,8 +92,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: kMarginMedium2,
+                    padding: EdgeInsets.symmetric(
+                      horizontal:
+                          getDeviceType() == 'phone'
+                              ? kMarginMedium2
+                              : MediaQuery.of(context).size.width * 0.15,
                       vertical: kMarginMedium2,
                     ),
                     child: customButton(
@@ -173,7 +187,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       behavior: HitTestBehavior.opaque,
       onTap: onPress,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: kMarginMedium2),
+        margin: EdgeInsets.symmetric(
+          horizontal:
+              getDeviceType() == 'phone'
+                  ? kMarginMedium2
+                  : MediaQuery.of(context).size.width * 0.15,
+        ),
         padding: EdgeInsets.symmetric(vertical: 3),
         child: Column(
           spacing: 5,
@@ -230,6 +249,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               'Are you sure you want to delete your account permanently?',
               textAlign: TextAlign.center,
+              style: TextStyle(fontSize: kTextRegular18),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

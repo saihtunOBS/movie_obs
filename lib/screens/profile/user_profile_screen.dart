@@ -19,11 +19,11 @@ class UserProfileScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAppBar(context),
-          _buildUserInfo('Username', 'Username'),
+          _buildUserInfo('Username', 'Username',context),
           10.vGap,
-          _buildUserInfo('Phone Number', '+95 0976666677'),
+          _buildUserInfo('Phone Number', '+95 0976666677',context),
           10.vGap,
-          _buildUserInfo('Email Address', 'user@gmail.com', isLast: true),
+          _buildUserInfo('Email Address', 'user@gmail.com',context, isLast: true),
         ],
       ),
     );
@@ -56,7 +56,7 @@ class UserProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(kMarginMedium + 8),
                   ),
                   child: Center(
-                    child: Icon(CupertinoIcons.arrow_left, color: kWhiteColor),
+                    child: Icon(CupertinoIcons.arrow_left, color: kWhiteColor,size: getDeviceType() == 'phone' ? 20 : 27,),
                   ),
                 ),
               ),
@@ -88,58 +88,60 @@ class UserProfileScreen extends StatelessWidget {
 
         Padding(
           padding: const EdgeInsets.only(top: 70),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 10,
-              children: [
-                Container(
-                  height: 48,
-                  width: 48,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(19),
-                  ),
-                  child: Center(
-                    child: Image.asset(kUserIcon, width: 28, height: 28),
-                  ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            spacing: 10,
+            children: [
+              Container(
+                height: 48,
+                width: 48,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(19),
                 ),
-                Container(
-                  height: 26,
-                  width: 130,
+                child: Center(
+                  child: Image.asset(kUserIcon, width: 28, height: 28),
+                ),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Container(
+                  // height: 26,
+                  padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(15),
                     color: Colors.grey.withValues(alpha: 0.3),
                   ),
-                  child: Center(
-                    child: Text(
-                      'Upgrade Premium',
-                      style: TextStyle(
-                        color: kWhiteColor,
-                        fontSize: kTextSmall,
-                        fontWeight: FontWeight.w700,
-                      ),
+                  child: Text(
+                    'Upgrade Premium',
+                    style: TextStyle(
+                      color: kWhiteColor,
+                      fontSize: kTextSmall,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  Widget _buildUserInfo(String title, String name, {bool? isLast}) {
+  Widget _buildUserInfo(String title, String name,BuildContext context, {bool? isLast}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+      padding:  EdgeInsets.symmetric(horizontal:
+              getDeviceType() == 'phone'
+                  ? kMarginMedium2
+                  : MediaQuery.of(context).size.width * 0.15,),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(color: Colors.grey)),
+          Text(title, style: TextStyle(color: Colors.grey,fontSize: kTextRegular2x)),
           5.vGap,
-          Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(name, style: TextStyle(fontWeight: FontWeight.bold,fontSize: kTextRegular2x)),
           10.vGap,
           isLast ?? false
               ? SizedBox()

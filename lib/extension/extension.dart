@@ -13,6 +13,12 @@ extension DateFormatting on DateTime {
   }
 }
 
+String getDeviceType() {
+    // ignore: deprecated_member_use
+    final data = MediaQueryData.fromView(WidgetsBinding.instance.window);
+    return data.size.shortestSide < 600 ? 'phone' :'tablet';
+  }
+
 extension StringValidators on String {
   bool get containsUppercase => contains(RegExp(r'[A-Z]'));
   bool get containsLowercase => contains(RegExp(r'[a-z]'));

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
+import 'package:movie_obs/screens/home/notification_screen.dart';
 import 'package:movie_obs/widgets/banner_image_animation.dart';
 import 'package:movie_obs/screens/home/movie_type_screen.dart';
 import 'package:movie_obs/screens/home/new_release_screen.dart';
@@ -33,9 +34,14 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Icon(CupertinoIcons.layers),
           ),
           10.hGap,
-          CircleAvatar(
-            backgroundColor: Colors.black12,
-            child: Icon(CupertinoIcons.bell),
+          InkWell(
+            onTap: () {
+              PageNavigator(ctx: context).nextPage(page: NotificationScreen());
+            },
+            child: CircleAvatar(
+              backgroundColor: Colors.black12,
+              child: Icon(CupertinoIcons.bell),
+            ),
           ),
           10.hGap,
           CircleAvatar(
@@ -51,10 +57,13 @@ class _HomeScreenState extends State<HomeScreen> {
         slivers: [
           SliverToBoxAdapter(child: Container(height: 15, color: kWhiteColor)),
           //carousel
-          SliverToBoxAdapter(child: Container(
-            height: 250,
-            color: kWhiteColor,
-            child: BannerImageAnimation())),
+          SliverToBoxAdapter(
+            child: Container(
+              height: getDeviceType() == 'phone' ? 220 : 350,
+              color: kWhiteColor,
+              child: BannerImageAnimation(),
+            ),
+          ),
 
           SliverToBoxAdapter(child: SizedBox(height: 10)),
           //options
@@ -64,27 +73,25 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverToBoxAdapter(
             child: _buildMovieOptions('Free Movie & Series', () {}),
           ),
-          SliverToBoxAdapter(child: SizedBox(height: 17)),
+          SliverToBoxAdapter(child: SizedBox(height: 10)),
           //top trending
           SliverToBoxAdapter(
             child: _buildMovieOptions('Top Trending', () {
               PageNavigator(ctx: context).nextPage(page: TopTrendingScreen());
             }),
           ),
-          SliverToBoxAdapter(child: SizedBox(height: 17)),
+          SliverToBoxAdapter(child: SizedBox(height: 10)),
           //new release
           SliverToBoxAdapter(
             child: _buildMovieOptions('New Releases', () {
               PageNavigator(ctx: context).nextPage(page: NewReleaseScreen());
             }),
           ),
-          SliverToBoxAdapter(child: SizedBox(height: 17)),
+          SliverToBoxAdapter(child: SizedBox(height: 20)),
         ],
       ),
     );
   }
-
-  
 
   Widget _buildOptions() {
     return Padding(
@@ -136,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: Center(child: Icon(CupertinoIcons.bookmark)),
               ),
-              Text('Wishlist'),
+              Text('Watchlist'),
             ],
           ),
         ],
@@ -146,10 +153,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildMovieOptions(String title, VoidCallback onPress) {
     return SizedBox(
-      height: 270,
+      height: 250,
       width: double.infinity,
       child: Column(
-        spacing: kMarginMedium - 3,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),

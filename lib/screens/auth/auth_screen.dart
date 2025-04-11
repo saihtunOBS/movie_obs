@@ -46,7 +46,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         }).toList(),
                     options: CarouselOptions(
                       autoPlay: false,
-                      viewportFraction: 0.8,
+                      viewportFraction: getDeviceType() == 'phone' ? 0.8 : 0.5,
                       enlargeCenterPage: true,
                       disableCenter: true,
                       onPageChanged: (index, reason) {
@@ -67,7 +67,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     dotHeight: kMarginMedium,
                     dotWidth: kMarginMedium,
                     activeDotColor: kBlackColor,
-                    dotColor: kWhiteColor
+                    dotColor: kWhiteColor,
                   ),
                   activeIndex: value,
                   count: imageArray.length,
@@ -84,18 +84,29 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
           ),
           10.vGap,
-          Text(
-            'Enjoy movies on your phone, tablet, or smart TV whenever you want.',
-            textAlign: TextAlign.center,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+            child: Text(
+              'Enjoy movies on your phone, tablet, or smart TV whenever you want.',
+              textAlign: TextAlign.center,
+            ),
           ),
 
-          SizedBox(height: 80),
+          SizedBox(
+            height:
+                getDeviceType() == 'phone'
+                    ? 80
+                    : MediaQuery.of(context).size.width * 0.3,
+          ),
         ],
       ),
       bottomNavigationBar: Container(
         height: 140,
         margin: EdgeInsets.symmetric(
-          horizontal: kMarginMedium2,
+          horizontal:
+              getDeviceType() == 'phone'
+                  ? kMarginMedium2
+                  : MediaQuery.of(context).size.width * 0.15,
           vertical: kMarginMedium2,
         ),
         width: double.infinity,

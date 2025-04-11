@@ -2,6 +2,7 @@ import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
 import 'package:movie_obs/data/dummy/dummy_data.dart';
+import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 
@@ -91,7 +92,7 @@ class _ImageScaleAnimationState extends State<ImageScaleAnimation>
           builder: (context, child) {
             // Animate from full screen to small circle
             final width = lerpDouble(screenWidth, 120, _animation.value)!;
-            final height = lerpDouble(250, 120, _animation.value)!;
+            final height = lerpDouble(getDeviceType() == 'phone' ? 250 : 350, 120, _animation.value)!;
             final borderRadius = lerpDouble(0, height / 2, _animation.value)!;
 
             return ClipRRect(

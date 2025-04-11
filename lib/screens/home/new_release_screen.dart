@@ -51,7 +51,7 @@ class _NewReleaseScreenState extends State<NewReleaseScreen> {
                         }).toList(),
                     options: CarouselOptions(
                       autoPlay: false,
-                      viewportFraction: 0.8,
+                      viewportFraction: getDeviceType() == 'phone' ? 0.8 : 0.5,
                       enlargeCenterPage: true,
                       disableCenter: true,
                       onPageChanged: (index, reason) {

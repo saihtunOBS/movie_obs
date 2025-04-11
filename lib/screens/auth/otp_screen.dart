@@ -75,7 +75,12 @@ class _OTPScreenState extends State<OTPScreen> {
             surfaceTintColor: Colors.transparent,
           ),
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+            padding: EdgeInsets.symmetric(
+              horizontal:
+                  getDeviceType() == 'phone'
+                      ? kMarginMedium2
+                      : MediaQuery.of(context).size.width * 0.15,
+            ),
             child: Column(
               spacing: kMarginMedium2,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,7 +120,15 @@ class _OTPScreenState extends State<OTPScreen> {
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             margin: EdgeInsets.only(
-              left: kMarginMedium2,right: kMarginMedium2,bottom: 27
+              left:
+                  getDeviceType() == 'phone'
+                      ? kMarginMedium2
+                      : MediaQuery.of(context).size.width * 0.15,
+              right:
+                  getDeviceType() == 'phone'
+                      ? kMarginMedium2
+                      : MediaQuery.of(context).size.width * 0.15,
+              bottom: 27,
             ),
             child: customButton(
               onPress: () {
@@ -136,45 +149,48 @@ class _OTPScreenState extends State<OTPScreen> {
 
   Widget _buildPinView() {
     final defaultPinTheme = PinTheme(
-      width: kSize64,
-      height: kSize64,
-      margin: const EdgeInsets.symmetric(horizontal: 1),
+      width: kSize64 + 10,
+      height: kSize64 + 10,
+      margin:  EdgeInsets.symmetric(horizontal: getDeviceType() == 'phone' ? 1 : 10),
       textStyle: const TextStyle(fontSize: kTextRegular22, color: Colors.black),
       decoration: BoxDecoration(color: kWhiteColor, shape: BoxShape.circle),
     );
     final submittedPinTheme = PinTheme(
-      width: kSize64,
-      height: kSize64,
+      width: kSize64 + 10,
+      height: kSize64 + 10,
       margin: const EdgeInsets.symmetric(horizontal: 1),
       textStyle: const TextStyle(fontSize: kTextRegular22, color: Colors.black),
       decoration: BoxDecoration(color: kWhiteColor, shape: BoxShape.circle),
     );
     return Center(
-      child: Directionality(
-        textDirection: TextDirection.ltr,
-        child: Pinput(
-          controller: pinController,
-          length: 6,
-          autofocus: true,
-          focusNode: focusNode,
-          defaultPinTheme: defaultPinTheme,
-          submittedPinTheme: submittedPinTheme,
-          focusedPinTheme: submittedPinTheme,
-          onClipboardFound: (value) {
-            pinController.setText(value);
-          },
-          onCompleted: (pin) {
-            setState(() {
-              isFilled = true;
-            });
-          },
-          onChanged: (value) {
-            setState(() {
-              if (pinController.text.length < 6) {
-                isFilled = false;
-              }
-            });
-          },
+      child: SizedBox(
+        height: 100,
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Pinput(
+            controller: pinController,
+            length: 6,
+            autofocus: true,
+            focusNode: focusNode,
+            defaultPinTheme: defaultPinTheme,
+            submittedPinTheme: submittedPinTheme,
+            focusedPinTheme: submittedPinTheme,
+            onClipboardFound: (value) {
+              pinController.setText(value);
+            },
+            onCompleted: (pin) {
+              setState(() {
+                isFilled = true;
+              });
+            },
+            onChanged: (value) {
+              setState(() {
+                if (pinController.text.length < 6) {
+                  isFilled = false;
+                }
+              });
+            },
+          ),
         ),
       ),
     );

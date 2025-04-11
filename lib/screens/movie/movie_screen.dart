@@ -53,26 +53,30 @@ class _MovieScreenState extends State<MovieScreen> {
         actions: [
           InkWell(
             onTap: () {
-              showModalBottomSheet(
-                useRootNavigator: true,
-                backgroundColor: kWhiteColor,
-                showDragHandle: true,
-                context: context,
-                builder: (context) {
-                  return movieFilterSheet();
-                },
-              );
+              if (getDeviceType() == 'phone') {
+                showModalBottomSheet(
+                  useRootNavigator: true,
+                  backgroundColor: kWhiteColor,
+                  showDragHandle: true,
+                  context: context,
+                  builder: (context) {
+                    return movieFilterSheet();
+                  },
+                );
+              } else {
+                showMovieRightSideSheet(context);
+              }
             },
             child: Container(
-              width: 43,
-              height: 33,
+              width: 42,
+              height: 32,
               decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(
                 CupertinoIcons.line_horizontal_3_decrease,
-                color: kWhiteColor,
+                color: kWhiteColor,size: 19,
               ),
             ),
           ),
@@ -81,7 +85,13 @@ class _MovieScreenState extends State<MovieScreen> {
         bottom: PreferredSize(
           preferredSize: Size(double.infinity, 65),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+            padding: EdgeInsets.only(
+              left: kMarginMedium2,
+              right:
+                  getDeviceType() == 'phone'
+                      ? kMarginMedium2
+                      : MediaQuery.sizeOf(context).width / 2,
+            ),
             child: SearchBar(
               controller: _controller,
               leading: Icon(CupertinoIcons.search),
@@ -104,8 +114,8 @@ class _MovieScreenState extends State<MovieScreen> {
             GridView.builder(
               itemCount: 10,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisExtent: 230,
+                crossAxisCount: getDeviceType() == 'phone' ? 2 : 3,
+                mainAxisExtent: 200,
                 mainAxisSpacing: 10,
                 crossAxisSpacing: 10,
               ),

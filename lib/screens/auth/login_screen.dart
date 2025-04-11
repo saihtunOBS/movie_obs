@@ -1,3 +1,5 @@
+import 'package:country_picker/country_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
@@ -7,8 +9,15 @@ import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:movie_obs/widgets/custom_button.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  Country? selectedCountryCode;
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +27,14 @@ class LoginScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
+      resizeToAvoidBottomInset: true,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+        padding: EdgeInsets.symmetric(
+          horizontal:
+              getDeviceType() == 'phone'
+                  ? kMarginMedium2
+                  : MediaQuery.of(context).size.width * 0.15,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: kMarginMedium,
@@ -40,12 +55,84 @@ class LoginScreen extends StatelessWidget {
             Row(
               spacing: kMarginMedium,
               children: [
-                Container(
-                  height: 50,
-                  width: 70,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: kWhiteColor,
+                GestureDetector(
+                  onTap: () {
+                    showCountryPicker(
+                      context: context,
+                      useSafeArea: true,
+                      searchAutofocus: true,
+                      useRootNavigator: true,
+                      moveAlongWithKeyboard: false,
+                      countryListTheme: CountryListThemeData(
+                        bottomSheetHeight:
+                            MediaQuery.of(context).size.height / 1.5,
+                        inputDecoration: InputDecoration(
+                          labelText: 'Search Country',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(color: Colors.grey),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: Colors.grey,
+                              width: 1,
+                            ),
+                          ),
+                        ),
+
+                        textStyle: TextStyle(
+                          fontSize: getDeviceType() == 'phone' ? 16 : 20,
+                          color: Colors.black87,
+                        ),
+                        backgroundColor: Colors.white,
+                        searchTextStyle: TextStyle(
+                          fontSize: getDeviceType() == 'phone' ? 16 : 20,
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(24),
+                          topRight: Radius.circular(24),
+                        ),
+                      ),
+                      onSelect: (value) {
+                        setState(() {
+                          selectedCountryCode = value;
+                        });
+                      },
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 5),
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: kWhiteColor,
+                    ),
+                    child: Row(
+                      spacing: 5,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 20,
+                          height: selectedCountryCode == null ? 15 : 45,
+                          child:
+                              selectedCountryCode != null
+                                  ? Center(
+                                    child: Text(
+                                      selectedCountryCode!.flagEmoji,
+                                      style: TextStyle(fontSize: 25),
+                                    ),
+                                  )
+                                  : cacheImage(
+                                    'https://static.vecteezy.com/system/resources/previews/027/222/649/non_2x/myanmar-flag-flag-of-myanmar-myanmar-flag-wave-png.png',
+                                    boxFit: BoxFit.fill,
+                                  ),
+                        ),
+                        Text('+${selectedCountryCode?.phoneCode ?? '95'}'),
+                        Icon(CupertinoIcons.chevron_down, size: 16),
+                      ],
+                    ),
                   ),
                 ),
                 Expanded(
@@ -119,7 +206,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
-            20.vGap
+            20.vGap,
           ],
         ),
       ),

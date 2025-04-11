@@ -95,9 +95,7 @@ class VideoBloc extends ChangeNotifier {
 
   void onVerticalDragUpdate(DragUpdateDetails details) {
     if (isLockScreen == true) return;
-    // Calculate the difference in the drag position
     double dragDifference = details.localPosition.dy - initialPosition;
-    // Adjust the scale based on the drag difference
     double scaleChange =
         dragDifference / 200; // Adjust this value for sensitivity
 
@@ -214,6 +212,7 @@ class VideoBloc extends ChangeNotifier {
         useRootNavigator: false,
         allowFullScreen: false,
         draggableProgressBar: false,
+        
       );
 
       fetchQualityOptions();

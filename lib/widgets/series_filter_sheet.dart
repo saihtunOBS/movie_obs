@@ -56,7 +56,7 @@ Widget seriesFilterSheet() {
 
 Widget _buildSeriesSession() {
   return SizedBox(
-    height: 70,
+    height: getDeviceType()  == 'phone' ? 70 : 100,
     child: Column(
       spacing: 12,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,3 +81,38 @@ Widget _buildSeriesSession() {
   );
 }
 
+void showSeriesRightSideSheet(BuildContext context) {
+  showGeneralDialog(
+    useRootNavigator: true,
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: "RightSideSheet",
+    transitionDuration: const Duration(milliseconds: 300),
+    pageBuilder: (context, anim1, anim2) {
+      return Align(
+        alignment: Alignment.centerRight,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            margin: EdgeInsets.only(top: 60),
+            decoration: BoxDecoration(
+              color: kWhiteColor,
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(30)),
+            ),
+            width: MediaQuery.of(context).size.width / 2,
+            height: double.infinity,
+            padding: const EdgeInsets.all(20),
+            child: seriesFilterSheet(),
+          ),
+        ),
+      );
+    },
+    transitionBuilder: (context, animation, secondaryAnimation, child) {
+      final curvedValue = Curves.easeInOut.transform(animation.value) - 1.0;
+      return Transform.translate(
+        offset: Offset(curvedValue * -300, 0),
+        child: Opacity(opacity: animation.value, child: child),
+      );
+    },
+  );
+}

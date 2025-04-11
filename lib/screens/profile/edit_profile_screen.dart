@@ -19,16 +19,19 @@ class EditProfileScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAppBar(context),
-          _buildUserInfo('Username', 'Username'),
+          _buildUserInfo('Username', 'Username',context),
           10.vGap,
-          _buildUserInfo('Phone Number', '+95 0976666677'),
+          _buildUserInfo('Phone Number', '+95 0976666677',context),
           10.vGap,
-          _buildUserInfo('Email Address', 'user@gmail.com', isLast: true),
+          _buildUserInfo('Email Address', 'user@gmail.com',context, isLast: true),
         ],
       ),
       bottomNavigationBar: Container(
         margin: EdgeInsets.symmetric(
-          horizontal: kMarginMedium2,
+          horizontal:
+              getDeviceType() == 'phone'
+                  ? kMarginMedium2
+                  : MediaQuery.of(context).size.width * 0.15,
           vertical: kMarginMedium2 + 10,
         ),
         child: Row(
@@ -88,7 +91,7 @@ class EditProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(kMarginMedium + 8),
                   ),
                   child: Center(
-                    child: Icon(CupertinoIcons.arrow_left, color: kWhiteColor),
+                    child: Icon(CupertinoIcons.arrow_left, color: kWhiteColor,size: getDeviceType() == 'phone' ? 20 : 27,),
                   ),
                 ),
               ),
@@ -137,13 +140,22 @@ class EditProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUserInfo(String title, String name, {bool? isLast}) {
+  Widget _buildUserInfo(String title, String name, BuildContext context,{bool? isLast}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+      padding: EdgeInsets.symmetric(horizontal:
+              getDeviceType() == 'phone'
+                  ? kMarginMedium2
+                  : MediaQuery.of(context).size.width * 0.15,),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(fontWeight: FontWeight.w700)),
+          Text(
+            title,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: kTextRegular2x,
+            ),
+          ),
           5.vGap,
           CustomTextfield(hint: title),
           10.vGap,

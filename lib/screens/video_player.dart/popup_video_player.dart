@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/data/videoPlayer/video_player.dart';
+import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
@@ -78,8 +79,8 @@ class _MiniPlayerOverlay extends StatefulWidget {
 class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   Offset _position = Offset(20, 0);
-  final double _width = 180;
-  final double _height = 110;
+  final double _width = getDeviceType() == 'phone' ? 180 : 250;
+  final double _height = getDeviceType() == 'phone' ? 110 : 200;
   late AnimationController _controller;
   late Animation<Offset> _animation;
   double _dragStartY = 0;
@@ -259,7 +260,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                     Container(
                       color: Colors.black54,
                       height: 43,
-                      width: 180,
+                      width: getDeviceType() == 'phone' ? 180 : 250,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

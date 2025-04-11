@@ -31,7 +31,7 @@ class ActorViewScreen extends StatelessWidget {
       child: GridView.builder(
         itemCount: 10,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+          crossAxisCount: getDeviceType() == 'phone' ? 2 : 3,
           mainAxisExtent: 230,
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
@@ -67,7 +67,7 @@ class ActorViewScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Actor name', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Actor name', style: TextStyle(fontWeight: FontWeight.bold,fontSize: kTextRegular2x)),
               Text('Actor', style: TextStyle(fontSize: kTextSmall)),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),

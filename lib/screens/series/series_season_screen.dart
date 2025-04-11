@@ -1,20 +1,20 @@
-import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/extension/extension.dart';
-import 'package:movie_obs/extension/page_navigator.dart';
-import 'package:movie_obs/list_items/cast_list_item.dart';
-import 'package:movie_obs/screens/home/actor_view_screen.dart';
-import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
+import 'package:movie_obs/list_items/series_list_item.dart';
+import 'package:movie_obs/screens/series/season_episode_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 
+import '../../extension/page_navigator.dart';
+import '../../list_items/cast_list_item.dart';
 import '../../widgets/expandable_text.dart';
+import '../home/actor_view_screen.dart';
 
-class MovieTypeScreen extends StatelessWidget {
-  const MovieTypeScreen({super.key});
+class SeriesSeasonScreen extends StatelessWidget {
+  const SeriesSeasonScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -110,41 +110,25 @@ class MovieTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: kMarginMedium2,
-        vertical: kMarginMedium2 + 15,
-      ),
-      child: Column(
-        spacing: getDeviceType() == 'phone' ? 8 : 15,
-        children: [
-          Center(
-            child: Text(
-              'Movie Title',
-              style: TextStyle(fontSize: kTextRegular18 + 2),
-            ),
-          ),
-          _buildMinuteAndViewCount(),
-          Center(
-            child: Text(
-              'Action , Adventure',
-              style: TextStyle(
-                fontSize: kTextSmall,
-                color: Colors.grey,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          _buildTypeAndWatchList(),
-          1.vGap,
-          _buildWatchNowButton(context),
-          1.vGap,
-          _buildCastView(),
-          1.vGap,
-          _buildDescription(),
-        ],
-      ),
+  Widget _buildEpisodeAndViewCount() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: kMargin12 + 4,
+      children: [
+        Text('30 episodes', style: TextStyle(fontWeight: FontWeight.bold)),
+        SizedBox(
+          width: 5,
+          height: 5,
+          child: CircleAvatar(backgroundColor: kBlackColor),
+        ),
+        Row(
+          spacing: kMargin5,
+          children: [
+            Icon(CupertinoIcons.eye, size: 20),
+            Text('35', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ],
     );
   }
 
@@ -181,101 +165,68 @@ class MovieTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDescription() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Director : Myanmar',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-        5.vGap,
-        Text(
-          'Script Writer : Myanmar',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-        10.vGap,
-        ExpandableText(
-          text:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius',
-          style: TextStyle(fontSize: 14, color: kBlackColor),
-        ),
-        10.vGap,
-        Text('Tags', style: TextStyle(fontWeight: FontWeight.w700)),
-        SizedBox(
-          height: 50,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Chip(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  label: Text('#Title', style: TextStyle(color: kWhiteColor)),
-                  backgroundColor: kBlackColor,
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildWatchNowButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        context.pushTransparentRoute(
-          VideoPlayerScreen(
-            url:
-                'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
-            isFirstTime: true,
-          ),
-        );
-      },
-      child: Container(
-        height: 48,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: kBlackColor,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 10,
-          children: [
-            Icon(CupertinoIcons.video_camera, color: kWhiteColor, size: 27),
-            Text(
-              'Watch Now',
-              style: TextStyle(fontWeight: FontWeight.bold, color: kWhiteColor),
+  Widget _buildBody(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: kMarginMedium2,
+        vertical: kMarginMedium2 + 15,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: getDeviceType() == 'phone' ? 8 : 15,
+        children: [
+          Center(
+            child: Text(
+              'Series Title (Season 1)',
+              style: TextStyle(fontSize: kTextRegular18 + 2),
             ),
-          ],
-        ),
+          ),
+          _buildEpisodeAndViewCount(),
+          1.vGap,
+          _buildTypeAndWatchList(),
+          1.vGap,
+          _buildCastView(),
+          1.vGap,
+          _buildDescription(),
+          Text(
+            'Seasons',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: kTextRegular18,
+            ),
+          ),
+          _seriesListView(),
+        ],
       ),
     );
   }
 
-  Widget _buildMinuteAndViewCount() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      spacing: kMargin12 + 4,
-      children: [
-        Text('3 hr 30 mins', style: TextStyle(fontWeight: FontWeight.bold)),
-        SizedBox(
-          width: 5,
-          height: 5,
-          child: CircleAvatar(backgroundColor: kBlackColor),
-        ),
+  Widget _seriesListView() {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: 5,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            PageNavigator(ctx: context).nextPage(page: SeasonEpisodeScreen());
+          },
+          child: seasonListItem(isSeries: false),
+        );
+      },
+    );
+  }
 
-        Row(
-          spacing: kMargin5,
-          children: [
-            Icon(CupertinoIcons.eye, size: 20),
-            Text('35', style: TextStyle(fontWeight: FontWeight.bold)),
-          ],
+  Widget _buildDescription() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ExpandableText(
+          text:
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius',
+          style: TextStyle(fontSize: 14, color: kBlackColor),
         ),
       ],
     );

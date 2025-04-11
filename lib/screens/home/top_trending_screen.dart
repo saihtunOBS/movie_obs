@@ -51,7 +51,7 @@ class _TopTrendingScreenState extends State<TopTrendingScreen> {
                         }).toList(),
                     options: CarouselOptions(
                       autoPlay: false,
-                      viewportFraction: 0.8,
+                      viewportFraction: getDeviceType() == 'phone' ? 0.8 : 0.5,
                       enlargeCenterPage: true,
                       disableCenter: true,
                       onPageChanged: (index, reason) {
@@ -88,7 +88,7 @@ class _TopTrendingScreenState extends State<TopTrendingScreen> {
                     dotHeight: kMarginMedium,
                     dotWidth: kMarginMedium,
                     activeDotColor: kBlackColor,
-                    dotColor: kWhiteColor
+                    dotColor: kWhiteColor,
                   ),
                   activeIndex: value,
                   count: imageArray.length,

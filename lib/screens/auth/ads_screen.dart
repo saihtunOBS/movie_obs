@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/splash_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
@@ -12,7 +13,7 @@ class AdsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+        padding: EdgeInsets.symmetric(horizontal:getDeviceType() == 'phone' ? kMarginMedium2 : MediaQuery.of(context).size.width * 0.15),
         child: Column(
           spacing: 15,
           mainAxisAlignment: MainAxisAlignment.center,

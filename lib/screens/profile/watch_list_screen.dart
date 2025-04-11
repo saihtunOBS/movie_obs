@@ -1,21 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/extension/extension.dart';
-import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
-import 'package:movie_obs/screens/series/series_title_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
-import 'package:movie_obs/widgets/series_filter_sheet.dart';
+import 'package:movie_obs/widgets/movie_filter_sheet.dart';
 
-class SeriesScreen extends StatefulWidget {
-  const SeriesScreen({super.key});
+class WatchListScreen extends StatefulWidget {
+  const WatchListScreen({super.key});
 
   @override
-  State<SeriesScreen> createState() => _SeriesScreenState();
+  State<WatchListScreen> createState() => _WatchListScreenState();
 }
 
-class _SeriesScreenState extends State<SeriesScreen> {
+class _WatchListScreenState extends State<WatchListScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<String> suggestions = [
     'Apple',
@@ -50,7 +48,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
       appBar: AppBar(
         backgroundColor: kBackgroundColor,
         surfaceTintColor: kBackgroundColor,
-        title: Text('Tuu Tu\' Series'),
+        title: Text('Watchlist'),
         centerTitle: false,
         actions: [
           InkWell(
@@ -62,11 +60,11 @@ class _SeriesScreenState extends State<SeriesScreen> {
                   showDragHandle: true,
                   context: context,
                   builder: (context) {
-                    return seriesFilterSheet();
+                    return movieFilterSheet();
                   },
                 );
               } else {
-                showSeriesRightSideSheet(context);
+                showMovieRightSideSheet(context);
               }
             },
             child: Container(
@@ -78,8 +76,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
               ),
               child: Icon(
                 CupertinoIcons.line_horizontal_3_decrease,
-                color: kWhiteColor,
-                size: 19,
+                color: kWhiteColor,size: 19,
               ),
             ),
           ),
@@ -98,7 +95,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
             child: SearchBar(
               controller: _controller,
               leading: Icon(CupertinoIcons.search),
-              hintText: 'Search by series title',
+              hintText: 'Search by movie & series',
               backgroundColor: WidgetStateProperty.all(Colors.white),
               onChanged: _onSearchChanged,
               shape: WidgetStateProperty.all(
@@ -118,7 +115,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
               itemCount: 10,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: getDeviceType() == 'phone' ? 2 : 3,
-                mainAxisExtent: 200,
+                mainAxisExtent: 230,
                 mainAxisSpacing: 10,
                 crossAxisSpacing: 10,
               ),
@@ -127,14 +124,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                 vertical: kMarginMedium2 - 5,
               ),
               itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    PageNavigator(
-                      ctx: context,
-                    ).nextPage(page: SeriesTitleScreen());
-                  },
-                  child: movieListItem(isMovieScreen: true),
-                );
+                return movieListItem(isMovieScreen: true);
               },
             ),
             filteredSuggestions.isEmpty

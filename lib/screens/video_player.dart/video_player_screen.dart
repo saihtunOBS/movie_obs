@@ -8,7 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/data/videoPlayer/video_player.dart';
+import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/screens/video_player.dart/popup_video_player.dart';
+import 'package:movie_obs/utils/colors.dart';
+import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/rotation_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
@@ -189,10 +193,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   Widget build(BuildContext context) {
     return Consumer<VideoBloc>(
       builder: (context, value, child) {
-        return Material(
-          color: Colors.black.withValues(alpha: _dragOffset),
-          child: Column(
+        return Scaffold(
+          appBar: AppBar(
+            toolbarHeight: 0.0,
+            backgroundColor: Colors.transparent,automaticallyImplyLeading: false,),
+          extendBodyBehindAppBar: true,
+          extendBody: true,
+          backgroundColor: kBlackColor.withValues(alpha: _dragOffset),
+          body: Column(
             children: [
+              !bloc.isFullScreen ? 30.vGap : 0.vGap,
               _buildVideoPlayerSection(),
               if (!bloc.isFullScreen) Flexible(child: _buildContentSection()),
             ],
@@ -203,8 +213,14 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildVideoPlayerSection() {
-    return SizedBox(
-      height: bloc.isFullScreen ? MediaQuery.of(context).size.height : 270,
+    return Container(
+      color: Colors.transparent,
+      height:
+          bloc.isFullScreen
+              ? MediaQuery.of(context).size.height
+              : getDeviceType() == 'phone'
+              ? 245
+              : MediaQuery.of(context).size.width * 10 / 16,
       width: MediaQuery.of(context).size.width,
 
       child: GestureDetector(
@@ -213,7 +229,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           bloc.resetControlVisibility();
         },
         child: Container(
-          margin: EdgeInsets.only(top: bloc.isFullScreen ? 0 : 40),
+          margin: EdgeInsets.only(top: bloc.isFullScreen ? 0 : 0),
           child: Stack(
             children: [
               chewieControllerNotifier == null ||
@@ -270,9 +286,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         showControl = false;
         onStartDrag.value = details.progress <= 0.0;
         setState(() {
-          // Calculate offset based on screen height but maintain padding
           if (mounted) {
-            _newDragOffset = details.progress * (screenHeight * 0.26);
+            _newDragOffset = details.progress * (screenHeight * 0.25);
             _dragOffset = 1.0 - details.progress;
           }
         });
@@ -448,41 +463,34 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Widget _buildExitButton() {
     if (bloc.isFullScreen) return const SizedBox();
-    return IgnorePointer(
-      ignoring: !showControl,
-      child: InkWell(
-        onTap: () {
-          if (videoPlayerController.value.isInitialized) {
-            showMiniControl = true;
-            if (!videoPlayerController.value.isPlaying) {
-              showVisibleMiniControl.value = true;
-            }
-            isPlay.value = !videoPlayerController.value.isPlaying;
-            showControl = false;
-            bloc.updateListener();
-            Navigator.pop(context);
-            MiniVideoPlayer.showMiniPlayer(
-              context,
-              bloc.currentUrl,
-              videoPlayerController.value.isPlaying
-                  ? isPlay.value = true
-                  : isPlay.value = false,
-            );
-          }
-        },
-        child: Container(
-          //margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          height: 30,
-          width: 35,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: Colors.transparent,
-          ),
-          child: const Icon(
-            CupertinoIcons.chevron_down,
-            color: Colors.white,
-            size: 22,
-          ),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        if (videoPlayerController.value.isInitialized) {
+          isPlay.value = !videoPlayerController.value.isPlaying;
+          showControl = false;
+          bloc.updateListener();
+          Navigator.pop(context);
+          MiniVideoPlayer.showMiniPlayer(
+            context,
+            bloc.currentUrl,
+            videoPlayerController.value.isPlaying
+                ? isPlay.value = true
+                : isPlay.value = false,
+          );
+        }
+      },
+      child: Container(
+        height: 30,
+        width: 35,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.transparent,
+        ),
+        child: const Icon(
+          CupertinoIcons.chevron_down,
+          color: Colors.white,
+          size: 22,
         ),
       ),
     );
@@ -701,55 +709,48 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Widget _buildContent() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20, top: 16),
+      padding: const EdgeInsets.only(bottom: 20),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        color: Colors.black,
+        decoration: BoxDecoration(
+          color: kBackgroundColor,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
         child: SingleChildScrollView(
           physics: ClampingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              10.vGap,
+              Text(
                 'Tuutu TV',
-                style: TextStyle(fontSize: 20, color: Colors.white),
+                style: TextStyle(
+                  fontSize: getDeviceType() == 'phone' ? 18 : 20,
+                ),
               ),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 'Video insertion of audio narrated descriptions of a television program key visual elements into natural pauses in the program dialogue, which makes video programming more accessible to individuals who are blind or visually impaired.',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                  fontSize: getDeviceType() == 'phone' ? 14 : 16,
+                ),
               ),
               const SizedBox(height: 20),
               GridView.builder(
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: getDeviceType() == 'phone' ? 2 : 3,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
                 itemCount: 5,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: SizedBox(
-                        width: 150,
-                        height: 100,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            'https://cdna.artstation.com/p/assets/images/images/017/022/542/large/amirhosein-naseri-desktop-screenshot-2019-04-03-18-17-47-11.jpg?1554338571',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
+                  return movieListItem(isMovieScreen: true);
                 },
               ),
               const SizedBox(height: 20),
@@ -825,10 +826,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           children: [
             Icon(icon, size: 20, color: Colors.white),
 
-            Text(title, style: TextStyle(fontSize: 15, color: Colors.white)),
+            Text(
+              title,
+              style: TextStyle(fontSize: kTextRegular2x, color: Colors.white),
+            ),
           ],
         ),
-        Text(value, style: TextStyle(fontSize: 14, color: Colors.grey)),
+        Text(
+          value,
+          style: TextStyle(fontSize: kTextRegular2x, color: Colors.grey),
+        ),
       ],
     );
   }
@@ -894,9 +901,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                                       )
                                       : SizedBox(width: 30),
                                   Text(
-                                    'Auto (recommanded)',
+                                    'Auto (recommended)',
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: kTextRegular2x,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -953,7 +960,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                                       '',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 15,
+                                    fontSize: kTextRegular2x,
                                     color: Colors.white,
                                   ),
                                 ),
