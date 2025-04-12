@@ -25,7 +25,12 @@ Widget movieListItem({bool? isMovieScreen}) {
           top: 10,
           child: Container(
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 186, 184, 184).withValues(alpha: 0.8),
+              color: const Color.fromARGB(
+                255,
+                186,
+                184,
+                184,
+              ).withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(10),
             ),
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),

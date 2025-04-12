@@ -115,7 +115,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   @override
   void initState() {
-    SystemChrome.setPreferredOrientations([]);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     onStartDrag.value = true;
     WidgetsBinding.instance.addObserver(this);
     bloc = Provider.of<VideoBloc>(context, listen: false);
@@ -196,7 +200,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         return Scaffold(
           appBar: AppBar(
             toolbarHeight: 0.0,
-            backgroundColor: Colors.transparent,automaticallyImplyLeading: false,),
+            backgroundColor: Colors.transparent,
+            automaticallyImplyLeading: false,
+          ),
           extendBodyBehindAppBar: true,
           extendBody: true,
           backgroundColor: kBlackColor.withValues(alpha: _dragOffset),

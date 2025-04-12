@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: kTextRegular3x,
+                    fontSize: kTextRegular3x - 1,
                     fontWeight: FontWeight.w800,
                   ),
                 ),

@@ -63,7 +63,7 @@ class PromotionScreen extends StatelessWidget {
         ),
 
         Padding(
-          padding: const EdgeInsets.only(top: 80, left: 30, right: 30),
+          padding: EdgeInsets.only(top: getDeviceType() == 'phone' ? 80 : 60, left: 30, right: 30),
           child: Align(
             alignment: Alignment.bottomCenter,
             child: Column(
