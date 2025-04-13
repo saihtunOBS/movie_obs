@@ -70,11 +70,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ctx: context,
                               ).nextPage(page: UserProfileScreen());
                             case 1:
-                             PageNavigator(
+                              PageNavigator(
                                 ctx: context,
                               ).nextPage(page: PromotionScreen());
-                            case 2: 
-                             PageNavigator(
+                            case 2:
+                              PageNavigator(
                                 ctx: context,
                               ).nextPage(page: WatchListScreen());
                             case 7:
@@ -249,7 +249,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               'Are you sure you want to delete your account permanently?',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: kTextRegular18),
+              style: TextStyle(fontSize: kTextRegular2x),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

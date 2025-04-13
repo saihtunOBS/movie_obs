@@ -133,24 +133,21 @@ Widget buildTypeSession() {
 Widget buildGenreSession() {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-    spacing: 7,
+    spacing: 5,
     children: [
-      SizedBox(
-        height: getDeviceType() == 'phone' ? 20 : 40,
-        child: Row(
-          spacing: kMarginMedium,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(CupertinoIcons.folder_fill,size: 20,),
-            Text(
-              'Genre',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: kTextRegular2x,
-              ),
+      Row(
+        spacing: kMarginMedium,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(kGenreIcon, width: 32, height: 32),
+          Text(
+            'Genre',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: kTextRegular2x,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       Wrap(
         spacing: kMarginMedium,
