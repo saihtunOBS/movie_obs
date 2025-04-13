@@ -484,6 +484,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                 ? isPlay.value = true
                 : isPlay.value = false,
           );
+          SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
         }
       },
       child: Container(
@@ -609,7 +610,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           padding: const EdgeInsets.only(left: 10),
           child: Text(
             "${bloc.formatDuration(value.position)} / ${bloc.formatDuration(value.duration)}",
-            style: const TextStyle(color: Colors.white, fontSize: 12),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         );
       },

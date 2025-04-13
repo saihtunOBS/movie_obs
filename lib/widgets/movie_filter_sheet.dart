@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
+import 'package:movie_obs/utils/images.dart';
 
 Widget movieFilterSheet() {
   return Container(
@@ -10,7 +12,7 @@ Widget movieFilterSheet() {
       vertical: kMarginMedium2,
     ),
     child: Column(
-      spacing: kMarginMedium2,
+      spacing: 5,
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -54,94 +56,92 @@ Widget movieFilterSheet() {
 }
 
 Widget _buildMovieSession() {
-  return SizedBox(
-    height: getDeviceType()  == 'phone' ? 70 : 100,
-    child: Column(
-      spacing: 12,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          spacing: kMargin10,
-          children: [
-            Icon(Icons.tv),
-            Text(
-              'Movies',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: kTextRegular2x,
-              ),
+  return Column(
+    spacing: 5,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        spacing: kMarginMedium,
+        children: [
+          Image.asset(kMovieSeriesIcon, width: 28, height: 28),
+          Text(
+            'Movies',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: kTextRegular2x,
             ),
-          ],
-        ),
-        Expanded(
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
-            itemCount: 1,
-            itemBuilder: (context, index) {
-              return Chip(
-                label: Text('hello'),
-                backgroundColor: kWhiteColor,
-                side: BorderSide(color: kBlackColor),
-              );
-            },
           ),
+        ],
+      ),
+      SizedBox(
+        height: 50,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            return Chip(
+              label: Text('hello'),
+              backgroundColor: kWhiteColor,
+              side: BorderSide(color: kBlackColor),
+            );
+          },
         ),
-      ],
-    ),
+      ),
+    ],
   );
 }
 
 Widget buildTypeSession() {
-  return SizedBox(
-    height:getDeviceType()  == 'phone' ? 70 : 100,
-    child: Column(
-      spacing: 12,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          spacing: kMargin10,
-          children: [
-            Icon(Icons.tv),
-            Text(
-              'Types',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: kTextRegular2x,
-              ),
+  return Column(
+    spacing: 5,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Row(
+        spacing: kMarginMedium,
+        children: [
+          Image.asset(kTypeIcon, width: 32, height: 32),
+          Text(
+            'Types',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: kTextRegular2x,
             ),
-          ],
-        ),
-        Expanded(
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
-            itemCount: 1,
-            itemBuilder: (context, index) {
-              return Chip(
-                label: Text('hello'),
-                backgroundColor: kWhiteColor,
-                side: BorderSide(color: kBlackColor),
-              );
-            },
           ),
+        ],
+      ),
+      SizedBox(
+        height: 50,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            return Chip(
+              label: Text('hello'),
+              backgroundColor: kWhiteColor,
+              side: BorderSide(color: kBlackColor),
+            );
+          },
         ),
-      ],
-    ),
+      ),
+    ],
   );
 }
 
 Widget buildGenreSession() {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-    spacing: 12,
+    spacing: 7,
     children: [
       SizedBox(
-        height: getDeviceType()  == 'phone' ? 20 : 40,
+        height: getDeviceType() == 'phone' ? 20 : 40,
         child: Row(
-          spacing: kMargin10,
+          spacing: kMarginMedium,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(Icons.tv),
+            Icon(CupertinoIcons.folder_fill,size: 20,),
             Text(
               'Genre',
               style: TextStyle(

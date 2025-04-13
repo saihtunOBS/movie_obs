@@ -13,3 +13,9 @@ const kTermIcon = 'assets/images/term.png';
 const kPrivacyIcon = 'assets/images/privacy.png';
 const kUserIcon = 'assets/images/user.png';
 const kEditIcon = 'assets/images/edit.png';
+
+//
+const kCategoryIcon = 'assets/images/category.png';
+const kMovieSeriesIcon = 'assets/images/movie_series.png';
+const kTypeIcon = 'assets/images/type.png';
+const kGenreIcon = 'assets/images/genre.png';

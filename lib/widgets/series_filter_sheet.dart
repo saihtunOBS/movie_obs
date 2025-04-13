@@ -4,6 +4,8 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
 
+import '../utils/images.dart';
+
 Widget seriesFilterSheet() {
   return Container(
     margin: EdgeInsets.symmetric(
@@ -11,7 +13,7 @@ Widget seriesFilterSheet() {
       vertical: kMarginMedium2,
     ),
     child: Column(
-      spacing: kMarginMedium2,
+      spacing: 5,
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -55,29 +57,39 @@ Widget seriesFilterSheet() {
 }
 
 Widget _buildSeriesSession() {
-  return SizedBox(
-    height: getDeviceType()  == 'phone' ? 70 : 100,
-    child: Column(
-      spacing: 12,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(spacing: kMargin10, children: [Icon(Icons.tv), Text('Series',style: TextStyle(fontWeight: FontWeight.bold,fontSize: kTextRegular2x),)]),
-        Expanded(
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
-            itemCount: 1,
-            itemBuilder: (context, index) {
-              return Chip(
-                label: Text('hello'),
-                backgroundColor: kWhiteColor,
-                side: BorderSide(color: kBlackColor),
-              );
-            },
+  return Column(
+    spacing: 5,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        spacing: kMargin10,
+        children: [
+          Image.asset(kMovieSeriesIcon, width: 28, height: 28),
+          Text(
+            'Series',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: kTextRegular2x,
+            ),
           ),
+        ],
+      ),
+      SizedBox(
+        height: 50,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            return Chip(
+              label: Text('hello'),
+              backgroundColor: kWhiteColor,
+              side: BorderSide(color: kBlackColor),
+            );
+          },
         ),
-      ],
-    ),
+      ),
+    ],
   );
 }
 

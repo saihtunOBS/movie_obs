@@ -43,7 +43,7 @@ class _MovieOBSState extends State<MovieOBS> {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(
             textScaler: TextScaler.linear(
-              getDeviceType() == 'phone' ? 0.9 : 1.3,
+              getDeviceType() == 'phone' ? 0.87 : 1.3,
             ),
           ),
           child: child!,
@@ -57,9 +57,7 @@ class _MovieOBSState extends State<MovieOBS> {
                 size: getDeviceType() == 'phone' ? 20 : 27,
               ),
         ),
-        progressIndicatorTheme: ProgressIndicatorThemeData(
-          color: Colors.white,
-        ),
+        progressIndicatorTheme: ProgressIndicatorThemeData(color: Colors.white),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.red,
           primary: Colors.amber,
