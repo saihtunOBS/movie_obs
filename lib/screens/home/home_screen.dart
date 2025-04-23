@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('LOGO'),
         centerTitle: false,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         surfaceTintColor: kBackgroundColor,
         actions: [
           CircleAvatar(
@@ -73,14 +73,18 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverToBoxAdapter(
             child: _buildMovieOptions('Free Movie & Series', () {}),
           ),
-          SliverToBoxAdapter(child: SizedBox(height: getDeviceType() == 'phone' ? 10 : 20)),
+          SliverToBoxAdapter(
+            child: SizedBox(height: getDeviceType() == 'phone' ? 10 : 20),
+          ),
           //top trending
           SliverToBoxAdapter(
             child: _buildMovieOptions('Top Trending', () {
               PageNavigator(ctx: context).nextPage(page: TopTrendingScreen());
             }),
           ),
-          SliverToBoxAdapter(child: SizedBox(height:  getDeviceType() == 'phone' ? 10 : 20)),
+          SliverToBoxAdapter(
+            child: SizedBox(height: getDeviceType() == 'phone' ? 10 : 20),
+          ),
           //new release
           SliverToBoxAdapter(
             child: _buildMovieOptions('New Releases', () {

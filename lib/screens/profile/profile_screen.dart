@@ -29,150 +29,139 @@ var titleArray = [
   'Delete Account',
 ];
 List<Widget> iconArray = [
-  Icon(CupertinoIcons.person_fill, size: 20, color: kBlackColor),
-  Image.asset(kPromotionIcon),
-  Icon(CupertinoIcons.bookmark_fill, size: 20, color: kBlackColor),
-  Icon(CupertinoIcons.arrow_clockwise, size: 20, color: kBlackColor),
-  Image.asset(kFaqIcon),
-  Image.asset(kTermIcon),
-  Image.asset(kPrivacyIcon),
-  Icon(CupertinoIcons.trash, size: 20, color: kBlackColor),
+  Icon(CupertinoIcons.person_fill, size: 20, color: kWhiteColor),
+  Image.asset(kPromotionIcon, color: kWhiteColor),
+  Icon(CupertinoIcons.bookmark_fill, size: 20, color: kWhiteColor),
+  Icon(CupertinoIcons.arrow_clockwise, size: 20, color: kWhiteColor),
+  Image.asset(kFaqIcon, color: kWhiteColor),
+  Image.asset(kTermIcon, color: kWhiteColor),
+  Image.asset(kPrivacyIcon, color: kWhiteColor),
+  Icon(CupertinoIcons.trash, size: 20, color: kWhiteColor),
 ];
 
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBackgroundColor,
-      extendBody: true,
-      body: Column(
-        children: [
-          _buildAppBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: ClampingScrollPhysics(),
-              child: Column(
-                children: [
-                  ListView.builder(
-                    padding: EdgeInsets.zero,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: titleArray.length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return _buidProfileListItem(
-                        titleArray[index],
-                        iconArray[index],
-                        titleArray[index] == 'Delete Account' ? true : false,
-                        onPress: () {
-                          switch (index) {
-                            case 0:
-                              PageNavigator(
-                                ctx: context,
-                              ).nextPage(page: UserProfileScreen());
-                            case 1:
-                              PageNavigator(
-                                ctx: context,
-                              ).nextPage(page: PromotionScreen());
-                            case 2:
-                              PageNavigator(
-                                ctx: context,
-                              ).nextPage(page: WatchListScreen());
-                            case 7:
-                              showDialog(
-                                useRootNavigator: true,
-                                context: context,
-                                builder:
-                                    (builder) => Dialog(child: _buildAlert()),
-                              );
-                              break;
-                            default:
-                          }
-                        },
-                      );
-                    },
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal:
-                          getDeviceType() == 'phone'
-                              ? kMarginMedium2
-                              : MediaQuery.of(context).size.width * 0.15,
-                      vertical: kMarginMedium2,
-                    ),
-                    child: customButton(
-                      onPress: () {},
-                      context: context,
-                      backgroundColor: kBlackColor,
-                      title: 'Logout',
-                      textColor: kWhiteColor,
-                    ),
-                  ),
-                ],
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        toolbarHeight: 70,
+        title: _buildAppBar(),
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+      ),
+      body: SingleChildScrollView(
+        physics: ClampingScrollPhysics(),
+        child: Column(
+          children: [
+            30.vGap,
+            ListView.builder(
+              padding: EdgeInsets.zero,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: titleArray.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return _buidProfileListItem(
+                  titleArray[index],
+                  iconArray[index],
+                  titleArray[index] == 'Delete Account' ? true : false,
+                  onPress: () {
+                    switch (index) {
+                      case 0:
+                        PageNavigator(
+                          ctx: context,
+                        ).nextPage(page: UserProfileScreen());
+                      case 1:
+                        PageNavigator(
+                          ctx: context,
+                        ).nextPage(page: PromotionScreen());
+                      case 2:
+                        PageNavigator(
+                          ctx: context,
+                        ).nextPage(page: WatchListScreen());
+                      case 7:
+                        showDialog(
+                          useRootNavigator: true,
+                          context: context,
+                          builder: (builder) => Dialog(child: _buildAlert()),
+                        );
+                        break;
+                      default:
+                    }
+                  },
+                );
+              },
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal:
+                    getDeviceType() == 'phone'
+                        ? kMarginMedium2
+                        : MediaQuery.of(context).size.width * 0.15,
+                vertical: kMarginMedium2,
+              ),
+              child: customButton(
+                onPress: () {},
+                context: context,
+                backgroundColor: kSecondaryColor,
+                title: 'Logout',
+                textColor: kWhiteColor,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildAppBar() {
-    return Stack(
+    return Column(
       children: [
-        SizedBox(
-          height: 200,
-          width: double.infinity,
-          child: Image.asset(kBarBackground, fit: BoxFit.fill),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            top: 60,
-            left: kMarginMedium2,
-            right: kMarginMedium2,
-          ),
-          child: Row(
-            spacing: 10,
-            children: [
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(kMarginMedium + 8),
-                ),
-                child: Center(
-                  child: Icon(CupertinoIcons.person_fill, color: kWhiteColor),
-                ),
+        Row(
+          spacing: 10,
+          children: [
+            Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.grey.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(kMarginMedium + 8),
               ),
-              Text(
-                'Username',
-                style: TextStyle(
-                  color: kWhiteColor,
-                  fontSize: kTextRegular18,
-                  fontWeight: FontWeight.w700,
-                ),
+              child: Center(
+                child: Icon(CupertinoIcons.person_fill, color: kWhiteColor),
               ),
+            ),
+            Text(
+              'Username',
+              style: TextStyle(
+                color: kWhiteColor,
+                fontSize: kTextRegular18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
 
-              Spacer(),
-              Container(
-                height: 40,
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.grey.withValues(alpha: 0.3),
-                ),
-                child: Center(
-                  child: Text(
-                    'Upgrade Premium',
-                    style: TextStyle(
-                      color: kWhiteColor,
-                      fontWeight: FontWeight.w700,
-                    ),
+            Spacer(),
+            Container(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.grey.withValues(alpha: 0.3),
+              ),
+              child: Center(
+                child: Text(
+                  'Upgrade Premium',
+                  style: TextStyle(
+                    color: kWhiteColor,
+                    fontSize: kTextRegular,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+        10.vGap,
+        Image.asset(kShadowImage),
       ],
     );
   }

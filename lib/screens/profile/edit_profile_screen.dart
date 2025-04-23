@@ -19,11 +19,17 @@ class EditProfileScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAppBar(context),
-          _buildUserInfo('Username', 'Username',context),
+          20.vGap,
+          _buildUserInfo('Username', 'Username', context),
           10.vGap,
-          _buildUserInfo('Phone Number', '+95 0976666677',context),
+          _buildUserInfo('Phone Number', '+95 0976666677', context),
           10.vGap,
-          _buildUserInfo('Email Address', 'user@gmail.com',context, isLast: true),
+          _buildUserInfo(
+            'Email Address',
+            'user@gmail.com',
+            context,
+            isLast: true,
+          ),
         ],
       ),
       bottomNavigationBar: Container(
@@ -67,11 +73,6 @@ class EditProfileScreen extends StatelessWidget {
   Widget _buildAppBar(BuildContext context) {
     return Stack(
       children: [
-        SizedBox(
-          height: 200,
-          width: double.infinity,
-          child: Image.asset(kBarBackground, fit: BoxFit.fill),
-        ),
         Padding(
           padding: EdgeInsets.only(
             top: 60,
@@ -91,7 +92,11 @@ class EditProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(kMarginMedium + 8),
                   ),
                   child: Center(
-                    child: Icon(CupertinoIcons.arrow_left, color: kWhiteColor,size: getDeviceType() == 'phone' ? 20 : 27,),
+                    child: Icon(
+                      CupertinoIcons.arrow_left,
+                      color: kWhiteColor,
+                      size: getDeviceType() == 'phone' ? 20 : 27,
+                    ),
                   ),
                 ),
               ),
@@ -140,12 +145,19 @@ class EditProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUserInfo(String title, String name, BuildContext context,{bool? isLast}) {
+  Widget _buildUserInfo(
+    String title,
+    String name,
+    BuildContext context, {
+    bool? isLast,
+  }) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal:
-              getDeviceType() == 'phone'
-                  ? kMarginMedium2
-                  : MediaQuery.of(context).size.width * 0.15,),
+      padding: EdgeInsets.symmetric(
+        horizontal:
+            getDeviceType() == 'phone'
+                ? kMarginMedium2
+                : MediaQuery.of(context).size.width * 0.15,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

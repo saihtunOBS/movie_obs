@@ -23,7 +23,14 @@ Widget customButton({
         border: Border.all(color: borderColor ?? Colors.transparent),
       ),
       child: Center(
-        child: Text(title ?? '', style: TextStyle(color: textColor,fontWeight: FontWeight.w700,fontSize: kTextRegular2x)),
+        child: Text(
+          title ?? '',
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.w700,
+            fontSize: kTextRegular2x,
+          ),
+        ),
       ),
     ),
   );

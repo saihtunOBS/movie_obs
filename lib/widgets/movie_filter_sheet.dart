@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/colors.dart';

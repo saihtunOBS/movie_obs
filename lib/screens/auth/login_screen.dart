@@ -6,6 +6,7 @@ import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/otp_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
+import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:movie_obs/widgets/custom_button.dart';
 
@@ -155,14 +156,20 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             20.vGap,
             //button
-            customButton(
-              onPress: () {
-                PageNavigator(ctx: context).nextPage(page: OTPScreen());
-              },
-              context: context,
-              backgroundColor: kBlackColor,
-              title: 'Send OTP',
-              textColor: kWhiteColor,
+            Column(
+              spacing: 2,
+              children: [
+                customButton(
+                  onPress: () {
+                    PageNavigator(ctx: context).nextPage(page: OTPScreen());
+                  },
+                  context: context,
+                  backgroundColor: kSecondaryColor,
+                  title: 'Send OTP',
+                  textColor: kWhiteColor,
+                ),
+                Image.asset(kShadowImage),
+              ],
             ),
 
             //spacer
@@ -170,9 +177,9 @@ class _LoginScreenState extends State<LoginScreen> {
             Row(
               spacing: kMargin24,
               children: [
-                Expanded(child: Divider(color: kBlackColor)),
+                Expanded(child: Divider(color: kWhiteColor)),
                 Text('Or', style: TextStyle(fontSize: kTextRegular2x)),
-                Expanded(child: Divider(color: kBlackColor)),
+                Expanded(child: Divider(color: kWhiteColor)),
               ],
             ),
             10.vGap,
@@ -181,7 +188,36 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 50,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(kMarginMedium2),
-                  color: kBlackColor,
+                  color: kWhiteColor,
+                ),
+                child: Row(
+                  spacing: 5,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: Icon(Icons.apple, color: kBlackColor, size: 35),
+                    ),
+                    Text(
+                      'Sign in with Apple',
+                      style: TextStyle(
+                        color: kBlackColor,
+                        fontWeight: FontWeight.w700,
+                        fontSize: kTextRegular2x,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            1.vGap,
+            GestureDetector(
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(kMarginMedium2),
+                  color: kWhiteColor,
                 ),
                 child: Row(
                   spacing: 10,
@@ -190,14 +226,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       width: 30,
                       height: 30,
-                      child: cacheImage(
-                        'https://techcrunch.com/wp-content/uploads/2019/02/GettyImages-1127359452.jpg',
-                      ),
+                      child: Image.asset(kGoogleIcon),
                     ),
                     Text(
-                      'Continue with Google',
+                      'Sign in with Google',
                       style: TextStyle(
-                        color: kWhiteColor,
+                        color: kBlackColor,
                         fontWeight: FontWeight.w700,
                         fontSize: kTextRegular2x,
                       ),

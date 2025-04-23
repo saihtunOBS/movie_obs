@@ -6,6 +6,7 @@ import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
+import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/custom_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -66,7 +67,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   effect: ExpandingDotsEffect(
                     dotHeight: kMarginMedium,
                     dotWidth: kMarginMedium,
-                    activeDotColor: kBlackColor,
+                    activeDotColor: kSecondaryColor,
                     dotColor: kWhiteColor,
                   ),
                   activeIndex: value,
@@ -111,7 +112,7 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
         width: double.infinity,
         child: Column(
-          spacing: kMarginMedium2 - 3,
+          spacing: 3,
           children: [
             customButton(
               onPress: () {
@@ -119,17 +120,10 @@ class _AuthScreenState extends State<AuthScreen> {
               },
               context: context,
               title: 'Login',
-              backgroundColor: kBlackColor,
+              backgroundColor: kSecondaryColor,
               textColor: kWhiteColor,
             ),
-            customButton(
-              onPress: () {},
-              context: context,
-              title: 'Try as Guest',
-              textColor: kBlackColor,
-              borderColor: kBlackColor,
-              backgroundColor: Colors.transparent,
-            ),
+            Image.asset(kShadowImage)
           ],
         ),
       ),

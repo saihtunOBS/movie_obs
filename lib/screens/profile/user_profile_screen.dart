@@ -19,6 +19,7 @@ class UserProfileScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAppBar(context),
+          20.vGap,
           _buildUserInfo('Username', 'Username',context),
           10.vGap,
           _buildUserInfo('Phone Number', '+95 0976666677',context),
@@ -32,11 +33,6 @@ class UserProfileScreen extends StatelessWidget {
   Widget _buildAppBar(BuildContext context) {
     return Stack(
       children: [
-        SizedBox(
-          height: 200,
-          width: double.infinity,
-          child: Image.asset(kBarBackground, fit: BoxFit.fill),
-        ),
         Padding(
           padding: EdgeInsets.only(
             top: 60,

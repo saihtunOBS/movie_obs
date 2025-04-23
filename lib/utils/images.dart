@@ -19,3 +19,8 @@ const kCategoryIcon = 'assets/images/category.png';
 const kMovieSeriesIcon = 'assets/images/movie_series.png';
 const kTypeIcon = 'assets/images/type.png';
 const kGenreIcon = 'assets/images/genre.png';
+
+const kShadowImage = 'assets/images/shadow.png';
+const kBottomShadowImage = 'assets/images/bottom_shadow.png';
+
+const kGoogleIcon = 'assets/images/google.png';

@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/screens/auth/ads_screen.dart';
+import 'package:movie_obs/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -50,6 +51,7 @@ class _MovieOBSState extends State<MovieOBS> {
         );
       },
       theme: ThemeData(
+       
         actionIconTheme: ActionIconThemeData(
           backButtonIconBuilder:
               (BuildContext context) => Icon(
@@ -60,7 +62,8 @@ class _MovieOBSState extends State<MovieOBS> {
         progressIndicatorTheme: ProgressIndicatorThemeData(color: Colors.white),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.red,
-          primary: Colors.amber,
+          primary: kSecondaryColor,
+          brightness: Brightness.dark
         ),
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),

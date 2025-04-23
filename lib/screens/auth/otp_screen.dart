@@ -4,12 +4,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
-import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
+import 'package:movie_obs/screens/auth/change_language_screen.dart';
 import 'package:movie_obs/widgets/custom_button.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../utils/colors.dart';
 import '../../utils/dimens.dart';
+import '../../utils/images.dart';
 
 class OTPScreen extends StatefulWidget {
   const OTPScreen({super.key, this.phone, this.token});
@@ -65,83 +66,84 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: Scaffold(
-          backgroundColor: kBackgroundColor,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            surfaceTintColor: Colors.transparent,
-          ),
-          body: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal:
-                  getDeviceType() == 'phone'
-                      ? kMarginMedium2
-                      : MediaQuery.of(context).size.width * 0.15,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+      ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal:
+              getDeviceType() == 'phone'
+                  ? kMarginMedium2
+                  : MediaQuery.of(context).size.width * 0.15,
+        ),
+        child: Column(
+          spacing: kMarginMedium2,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'VERIFICATION',
+              style: TextStyle(
+                letterSpacing: 5.0,
+                fontSize: kTextRegular32,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            child: Column(
-              spacing: kMarginMedium2,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Text(
+              'Send OTP Code to +95 09888888888.\n Enter your OTP Code here.',
+              style: TextStyle(fontSize: kTextRegular2x),
+            ),
+            10.vGap,
+            _buildPinView(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'VERIFICATION',
-                  style: TextStyle(
-                    letterSpacing: 5.0,
-                    fontSize: kTextRegular32,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  '00:16',
+                  style: TextStyle(fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  'Send OTP Code to +95 09888888888.\n Enter your OTP Code here.',
-                  style: TextStyle(fontSize: kTextRegular2x),
-                ),
-                10.vGap,
-                _buildPinView(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '00:16',
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    Text(
-                      'Resend',
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                  ],
+                  'Resend',
+                  style: TextStyle(fontWeight: FontWeight.w700),
                 ),
               ],
             ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        margin: EdgeInsets.only(
+          left:
+              getDeviceType() == 'phone'
+                  ? kMarginMedium2
+                  : MediaQuery.of(context).size.width * 0.15,
+          right:
+              getDeviceType() == 'phone'
+                  ? kMarginMedium2
+                  : MediaQuery.of(context).size.width * 0.15,
+          bottom: 27,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 2,
+          children: [customButton(
+            onPress: () {
+              PageNavigator(
+                ctx: context,
+              ).nextPage(page: ChangeLanguageScreen());
+            },
+            context: context,
+            backgroundColor: kSecondaryColor,
+            title: 'Confirm',
+            textColor: kWhiteColor,
           ),
-          bottomNavigationBar: Container(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            margin: EdgeInsets.only(
-              left:
-                  getDeviceType() == 'phone'
-                      ? kMarginMedium2
-                      : MediaQuery.of(context).size.width * 0.15,
-              right:
-                  getDeviceType() == 'phone'
-                      ? kMarginMedium2
-                      : MediaQuery.of(context).size.width * 0.15,
-              bottom: 27,
-            ),
-            child: customButton(
-              onPress: () {
-                PageNavigator(
-                  ctx: context,
-                ).nextPageOnly(page: BottomNavScreen());
-              },
-              context: context,
-              backgroundColor: kBlackColor,
-              title: 'Confirm',
-              textColor: kWhiteColor,
-            ),
-          ),
+          Image.asset(kShadowImage),
+          ],
         ),
       ),
     );
@@ -151,7 +153,9 @@ class _OTPScreenState extends State<OTPScreen> {
     final defaultPinTheme = PinTheme(
       width: kSize64 + 10,
       height: kSize64 + 10,
-      margin:  EdgeInsets.symmetric(horizontal: getDeviceType() == 'phone' ? 1 : 10),
+      margin: EdgeInsets.symmetric(
+        horizontal: getDeviceType() == 'phone' ? 1 : 10,
+      ),
       textStyle: const TextStyle(fontSize: kTextRegular22, color: Colors.black),
       decoration: BoxDecoration(color: kWhiteColor, shape: BoxShape.circle),
     );

@@ -4,6 +4,7 @@ import 'package:movie_obs/screens/home/home_screen.dart';
 import 'package:movie_obs/screens/movie/movie_screen.dart';
 import 'package:movie_obs/screens/profile/profile_screen.dart';
 import 'package:movie_obs/screens/series/series_screen.dart';
+import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/banner_image_animation.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
@@ -24,17 +25,28 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   ];
   @override
   Widget build(BuildContext context) {
-    return PersistentTabView(
-      context,
-      screens: screens,
-      items: _navBarsItems(),
-      onItemSelected: (value) {
-        if (value != 0) {
-          controller.stop();
-        } else {
-          controller.reset();
-        }
-      },
+    return Stack(
+      children: [
+        PersistentTabView(
+          backgroundColor: Colors.transparent,
+          context,
+          screens: screens,
+          items: _navBarsItems(),
+          onItemSelected: (value) {
+            if (value != 0) {
+              controller.stop();
+            } else {
+              controller.reset();
+            }
+          },
+        ),
+        Positioned(
+          bottom: 87,
+          left: 0,
+          right: 0,
+          child: Image.asset(kBottomShadowImage,fit: BoxFit.contain,)
+        ),
+      ],
     );
   }
 }
@@ -42,32 +54,28 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 List<PersistentBottomNavBarItem> _navBarsItems() {
   return [
     PersistentBottomNavBarItem(
-      icon: Image.asset(kHomeFillIcon),
-      inactiveIcon: Image.asset(kHomeIcon),
+      icon: Image.asset(kHomeFillIcon, color: kSecondaryColor),
+      inactiveIcon: Image.asset(kHomeIcon, color: kWhiteColor),
       title: ("Home"),
-      activeColorPrimary: Colors.black,
-      inactiveColorPrimary: Colors.black,
+      activeColorPrimary: kWhiteColor,
     ),
     PersistentBottomNavBarItem(
-      icon: Image.asset(kMovieFillIcon),
-      inactiveIcon: Image.asset(kMovieIcon),
+      icon: Image.asset(kMovieFillIcon, color: kSecondaryColor),
+      inactiveIcon: Image.asset(kMovieIcon, color: kWhiteColor),
       title: ("Movies"),
-      activeColorPrimary: Colors.black,
-      inactiveColorPrimary: Colors.black,
+      activeColorPrimary: kWhiteColor,
     ),
     PersistentBottomNavBarItem(
-      icon: Image.asset(kSeriesFillIcon),
-      inactiveIcon: Image.asset(kSeriesIcon),
+      icon: Image.asset(kSeriesFillIcon, color: kSecondaryColor),
+      inactiveIcon: Image.asset(kSeriesIcon, color: kWhiteColor),
       title: ("Series"),
-      activeColorPrimary: Colors.black,
-      inactiveColorPrimary: Colors.black,
+      activeColorPrimary: kWhiteColor,
     ),
     PersistentBottomNavBarItem(
-      icon: Icon(CupertinoIcons.person_fill),
-      inactiveIcon: Icon(CupertinoIcons.person),
+      icon: Icon(CupertinoIcons.person_fill, color: kSecondaryColor),
+      inactiveIcon: Icon(CupertinoIcons.person, color: kWhiteColor),
       title: ("Profile"),
-      activeColorPrimary: Colors.black,
-      inactiveColorPrimary: Colors.black,
+      activeColorPrimary: kWhiteColor,
     ),
   ];
 }
