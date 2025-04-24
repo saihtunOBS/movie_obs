@@ -20,11 +20,16 @@ class UserProfileScreen extends StatelessWidget {
         children: [
           _buildAppBar(context),
           20.vGap,
-          _buildUserInfo('Username', 'Username',context),
+          _buildUserInfo('Username', 'Username', context),
           10.vGap,
-          _buildUserInfo('Phone Number', '+95 0976666677',context),
+          _buildUserInfo('Phone Number', '+95 0976666677', context),
           10.vGap,
-          _buildUserInfo('Email Address', 'user@gmail.com',context, isLast: true),
+          _buildUserInfo(
+            'Email Address',
+            'user@gmail.com',
+            context,
+            isLast: true,
+          ),
         ],
       ),
     );
@@ -34,11 +39,7 @@ class UserProfileScreen extends StatelessWidget {
     return Stack(
       children: [
         Padding(
-          padding: EdgeInsets.only(
-            top: 50,
-            left: kMarginMedium2,
-            right: kMarginMedium2,
-          ),
+          padding: EdgeInsets.only(top: 55, left: 10, right: 10),
           child: Row(
             spacing: 10,
             children: [
@@ -52,7 +53,11 @@ class UserProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(kMarginMedium + 8),
                   ),
                   child: Center(
-                    child: Icon(CupertinoIcons.arrow_left, color: kWhiteColor,size: getDeviceType() == 'phone' ? 20 : 27,),
+                    child: Icon(
+                      CupertinoIcons.arrow_left,
+                      color: kWhiteColor,
+                      size: getDeviceType() == 'phone' ? 20 : 27,
+                    ),
                   ),
                 ),
               ),
@@ -96,15 +101,13 @@ class UserProfileScreen extends StatelessWidget {
                   color: Colors.grey.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(19),
                 ),
-                child: Center(
-                  child: Image.asset(kProfileCoverIcon),
-                ),
+                child: Center(child: Image.asset(kProfileCoverIcon)),
               ),
               Align(
                 alignment: Alignment.center,
                 child: Container(
                   // height: 26,
-                  padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     color: Colors.grey.withValues(alpha: 0.3),
@@ -126,18 +129,34 @@ class UserProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUserInfo(String title, String name,BuildContext context, {bool? isLast}) {
+  Widget _buildUserInfo(
+    String title,
+    String name,
+    BuildContext context, {
+    bool? isLast,
+  }) {
     return Padding(
-      padding:  EdgeInsets.symmetric(horizontal:
-              getDeviceType() == 'phone'
-                  ? kMarginMedium2
-                  : MediaQuery.of(context).size.width * 0.15,),
+      padding: EdgeInsets.symmetric(
+        horizontal:
+            getDeviceType() == 'phone'
+                ? kMarginMedium2
+                : MediaQuery.of(context).size.width * 0.15,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(color: Colors.grey,fontSize: kTextRegular2x)),
+          Text(
+            title,
+            style: TextStyle(color: Colors.grey, fontSize: kTextRegular2x),
+          ),
           5.vGap,
-          Text(name, style: TextStyle(fontWeight: FontWeight.bold,fontSize: kTextRegular2x)),
+          Text(
+            name,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: kTextRegular2x,
+            ),
+          ),
           10.vGap,
           isLast ?? false
               ? SizedBox()

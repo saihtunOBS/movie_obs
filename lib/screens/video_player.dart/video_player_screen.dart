@@ -407,7 +407,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }) {
     return IconButton.filled(
       onPressed: onPressed,
-      icon: Icon(icon,color: kWhiteColor,),
+      icon: Icon(icon, color: kWhiteColor),
       style: IconButton.styleFrom(backgroundColor: Colors.black45),
     );
   }
@@ -478,7 +478,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-       // if (videoPlayerController.value.isInitialized) {
+        if (videoPlayerController.value.isInitialized) {
           isPlay.value = !videoPlayerController.value.isPlaying;
           showControl = false;
           bloc.updateListener();
@@ -491,7 +491,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                 : isPlay.value = false,
           );
           SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-       // }
+        } else {
+          Navigator.pop(context);
+        }
       },
       child: Container(
         height: 30,

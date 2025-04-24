@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
+import 'package:movie_obs/screens/auth/change_language_screen.dart';
 import 'package:movie_obs/screens/profile/promotion_screen.dart';
 import 'package:movie_obs/screens/profile/user_profile_screen.dart';
 import 'package:movie_obs/screens/profile/watch_list_screen.dart';
@@ -23,6 +24,7 @@ var titleArray = [
   'Promotion',
   'Watchlist',
   'History',
+  'Language',
   'FAQ',
   'Terms & Condition',
   'Privacy Policy',
@@ -33,6 +35,7 @@ List<Widget> iconArray = [
   Image.asset(kPromotionIcon, color: kWhiteColor),
   Icon(CupertinoIcons.bookmark_fill, size: 20, color: kWhiteColor),
   Icon(CupertinoIcons.arrow_clockwise, size: 20, color: kWhiteColor),
+  Icon(Icons.language, color: kWhiteColor),
   Image.asset(kFaqIcon, color: kWhiteColor),
   Image.asset(kTermIcon, color: kWhiteColor),
   Image.asset(kPrivacyIcon, color: kWhiteColor),
@@ -45,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        toolbarHeight: 70,
+        toolbarHeight: 75,
         title: _buildAppBar(),
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
@@ -79,6 +82,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         PageNavigator(
                           ctx: context,
                         ).nextPage(page: WatchListScreen());
+                      case 4:
+                        PageNavigator(
+                          ctx: context,
+                        ).nextPage(page: ChangeLanguageScreen());
                       case 7:
                         showDialog(
                           useRootNavigator: true,
@@ -120,40 +127,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Row(
           spacing: 10,
           children: [
-            Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(kMarginMedium + 8),
-              ),
-              child: Center(
-                child: Icon(CupertinoIcons.person_fill, color: kWhiteColor),
-              ),
-            ),
-            Text(
-              'Username',
-              style: TextStyle(
-                color: kWhiteColor,
-                fontSize: kTextRegular18,
-                fontWeight: FontWeight.w700,
+            InkWell(
+              onTap:
+                  () => PageNavigator(
+                    ctx: context,
+                  ).nextPage(page: UserProfileScreen()),
+              child: Row(
+                spacing: 10,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(kMarginMedium + 8),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        CupertinoIcons.person_fill,
+                        color: kWhiteColor,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'Username',
+                    style: TextStyle(
+                      color: kWhiteColor,
+                      fontSize: kTextRegular18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ),
             ),
 
             Spacer(),
-            Container(
-              height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey.withValues(alpha: 0.3),
-              ),
-              child: Center(
-                child: Text(
-                  'Upgrade Premium',
-                  style: TextStyle(
-                    color: kWhiteColor,
-                    fontSize: kTextRegular,
-                    fontWeight: FontWeight.w700,
+            InkWell(
+              onTap:
+                  () => PageNavigator(
+                    ctx: context,
+                  ).nextPage(page: PromotionScreen()),
+              child: Container(
+                height: 40,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.grey.withValues(alpha: 0.3),
+                ),
+                child: Center(
+                  child: Text(
+                    'Upgrade Premium',
+                    style: TextStyle(
+                      color: kWhiteColor,
+                      fontSize: kTextRegular,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),

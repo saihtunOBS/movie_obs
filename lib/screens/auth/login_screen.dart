@@ -136,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         Text(
                           '+${selectedCountryCode?.phoneCode ?? '95'}',
-                          style: TextStyle(color: kWhiteColor),
+                          style: TextStyle(color: kWhiteColor,fontWeight: FontWeight.bold),
                         ),
                         Icon(CupertinoIcons.chevron_down, size: 16),
                       ],
@@ -152,10 +152,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.grey.withValues(alpha: 0.2),
                     ),
                     child: TextField(
-                      style: TextStyle(color: kWhiteColor),
+                      style: TextStyle(color: kWhiteColor,fontWeight: FontWeight.bold),
                       decoration: InputDecoration(
                         hintText: 'Phone Number',
-
+                        contentPadding: EdgeInsets.only(top: 4),
                         hintStyle: TextStyle(color: kWhiteColor),
                         border: InputBorder.none,
                       ),

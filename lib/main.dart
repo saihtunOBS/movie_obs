@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
@@ -16,12 +17,12 @@ import 'package:rxdart/rxdart.dart';
 import 'data/persistence/persistence_data.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 StreamController<String> languageStreamController = BehaviorSubject<String>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await GetStorage.init();
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => VideoBloc())],
@@ -43,6 +44,7 @@ class _MovieOBSState extends State<MovieOBS> {
     return StreamBuilder(
       stream: languageStreamController.stream,
       builder: (context, snapshot) {
+        print(PersistenceData.shared.getLocale());
         String localString = '';
         snapshot.data == null
             ? PersistenceData.shared.getLocale() == 'my'

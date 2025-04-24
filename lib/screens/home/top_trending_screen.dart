@@ -74,7 +74,11 @@ class _TopTrendingScreenState extends State<TopTrendingScreen> {
           10.vGap,
           _buildMinuteAndViewCount(),
           10.vGap,
-          Text('Action, Romance, Drama', textAlign: TextAlign.center),
+          Text(
+            'Action, Romance, Drama',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: kThirdColor),
+          ),
           20.vGap,
           _buildUnlockAndWishlist(),
 
@@ -87,7 +91,7 @@ class _TopTrendingScreenState extends State<TopTrendingScreen> {
                   effect: ExpandingDotsEffect(
                     dotHeight: kMarginMedium,
                     dotWidth: kMarginMedium,
-                    activeDotColor: kBlackColor,
+                    activeDotColor: kSecondaryColor,
                     dotColor: kWhiteColor,
                   ),
                   activeIndex: value,
@@ -109,7 +113,7 @@ Widget _buildMinuteAndViewCount() {
       SizedBox(
         width: 5,
         height: 5,
-        child: CircleAvatar(backgroundColor: kBlackColor),
+        child: CircleAvatar(backgroundColor: kWhiteColor),
       ),
 
       Row(
@@ -133,14 +137,14 @@ Widget _buildUnlockAndWishlist() {
         padding: EdgeInsets.symmetric(horizontal: kMarginMedium + 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: kBlackColor,
+          color: kSecondaryColor.withValues(alpha: 0.2),
         ),
         child: Center(
           child: Row(
             spacing: kMargin5,
             children: [
               Icon(CupertinoIcons.lock, color: kWhiteColor, size: 18),
-              Text('2000 Ks to unlock', style: TextStyle(color: kWhiteColor)),
+              Text('2000 Ks to unlock', style: TextStyle(color: kThirdColor)),
             ],
           ),
         ),
@@ -151,7 +155,7 @@ Widget _buildUnlockAndWishlist() {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: Colors.transparent,
-          border: Border.all(color: kBlackColor),
+          border: Border.all(color: kWhiteColor),
         ),
         child: Center(
           child: Row(

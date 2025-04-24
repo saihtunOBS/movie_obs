@@ -31,7 +31,6 @@ class EditProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-     
     );
   }
 
@@ -39,11 +38,7 @@ class EditProfileScreen extends StatelessWidget {
     return Stack(
       children: [
         Padding(
-          padding: EdgeInsets.only(
-            top: 60,
-            left: kMarginMedium2,
-            right: kMarginMedium2,
-          ),
+          padding: EdgeInsets.only(top: 55, left: 10, right: 10),
           child: Row(
             spacing: 10,
             children: [
@@ -83,9 +78,7 @@ class EditProfileScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.grey.withValues(alpha: 0.3),
                     ),
-                    child: Center(
-                      child: Image.asset(kProfileCoverIcon),
-                    ),
+                    child: Center(child: Image.asset(kProfileCoverIcon)),
                   ),
                   Positioned(
                     bottom: 0,
@@ -107,7 +100,7 @@ class EditProfileScreen extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 60,
+          top: 65,
           right: kMarginMedium2,
           child: Row(
             spacing: 10,
@@ -117,13 +110,13 @@ class EditProfileScreen extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: kSecondaryColor,
                     borderRadius: BorderRadius.circular(kMarginMedium + 8),
                   ),
                   child: Center(
-                    child: Text('Save',style: TextStyle(color: kWhiteColor),),
+                    child: Text('Save', style: TextStyle(color: kWhiteColor)),
                   ),
                 ),
               ),

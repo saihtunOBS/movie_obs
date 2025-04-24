@@ -23,7 +23,10 @@ class PromotionScreen extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2,vertical: kMarginMedium2 + 5),
+        padding: const EdgeInsets.symmetric(
+          horizontal: kMarginMedium2,
+          vertical: kMarginMedium2 + 5,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           spacing: 2,
@@ -36,7 +39,6 @@ class PromotionScreen extends StatelessWidget {
               textColor: kWhiteColor,
             ),
             Image.asset(kShadowImage),
-            
           ],
         ),
       ),
@@ -47,11 +49,7 @@ class PromotionScreen extends StatelessWidget {
     return Stack(
       children: [
         Padding(
-          padding: EdgeInsets.only(
-            top: 60,
-            left: kMarginMedium2,
-            right: kMarginMedium2,
-          ),
+          padding: EdgeInsets.only(top: 55, left: 10, right: 10),
           child: Row(
             spacing: 10,
             children: [
@@ -79,7 +77,7 @@ class PromotionScreen extends StatelessWidget {
 
         Padding(
           padding: EdgeInsets.only(
-            top: getDeviceType() == 'phone' ? 80 : 60,
+            top: getDeviceType() == 'phone' ? 70 : 50,
             left: 30,
             right: 30,
           ),

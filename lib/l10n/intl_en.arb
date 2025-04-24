@@ -2,5 +2,9 @@
   "@@locale": "en",
   "language": "LANGUAGE",
   "preferLanguage": "Please select your prefer language to continue.",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "home": "Home",
+  "movies": "Movies",
+  "series": "Series",
+  "profile": "Profile"
 }

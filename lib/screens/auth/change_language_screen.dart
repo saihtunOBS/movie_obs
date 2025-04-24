@@ -27,6 +27,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
 
   @override
   void initState() {
+    print(PersistenceData.shared.getLocale());
     _selectedValue = PersistenceData.shared.getLocale() == 'en' ? 1 : 0;
     languages = [
       _buildLanguageRow(title: 'Myanmar'),

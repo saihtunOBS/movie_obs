@@ -224,7 +224,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                         IgnorePointer(
                           ignoring: true,
                           child: Container(
-                            color: Colors.black,
+                            color: Colors.grey.withValues(alpha: 0.4),
                             width: _width,
                             height: _height,
                             child: Chewie(
@@ -258,7 +258,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                       ],
                     ),
                     Container(
-                      color: Colors.black54,
+                      color: Colors.grey.withValues(alpha: 0.4),
                       height: 43,
                       width: getDeviceType() == 'phone' ? 180 : 250,
                       child: Row(

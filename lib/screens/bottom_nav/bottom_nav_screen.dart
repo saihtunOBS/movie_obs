@@ -8,6 +8,7 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/banner_image_animation.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BottomNavScreen extends StatefulWidget {
   const BottomNavScreen({super.key});
@@ -31,7 +32,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
           backgroundColor: Colors.transparent,
           context,
           screens: screens,
-          items: _navBarsItems(),
+          items: _navBarsItems(context),
           onItemSelected: (value) {
             if (value != 0) {
               controller.stop();
@@ -51,30 +52,30 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   }
 }
 
-List<PersistentBottomNavBarItem> _navBarsItems() {
+List<PersistentBottomNavBarItem> _navBarsItems(BuildContext context) {
   return [
     PersistentBottomNavBarItem(
       icon: Image.asset(kHomeFillIcon, color: kSecondaryColor),
       inactiveIcon: Image.asset(kHomeIcon, color: kWhiteColor),
-      title: ("Home"),
+      title: (AppLocalizations.of(context)?.home ?? ''),
       activeColorPrimary: kWhiteColor,
     ),
     PersistentBottomNavBarItem(
       icon: Image.asset(kMovieFillIcon, color: kSecondaryColor),
       inactiveIcon: Image.asset(kMovieIcon, color: kWhiteColor),
-      title: ("Movies"),
+      title: (AppLocalizations.of(context)?.movies ?? ''),
       activeColorPrimary: kWhiteColor,
     ),
     PersistentBottomNavBarItem(
       icon: Image.asset(kSeriesFillIcon, color: kSecondaryColor),
       inactiveIcon: Image.asset(kSeriesIcon, color: kWhiteColor),
-      title: ("Series"),
+      title: (AppLocalizations.of(context)?.series ?? ''),
       activeColorPrimary: kWhiteColor,
     ),
     PersistentBottomNavBarItem(
       icon: Icon(CupertinoIcons.person_fill, color: kSecondaryColor),
       inactiveIcon: Icon(CupertinoIcons.person, color: kWhiteColor),
-      title: ("Profile"),
+      title: (AppLocalizations.of(context)?.profile ?? ''),
       activeColorPrimary: kWhiteColor,
     ),
   ];
