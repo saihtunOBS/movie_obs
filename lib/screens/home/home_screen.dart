@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: false,
         backgroundColor: Colors.transparent,
         surfaceTintColor: kBackgroundColor,
+        foregroundColor: kWhiteColor,
         actions: [
           CircleAvatar(
             backgroundColor: Colors.black12,
@@ -55,12 +56,14 @@ class _HomeScreenState extends State<HomeScreen> {
       body: CustomScrollView(
         physics: ClampingScrollPhysics(),
         slivers: [
-          SliverToBoxAdapter(child: Container(height: 15, color: kWhiteColor)),
+          SliverToBoxAdapter(
+            child: Container(height: 15, color: kBackgroundColor),
+          ),
           //carousel
           SliverToBoxAdapter(
             child: Container(
               height: getDeviceType() == 'phone' ? 220 : 350,
-              color: kWhiteColor,
+              color: Colors.transparent,
               child: BannerImageAnimation(),
             ),
           ),

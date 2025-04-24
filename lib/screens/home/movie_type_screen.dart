@@ -73,7 +73,7 @@ class MovieTypeScreen extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Center(
-                        child: Icon(CupertinoIcons.arrow_left, size: 20),
+                        child: Icon(CupertinoIcons.arrow_left, size: 20,color: kBlackColor,),
                       ),
                     ),
                   ),
@@ -101,9 +101,9 @@ class MovieTypeScreen extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(CupertinoIcons.play_circle_fill, size: 26),
+            const Icon(CupertinoIcons.play_circle_fill, size: 26,color: kBlackColor,),
             const SizedBox(width: 5),
-            Text('Watch Trailer', style: TextStyle(fontSize: kTextRegular2x)),
+            Text('Watch Trailer', style: TextStyle(fontSize: kTextRegular2x,color: kBlackColor)),
           ],
         ),
       ),
@@ -131,7 +131,7 @@ class MovieTypeScreen extends StatelessWidget {
               'Action , Adventure',
               style: TextStyle(
                 fontSize: kTextSmall,
-                color: Colors.grey,
+                color: kThirdColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -198,7 +198,7 @@ class MovieTypeScreen extends StatelessWidget {
         ExpandableText(
           text:
               'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius',
-          style: TextStyle(fontSize: 14, color: kBlackColor),
+          style: TextStyle(fontSize: 14,),
         ),
         10.vGap,
         Text('Tags', style: TextStyle(fontWeight: FontWeight.w700)),
@@ -241,7 +241,7 @@ class MovieTypeScreen extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: kBlackColor,
+          color: kSecondaryColor,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -267,7 +267,7 @@ class MovieTypeScreen extends StatelessWidget {
         SizedBox(
           width: 5,
           height: 5,
-          child: CircleAvatar(backgroundColor: kBlackColor),
+          child: CircleAvatar(backgroundColor: kWhiteColor),
         ),
 
         Row(
@@ -291,14 +291,14 @@ class MovieTypeScreen extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: kMarginMedium + 4),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: kBlackColor,
+            color: kSecondaryColor.withValues(alpha: 0.2),
           ),
           child: Center(
             child: Row(
               spacing: kMargin5,
               children: [
                 //Icon(CupertinoIcons.lock, color: kWhiteColor, size: 18),
-                Text('Free', style: TextStyle(color: kWhiteColor)),
+                Text('Free', style: TextStyle(color: kThirdColor)),
               ],
             ),
           ),
@@ -309,7 +309,7 @@ class MovieTypeScreen extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             color: Colors.transparent,
-            border: Border.all(color: kBlackColor),
+            border: Border.all(color: kWhiteColor),
           ),
           child: Center(
             child: Row(

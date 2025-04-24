@@ -50,6 +50,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
       appBar: AppBar(
         backgroundColor: kBackgroundColor,
         surfaceTintColor: kBackgroundColor,
+        foregroundColor: kWhiteColor,
         title: Text('Tuu Tu\' Series'),
         centerTitle: false,
         actions: [
@@ -58,7 +59,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
               if (getDeviceType() == 'phone') {
                 showModalBottomSheet(
                   useRootNavigator: true,
-                  backgroundColor: kWhiteColor,
+                  backgroundColor: kBlackColor,
                   showDragHandle: true,
                   context: context,
                   builder: (context) {
@@ -73,12 +74,12 @@ class _SeriesScreenState extends State<SeriesScreen> {
               width: 42,
               height: 32,
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: Colors.grey.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(
-                CupertinoIcons.line_horizontal_3_decrease,
-                color: kWhiteColor,
+                CupertinoIcons.slider_horizontal_3,
+                color: kThirdColor,
                 size: 19,
               ),
             ),
@@ -86,7 +87,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
           kMarginMedium2.hGap,
         ],
         bottom: PreferredSize(
-          preferredSize: Size(double.infinity, 65),
+          preferredSize: Size(double.infinity, 50),
           child: Padding(
             padding: EdgeInsets.only(
               left: kMarginMedium2,
@@ -95,15 +96,23 @@ class _SeriesScreenState extends State<SeriesScreen> {
                       ? kMarginMedium2
                       : MediaQuery.sizeOf(context).width / 2,
             ),
-            child: SearchBar(
-              controller: _controller,
-              leading: Icon(CupertinoIcons.search),
-              hintText: 'Search by series title',
-              backgroundColor: WidgetStateProperty.all(Colors.white),
-              onChanged: _onSearchChanged,
-              shape: WidgetStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16), // your border radius
+            child: SizedBox(
+              height: 50,
+              child: SearchBar(
+                controller: _controller,
+                leading: Icon(CupertinoIcons.search),
+                hintText: 'Search by series title',
+                backgroundColor: WidgetStateProperty.all(
+                  Colors.grey.withValues(alpha: 0.2),
+                ),
+                hintStyle: WidgetStateProperty.resolveWith<TextStyle>(
+                  (_) => TextStyle(color: kWhiteColor),
+                ),
+                onChanged: _onSearchChanged,
+                shape: WidgetStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16), // your border radius
+                  ),
                 ),
               ),
             ),

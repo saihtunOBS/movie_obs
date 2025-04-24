@@ -28,7 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
-      resizeToAvoidBottomInset: true,
       body: Padding(
         padding: EdgeInsets.symmetric(
           horizontal:
@@ -43,9 +42,10 @@ class _LoginScreenState extends State<LoginScreen> {
             Text(
               'LOGIN',
               style: TextStyle(
-                letterSpacing: 5.0,
+                letterSpacing: 10.0,
                 fontSize: kTextRegular32,
                 fontWeight: FontWeight.bold,
+                color: kThirdColor,
               ),
             ),
             Text(
@@ -68,15 +68,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         bottomSheetHeight:
                             MediaQuery.of(context).size.height / 1.5,
                         inputDecoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: kWhiteColor),
+                          ),
                           labelText: 'Search Country',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(color: Colors.grey),
+                            borderSide: const BorderSide(color: Colors.white),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: const BorderSide(
-                              color: Colors.grey,
+                              color: Colors.white,
                               width: 1,
                             ),
                           ),
@@ -84,10 +87,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         textStyle: TextStyle(
                           fontSize: getDeviceType() == 'phone' ? 16 : 20,
-                          color: Colors.black87,
+                          color: Colors.white,
                         ),
-                        backgroundColor: Colors.white,
+                        backgroundColor: Colors.black,
                         searchTextStyle: TextStyle(
+                          color: kWhiteColor,
                           fontSize: getDeviceType() == 'phone' ? 16 : 20,
                         ),
                         borderRadius: const BorderRadius.only(
@@ -107,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: kWhiteColor,
+                      color: Colors.grey.withValues(alpha: 0.2),
                     ),
                     child: Row(
                       spacing: 5,
@@ -130,7 +134,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     boxFit: BoxFit.fill,
                                   ),
                         ),
-                        Text('+${selectedCountryCode?.phoneCode ?? '95'}'),
+                        Text(
+                          '+${selectedCountryCode?.phoneCode ?? '95'}',
+                          style: TextStyle(color: kWhiteColor),
+                        ),
                         Icon(CupertinoIcons.chevron_down, size: 16),
                       ],
                     ),
@@ -142,11 +149,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: EdgeInsets.symmetric(horizontal: kMarginMedium),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: kWhiteColor,
+                      color: Colors.grey.withValues(alpha: 0.2),
                     ),
                     child: TextField(
+                      style: TextStyle(color: kWhiteColor),
                       decoration: InputDecoration(
                         hintText: 'Phone Number',
+
+                        hintStyle: TextStyle(color: kWhiteColor),
                         border: InputBorder.none,
                       ),
                     ),
@@ -172,17 +182,25 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
 
-            //spacer
-            Spacer(),
-            Row(
-              spacing: kMargin24,
-              children: [
-                Expanded(child: Divider(color: kWhiteColor)),
-                Text('Or', style: TextStyle(fontSize: kTextRegular2x)),
-                Expanded(child: Divider(color: kWhiteColor)),
-              ],
-            ),
-            10.vGap,
+
+          ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 10,
+          children: [
+             //spacer
+              Row(
+                spacing: kMargin24,
+                children: [
+                  Expanded(child: Divider(color: kWhiteColor)),
+                  Text('Or', style: TextStyle(fontSize: kTextRegular2x)),
+                  Expanded(child: Divider(color: kWhiteColor)),
+                ],
+              ),
             GestureDetector(
               child: Container(
                 height: 50,
@@ -211,7 +229,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            1.vGap,
             GestureDetector(
               child: Container(
                 height: 50,

@@ -28,13 +28,13 @@ Widget movieFilterSheet() {
             Spacer(),
             Chip(
               label: Text('Filter', style: TextStyle(color: kWhiteColor)),
-              backgroundColor: kBlackColor,
+              backgroundColor: kSecondaryColor,
             ),
             10.hGap,
             Chip(
-              label: Text('Clear', style: TextStyle(color: kBlackColor)),
-              backgroundColor: kWhiteColor,
-              side: BorderSide(color: kBlackColor),
+              label: Text('Clear', style: TextStyle(color: kWhiteColor)),
+              backgroundColor: Colors.transparent,
+              side: BorderSide(color: kWhiteColor),
             ),
           ],
         ),
@@ -62,7 +62,7 @@ Widget _buildMovieSession() {
       Row(
         spacing: kMarginMedium,
         children: [
-          Image.asset(kMovieSeriesIcon, width: 28, height: 28),
+          Image.asset(kMovieSeriesIcon, width: 28, height: 28,color: kWhiteColor,),
           Text(
             'Movies',
             style: TextStyle(
@@ -81,7 +81,7 @@ Widget _buildMovieSession() {
           itemBuilder: (context, index) {
             return Chip(
               label: Text('hello'),
-              backgroundColor: kWhiteColor,
+              backgroundColor: Colors.grey.withValues(alpha: 0.2),
               side: BorderSide(color: kBlackColor),
             );
           },
@@ -100,7 +100,7 @@ Widget buildTypeSession() {
       Row(
         spacing: kMarginMedium,
         children: [
-          Image.asset(kTypeIcon, width: 32, height: 32),
+          Image.asset(kTypeIcon, width: 32, height: 32,color: kWhiteColor,),
           Text(
             'Types',
             style: TextStyle(
@@ -119,7 +119,7 @@ Widget buildTypeSession() {
           itemBuilder: (context, index) {
             return Chip(
               label: Text('hello'),
-              backgroundColor: kWhiteColor,
+              backgroundColor: Colors.grey.withValues(alpha: 0.2),
               side: BorderSide(color: kBlackColor),
             );
           },
@@ -138,7 +138,7 @@ Widget buildGenreSession() {
         spacing: kMarginMedium,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(kGenreIcon, width: 32, height: 32),
+          Image.asset(kGenreIcon, width: 32, height: 32,color: kWhiteColor,),
           Text(
             'Genre',
             style: TextStyle(
@@ -155,14 +155,10 @@ Widget buildGenreSession() {
         children: [
           Chip(
             label: Text('hello'),
-            backgroundColor: kWhiteColor,
+            backgroundColor: Colors.grey.withValues(alpha: 0.2),
             side: BorderSide(color: kBlackColor),
           ),
-          Chip(
-            label: Text('hello'),
-            backgroundColor: kWhiteColor,
-            side: BorderSide(color: kBlackColor),
-          ),
+         
         ],
       ),
     ],

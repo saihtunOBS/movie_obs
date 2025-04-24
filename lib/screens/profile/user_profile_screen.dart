@@ -35,7 +35,7 @@ class UserProfileScreen extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.only(
-            top: 60,
+            top: 50,
             left: kMarginMedium2,
             right: kMarginMedium2,
           ),
@@ -97,7 +97,7 @@ class UserProfileScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(19),
                 ),
                 child: Center(
-                  child: Image.asset(kUserIcon, width: 28, height: 28),
+                  child: Image.asset(kProfileCoverIcon),
                 ),
               ),
               Align(

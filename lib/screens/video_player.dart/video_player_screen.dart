@@ -407,7 +407,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }) {
     return IconButton.filled(
       onPressed: onPressed,
-      icon: Icon(icon),
+      icon: Icon(icon,color: kWhiteColor,),
       style: IconButton.styleFrom(backgroundColor: Colors.black45),
     );
   }
@@ -425,13 +425,19 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                     ? const Icon(
                       CupertinoIcons.arrow_counterclockwise,
                       size: 30,
+                      color: kWhiteColor,
                     )
                     : bloc.seekCount != 0
-                    ? const Icon(CupertinoIcons.pause, size: 30)
+                    ? const Icon(
+                      CupertinoIcons.pause,
+                      size: 30,
+                      color: kWhiteColor,
+                    )
                     : Icon(
                       videoPlayerController.value.isPlaying
                           ? CupertinoIcons.pause
                           : CupertinoIcons.play,
+                      color: kWhiteColor,
                       size: 30,
                     ),
           );
@@ -472,7 +478,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        if (videoPlayerController.value.isInitialized) {
+       // if (videoPlayerController.value.isInitialized) {
           isPlay.value = !videoPlayerController.value.isPlaying;
           showControl = false;
           bloc.updateListener();
@@ -485,7 +491,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                 : isPlay.value = false,
           );
           SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-        }
+       // }
       },
       child: Container(
         height: 30,

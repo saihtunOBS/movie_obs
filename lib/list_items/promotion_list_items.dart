@@ -8,7 +8,7 @@ Widget promotionListItem(bool isPremium, BuildContext context) {
     margin: EdgeInsets.only(bottom: 40),
     padding: EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
-      color: kWhiteColor,
+      color: Colors.grey.withValues(alpha: 0.2),
       borderRadius: BorderRadius.circular(15),
       border: Border.all(color: Colors.grey, width: 0.3),
     ),
@@ -22,7 +22,7 @@ Widget promotionListItem(bool isPremium, BuildContext context) {
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              color: kBlackColor,
+              color: kSecondaryColor,
             ),
             child: Text(
               'Thingyan Festival',
@@ -102,11 +102,11 @@ Widget promotionListItem(bool isPremium, BuildContext context) {
               margin: EdgeInsets.only(top: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: Colors.grey.withValues(alpha: 0.5),
+                color: Colors.grey.withValues(alpha: 0.2),
               ),
               child: Text(
                 'Within April 1, 2025 - April 5, 2025',
-                style: TextStyle(),
+                style: TextStyle(color: kThirdColor),
                 textAlign: TextAlign.justify,
               ),
             ),

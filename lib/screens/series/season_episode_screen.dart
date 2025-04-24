@@ -60,7 +60,7 @@ class SeasonEpisodeScreen extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Center(
-                        child: Icon(CupertinoIcons.arrow_left, size: 20),
+                        child: Icon(CupertinoIcons.arrow_left, size: 20,color: kBlackColor,),
                       ),
                     ),
                   ),
@@ -101,13 +101,13 @@ class SeasonEpisodeScreen extends StatelessWidget {
          SizedBox(
           width: 5,
           height: 5,
-          child: CircleAvatar(backgroundColor: kBlackColor),
+          child: CircleAvatar(backgroundColor: kWhiteColor),
         ),
         Text('30 mins', style: TextStyle(fontWeight: FontWeight.bold)),
         SizedBox(
           width: 5,
           height: 5,
-          child: CircleAvatar(backgroundColor: kBlackColor),
+          child: CircleAvatar(backgroundColor: kWhiteColor),
         ),
         Row(
           spacing: kMargin5,
@@ -173,7 +173,7 @@ class SeasonEpisodeScreen extends StatelessWidget {
         ExpandableText(
           text:
               'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius',
-          style: TextStyle(fontSize: 14, color: kBlackColor),
+          style: TextStyle(fontSize: 14,),
         ),
       ],
     );
@@ -195,7 +195,7 @@ class SeasonEpisodeScreen extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: kBlackColor,
+          color: kSecondaryColor,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

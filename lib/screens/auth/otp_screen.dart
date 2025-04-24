@@ -86,9 +86,10 @@ class _OTPScreenState extends State<OTPScreen> {
             Text(
               'VERIFICATION',
               style: TextStyle(
-                letterSpacing: 5.0,
+                letterSpacing: 10.0,
                 fontSize: kTextRegular32,
                 fontWeight: FontWeight.bold,
+                color: kThirdColor
               ),
             ),
             Text(

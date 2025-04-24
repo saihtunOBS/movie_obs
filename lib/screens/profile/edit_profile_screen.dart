@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/extension/extension.dart';
-import 'package:movie_obs/widgets/custom_button.dart';
 import 'package:movie_obs/widgets/custom_textfield.dart';
 
 import '../../utils/colors.dart';
@@ -19,7 +18,7 @@ class EditProfileScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAppBar(context),
-          20.vGap,
+          30.vGap,
           _buildUserInfo('Username', 'Username', context),
           10.vGap,
           _buildUserInfo('Phone Number', '+95 0976666677', context),
@@ -32,41 +31,7 @@ class EditProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        margin: EdgeInsets.symmetric(
-          horizontal:
-              getDeviceType() == 'phone'
-                  ? kMarginMedium2
-                  : MediaQuery.of(context).size.width * 0.15,
-          vertical: kMarginMedium2 + 10,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 10,
-          children: [
-            Expanded(
-              child: customButton(
-                onPress: () {
-                  Navigator.pop(context);
-                },
-                borderColor: kBlackColor,
-                context: context,
-                backgroundColor: Colors.transparent,
-                title: 'Cancel',
-              ),
-            ),
-            Expanded(
-              child: customButton(
-                onPress: () {},
-                context: context,
-                backgroundColor: kBlackColor,
-                title: 'Save',
-                textColor: kWhiteColor,
-              ),
-            ),
-          ],
-        ),
-      ),
+     
     );
   }
 
@@ -119,7 +84,7 @@ class EditProfileScreen extends StatelessWidget {
                       color: Colors.grey.withValues(alpha: 0.3),
                     ),
                     child: Center(
-                      child: Image.asset(kUserIcon, width: 44, height: 44),
+                      child: Image.asset(kProfileCoverIcon),
                     ),
                   ),
                   Positioned(
@@ -128,7 +93,7 @@ class EditProfileScreen extends StatelessWidget {
                     right: 0,
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 3),
-                      color: Colors.black26,
+                      color: Colors.black54,
                       child: Icon(
                         CupertinoIcons.camera_fill,
                         color: kWhiteColor,
@@ -139,6 +104,30 @@ class EditProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
+          ),
+        ),
+        Positioned(
+          top: 60,
+          right: kMarginMedium2,
+          child: Row(
+            spacing: 10,
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                  decoration: BoxDecoration(
+                    color: kSecondaryColor,
+                    borderRadius: BorderRadius.circular(kMarginMedium + 8),
+                  ),
+                  child: Center(
+                    child: Text('Save',style: TextStyle(color: kWhiteColor),),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],

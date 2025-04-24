@@ -193,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   width: 36,
                   height: 36,
                   child: CircleAvatar(
-                    backgroundColor: Colors.black12,
+                    backgroundColor: Colors.grey.withValues(alpha: 0.2),
                     child: Padding(
                       padding: const EdgeInsets.all(7),
                       child: icon,
@@ -219,7 +219,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: kWhiteColor,
+        color: Colors.grey.withValues(alpha: 0.2),
       ),
       padding: EdgeInsets.all(20),
       child: SingleChildScrollView(
@@ -252,7 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.of(context, rootNavigator: true).pop();
                       }
                     },
-                    borderColor: kBlackColor,
+                    borderColor: kWhiteColor,
                     context: context,
                     backgroundColor: Colors.transparent,
                     title: 'No',
@@ -263,7 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: 35,
                     onPress: () {},
                     context: context,
-                    backgroundColor: kBlackColor,
+                    backgroundColor: kSecondaryColor,
                     title: 'Yes',
                     textColor: kWhiteColor,
                   ),

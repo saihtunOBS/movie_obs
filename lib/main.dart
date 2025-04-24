@@ -61,7 +61,7 @@ class _MovieOBSState extends State<MovieOBS> {
         ),
         progressIndicatorTheme: ProgressIndicatorThemeData(color: Colors.white),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.red,
+          seedColor: kSecondaryColor,
           primary: kSecondaryColor,
           brightness: Brightness.dark
         ),

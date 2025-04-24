@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 
 class ExpandableText extends StatefulWidget {
@@ -46,7 +47,7 @@ class _ExpandableTextState extends State<ExpandableText>
                 style:
                     widget.linkStyle ??
                     const TextStyle(
-                      color: Colors.blue,
+                      color: kThirdColor,
                       fontWeight: FontWeight.w500,
                       fontSize: kTextSmall,
                     ),

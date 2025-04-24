@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/list_items/promotion_list_items.dart';
 import 'package:movie_obs/utils/colors.dart';
-import 'package:movie_obs/utils/images.dart';
 
 import '../../extension/extension.dart';
 import '../../utils/dimens.dart';
+import '../../utils/images.dart';
+import '../../widgets/custom_button.dart';
 
 class PromotionScreen extends StatelessWidget {
   const PromotionScreen({super.key});
@@ -17,8 +18,27 @@ class PromotionScreen extends StatelessWidget {
       body: Column(
         children: [
           _buildAppBar(context),
+          20.vGap,
           Expanded(child: _buildListView(context)),
         ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2,vertical: kMarginMedium2 + 5),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 2,
+          children: [
+            customButton(
+              onPress: () {},
+              context: context,
+              backgroundColor: kSecondaryColor,
+              title: 'Continue for Payment',
+              textColor: kWhiteColor,
+            ),
+            Image.asset(kShadowImage),
+            
+          ],
+        ),
       ),
     );
   }
@@ -26,11 +46,6 @@ class PromotionScreen extends StatelessWidget {
   Widget _buildAppBar(BuildContext context) {
     return Stack(
       children: [
-        SizedBox(
-          height: 200,
-          width: double.infinity,
-          child: Image.asset(kBarBackground, fit: BoxFit.fill),
-        ),
         Padding(
           padding: EdgeInsets.only(
             top: 60,
@@ -63,7 +78,11 @@ class PromotionScreen extends StatelessWidget {
         ),
 
         Padding(
-          padding: EdgeInsets.only(top: getDeviceType() == 'phone' ? 80 : 60, left: 30, right: 30),
+          padding: EdgeInsets.only(
+            top: getDeviceType() == 'phone' ? 80 : 60,
+            left: 30,
+            right: 30,
+          ),
           child: Align(
             alignment: Alignment.bottomCenter,
             child: Column(

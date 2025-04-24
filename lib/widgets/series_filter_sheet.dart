@@ -30,13 +30,13 @@ Widget seriesFilterSheet() {
             Spacer(),
             Chip(
               label: Text('Filter', style: TextStyle(color: kWhiteColor)),
-              backgroundColor: kBlackColor,
+              backgroundColor: kSecondaryColor,
             ),
             10.hGap,
             Chip(
-              label: Text('Clear', style: TextStyle(color: kBlackColor)),
-              backgroundColor: kWhiteColor,
-              side: BorderSide(color: kBlackColor),
+              label: Text('Clear', style: TextStyle(color: kWhiteColor)),
+              backgroundColor: kBlackColor,
+              side: BorderSide(color: kWhiteColor),
             ),
           ],
         ),
@@ -64,7 +64,7 @@ Widget _buildSeriesSession() {
       Row(
         spacing: kMargin10,
         children: [
-          Image.asset(kMovieSeriesIcon, width: 28, height: 28),
+          Image.asset(kMovieSeriesIcon, width: 28, height: 28,color: kWhiteColor,),
           Text(
             'Series',
             style: TextStyle(
@@ -83,7 +83,7 @@ Widget _buildSeriesSession() {
           itemBuilder: (context, index) {
             return Chip(
               label: Text('hello'),
-              backgroundColor: kWhiteColor,
+              backgroundColor: Colors.grey.withValues(alpha: 0.2),
               side: BorderSide(color: kBlackColor),
             );
           },

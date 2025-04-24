@@ -3,7 +3,6 @@ import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
 import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/extension/extension.dart';
-import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 
 late final AnimationController controller;
@@ -85,7 +84,7 @@ class _ImageScaleAnimationState extends State<ImageScaleAnimation>
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: kWhiteColor,
+      backgroundColor: Colors.transparent,
       body: Center(
         child: AnimatedBuilder(
           animation: _animation,

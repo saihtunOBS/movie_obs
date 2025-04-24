@@ -57,7 +57,7 @@ class ActorViewScreen extends StatelessWidget {
             height: 80,
             width: 80,
             decoration: BoxDecoration(
-              color: kBlackColor,
+              color: Colors.grey.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Center(child: Image.asset(kUserIcon, width: 30, height: 30)),
@@ -72,7 +72,7 @@ class ActorViewScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 decoration: BoxDecoration(
-                  color: kBlackColor,
+                  color: Colors.grey.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(

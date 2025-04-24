@@ -3,4 +3,5 @@ import 'package:flutter/material.dart';
 const Color kBlackColor = Colors.black;
 const Color kWhiteColor = Colors.white;
 const Color kBackgroundColor = Colors.black;
-const Color kSecondaryColor = Colors.green;
+const Color kSecondaryColor = Color(0xFF4CAB09);
+const Color kThirdColor = Color(0xFF6AFF00);

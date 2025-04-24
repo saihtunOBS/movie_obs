@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:movie_obs/utils/colors.dart';
 
 class CustomTextfield extends StatelessWidget {
   const CustomTextfield({super.key, this.hint});
@@ -8,10 +7,11 @@ class CustomTextfield extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 50,
       decoration: BoxDecoration(
-        color: kWhiteColor,
+        color: Colors.grey.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
+        // border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
       ),
       child: TextField(
       

@@ -53,9 +53,10 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
             Text(
               'LANGUAGE',
               style: TextStyle(
-                letterSpacing: 5.0,
+                letterSpacing: 10.0,
                 fontSize: kTextRegular32,
                 fontWeight: FontWeight.bold,
+                color: kThirdColor
               ),
             ),
             Text(

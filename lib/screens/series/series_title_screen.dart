@@ -57,7 +57,7 @@ class SeriesTitleScreen extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Center(
-                        child: Icon(CupertinoIcons.arrow_left, size: 20),
+                        child: Icon(CupertinoIcons.arrow_left, size: 20,color: kBlackColor,),
                       ),
                     ),
                   ),
@@ -94,7 +94,7 @@ class SeriesTitleScreen extends StatelessWidget {
               'Action , Adventure',
               style: TextStyle(
                 fontSize: kTextSmall,
-                color: Colors.grey,
+                color: kThirdColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -193,14 +193,14 @@ class SeriesTitleScreen extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: kMarginMedium + 4),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: kBlackColor,
+            color: kSecondaryColor.withValues(alpha: 0.2),
           ),
           child: Center(
             child: Row(
               spacing: kMargin5,
               children: [
                 //Icon(CupertinoIcons.lock, color: kWhiteColor, size: 18),
-                Text('Free', style: TextStyle(color: kWhiteColor)),
+                Text('Free', style: TextStyle(color: kThirdColor)),
               ],
             ),
           ),
@@ -211,7 +211,7 @@ class SeriesTitleScreen extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             color: Colors.transparent,
-            border: Border.all(color: kBlackColor),
+            border: Border.all(color: kWhiteColor),
           ),
           child: Center(
             child: Row(
