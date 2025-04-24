@@ -4,6 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:movie_obs/exception/custom_exception.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/movie_api.dart';
+import 'package:movie_obs/network/requests/send_otp_request.dart';
+import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/responses/otp_response.dart';
 
 import '../../data/vos/error_vo.dart';
 
@@ -22,6 +25,30 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     final dio = Dio();
     movieApi = MovieApi(dio);
   }
+
+  @override
+  Future<OTPResponse> sendOtp(SendOtpRequest request) {
+    return movieApi
+        .sendOTP(request)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<OTPResponse> verifyOtp(VerifyOtpRequest request) {
+    return movieApi
+        .verifyOTP(request)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
 }
 
 ///custom exception
@@ -30,10 +57,7 @@ CustomException _createException(dynamic error) {
   if (error is DioException) {
     errorVO = _parseDioError(error);
   } else {
-    errorVO = ErrorVO(
-      status: false,
-      message: "UnExcepted error",
-    );
+    errorVO = ErrorVO(status: false, message: "UnExcepted error");
   }
   return CustomException(errorVO);
 }
@@ -57,4 +81,3 @@ ErrorVO _parseDioError(DioException error) {
     return ErrorVO(status: false, message: "Invalid DioException Format");
   }
 }
-

@@ -1,5 +1,6 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
@@ -7,7 +8,10 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/custom_button.dart';
 
+import '../../main.dart';
 import '../../utils/images.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChangeLanguageScreen extends StatefulWidget {
   const ChangeLanguageScreen({super.key});
@@ -23,6 +27,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
 
   @override
   void initState() {
+    _selectedValue = PersistenceData.shared.getLocale() == 'en' ? 1 : 0;
     languages = [
       _buildLanguageRow(title: 'Myanmar'),
       _buildLanguageRow(title: 'English'),
@@ -51,16 +56,16 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
           spacing: kMarginMedium,
           children: [
             Text(
-              'LANGUAGE',
+              AppLocalizations.of(context)?.language ?? '',
               style: TextStyle(
                 letterSpacing: 10.0,
                 fontSize: kTextRegular32,
                 fontWeight: FontWeight.bold,
-                color: kThirdColor
+                color: kThirdColor,
               ),
             ),
             Text(
-              'Please select your prefer language to continue.',
+              AppLocalizations.of(context)?.preferLanguage ?? '',
               style: TextStyle(fontSize: kTextRegular2x),
             ),
             20.vGap,
@@ -85,12 +90,12 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                         onChanged: (value) {
                           setState(() {
                             switch (value) {
-                              case 0:
-                              // PersistenceData.shared.saveLocale('en');
-                              // languageStreamController.sink.add('en');
                               case 1:
-                                // PersistenceData.shared.saveLocale('my');
-                                // languageStreamController.sink.add('my');
+                                PersistenceData.shared.saveLocale('en');
+                                languageStreamController.sink.add('en');
+                              case 0:
+                                PersistenceData.shared.saveLocale('my');
+                                languageStreamController.sink.add('my');
                                 break;
                               default:
                             }
@@ -114,7 +119,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                   },
                   context: context,
                   backgroundColor: kSecondaryColor,
-                  title: 'Send OTP',
+                  title: AppLocalizations.of(context)?.confirm ?? '',
                   textColor: kWhiteColor,
                 ),
                 Image.asset(kShadowImage),
