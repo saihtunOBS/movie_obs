@@ -13,6 +13,7 @@ import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/screens/video_player.dart/popup_video_player.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
+import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/utils/rotation_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
@@ -206,59 +207,58 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           extendBodyBehindAppBar: true,
           extendBody: true,
           backgroundColor: kBlackColor.withValues(alpha: _dragOffset),
-          body: Column(
-            children: [
-              !bloc.isFullScreen ? 30.vGap : 0.vGap,
-              _buildVideoPlayerSection(),
-              if (!bloc.isFullScreen) Flexible(child: _buildContentSection()),
-            ],
-          ),
+          body: _buildVideoPlayerSection(),
         );
       },
     );
   }
 
+  // if (!bloc.isFullScreen) Flexible(child: _buildContentSection()),
+
   Widget _buildVideoPlayerSection() {
     return Container(
       color: Colors.transparent,
-      height:
-          bloc.isFullScreen
-              ? MediaQuery.of(context).size.height
-              : getDeviceType() == 'phone'
-              ? 245
-              : MediaQuery.of(context).size.width * 10 / 16,
-      width: MediaQuery.of(context).size.width,
 
+      // height:
+      //     bloc.isFullScreen
+      //         ? MediaQuery.of(context).size.height
+      //         : getDeviceType() == 'phone'
+      //         ? 245
+      //         : MediaQuery.of(context).size.width * 10 / 16,
+      // width: MediaQuery.of(context).size.width,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
           bloc.resetControlVisibility();
         },
-        child: Container(
-          margin: EdgeInsets.only(top: bloc.isFullScreen ? 0 : 0),
-          child: Stack(
-            children: [
-              chewieControllerNotifier == null ||
-                      !videoPlayerController.value.isInitialized ||
-                      bloc.isLoading
-                  ? _buildLoadingIndicator()
-                  : _buildVideoPlayer(),
+        child: Stack(
+          children: [
+            chewieControllerNotifier == null ||
+                    !videoPlayerController.value.isInitialized ||
+                    bloc.isLoading
+                ? _buildLoadingIndicator()
+                : _buildVideoPlayer(),
 
-              !videoPlayerController.value.isInitialized
-                  ? SizedBox()
-                  : _buildPlayPauseControls(),
-              _buildTopLeftControls(),
-              _buildTopRightControls(),
-              _buildProgressBar(),
-            ],
-          ),
+            !videoPlayerController.value.isInitialized
+                ? SizedBox()
+                : _buildPlayPauseControls(),
+            _buildTopLeftControls(),
+            _buildTopRightControls(),
+            _buildProgressBar(),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildLoadingIndicator() {
-    return const Center(child: CircularProgressIndicator(strokeWidth: 1));
+    return const Center(
+      child: CircularProgressIndicator(
+        strokeWidth: 2,
+        color: kThirdColor,
+        backgroundColor: kWhiteColor,
+      ),
+    );
   }
 
   Widget _buildVideoPlayer() {
@@ -271,7 +271,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                   !videoPlayerController.value.isInitialized
               ? DismissDirection.none
               : DismissDirection.down,
-      dismissThresholds: const {DismissDirection.down: 0.8},
+      dismissThresholds: const {DismissDirection.down: 0.1},
       movementDuration: const Duration(milliseconds: 300),
       onDismissed: (direction) async {},
       confirmDismiss: (direction) async {
@@ -293,7 +293,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         onStartDrag.value = details.progress <= 0.0;
         setState(() {
           if (mounted) {
-            _newDragOffset = details.progress * (screenHeight * 0.25);
+            _newDragOffset = details.progress * (screenHeight * 1);
             _dragOffset = 1.0 - details.progress;
           }
         });
@@ -372,7 +372,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return IgnorePointer(
       ignoring: !showControl,
       child: Row(
-        spacing: 15,
+        spacing: 20,
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildSeekButton(
@@ -407,7 +407,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }) {
     return IconButton.filled(
       onPressed: onPressed,
-      icon: Icon(icon, color: kWhiteColor),
+      icon: Icon(icon, color: kWhiteColor,size: 27,),
       style: IconButton.styleFrom(backgroundColor: Colors.black45),
     );
   }
@@ -438,7 +438,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                           ? CupertinoIcons.pause
                           : CupertinoIcons.play,
                       color: kWhiteColor,
-                      size: 30,
+                      size: 35,
                     ),
           );
         },
@@ -467,7 +467,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Widget _buildTopLeftControls() {
     return Positioned(
-      top: bloc.isFullScreen ? 20 : 10,
+      top: bloc.isFullScreen ? 20 : 60,
       left: bloc.isFullScreen ? 20 : 10,
       child: showControl ? _buildExitButton() : const SizedBox(),
     );
@@ -475,45 +475,71 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Widget _buildExitButton() {
     if (bloc.isFullScreen) return const SizedBox();
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        if (videoPlayerController.value.isInitialized) {
-          isPlay.value = !videoPlayerController.value.isPlaying;
-          showControl = false;
-          bloc.updateListener();
-          Navigator.pop(context);
-          MiniVideoPlayer.showMiniPlayer(
-            context,
-            bloc.currentUrl,
-            videoPlayerController.value.isPlaying
-                ? isPlay.value = true
-                : isPlay.value = false,
-          );
-          SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-        } else {
-          Navigator.pop(context);
-        }
-      },
-      child: Container(
-        height: 30,
-        width: 35,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Colors.transparent,
+    return Row(
+      spacing: 15,
+      children: [
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            Navigator.pop(context);
+            videoPlayerController.pause();
+            videoPlayerController.dispose();
+          },
+          child: Container(
+            height: 30,
+            width: 35,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.transparent,
+            ),
+            child: const Icon(
+              CupertinoIcons.clear_thick,
+              color: Colors.white,
+              size: 22,
+            ),
+          ),
         ),
-        child: const Icon(
-          CupertinoIcons.chevron_down,
-          color: Colors.white,
-          size: 22,
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            if (videoPlayerController.value.isInitialized) {
+              isPlay.value = !videoPlayerController.value.isPlaying;
+              showControl = false;
+              bloc.updateListener();
+              Navigator.pop(context);
+              MiniVideoPlayer.showMiniPlayer(
+                context,
+                bloc.currentUrl,
+                videoPlayerController.value.isPlaying
+                    ? isPlay.value = true
+                    : isPlay.value = false,
+              );
+              SystemChrome.setPreferredOrientations([
+                DeviceOrientation.portraitUp,
+              ]);
+            }
+          },
+          child: Container(
+            height: 25,
+            width: 25,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.transparent,
+            ),
+            child: Image.asset(
+              kPictureInPictureIcon,
+              width: 30,
+              color: kWhiteColor,
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildTopRightControls() {
     return Positioned(
-      top: bloc.isFullScreen ? 20 : 10,
+      top: bloc.isFullScreen ? 20 : 60,
       right: bloc.isFullScreen ? 20 : 10,
       child: showControl ? _buildSettingsButtons() : const SizedBox(),
     );
@@ -586,7 +612,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Widget _buildProgressBar() {
     return Positioned(
-      bottom: bloc.isFullScreen ? 20 : 0,
+      bottom: bloc.isFullScreen ? 20 : 30,
       left: 0,
       right: 0,
       child: showControl ? _buildProgressBarContent() : const SizedBox(),
@@ -620,7 +646,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             "${bloc.formatDuration(value.position)} / ${bloc.formatDuration(value.duration)}",
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 12,
+              // fontSize: 12,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -633,15 +659,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
         allowedInteraction: SliderInteraction.slideOnly,
-        trackHeight: 2.0,
+        trackHeight: bloc.isFullScreen ? 2.0:  3.0,
         inactiveTrackColor: Colors.white.withValues(alpha: 0.5),
-        activeTrackColor: Colors.red,
+        activeTrackColor: kThirdColor,
         overlayColor: Colors.grey.withValues(alpha: 0.5),
         secondaryActiveTrackColor:
             bloc.isSeeking ? Colors.transparent : Colors.white,
-        thumbColor: Colors.red,
+        thumbColor: kThirdColor,
         trackShape: const RoundedRectSliderTrackShape(),
-        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
+        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7.0),
       ),
       child: ValueListenableBuilder(
         valueListenable: videoPlayerController,
@@ -707,14 +733,14 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return InkWell(
       onTap: () => bloc.toggleFullScreen(),
       child: SizedBox(
-        height: bloc.isFullScreen ? 42 : 30,
-        width: bloc.isFullScreen ? 40 : 20,
-        child: Icon(Icons.fullscreen, color: Colors.white, size: 24),
+        // height: bloc.isFullScreen ? 42 : 30,
+        // width: bloc.isFullScreen ? 40 : 30,
+        child: Icon(Icons.fullscreen, color: Colors.white, size: 30),
       ),
     );
   }
 
-  Widget _buildContentSection() {
+  Widget buildContentSection() {
     return ValueListenableBuilder(
       valueListenable: onStartDrag,
       builder: (context, value, child) {

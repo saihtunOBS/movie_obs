@@ -25,4 +25,6 @@ const kBottomShadowImage = 'assets/images/bottom_shadow.png';
 
 const kGoogleIcon = 'assets/images/google.png';
 const kProfileCoverIcon = 'assets/images/profile_cover.png';
+const kPictureInPictureIcon = 'assets/images/picture.png';
+
 

@@ -33,7 +33,7 @@ class PersistenceData {
 
 
   getLocale() {
-    return GetStorage().read(PersistenceList.locale.name);
+    return GetStorage().read(PersistenceList.locale.name) ?? 'en';
   }
 
   clearToken() async {

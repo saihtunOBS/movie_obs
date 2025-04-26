@@ -59,7 +59,6 @@ class _SeriesScreenState extends State<SeriesScreen> {
               if (getDeviceType() == 'phone') {
                 showModalBottomSheet(
                   useRootNavigator: true,
-                  backgroundColor: kBlackColor,
                   showDragHandle: true,
                   context: context,
                   builder: (context) {

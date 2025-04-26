@@ -56,7 +56,6 @@ class _WatchListScreenState extends State<WatchListScreen> {
               if (getDeviceType() == 'phone') {
                 showModalBottomSheet(
                   useRootNavigator: true,
-                  backgroundColor: kWhiteColor,
                   showDragHandle: true,
                   context: context,
                   builder: (context) {

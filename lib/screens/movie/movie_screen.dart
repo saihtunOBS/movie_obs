@@ -57,7 +57,6 @@ class _MovieScreenState extends State<MovieScreen> {
               if (getDeviceType() == 'phone') {
                 showModalBottomSheet(
                   useRootNavigator: true,
-                  backgroundColor: kBlackColor,
                   showDragHandle: true,
                   context: context,
                   builder: (context) {
@@ -109,7 +108,9 @@ class _MovieScreenState extends State<MovieScreen> {
                 onChanged: _onSearchChanged,
                 shape: WidgetStateProperty.all(
                   RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16), // your border radius
+                    borderRadius: BorderRadius.circular(
+                      16,
+                    ), // your border radius
                   ),
                 ),
               ),

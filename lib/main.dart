@@ -44,13 +44,13 @@ class _MovieOBSState extends State<MovieOBS> {
     return StreamBuilder(
       stream: languageStreamController.stream,
       builder: (context, snapshot) {
-        print(PersistenceData.shared.getLocale());
         String localString = '';
         snapshot.data == null
             ? PersistenceData.shared.getLocale() == 'my'
                 ? localString = 'my'
                 : localString = 'en'
             : localString = snapshot.data ?? 'en';
+
         return MaterialApp(
           title: 'TuuTu Player',
           debugShowCheckedModeBanner: false,

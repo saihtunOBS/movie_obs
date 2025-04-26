@@ -65,8 +65,8 @@ class _AuthScreenState extends State<AuthScreen> {
             builder:
                 (context, value, child) => AnimatedSmoothIndicator(
                   effect: ExpandingDotsEffect(
-                    dotHeight: kMarginMedium,
-                    dotWidth: kMarginMedium,
+                    dotHeight: kMargin5,
+                    dotWidth: kMargin5,
                     activeDotColor: kSecondaryColor,
                     dotColor: kWhiteColor,
                   ),
