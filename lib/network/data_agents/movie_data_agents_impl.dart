@@ -6,7 +6,12 @@ import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/movie_api.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/responses/category_response.dart';
+import 'package:movie_obs/network/responses/genre_response.dart';
+import 'package:movie_obs/network/responses/movie_detail_response.dart';
+import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
+import 'package:movie_obs/network/responses/season_response.dart';
 
 import '../../data/vos/error_vo.dart';
 
@@ -42,6 +47,130 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   Future<OTPResponse> verifyOtp(VerifyOtpRequest request) {
     return movieApi
         .verifyOTP(request)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<MovieResponse> getMovies(String token) {
+    return movieApi
+        .getMovies('Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<MovieResponse> getAllMovie(String token) {
+    return movieApi
+        .getAllMovies('Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<MovieResponse> getNewRelease(String token) {
+    return movieApi
+        .getNewRelease('Bearer $token', 'createdAt', 'desc')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<MovieResponse> getTopTrending(String token) {
+    return movieApi
+        .getTopTrending('Bearer $token', true)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<MovieResponse> getSeries(String token) {
+    return movieApi
+        .getSeries('Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<MovieDetailResponse> getMovieDetail(String token, String id) {
+    return movieApi
+        .getMovieDetail(id, 'Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<MovieDetailResponse> getSeriesDetail(
+    String token,
+    String id,
+    bool isSeasonInclude,
+  ) {
+    return movieApi
+        .getSeriesDetail(id, isSeasonInclude, 'Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<SeasonResponse> getSeason(String token) {
+    return movieApi
+        .getAllSeason('Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<CategoryResponse> getAllCategory(String token) {
+    return movieApi
+        .getAllCategory('Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<GenreResponse> getAllGenre(String token) {
+    return movieApi
+        .getAllGenre('Bearer $token')
         .asStream()
         .map((response) => response)
         .first

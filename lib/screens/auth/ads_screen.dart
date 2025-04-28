@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/splash_screen.dart';
+import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 
@@ -34,7 +36,12 @@ class AdsScreen extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                PageNavigator(ctx: context).nextPageOnly(page: SplashScreen());
+                if(PersistenceData.shared.getToken() != ''){
+                  PageNavigator(ctx: context).nextPageOnly(page: BottomNavScreen());
+                }else {
+                  PageNavigator(ctx: context).nextPageOnly(page: SplashScreen());
+                }
+                
               },
               child: Container(
                 height: MediaQuery.sizeOf(context).height * 0.6,

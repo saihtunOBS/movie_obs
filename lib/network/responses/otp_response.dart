@@ -10,10 +10,16 @@ class OTPResponse {
   @JsonKey(name: "requestId")
   final dynamic requestId;
 
-  OTPResponse(
-      {this.status,
-      this.requestId,
-      });
+  @JsonKey(name: 'accessToken')
+  final String? accessToken;
+
+  @JsonKey(name: 'refreshToken')
+  final String? refreshToken;
+
+  @JsonKey(name: 'userId')
+  final String? userId;
+
+  OTPResponse({this.status, this.requestId,this.accessToken,this.refreshToken,this.userId});
 
   factory OTPResponse.fromJson(Map<String, dynamic> json) =>
       _$OTPResponseFromJson(json);

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/bloc/home_bloc.dart';
+import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
@@ -10,6 +12,7 @@ import 'package:movie_obs/screens/home/new_release_screen.dart';
 import 'package:movie_obs/screens/home/top_trending_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,81 +24,112 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      appBar: AppBar(
-        title: Text('LOGO'),
-        centerTitle: false,
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: kBackgroundColor,
-        foregroundColor: kWhiteColor,
-        actions: [
-          CircleAvatar(
-            backgroundColor: Colors.black12,
-            child: Icon(CupertinoIcons.layers),
-          ),
-          10.hGap,
-          InkWell(
-            onTap: () {
-              PageNavigator(ctx: context).nextPage(page: NotificationScreen());
-            },
-            child: CircleAvatar(
+    return ChangeNotifierProvider(
+      create: (context) => HomeBloc(context),
+      child: Scaffold(
+        backgroundColor: kBackgroundColor,
+        appBar: AppBar(
+          title: Text('LOGO'),
+          centerTitle: false,
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: kBackgroundColor,
+          foregroundColor: kWhiteColor,
+          actions: [
+            CircleAvatar(
               backgroundColor: Colors.black12,
-              child: Icon(CupertinoIcons.bell),
+              child: Icon(CupertinoIcons.layers),
             ),
-          ),
-          10.hGap,
-          CircleAvatar(
-            backgroundColor: Colors.black12,
-            child: Icon(CupertinoIcons.search),
-          ),
-          10.hGap,
-        ],
-      ),
-
-      body: CustomScrollView(
-        physics: ClampingScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: Container(height: 15, color: kBackgroundColor),
-          ),
-          //carousel
-          SliverToBoxAdapter(
-            child: Container(
-              height: getDeviceType() == 'phone' ? 220 : 350,
-              color: Colors.transparent,
-              child: BannerImageAnimation(),
+            10.hGap,
+            InkWell(
+              onTap: () {
+                PageNavigator(
+                  ctx: context,
+                ).nextPage(page: NotificationScreen());
+              },
+              child: CircleAvatar(
+                backgroundColor: Colors.black12,
+                child: Icon(CupertinoIcons.bell),
+              ),
             ),
-          ),
+            10.hGap,
+            CircleAvatar(
+              backgroundColor: Colors.black12,
+              child: Icon(CupertinoIcons.search),
+            ),
+            10.hGap,
+          ],
+        ),
 
-          SliverToBoxAdapter(child: SizedBox(height: 10)),
-          //options
-          SliverToBoxAdapter(child: _buildOptions()),
+        body: Consumer<HomeBloc>(
+          builder:
+              (context, bloc, child) => CustomScrollView(
+                physics: ClampingScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Container(height: 15, color: kBackgroundColor),
+                  ),
+                  //carousel
+                  SliverToBoxAdapter(
+                    child: Container(
+                      height: getDeviceType() == 'phone' ? 220 : 350,
+                      color: Colors.transparent,
+                      child: BannerImageAnimation(),
+                    ),
+                  ),
 
-          //free movie & series
-          SliverToBoxAdapter(
-            child: _buildMovieOptions('Free Movie & Series', () {}),
-          ),
-          SliverToBoxAdapter(
-            child: SizedBox(height: getDeviceType() == 'phone' ? 10 : 20),
-          ),
-          //top trending
-          SliverToBoxAdapter(
-            child: _buildMovieOptions('Top Trending', () {
-              PageNavigator(ctx: context).nextPage(page: TopTrendingScreen());
-            }),
-          ),
-          SliverToBoxAdapter(
-            child: SizedBox(height: getDeviceType() == 'phone' ? 10 : 20),
-          ),
-          //new release
-          SliverToBoxAdapter(
-            child: _buildMovieOptions('New Releases', () {
-              PageNavigator(ctx: context).nextPage(page: NewReleaseScreen());
-            }),
-          ),
-          SliverToBoxAdapter(child: SizedBox(height: 20)),
-        ],
+                  SliverToBoxAdapter(child: SizedBox(height: 0)),
+                  //options
+                  SliverToBoxAdapter(child: _buildOptions()),
+
+                  //free movie & series
+                  SliverToBoxAdapter(
+                    child: _buildMovieOptions(
+                      'Free Movie & Series',
+                      () {},
+                      bloc.movieLists,
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: getDeviceType() == 'phone' ? 10 : 20,
+                    ),
+                  ),
+                  //top trending
+                  SliverToBoxAdapter(
+                    child: Visibility(
+                      visible: bloc.topTrendingMoviesList.isNotEmpty,
+                      child: _buildMovieOptions('Top Trending', () {
+                        PageNavigator(
+                          ctx: context,
+                        ).nextPage(page: TopTrendingScreen());
+                      }, bloc.topTrendingMoviesList),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height:
+                          bloc.topTrendingMoviesList.isNotEmpty
+                              ? getDeviceType() == 'phone'
+                                  ? 10
+                                  : 20
+                              : 0,
+                    ),
+                  ),
+                  //new release
+                  SliverToBoxAdapter(
+                    child: Visibility(
+                      visible: bloc.newReleaseMoviesList.isNotEmpty,
+                      child: _buildMovieOptions('New Releases', () {
+                        PageNavigator(
+                          ctx: context,
+                        ).nextPage(page: NewReleaseScreen(movieLists: bloc.newReleaseMoviesList,));
+                      }, bloc.newReleaseMoviesList),
+                    ),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 20)),
+                ],
+              ),
+        ),
       ),
     );
   }
@@ -158,7 +192,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildMovieOptions(String title, VoidCallback onPress) {
+  Widget _buildMovieOptions(
+    String title,
+    VoidCallback onPress,
+    List<MovieVO> movies,
+  ) {
     return SizedBox(
       height: 250,
       width: double.infinity,
@@ -188,15 +226,18 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: kMarginMedium2),
               scrollDirection: Axis.horizontal,
-              itemCount: 5,
+              itemCount: movies.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
                     PageNavigator(
                       ctx: context,
-                    ).nextPage(page: MovieTypeScreen());
+                    ).nextPage(page: MovieTypeScreen(movie: movies[index]));
                   },
-                  child: SizedBox(width: 180, child: movieListItem()),
+                  child: SizedBox(
+                    width: 180,
+                    child: movieListItem(movies: movies[index]),
+                  ),
                 );
               },
             ),

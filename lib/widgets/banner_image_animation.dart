@@ -1,11 +1,6 @@
-import 'dart:ui' show lerpDouble;
-
 import 'package:flutter/material.dart';
 import 'package:movie_obs/data/dummy/dummy_data.dart';
-import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
-
-late final AnimationController controller;
 
 class BannerImageAnimation extends StatelessWidget {
   const BannerImageAnimation({super.key});
@@ -13,21 +8,22 @@ class BannerImageAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: ImageScaleAnimation(),
+      home: ImageFadeAnimation(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class ImageScaleAnimation extends StatefulWidget {
-  const ImageScaleAnimation({super.key});
+class ImageFadeAnimation extends StatefulWidget {
+  const ImageFadeAnimation({super.key});
 
   @override
-  State<ImageScaleAnimation> createState() => _ImageScaleAnimationState();
+  State<ImageFadeAnimation> createState() => _ImageFadeAnimationState();
 }
 
-class _ImageScaleAnimationState extends State<ImageScaleAnimation>
+class _ImageFadeAnimationState extends State<ImageFadeAnimation>
     with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
   late Animation<double> _animation;
 
   int currentIndex = 0;
@@ -36,73 +32,54 @@ class _ImageScaleAnimationState extends State<ImageScaleAnimation>
   void initState() {
     super.initState();
 
-    controller = AnimationController(
+    _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     );
 
-    _animation = Tween<double>(
-      begin: 1,
-      end: 0,
-    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
+    _animation = Tween<double>(begin: 0.1, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
 
-    Future.delayed(Duration(milliseconds: 1000), () {
-      controller.forward();
-    });
+    _startAnimation();
+  }
 
-    controller.addStatusListener((status) {
+  void _startAnimation() {
+    _controller.forward();
+
+    _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Future.delayed(Duration(seconds: 3), () {
-          controller.reverse();
+        Future.delayed(const Duration(seconds: 2), () {
+          _controller.reverse();
         });
       } else if (status == AnimationStatus.dismissed) {
-        if (_animation.value == 0) {
-          Future.delayed(const Duration(seconds: 1), () {
-            setState(() {
-              currentIndex = (currentIndex + 1) % imageArray.length;
-            });
-            controller.forward();
-          });
-        } else {
-          setState(() {
-            currentIndex = (currentIndex + 1) % imageArray.length;
-          });
-          controller.forward();
-        }
+        setState(() {
+          currentIndex = (currentIndex + 1) % imageArray.length;
+        });
+        _controller.forward();
       }
     });
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.black,
       body: Center(
-        child: AnimatedBuilder(
-          animation: _animation,
-          builder: (context, child) {
-            // Animate from full screen to small circle
-            final width = lerpDouble(screenWidth, 120, _animation.value)!;
-            final height = lerpDouble(getDeviceType() == 'phone' ? 250 : 350, 120, _animation.value)!;
-            final borderRadius = lerpDouble(0, height / 2, _animation.value)!;
-
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(borderRadius),
-              child: SizedBox(
-                width: width,
-                height: height,
-                child: cacheImage(imageArray[currentIndex]),
-              ),
-            );
-          },
+        child: SizedBox(
+          width: double.infinity,
+          child: FadeTransition(
+            opacity: _animation,
+            child: cacheImage(
+              imageArray[currentIndex],
+            ),
+          ),
         ),
       ),
     );

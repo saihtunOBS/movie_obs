@@ -9,7 +9,6 @@ import 'package:movie_obs/screens/series/series_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
-import 'package:movie_obs/widgets/banner_image_animation.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -38,11 +37,11 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
           screens: screens,
           items: _navBarsItems(context),
           onItemSelected: (value) {
-            if (value != 0) {
-              controller.stop();
-            } else {
-              controller.reset();
-            }
+            // if (value != 0) {
+            //   controller.stop();
+            // } else {
+            //   controller.reset();
+            // }
           },
         ),
         Positioned(

@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:movie_obs/utils/images.dart';
+import 'package:movie_obs/network/responses/movie_detail_response.dart';
+import 'package:movie_obs/widgets/cache_image.dart';
 
-Widget castListItem() {
+Widget castListItem({ActorVO? actor}) {
   return Row(
     crossAxisAlignment: CrossAxisAlignment.center,
     spacing: 10,
     children: [
-      Container(
-        height: 70,
-        width: 70,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.grey.withValues(alpha: 0.2),
+      ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          height: 70,
+          width: 70,
+          decoration: BoxDecoration(color: Colors.grey.withValues(alpha: 0.2)),
+          child: Center(
+            child: cacheImage(actor?.cast?.profilePictureUrl ?? ''),
+          ),
         ),
-        child: Center(child: Image.asset(kUserIcon,width: 32,height: 32,)),
       ),
       Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 3,
-        children: [Text('Name'), Text('Movie\'s Actor name')]),
+        children: [
+          Text(actor?.cast?.name ?? ''),
+          Text(actor?.characterName ?? ''),
+        ],
+      ),
     ],
   );
 }

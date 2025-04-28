@@ -1,97 +1,108 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/data/dummy/dummy_data.dart';
+import 'package:movie_obs/bloc/series_detail_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/series_list_item.dart';
-import 'package:movie_obs/screens/series/season_episode_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
+import 'package:provider/provider.dart';
 
+import '../../data/vos/movie_vo.dart';
 import '../../extension/page_navigator.dart';
 import '../../list_items/cast_list_item.dart';
 import '../../widgets/expandable_text.dart';
 import '../home/actor_view_screen.dart';
 
-class SeriesSeasonScreen extends StatelessWidget {
-  const SeriesSeasonScreen({super.key});
+class EpisodeOrSeriesLockScreen extends StatelessWidget {
+  const EpisodeOrSeriesLockScreen({super.key, this.series});
+  final MovieVO? series;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: getDeviceType() == 'phone' ? 250 : 380,
-            automaticallyImplyLeading: false,
-            foregroundColor: Colors.white,
-            backgroundColor: kBackgroundColor,
-            pinned: true,
-            stretch: true,
-            floating: true,
-            flexibleSpace: Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  height: double.infinity,
-                  width: double.infinity,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(40),
-                      bottomRight: Radius.circular(40),
+    return ChangeNotifierProvider(
+      create: (context) => SeriesDetailBloc(series?.id),
+      child: Scaffold(
+        backgroundColor: kBackgroundColor,
+        body: Consumer<SeriesDetailBloc>(
+          builder:
+              (context, bloc, child) => CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                    expandedHeight: getDeviceType() == 'phone' ? 250 : 380,
+                    automaticallyImplyLeading: false,
+                    foregroundColor: Colors.white,
+                    backgroundColor: kBackgroundColor,
+                    pinned: true,
+                    stretch: true,
+                    floating: true,
+                    flexibleSpace: Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          height: double.infinity,
+                          width: double.infinity,
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(40),
+                              bottomRight: Radius.circular(40),
+                            ),
+                            child: cacheImage(series?.posterImageUrl ?? ''),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: -17,
+                          child: Container(
+                            height: 35,
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            decoration: BoxDecoration(
+                              color: kWhiteColor,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: _buildWatchTrailerView(),
+                          ),
+                        ),
+                        Positioned(
+                          left: 20,
+                          top: 55,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: 35,
+                              width: 35,
+                              decoration: BoxDecoration(
+                                color: kWhiteColor,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  CupertinoIcons.arrow_left,
+                                  size: 20,
+                                  color: kBlackColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: cacheImage(imageArray.first),
                   ),
-                ),
-                Positioned(
-                  bottom: -20,
-                  child: Container(
-                    height: 42,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: kWhiteColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: _buildWatchTrailerView(),
-                  ),
-                ),
-                Positioned(
-                  left: 20,
-                  top: 55,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                        color: kWhiteColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Icon(CupertinoIcons.arrow_left, size: 20,color: kBlackColor,),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
 
-          //body
-          SliverToBoxAdapter(child: _buildBody(context)),
-        ],
+                  //body
+                  SliverToBoxAdapter(child: _buildBody(context, bloc)),
+                ],
+              ),
+        ),
       ),
     );
   }
 
   Widget _buildWatchTrailerView() {
     return Container(
-      height: 42,
       padding: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
         color: kWhiteColor,
@@ -101,9 +112,19 @@ class SeriesSeasonScreen extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(CupertinoIcons.play_circle_fill, size: 26,color: kBlackColor,),
+            const Icon(
+              CupertinoIcons.play_circle_fill,
+              size: 26,
+              color: kBlackColor,
+            ),
             const SizedBox(width: 5),
-            Text('Watch Trailer', style: TextStyle(fontSize: kTextRegular2x,color: kBlackColor)),
+            Text(
+              'Watch Trailer',
+              style: TextStyle(
+                fontSize: kTextRegular2x - 3,
+                color: kBlackColor,
+              ),
+            ),
           ],
         ),
       ),
@@ -132,18 +153,17 @@ class SeriesSeasonScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCastView() {
+  Widget _buildCastView(SeriesDetailBloc bloc) {
     return SizedBox(
       height: 100,
       child: Column(
         spacing: 10,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('The Cast', style: TextStyle(fontSize: kTextRegular18)),
           Expanded(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 5,
+              itemCount: bloc.seriesResponse?.tags?.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,
@@ -154,7 +174,9 @@ class SeriesSeasonScreen extends StatelessWidget {
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(right: 10),
-                    child: castListItem(),
+                    child: castListItem(
+                      actor: bloc.seriesResponse?.actors?[index],
+                    ),
                   ),
                 );
               },
@@ -165,7 +187,7 @@ class SeriesSeasonScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildBody(BuildContext context, SeriesDetailBloc bloc) {
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: kMarginMedium2,
@@ -177,7 +199,7 @@ class SeriesSeasonScreen extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              'Series Title (Season 1)',
+              series?.name ?? '',
               style: TextStyle(fontSize: kTextRegular18 + 2),
             ),
           ),
@@ -185,11 +207,11 @@ class SeriesSeasonScreen extends StatelessWidget {
           1.vGap,
           _buildTypeAndWatchList(),
           1.vGap,
-          _buildCastView(),
+          _buildCastView(bloc),
           1.vGap,
-          _buildDescription(),
+          _buildDescription(bloc),
           Text(
-            'Seasons',
+            'Episodes',
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: kTextRegular18,
@@ -211,7 +233,7 @@ class SeriesSeasonScreen extends StatelessWidget {
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            PageNavigator(ctx: context).nextPage(page: SeasonEpisodeScreen());
+            // PageNavigator(ctx: context).nextPage(page: SeasonEpisodeScreen());
           },
           child: seasonListItem(isSeries: false),
         );
@@ -219,13 +241,12 @@ class SeriesSeasonScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDescription() {
+  Widget _buildDescription(SeriesDetailBloc bloc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ExpandableText(
-          text:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius',
+          text: bloc.seriesResponse?.description ?? '',
           style: TextStyle(fontSize: 14),
         ),
       ],

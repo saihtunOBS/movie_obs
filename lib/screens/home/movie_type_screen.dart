@@ -1,97 +1,111 @@
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/data/dummy/dummy_data.dart';
+import 'package:movie_obs/bloc/movie_detail_bloc.dart';
+import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/cast_list_item.dart';
 import 'package:movie_obs/screens/home/actor_view_screen.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
+import 'package:movie_obs/utils/calculate_time.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
+import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
+import 'package:provider/provider.dart';
 
 import '../../widgets/expandable_text.dart';
 
 class MovieTypeScreen extends StatelessWidget {
-  const MovieTypeScreen({super.key});
+  const MovieTypeScreen({super.key, this.movie});
+  final MovieVO? movie;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: getDeviceType() == 'phone' ? 250 : 380,
-            automaticallyImplyLeading: false,
-            foregroundColor: Colors.white,
-            backgroundColor: kBackgroundColor,
-            pinned: true,
-            stretch: true,
-            floating: true,
-            flexibleSpace: Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  height: double.infinity,
-                  width: double.infinity,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(40),
-                      bottomRight: Radius.circular(40),
+    return ChangeNotifierProvider(
+      create: (context) => MovieDetailBloc(movie?.id),
+      child: Consumer<MovieDetailBloc>(
+        builder:
+            (context, bloc, child) => Scaffold(
+              backgroundColor: kBackgroundColor,
+              body: CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                    expandedHeight: getDeviceType() == 'phone' ? 250 : 380,
+                    automaticallyImplyLeading: false,
+                    foregroundColor: Colors.white,
+                    backgroundColor: kBackgroundColor,
+                    pinned: true,
+                    stretch: true,
+                    floating: true,
+                    flexibleSpace: Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          height: double.infinity,
+                          width: double.infinity,
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(40),
+                              bottomRight: Radius.circular(40),
+                            ),
+                            child: cacheImage(movie?.posterImageUrl ?? ''),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: -17,
+                          child: Container(
+                            height: 35,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: kWhiteColor,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: _buildWatchTrailerView(),
+                          ),
+                        ),
+                        Positioned(
+                          left: 20,
+                          top: 55,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: 35,
+                              width: 35,
+                              decoration: BoxDecoration(
+                                color: kWhiteColor,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  CupertinoIcons.arrow_left,
+                                  size: 20,
+                                  color: kBlackColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: cacheImage(imageArray.first),
                   ),
-                ),
-                Positioned(
-                  bottom: -20,
-                  child: Container(
-                    height: 42,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: kWhiteColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: _buildWatchTrailerView(),
-                  ),
-                ),
-                Positioned(
-                  left: 20,
-                  top: 55,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                        color: kWhiteColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Icon(CupertinoIcons.arrow_left, size: 20,color: kBlackColor,),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
 
-          //body
-          SliverToBoxAdapter(child: _buildBody(context)),
-        ],
+                  //body
+                  SliverToBoxAdapter(child: _buildBody(context, bloc)),
+                ],
+              ),
+            ),
       ),
     );
   }
 
   Widget _buildWatchTrailerView() {
     return Container(
-      height: 42,
       padding: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
         color: kWhiteColor,
@@ -101,16 +115,26 @@ class MovieTypeScreen extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(CupertinoIcons.play_circle_fill, size: 26,color: kBlackColor,),
+            const Icon(
+              CupertinoIcons.play_circle_fill,
+              size: 26,
+              color: kBlackColor,
+            ),
             const SizedBox(width: 5),
-            Text('Watch Trailer', style: TextStyle(fontSize: kTextRegular2x,color: kBlackColor)),
+            Text(
+              'Watch Trailer',
+              style: TextStyle(
+                fontSize: kTextRegular2x - 3,
+                color: kBlackColor,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildBody(BuildContext context, MovieDetailBloc bloc) {
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: kMarginMedium2,
@@ -121,84 +145,94 @@ class MovieTypeScreen extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              'Movie Title',
+              movie?.name ?? '',
+              textAlign: TextAlign.center,
               style: TextStyle(fontSize: kTextRegular18 + 2),
             ),
           ),
-          _buildMinuteAndViewCount(),
-          Center(
-            child: Text(
-              'Action , Adventure',
-              style: TextStyle(
-                fontSize: kTextSmall,
-                color: kThirdColor,
-                fontWeight: FontWeight.bold,
+          _buildMinuteAndViewCount(bloc),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                bloc.moviesResponse?.genres
+                        ?.map((genre) => genre.name ?? '')
+                        .join(', ') ??
+                    '',
+                style: TextStyle(
+                  fontSize: kTextSmall,
+                  color: kThirdColor,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
+            ],
           ),
           _buildTypeAndWatchList(),
           1.vGap,
           _buildWatchNowButton(context),
           1.vGap,
-          _buildCastView(),
-          1.vGap,
-          _buildDescription(),
+          _buildCastView(bloc),
+          _buildDescription(bloc),
         ],
       ),
     );
   }
 
-  Widget _buildCastView() {
+  Widget _buildCastView(MovieDetailBloc bloc) {
     return SizedBox(
       height: 100,
       child: Column(
         spacing: 10,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('The Cast', style: TextStyle(fontSize: kTextRegular18)),
-          Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    PageNavigator(
-                      ctx: context,
-                    ).nextPage(page: ActorViewScreen());
+          bloc.moviesResponse?.actors?.isEmpty ?? true
+              ? SizedBox.shrink()
+              : Expanded(
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: bloc.moviesResponse?.actors?.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        PageNavigator(
+                          ctx: context,
+                        ).nextPage(page: ActorViewScreen());
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: castListItem(
+                          actor: bloc.moviesResponse?.actors?[index],
+                        ),
+                      ),
+                    );
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: castListItem(),
-                  ),
-                );
-              },
-            ),
-          ),
+                ),
+              ),
         ],
       ),
     );
   }
 
-  Widget _buildDescription() {
+  Widget _buildDescription(MovieDetailBloc bloc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Director : Myanmar',
+          'Director : ${bloc.moviesResponse?.director ?? ''}',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
         5.vGap,
+        Divider(thickness: 0.5,),
+        5.vGap,
         Text(
-          'Script Writer : Myanmar',
+          'Script Writer : ${bloc.moviesResponse?.scriptWriter ?? ''}',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
-        10.vGap,
+        20.vGap,
         ExpandableText(
-          text:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius',
-          style: TextStyle(fontSize: 14,),
+          text: bloc.moviesResponse?.description ?? '',
+          style: TextStyle(fontSize: 14),
         ),
         10.vGap,
         Text('Tags', style: TextStyle(fontWeight: FontWeight.w700)),
@@ -206,7 +240,7 @@ class MovieTypeScreen extends StatelessWidget {
           height: 50,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: 3,
+            itemCount: bloc.moviesResponse?.tags?.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
@@ -214,7 +248,10 @@ class MovieTypeScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  label: Text('#Title', style: TextStyle(color: kWhiteColor)),
+                  label: Text(
+                    '#${bloc.moviesResponse?.tags?[index]}',
+                    style: TextStyle(color: kWhiteColor),
+                  ),
                   backgroundColor: kBlackColor,
                 ),
               );
@@ -236,45 +273,60 @@ class MovieTypeScreen extends StatelessWidget {
           ),
         );
       },
-      child: Container(
-        height: 48,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: kSecondaryColor,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 10,
-          children: [
-            Icon(CupertinoIcons.video_camera, color: kWhiteColor, size: 27),
-            Text(
-              'Watch Now',
-              style: TextStyle(fontWeight: FontWeight.bold, color: kWhiteColor),
+      child: Column(
+        spacing: 2,
+        children: [
+          Container(
+            height: 48,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: kSecondaryColor,
             ),
-          ],
-        ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 10,
+              children: [
+                Icon(CupertinoIcons.video_camera, color: kWhiteColor, size: 27),
+                Text(
+                  'Watch Now',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: kWhiteColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Image.asset(kShadowImage),
+        ],
       ),
     );
   }
 
-  Widget _buildMinuteAndViewCount() {
+  Widget _buildMinuteAndViewCount(MovieDetailBloc bloc) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       spacing: kMargin12 + 4,
       children: [
-        Text('3 hr 30 mins', style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          formatMinutesToHoursAndMinutes(bloc.moviesResponse?.duration ?? 0),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+        ),
         SizedBox(
           width: 5,
           height: 5,
-          child: CircleAvatar(backgroundColor: kWhiteColor),
+          child: CircleAvatar(backgroundColor: Colors.grey),
         ),
 
         Row(
           spacing: kMargin5,
           children: [
-            Icon(CupertinoIcons.eye, size: 20),
-            Text('35', style: TextStyle(fontWeight: FontWeight.bold)),
+            Icon(CupertinoIcons.eye, size: 20, color: Colors.grey),
+            Text(
+              bloc.moviesResponse?.viewCount.toString() ?? '',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+            ),
           ],
         ),
       ],

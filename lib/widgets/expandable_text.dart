@@ -12,7 +12,7 @@ class ExpandableText extends StatefulWidget {
   const ExpandableText({
     super.key,
     required this.text,
-    this.trimLength = 300,
+    this.trimLength = 200,
     this.style,
     this.linkStyle,
   });

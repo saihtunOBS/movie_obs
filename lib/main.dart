@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -63,13 +64,14 @@ class _MovieOBSState extends State<MovieOBS> {
           locale: Locale(localString),
           supportedLocales: [Locale('en'), Locale('my')],
           builder: (context, child) {
+            child = BotToastInit()(context, child);
             return MediaQuery(
               data: MediaQuery.of(context).copyWith(
                 textScaler: TextScaler.linear(
                   getDeviceType() == 'phone' ? 0.87 : 1.3,
                 ),
               ),
-              child: child!,
+              child: child,
             );
           },
           theme: ThemeData(

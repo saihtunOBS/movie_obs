@@ -27,7 +27,7 @@ class PersistenceData {
   }
 
   getToken() {
-    return GetStorage().read(PersistenceList.token.name);
+    return GetStorage().read(PersistenceList.token.name) ?? '';
   }
 
 

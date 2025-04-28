@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/data/dummy/dummy_data.dart';
+import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 
 import '../utils/colors.dart';
 
-Widget seasonListItem({bool? isSeries}) {
+Widget seasonListItem({bool? isSeries, SeasonVO? data}) {
   return Column(
     spacing: 7,
     children: [
@@ -21,7 +21,7 @@ Widget seasonListItem({bool? isSeries}) {
             child: SizedBox(
               height: 80,
               width: 120,
-              child: cacheImage(imageArray.last),
+              child: cacheImage(data?.bannerImageUrl ?? ''),
             ),
           ),
           Expanded(
@@ -30,7 +30,7 @@ Widget seasonListItem({bool? isSeries}) {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Season (1)',
+                  data?.name ?? '',
                   style: TextStyle(
                     fontSize: kTextRegular2x,
                     fontWeight: FontWeight.w600,
@@ -65,7 +65,7 @@ Widget seasonListItem({bool? isSeries}) {
                             height: 5,
                             child: CircleAvatar(backgroundColor: kBlackColor),
                           ),
-                          1.hGap
+                          1.hGap,
                         ],
                       ),
                     ),
@@ -98,7 +98,7 @@ Widget seasonListItem({bool? isSeries}) {
           ),
         ],
       ),
-      Divider(color: Colors.grey, thickness: 0.5),
+      Divider( thickness: 0.5),
     ],
   );
 }

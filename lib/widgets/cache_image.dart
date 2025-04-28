@@ -10,9 +10,9 @@ Widget cacheImage(String url, {BoxFit? boxFit}) {
     placeholder:
         (context, url) => Shimmer.fromColors(
           direction: ShimmerDirection.ltr,
-          baseColor: Colors.grey.withValues(alpha: 0.8),
+          baseColor: kBlackColor,
           highlightColor: kBlackColor,
-          child: Container(color: Colors.black26),
+          child: Container(color: kBlackColor),
         ),
     errorWidget:
         (context, url, error) => CachedNetworkImage(

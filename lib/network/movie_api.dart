@@ -3,7 +3,12 @@ import 'package:movie_obs/network/api_constants.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart'
     show SendOtpRequest;
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/responses/category_response.dart';
+import 'package:movie_obs/network/responses/genre_response.dart';
+import 'package:movie_obs/network/responses/movie_detail_response.dart';
+import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
+import 'package:movie_obs/network/responses/season_response.dart';
 import 'package:retrofit/error_logger.dart';
 import 'package:retrofit/http.dart';
 
@@ -18,4 +23,56 @@ abstract class MovieApi {
 
   @POST(kEndPointVerifyOtp)
   Future<OTPResponse> verifyOTP(@Body() VerifyOtpRequest request);
+
+  @GET(kEndPointMovie)
+  Future<MovieResponse> getMovies(@Header(kHeaderAuthorization) String token);
+
+  @GET('$kEndPointMovie/{id}')
+  Future<MovieDetailResponse> getMovieDetail(
+    @Path() String id,
+    @Header(kHeaderAuthorization) String token,
+  );
+
+  @GET('$kEndPointSeries/{id}')
+  Future<MovieDetailResponse> getSeriesDetail(
+    @Path() String id,
+    @Query('includeSeasons') bool isSeasonInclude,
+    @Header(kHeaderAuthorization) String token,
+  );
+
+  @GET(kEndPointHomeMovieAndSeries)
+  Future<MovieResponse> getAllMovies(
+    @Header(kHeaderAuthorization) String token,
+  );
+
+  @GET(kEndPointSeason)
+  Future<SeasonResponse> getAllSeason(
+    @Header(kHeaderAuthorization) String token,
+  );
+
+  @GET(kEndPointCategory)
+  Future<CategoryResponse> getAllCategory(
+    @Header(kHeaderAuthorization) String token,
+  );
+
+  @GET(kEndPointGenre)
+  Future<GenreResponse> getAllGenre(
+    @Header(kHeaderAuthorization) String token,
+  );
+
+  @GET(kEndPointHomeMovieAndSeries)
+  Future<MovieResponse> getTopTrending(
+    @Header(kHeaderAuthorization) String token,
+    @Query('isTrending') bool isTrending,
+  );
+
+  @GET(kEndPointHomeMovieAndSeries)
+  Future<MovieResponse> getNewRelease(
+    @Header(kHeaderAuthorization) String token,
+    @Query('sortBy') String sortBy,
+    @Query('sortOrder') String sortOrder,
+  );
+
+  @GET(kEndPointSeries)
+  Future<MovieResponse> getSeries(@Header(kHeaderAuthorization) String token);
 }

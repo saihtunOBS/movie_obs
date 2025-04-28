@@ -232,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Divider(
               color: isLastRow ?? true ? Colors.transparent : Colors.grey,
-              thickness: 0.5,
+              thickness: 0.3,
             ),
           ],
         ),

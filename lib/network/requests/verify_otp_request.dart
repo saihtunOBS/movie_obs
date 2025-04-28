@@ -1,4 +1,3 @@
-
 import 'package:json_annotation/json_annotation.dart';
 
 part 'verify_otp_request.g.dart';
@@ -11,10 +10,10 @@ class VerifyOtpRequest {
   String? userType;
   @JsonKey(name: "otp")
   String? otp;
-  @JsonKey(name: "request")
+  @JsonKey(name: "requestId")
   String? requestId;
 
-  VerifyOtpRequest(this.phone);
+  VerifyOtpRequest(this.phone, this.userType, this.otp, this.requestId);
 
   factory VerifyOtpRequest.fromJson(Map<String, dynamic> json) =>
       _$VerifyOtpRequestFromJson(json);

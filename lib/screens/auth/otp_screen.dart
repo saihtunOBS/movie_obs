@@ -2,20 +2,25 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/bloc/auth_bloc.dart';
+import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/change_language_screen.dart';
 import 'package:movie_obs/widgets/custom_button.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
+import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
 
 import '../../utils/colors.dart';
 import '../../utils/dimens.dart';
 import '../../utils/images.dart';
 
 class OTPScreen extends StatefulWidget {
-  const OTPScreen({super.key, this.phone, this.token});
+  const OTPScreen({super.key, this.phone, this.requestId});
   final String? phone;
-  final String? token;
+  final String? requestId;
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
@@ -26,9 +31,7 @@ class _OTPScreenState extends State<OTPScreen> {
   bool isFilled = false;
   final focusNode = FocusNode();
   Timer? _timer;
-  int _start = 300;
-
-  String token = '';
+  int _start = 60;
 
   @override
   void dispose() {
@@ -39,9 +42,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   void initState() {
-    _start = 300;
-    startTimer();
-    token = widget.token ?? '';
+    _start = 60;
     super.initState();
   }
 
@@ -52,7 +53,7 @@ class _OTPScreenState extends State<OTPScreen> {
           _start--;
         } else {
           _timer?.cancel();
-          _start = 300;
+          _start = 60;
         }
       });
     });
@@ -66,85 +67,137 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
+    return ChangeNotifierProvider(
+      create: (context) => AuthBloc(),
+      child: Scaffold(
         backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal:
-              getDeviceType() == 'phone'
-                  ? kMarginMedium2
-                  : MediaQuery.of(context).size.width * 0.15,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
         ),
-        child: Column(
-          spacing: kMarginMedium2,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'VERIFICATION',
-              style: TextStyle(
-                letterSpacing: 10.0,
-                fontSize: kTextRegular32,
-                fontWeight: FontWeight.bold,
-                color: kThirdColor
+        body: Consumer<AuthBloc>(
+          builder:
+              (context, bloc, child) => Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal:
+                      getDeviceType() == 'phone'
+                          ? kMarginMedium2
+                          : MediaQuery.of(context).size.width * 0.15,
+                ),
+                child: Stack(
+                  children: [
+                    Column(
+                      spacing: kMarginMedium2,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'VERIFICATION',
+                          style: TextStyle(
+                            letterSpacing: 10.0,
+                            fontSize: kTextRegular32,
+                            fontWeight: FontWeight.bold,
+                            color: kThirdColor,
+                          ),
+                        ),
+                        Text(
+                          'Send OTP Code to ${widget.phone}.\n Enter your OTP Code here.',
+                          style: TextStyle(fontSize: kTextRegular2x),
+                        ),
+                        10.vGap,
+                        _buildPinView(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              timerText,
+                              style: TextStyle(fontWeight: FontWeight.w700),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                if (_start == 60) {
+                                  startTimer();
+                                  bloc
+                                      .userLogin(widget.phone ?? '')
+                                      .then((_) {
+                                        ToastService.successToast(
+                                          'Code sent success',
+                                        );
+                                      })
+                                      .catchError((error) {
+                                        ToastService.warningToast(
+                                          error.toString(),
+                                        );
+                                      });
+                                }
+                              },
+                              child: Text(
+                                'Resend',
+                                style: TextStyle(fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    //loading
+                    bloc.isLoading ? LoadingView() : SizedBox.shrink(),
+                  ],
+                ),
               ),
-            ),
-            Text(
-              'Send OTP Code to +95 09888888888.\n Enter your OTP Code here.',
-              style: TextStyle(fontSize: kTextRegular2x),
-            ),
-            10.vGap,
-            _buildPinView(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '00:16',
-                  style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+        bottomNavigationBar: Consumer<AuthBloc>(
+          builder:
+              (context, bloc, child) => Container(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
-                Text(
-                  'Resend',
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                margin: EdgeInsets.only(
+                  left:
+                      getDeviceType() == 'phone'
+                          ? kMarginMedium2
+                          : MediaQuery.of(context).size.width * 0.15,
+                  right:
+                      getDeviceType() == 'phone'
+                          ? kMarginMedium2
+                          : MediaQuery.of(context).size.width * 0.15,
+                  bottom: 27,
                 ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        margin: EdgeInsets.only(
-          left:
-              getDeviceType() == 'phone'
-                  ? kMarginMedium2
-                  : MediaQuery.of(context).size.width * 0.15,
-          right:
-              getDeviceType() == 'phone'
-                  ? kMarginMedium2
-                  : MediaQuery.of(context).size.width * 0.15,
-          bottom: 27,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 2,
-          children: [customButton(
-            onPress: () {
-              PageNavigator(
-                ctx: context,
-              ).nextPage(page: ChangeLanguageScreen());
-            },
-            context: context,
-            backgroundColor: kSecondaryColor,
-            title: 'Confirm',
-            textColor: kWhiteColor,
-          ),
-          Image.asset(kShadowImage),
-          ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 2,
+                  children: [
+                    customButton(
+                      onPress: () {
+                        FocusScope.of(context).unfocus();
+                        Future.delayed(Duration(milliseconds: 300), () {
+                          bloc
+                              .verifyOtp(
+                                widget.phone ?? '',
+                                widget.requestId ?? '',
+                                pinController.text,
+                              )
+                              .then((response) {
+                                PersistenceData.shared.saveToken(
+                                  response.accessToken ?? '',
+                                );
+                                PageNavigator(
+                                  ctx: context,
+                                ).nextPage(page: ChangeLanguageScreen());
+                              })
+                              .catchError((error) {
+                                ToastService.warningToast(error.toString());
+                              });
+                        });
+                      },
+                      context: context,
+                      backgroundColor: kSecondaryColor,
+                      title: 'Confirm',
+                      textColor: kWhiteColor,
+                    ),
+                    Image.asset(kShadowImage),
+                  ],
+                ),
+              ),
         ),
       ),
     );

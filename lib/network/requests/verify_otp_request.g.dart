@@ -7,15 +7,17 @@ part of 'verify_otp_request.dart';
 // **************************************************************************
 
 VerifyOtpRequest _$VerifyOtpRequestFromJson(Map<String, dynamic> json) =>
-    VerifyOtpRequest(json['phone'] as String?)
-      ..userType = json['userType'] as String?
-      ..otp = json['otp'] as String?
-      ..requestId = json['request'] as String?;
+    VerifyOtpRequest(
+      json['phone'] as String?,
+      json['userType'] as String?,
+      json['otp'] as String?,
+      json['requestId'] as String?,
+    );
 
 Map<String, dynamic> _$VerifyOtpRequestToJson(VerifyOtpRequest instance) =>
     <String, dynamic>{
       'phone': instance.phone,
       'userType': instance.userType,
       'otp': instance.otp,
-      'request': instance.requestId,
+      'requestId': instance.requestId,
     };
