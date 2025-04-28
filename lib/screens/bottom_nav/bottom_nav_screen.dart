@@ -20,7 +20,6 @@ class BottomNavScreen extends StatefulWidget {
   State<BottomNavScreen> createState() => _BottomNavScreenState();
 }
 
-//hello
 
 class _BottomNavScreenState extends State<BottomNavScreen> {
   List<Widget> screens = [
