@@ -148,14 +148,14 @@ Widget buildTypeSession({List<CategoryVO>? categoryData}) {
                 padding: const EdgeInsets.only(right: 7),
                 child: ValueListenableBuilder(
                   valueListenable: _selectedType,
-                  builder: (context, value, child) => 
-                   Chip(
-                    label: Text(categoryData?[index].name ?? ''),
-                    backgroundColor:
-                        value == index
-                            ? kSecondaryColor
-                            : Colors.grey.withValues(alpha: 0.2),
-                  ),
+                  builder:
+                      (context, value, child) => Chip(
+                        label: Text(categoryData?[index].name ?? ''),
+                        backgroundColor:
+                            value == index
+                                ? kSecondaryColor
+                                : Colors.grey.withValues(alpha: 0.2),
+                      ),
                 ),
               ),
             );
@@ -189,9 +189,21 @@ Widget buildGenreSession({List<GenreVO>? genreData}) {
         spacing: kMarginMedium,
         runSpacing: kMarginMedium,
         alignment: WrapAlignment.start,
-        children: [
-         
-        ],
+        children:
+            genreData?.asMap().entries.map((value) {
+              return ValueListenableBuilder(
+                valueListenable: _selectedGenre,
+                builder:
+                    (context, index, child) => Chip(
+                      label: Text(genreData[value.key].name ?? ''),
+                      backgroundColor:
+                          index == value.key
+                              ? kSecondaryColor
+                              : Colors.grey.withValues(alpha: 0.2),
+                    ),
+              );
+            }).toList() ??
+            [],
       ),
     ],
   );
