@@ -36,7 +36,7 @@ class _MovieScreenState extends State<MovieScreen> {
           backgroundColor: kBackgroundColor,
           surfaceTintColor: kBackgroundColor,
           foregroundColor: kWhiteColor,
-          title: Text('Tuu Tu\' Movies'),
+          title: Text('Tuu Tu\'s Movies'),
           centerTitle: false,
           actions: [
             InkWell(

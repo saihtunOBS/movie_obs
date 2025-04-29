@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-
 part 'movie_vo.g.dart';
 
 @JsonSerializable()
@@ -55,8 +54,9 @@ class MovieVO {
   @JsonKey(name: "scheduleAt")
   final String? scheduleAt;
 
-  @JsonKey(name: "genres")
-  final List<String>? genres;
+  // @GenreListConverter()
+  // @JsonKey(name: "genres")
+  // final List<GenreVO>? genres;
 
   @JsonKey(name: "director")
   final String? director;
@@ -94,7 +94,7 @@ class MovieVO {
     this.duration,
     this.publishedYear,
     this.scheduleAt,
-    this.genres,
+    // this.genres,
     this.director,
     this.actors,
     this.actresses,
@@ -103,7 +103,8 @@ class MovieVO {
     this.updatedAt,
   });
 
-  factory MovieVO.fromJson(Map<String, dynamic> json) => _$MovieVOFromJson(json);
+  factory MovieVO.fromJson(Map<String, dynamic> json) =>
+      _$MovieVOFromJson(json);
 
   Map<String, dynamic> toJson() => _$MovieVOToJson(this);
 }
@@ -122,14 +123,10 @@ class CategoryVO {
   @JsonKey(name: "updatedAt")
   final String? updatedAt;
 
-  CategoryVO({
-    this.id,
-    this.name,
-    this.createdAt,
-    this.updatedAt,
-  });
+  CategoryVO({this.id, this.name, this.createdAt, this.updatedAt});
 
-  factory CategoryVO.fromJson(Map<String, dynamic> json) => _$CategoryVOFromJson(json);
+  factory CategoryVO.fromJson(Map<String, dynamic> json) =>
+      _$CategoryVOFromJson(json);
 
   Map<String, dynamic> toJson() => _$CategoryVOToJson(this);
 }
@@ -148,12 +145,7 @@ class CastVO {
   @JsonKey(name: "_id")
   final String? id;
 
-  CastVO({
-    this.cast,
-    this.sortOrder,
-    this.characterName,
-    this.id,
-  });
+  CastVO({this.cast, this.sortOrder, this.characterName, this.id});
 
   factory CastVO.fromJson(Map<String, dynamic> json) => _$CastVOFromJson(json);
 

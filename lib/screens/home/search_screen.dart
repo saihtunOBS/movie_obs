@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/movie_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/genre_list_item.dart';
+import 'package:movie_obs/screens/home/filter_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
@@ -75,7 +77,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   child: TextField(
                     controller: _controller,
 
-                    onChanged: (value) => bloc.onSearchChanged(value),
+                    onChanged: (value) => bloc.onSearchChanged(value,isSearchScreen: true),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Search Movies & Series',
@@ -122,7 +124,17 @@ class _SearchScreenState extends State<SearchScreen> {
                   mainAxisSpacing: 10,
                 ),
                 itemBuilder: (context, index) {
-                  return genreListItem(bloc.genreLists[index]);
+                  return GestureDetector(
+                    onTap: () {
+                      PageNavigator(ctx: context).nextPage(
+                        page: FilterScreen(
+                          id: bloc.genreLists[index].id ?? '',
+                          title: bloc.genreLists[index].name ?? '',
+                        ),
+                      );
+                    },
+                    child: genreListItem(bloc.genreLists[index]),
+                  );
                 },
               ),
             ),

@@ -16,13 +16,23 @@ class MovieBloc extends ChangeNotifier {
   List<CategoryVO> categoryLists = [];
   List<GenreVO> genreLists = [];
 
+  List<MovieVO> movieSeriesList = [];
+
   final MovieModel _movieModel = MovieModelImpl();
 
   MovieBloc() {
     token = PersistenceData.shared.getToken();
     getAllMovie();
+    getMovieSeries();
     getAllCategory();
     getAllGenre();
+  }
+
+  getMovieSeries() {
+    _movieModel.getAllMovie(token).then((response) {
+      movieSeriesList = response.data ?? [];
+      notifyListeners();
+    });
   }
 
   getAllMovie() {
@@ -51,18 +61,26 @@ class MovieBloc extends ChangeNotifier {
     });
   }
 
-  void onSearchChanged(String value) {
+  void onSearchChanged(String value, {bool? isSearchScreen}) {
     notifyListeners();
     if (value.isEmpty) {
       filteredSuggestions.clear();
       return;
     }
     filteredSuggestions =
-        movieLists
-            .where(
-              (item) => item.name!.toLowerCase().contains(value.toLowerCase()),
-            )
-            .toList();
+        isSearchScreen == true
+            ? movieSeriesList
+                .where(
+                  (item) =>
+                      item.name!.toLowerCase().contains(value.toLowerCase()),
+                )
+                .toList()
+            : movieLists
+                .where(
+                  (item) =>
+                      item.name!.toLowerCase().contains(value.toLowerCase()),
+                )
+                .toList();
     notifyListeners();
   }
 

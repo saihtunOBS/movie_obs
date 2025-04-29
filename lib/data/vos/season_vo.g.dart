@@ -18,7 +18,7 @@ SeasonVO _$SeasonVOFromJson(Map<String, dynamic> json) => SeasonVO(
   trailerUrl: json['trailerUrl'] as String?,
   viewCount: (json['viewCount'] as num?)?.toInt(),
   publishedYear: json['publishedYear'] as String?,
-  series: json['series'] as String?,
+  series: json['series'],
   actors:
       (json['actors'] as List<dynamic>?)
           ?.map((e) => SeasonCastVO.fromJson(e as Map<String, dynamic>))

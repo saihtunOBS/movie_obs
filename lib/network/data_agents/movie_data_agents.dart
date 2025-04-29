@@ -1,6 +1,7 @@
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
@@ -28,6 +29,9 @@ abstract class MovieDataAgents {
   Future<MovieResponse> getTopTrending(String token);
   Future<MovieResponse> getNewRelease(String token);
 
+  Future<MovieResponse> getMovieSeriesByGenre(String id);
+  Future<MovieResponse> getMovieSeriesByCategory(String id);
+
   Future<CategoryResponse> getAllCategory(String token);
   Future<GenreResponse> getAllGenre(String token);
 
@@ -38,5 +42,5 @@ abstract class MovieDataAgents {
   Future<List<MovieVO>> getRecommendedSeries(String id);
   Future<SeasonEpisodeResponse> getSeasonEpisode(String id);
 
-
+  Future<ActorDataResponse> getActorDetail(String token, String id);
 }

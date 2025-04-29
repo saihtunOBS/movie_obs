@@ -4,6 +4,7 @@ import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents_impl.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
@@ -110,5 +111,20 @@ class MovieModelImpl extends MovieModel {
   @override
   Future<SeasonEpisodeResponse> getSeasonEpisode(String id) {
     return movieDataAgent.getSeasonEpisode(id);
+  }
+
+  @override
+  Future<MovieResponse> getMovieSeriesByCategory(String id) {
+    return movieDataAgent.getMovieSeriesByCategory(id);
+  }
+
+  @override
+  Future<MovieResponse> getMovieSeriesByGenre(String id) {
+    return movieDataAgent.getMovieSeriesByGenre(id);
+  }
+
+  @override
+  Future<ActorDataResponse> getActorDetail(String token, String id) {
+    return movieDataAgent.getActorDetail(token, id);
   }
 }

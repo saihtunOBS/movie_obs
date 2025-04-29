@@ -38,7 +38,7 @@ class SeasonVO {
   final String? publishedYear;
 
   @JsonKey(name: "series")
-  final String? series;
+  final dynamic series;
 
   @JsonKey(name: "actors")
   final List<SeasonCastVO>? actors;

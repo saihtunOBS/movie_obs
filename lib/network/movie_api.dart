@@ -4,6 +4,7 @@ import 'package:movie_obs/network/api_constants.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart'
     show SendOtpRequest;
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
@@ -62,6 +63,19 @@ abstract class MovieApi {
     @Path() String id,
     @Query('include_episodes') bool isSeasonInclude,
   );
+
+  @GET('$kEndPointCast/{id}')
+  Future<ActorDataResponse> getActorDetail(
+    @Header(kHeaderAuthorization) String token,
+    @Path() String id,
+    @Query('include_contents') bool isSeasonInclude,
+  );
+
+  @GET(kEndPointMovie)
+  Future<MovieResponse> getMovieSeriesByGenre(@Query('genre') String id);
+
+  @GET(kEndPointSeason)
+  Future<MovieResponse> getMovieSeriesByCategory(@Query('category') String id);
 
   @GET(kEndPointCategory)
   Future<CategoryResponse> getAllCategory();

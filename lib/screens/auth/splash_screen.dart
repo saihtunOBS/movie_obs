@@ -32,10 +32,10 @@ class _SplashScreenState extends State<SplashScreen> {
           spacing: 15,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(kAppIcon, width: 70, height: 70),
+            Image.asset(kAppIcon, width: 90, height: 90),
             Text(
               "Tuu Tu TV",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
             ),
           ],
         ),

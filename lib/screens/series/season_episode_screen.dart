@@ -174,9 +174,17 @@ class SeasonEpisodeScreen extends StatelessWidget {
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
-                    PageNavigator(
-                      ctx: context,
-                    ).nextPage(page: ActorViewScreen());
+                    PageNavigator(ctx: context).nextPage(
+                      page: ActorViewScreen(
+                        id:
+                            bloc
+                                .seasonEpisodeResponse
+                                ?.actors?[index]
+                                .cast
+                                ?.id ??
+                            '',
+                      ),
+                    );
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(right: 10),

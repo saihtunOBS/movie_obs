@@ -16,5 +16,7 @@ const String kEndPointGenre = '/videos/genres';
 const String kEndPointAds = '/cms/ads';
 const String kEndPointBanner = '/cms/banners';
 
+const String kEndPointCast = '/videos/casts';
+
 const String kHeaderAuthorization = "Authorization";
 const String kHeaderAcceptLanguage = "Accept-Language";

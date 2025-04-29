@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/change_language_screen.dart';
+import 'package:movie_obs/screens/auth/login_screen.dart';
 import 'package:movie_obs/screens/profile/promotion_screen.dart';
 import 'package:movie_obs/screens/profile/user_profile_screen.dart';
 import 'package:movie_obs/screens/profile/watch_list_screen.dart';
@@ -108,7 +110,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 vertical: kMarginMedium2,
               ),
               child: customButton(
-                onPress: () {},
+                onPress: () {
+                  // PersistenceData.shared.clearToken();
+                  PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
+                },
                 context: context,
                 backgroundColor: kSecondaryColor,
                 title: 'Logout',

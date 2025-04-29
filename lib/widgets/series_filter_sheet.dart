@@ -109,9 +109,8 @@ Widget _buildSeriesSession() {
           itemCount: 1,
           itemBuilder: (context, index) {
             return Chip(
-              label: Text('hello'),
+              label: Text('Myanmar'),
               backgroundColor: Colors.grey.withValues(alpha: 0.2),
-              side: BorderSide(color: kBlackColor),
             );
           },
         ),

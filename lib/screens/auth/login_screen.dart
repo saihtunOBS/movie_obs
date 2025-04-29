@@ -32,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           surfaceTintColor: Colors.transparent,
         ),

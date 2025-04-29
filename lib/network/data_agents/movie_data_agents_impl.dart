@@ -7,6 +7,7 @@ import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/movie_api.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
@@ -240,6 +241,43 @@ class MovieDataAgentsImpl extends MovieDataAgents {
         })
         .first
         .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<MovieResponse> getMovieSeriesByCategory(String id) {
+    return movieApi
+        .getMovieSeriesByCategory(id)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<MovieResponse> getMovieSeriesByGenre(String id) {
+    return movieApi
+        .getMovieSeriesByGenre(id)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<ActorDataResponse> getActorDetail(String token, String id) {
+    return movieApi
+        .getActorDetail('Bearer $token', id, true)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          print('error is....$error');
           throw _createException(error);
         });
   }

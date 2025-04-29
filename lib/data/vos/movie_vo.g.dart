@@ -27,7 +27,6 @@ MovieVO _$MovieVOFromJson(Map<String, dynamic> json) => MovieVO(
   duration: (json['duration'] as num?)?.toInt(),
   publishedYear: json['publishedYear'] as String?,
   scheduleAt: json['scheduleAt'] as String?,
-  genres: (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList(),
   director: json['director'] as String?,
   actors:
       (json['actors'] as List<dynamic>?)
@@ -63,7 +62,6 @@ Map<String, dynamic> _$MovieVOToJson(MovieVO instance) => <String, dynamic>{
   'duration': instance.duration,
   'publishedYear': instance.publishedYear,
   'scheduleAt': instance.scheduleAt,
-  'genres': instance.genres,
   'director': instance.director,
   'actors': instance.actors,
   'actresses': instance.actresses,

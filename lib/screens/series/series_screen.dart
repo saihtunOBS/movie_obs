@@ -35,7 +35,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
           backgroundColor: kBackgroundColor,
           surfaceTintColor: kBackgroundColor,
           foregroundColor: kWhiteColor,
-          title: Text('Tuu Tu\' Series'),
+          title: Text('Tuu Tu\'s Series'),
           centerTitle: false,
           actions: [
             InkWell(

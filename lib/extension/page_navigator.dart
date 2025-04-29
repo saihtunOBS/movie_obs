@@ -16,17 +16,23 @@ class PageNavigator {
   }
 
   Future nextPageOnly({Widget? page}) {
-    return Navigator.pushAndRemoveUntil(
+    return PersistentNavBarNavigator.pushNewScreen(
       ctx!,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => page!,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-        transitionDuration: const Duration(milliseconds: 400),
-      ),
-      (route) => false,
+      screen: page!,
+      withNavBar: false,
+      pageTransitionAnimation: PageTransitionAnimation.fade,
     );
+    // return Navigator.pushAndRemoveUntil(
+    //   ctx!,
+    //   PageRouteBuilder(
+    //     pageBuilder: (context, animation, secondaryAnimation) => page!,
+    //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+    //       return FadeTransition(opacity: animation, child: child);
+    //     },
+    //     transitionDuration: const Duration(milliseconds: 400),
+    //   ),
+    //   (route) => false,
+    // );
   }
 
   Route popUp(Widget? page) {

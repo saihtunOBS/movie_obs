@@ -65,6 +65,7 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
 
   @override
   void dispose() {
+    _controller.stop();
     _controller.dispose();
     super.dispose();
   }

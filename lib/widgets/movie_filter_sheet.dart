@@ -8,8 +8,8 @@ import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:provider/provider.dart';
 
-final ValueNotifier<int> _selectedType = ValueNotifier(-1);
-final ValueNotifier<int> _selectedGenre = ValueNotifier(-1);
+final ValueNotifier<String> selectedType = ValueNotifier('');
+final ValueNotifier<int> selectedGenre = ValueNotifier(-1);
 
 Widget movieFilterSheet() {
   return ChangeNotifierProvider(
@@ -58,19 +58,28 @@ Widget movieFilterSheet() {
                               backgroundColor: kSecondaryColor,
                             ),
                             10.hGap,
-                            Chip(
-                              label: Text(
-                                'Clear',
-                                style: TextStyle(color: kWhiteColor),
+                            GestureDetector(
+                              onTap: () {
+                                selectedType.value = '';
+                                selectedGenre.value = -1;
+                              },
+                              child: Chip(
+                                label: Text(
+                                  'Clear',
+                                  style: TextStyle(color: kWhiteColor),
+                                ),
+                                backgroundColor: Colors.transparent,
+                                side: BorderSide(
+                                  color: kWhiteColor,
+                                  width: 0.8,
+                                ),
                               ),
-                              backgroundColor: Colors.transparent,
-                              side: BorderSide(color: kWhiteColor,width: 0.8),
                             ),
                           ],
                         ),
 
                         //movie session
-                        _buildMovieSession(),
+                        buildMovieSession(),
                         Divider(thickness: 0.5),
 
                         //type session
@@ -92,7 +101,7 @@ Widget movieFilterSheet() {
   );
 }
 
-Widget _buildMovieSession() {
+Widget buildMovieSession() {
   return Column(
     spacing: 5,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +132,7 @@ Widget _buildMovieSession() {
           itemCount: 1,
           itemBuilder: (context, index) {
             return Chip(
-              label: Text('hello'),
+              label: Text('Myanmar'),
               backgroundColor: Colors.grey.withValues(alpha: 0.2),
             );
           },
@@ -133,6 +142,48 @@ Widget _buildMovieSession() {
   );
 }
 
+Widget buildMovieAndSeriesSession() {
+  return Column(
+    spacing: 5,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        spacing: kMarginMedium,
+        children: [
+          Image.asset(
+            kMovieSeriesIcon,
+            width: 28,
+            height: 28,
+            color: kWhiteColor,
+          ),
+          Text(
+            'Movies & Series',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: kTextRegular2x,
+            ),
+          ),
+        ],
+      ),
+      SizedBox(
+        height: 50,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            return Chip(
+              label: Text('Myanmar'),
+              backgroundColor: Colors.grey.withValues(alpha: 0.2),
+            );
+          },
+        ),
+      ),
+    ],
+  );
+}
+
+List<String> typeArray = ['Free','Paid','Pay per view'];
 Widget buildTypeSession({List<CategoryVO>? categoryData}) {
   return Column(
     spacing: 5,
@@ -157,21 +208,21 @@ Widget buildTypeSession({List<CategoryVO>? categoryData}) {
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
-          itemCount: categoryData?.length,
+          itemCount: typeArray.length,
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () {
-                _selectedType.value = index;
+                selectedType.value = typeArray[index];
               },
               child: Padding(
                 padding: const EdgeInsets.only(right: 7),
                 child: ValueListenableBuilder(
-                  valueListenable: _selectedType,
+                  valueListenable: selectedType,
                   builder:
                       (context, value, child) => Chip(
-                        label: Text(categoryData?[index].name ?? ''),
+                        label: Text(typeArray[index]),
                         backgroundColor:
-                            value == index
+                            value == typeArray[index]
                                 ? kSecondaryColor
                                 : Colors.grey.withValues(alpha: 0.2),
                       ),
@@ -210,16 +261,21 @@ Widget buildGenreSession({List<GenreVO>? genreData}) {
         alignment: WrapAlignment.start,
         children:
             genreData?.asMap().entries.map((value) {
-              return ValueListenableBuilder(
-                valueListenable: _selectedGenre,
-                builder:
-                    (context, index, child) => Chip(
-                      label: Text(genreData[value.key].name ?? ''),
-                      backgroundColor:
-                          index == value.key
-                              ? kSecondaryColor
-                              : Colors.grey.withValues(alpha: 0.2),
-                    ),
+              return GestureDetector(
+                onTap: () {
+                  selectedGenre.value = value.key;
+                },
+                child: ValueListenableBuilder(
+                  valueListenable: selectedGenre,
+                  builder:
+                      (context, index, child) => Chip(
+                        label: Text(genreData[value.key].name ?? ''),
+                        backgroundColor:
+                            index == value.key
+                                ? kSecondaryColor
+                                : Colors.grey.withValues(alpha: 0.2),
+                      ),
+                ),
               );
             }).toList() ??
             [],

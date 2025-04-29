@@ -1,35 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:movie_obs/bloc/actor_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
-import 'package:movie_obs/utils/images.dart';
+import 'package:movie_obs/widgets/cache_image.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
+import 'package:provider/provider.dart';
 
 import '../../list_items/movie_list_item.dart';
 
 class ActorViewScreen extends StatelessWidget {
-  const ActorViewScreen({super.key});
+  const ActorViewScreen({super.key, required this.id});
+  final String id;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      appBar: AppBar(
+    return ChangeNotifierProvider(
+      create: (context) => ActorBloc(actorId: id),
+      child: Scaffold(
         backgroundColor: kBackgroundColor,
-        surfaceTintColor: kBackgroundColor,
-        title: Text('Back'),
-        centerTitle: false,
-      ),
-      body: Column(
-        spacing: 15,
-        children: [_buildActorView(context), _buildListView(context), 10.vGap],
+        appBar: AppBar(
+          backgroundColor: kBackgroundColor,
+          surfaceTintColor: kBackgroundColor,
+          title: Text('Back'),
+          centerTitle: false,
+        ),
+        body: Consumer<ActorBloc>(
+          builder:
+              (context, bloc, child) =>
+                  bloc.isLoading
+                      ? LoadingView()
+                      : Column(
+                        spacing: 15,
+                        children: [
+                          _buildActorView(context, bloc),
+                          bloc.actorData?.movieCounts == 0
+                              ? Center(
+                                child: Text('There is no movies to show.'),
+                              )
+                              : _buildListView(context, bloc),
+                          10.vGap,
+                        ],
+                      ),
+        ),
       ),
     );
   }
 
-  Widget _buildListView(BuildContext context) {
+  Widget _buildListView(BuildContext context, ActorBloc bloc) {
     return Expanded(
       child: GridView.builder(
-        itemCount: 10,
+        itemCount: bloc.actorData?.movies?.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: getDeviceType() == 'phone' ? 2 : 3,
           mainAxisExtent: 230,
@@ -41,13 +62,16 @@ class ActorViewScreen extends StatelessWidget {
           vertical: kMarginMedium2 - 5,
         ),
         itemBuilder: (context, index) {
-          return movieListItem(isMovieScreen: true);
+          return movieListItem(
+            isMovieScreen: true,
+            movies: bloc.actorData?.movies?[index],
+          );
         },
       ),
     );
   }
 
-  Widget _buildActorView(BuildContext context) {
+  Widget _buildActorView(BuildContext context, ActorBloc bloc) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
       child: Row(
@@ -60,15 +84,26 @@ class ActorViewScreen extends StatelessWidget {
               color: Colors.grey.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Center(child: Image.asset(kUserIcon, width: 30, height: 30)),
+            child: Center(child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: cacheImage(bloc.actorData?.profilePictureUrl ?? ''))),
           ),
           Column(
             spacing: 10,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Actor name', style: TextStyle(fontWeight: FontWeight.bold,fontSize: kTextRegular2x)),
-              Text('Actor', style: TextStyle(fontSize: kTextSmall)),
+              Text(
+                bloc.actorData?.name ?? '',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: kTextRegular2x,
+                ),
+              ),
+              Text(
+                bloc.actorData?.role?.role ?? '',
+                style: TextStyle(fontSize: kTextSmall),
+              ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 decoration: BoxDecoration(
