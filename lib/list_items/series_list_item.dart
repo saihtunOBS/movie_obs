@@ -8,7 +8,7 @@ import 'package:movie_obs/widgets/cache_image.dart';
 
 import '../utils/colors.dart';
 
-Widget seasonListItem({bool? isSeries, SeasonVO? data}) {
+Widget seasonListItem({bool? isSeries, SeasonVO? data,bool? isLast}) {
   return Column(
     spacing: 7,
     children: [
@@ -26,7 +26,7 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data}) {
           ),
           Expanded(
             child: Column(
-              spacing: 5,
+              spacing: 8,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -63,7 +63,7 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data}) {
                           SizedBox(
                             width: 5,
                             height: 5,
-                            child: CircleAvatar(backgroundColor: kWhiteColor),
+                            child: CircleAvatar(backgroundColor: Colors.grey),
                           ),
                           1.hGap,
                         ],
@@ -74,22 +74,22 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data}) {
                       isSeries == false
                           ? formatMinutesToHoursAndMinutes(data?.duration ?? 0)
                           : '25 Episodes',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13,color: Colors.grey),
                     ),
                     10.hGap,
                     SizedBox(
                       width: 5,
                       height: 5,
-                      child: CircleAvatar(backgroundColor: kWhiteColor),
+                      child: CircleAvatar(backgroundColor: Colors.grey),
                     ),
                     10.hGap,
                     Row(
                       spacing: kMargin5,
                       children: [
-                        Icon(CupertinoIcons.eye, size: 20),
+                        Icon(CupertinoIcons.eye, size: 20,color: Colors.grey,),
                         Text(
                           data?.viewCount.toString() ?? '',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13,color: Colors.grey),
                         ),
                       ],
                     ),
@@ -100,7 +100,7 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data}) {
           ),
         ],
       ),
-      Divider(thickness: 0.5),
+      isLast == true ? SizedBox.shrink() : Divider(thickness: 0.5),
     ],
   );
 }

@@ -44,7 +44,6 @@ class _MovieScreenState extends State<MovieScreen> {
                 if (getDeviceType() == 'phone') {
                   showModalBottomSheet(
                     useRootNavigator: true,
-                    showDragHandle: true,
                     context: context,
                     builder: (context) {
                       return movieFilterSheet();
@@ -71,7 +70,7 @@ class _MovieScreenState extends State<MovieScreen> {
             kMarginMedium2.hGap,
           ],
           bottom: PreferredSize(
-            preferredSize: Size(double.infinity, 50),
+            preferredSize: Size(double.infinity, 55),
             child: Consumer<MovieBloc>(
               builder:
                   (context, bloc, child) => Padding(
@@ -94,11 +93,23 @@ class _MovieScreenState extends State<MovieScreen> {
                         hintStyle: WidgetStateProperty.resolveWith<TextStyle>(
                           (_) => TextStyle(color: kWhiteColor),
                         ),
+                        trailing: [
+                          Visibility(
+                            visible: _controller.text.isNotEmpty,
+                            child: InkWell(
+                              onTap: () {
+                                _controller.clear();
+                                bloc.clearFilter();
+                              },
+                              child: Icon(CupertinoIcons.clear_circled,color: kWhiteColor,),
+                            ),
+                          ),
+                        ],
                         onChanged: (value) => bloc.onSearchChanged(value),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              16,
+                              8,
                             ), // your border radius
                           ),
                         ),
@@ -122,9 +133,10 @@ class _MovieScreenState extends State<MovieScreen> {
                         mainAxisSpacing: 10,
                         crossAxisSpacing: 10,
                       ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: kMarginMedium2,
-                        vertical: kMarginMedium2 - 5,
+                      padding: EdgeInsets.only(
+                        left: kMarginMedium2,
+                        right: kMarginMedium2,
+                        bottom: 20
                       ),
                       itemBuilder: (context, index) {
                         return GestureDetector(
@@ -142,12 +154,13 @@ class _MovieScreenState extends State<MovieScreen> {
                         );
                       },
                     ),
+
                     bloc.filteredSuggestions.isEmpty
                         ? SizedBox.shrink()
                         : Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15),
-                            color: Colors.black12,
+                            color: Colors.black38,
                           ),
                         ),
                     bloc.filteredSuggestions.isEmpty

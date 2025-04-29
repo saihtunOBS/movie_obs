@@ -43,7 +43,6 @@ class _SeriesScreenState extends State<SeriesScreen> {
                 if (getDeviceType() == 'phone') {
                   showModalBottomSheet(
                     useRootNavigator: true,
-                    showDragHandle: true,
                     context: context,
                     builder: (context) {
                       return seriesFilterSheet();
@@ -70,7 +69,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
             kMarginMedium2.hGap,
           ],
           bottom: PreferredSize(
-            preferredSize: Size(double.infinity, 50),
+            preferredSize: Size(double.infinity, 55),
             child: Padding(
               padding: EdgeInsets.only(
                 left: kMarginMedium2,
@@ -90,6 +89,18 @@ class _SeriesScreenState extends State<SeriesScreen> {
                         backgroundColor: WidgetStateProperty.all(
                           Colors.grey.withValues(alpha: 0.2),
                         ),
+                        trailing: [
+                          Visibility(
+                            visible: _controller.text.isNotEmpty,
+                            child: InkWell(
+                              onTap: () {
+                                _controller.clear();
+                                bloc.clearFilter();
+                              },
+                              child: Icon(CupertinoIcons.clear_circled,color: kWhiteColor,),
+                            ),
+                          ),
+                        ],
                         hintStyle: WidgetStateProperty.resolveWith<TextStyle>(
                           (_) => TextStyle(color: kWhiteColor),
                         ),
@@ -97,7 +108,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              16,
+                              8,
                             ), // your border radius
                           ),
                         ),
@@ -121,9 +132,10 @@ class _SeriesScreenState extends State<SeriesScreen> {
                         mainAxisSpacing: 10,
                         crossAxisSpacing: 10,
                       ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: kMarginMedium2,
-                        vertical: kMarginMedium2 - 5,
+                      padding: EdgeInsets.only(
+                       left: kMarginMedium2,
+                        right: kMarginMedium2,
+                        bottom: 20
                       ),
                       itemBuilder: (context, index) {
                         return GestureDetector(
@@ -146,7 +158,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                         : Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15),
-                            color: Colors.black12,
+                            color: Colors.black38,
                           ),
                         ),
                     bloc.filteredSuggestions.isEmpty

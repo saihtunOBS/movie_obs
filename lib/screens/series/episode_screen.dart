@@ -37,8 +37,8 @@ class EpisodeScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(40),
-                      bottomRight: Radius.circular(40),
+                      bottomLeft: Radius.circular(35),
+                      bottomRight: Radius.circular(35),
                     ),
                     child: cacheImage(imageArray.first),
                   ),

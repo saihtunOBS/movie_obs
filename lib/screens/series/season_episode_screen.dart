@@ -45,8 +45,8 @@ class SeasonEpisodeScreen extends StatelessWidget {
                           width: double.infinity,
                           child: ClipRRect(
                             borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(40),
-                              bottomRight: Radius.circular(40),
+                              bottomLeft: Radius.circular(35),
+                              bottomRight: Radius.circular(35),
                             ),
                             child: cacheImage(season?.bannerImageUrl ?? ''),
                           ),
@@ -212,15 +212,15 @@ class SeasonEpisodeScreen extends StatelessWidget {
           _buildEpisodeAndViewCount(bloc),
           1.vGap,
           _buildTypeAndWatchList(),
-          1.vGap,
-          _buildCastView(bloc),
-          1.vGap,
+          bloc.seasonEpisodeResponse?.actors?.isEmpty ?? true
+              ? SizedBox.shrink()
+              : _buildCastView(bloc),
           _buildDescription(bloc),
           5.vGap,
           bloc.seasonEpisodeResponse?.episodes?.isEmpty ?? true
               ? SizedBox.shrink()
               : Text(
-                'Episodes',
+                'Episodes (${bloc.seasonEpisodeResponse?.episodes?.length})',
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: kTextRegular18,
@@ -246,9 +246,16 @@ class SeasonEpisodeScreen extends StatelessWidget {
               onTap: () {
                 // PageNavigator(ctx: context).nextPage(page: SeasonEpisodeScreen());
               },
-              child: seasonListItem(
-                isSeries: false,
-                data: bloc.seasonEpisodeResponse?.episodes?[index],
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 5),
+                child: seasonListItem(
+                  isLast:
+                      (index ==
+                          (bloc.seasonEpisodeResponse?.episodes?.length ?? 0) -
+                              1),
+                  isSeries: false,
+                  data: bloc.seasonEpisodeResponse?.episodes?[index],
+                ),
               ),
             );
           },

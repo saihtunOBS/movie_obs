@@ -25,6 +25,11 @@ class SeriesBloc extends ChangeNotifier {
       notifyListeners();
     });
   }
+  clearFilter() {
+    filteredSuggestions.clear();
+    notifyListeners();
+  }
+
 
   void onSearchChanged(String value) {
     notifyListeners();

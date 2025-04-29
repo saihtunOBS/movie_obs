@@ -6,6 +6,7 @@ import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/screens/home/notification_screen.dart';
+import 'package:movie_obs/screens/home/search_screen.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/banner_image_animation.dart';
 import 'package:movie_obs/screens/home/movie_type_screen.dart';
@@ -66,9 +67,16 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             5.hGap,
-            CircleAvatar(
-              backgroundColor: Colors.black12,
-              child: Icon(CupertinoIcons.search, color: kWhiteColor),
+            InkWell(
+              onTap: () {
+                PageNavigator(
+                  ctx: context,
+                ).nextPage(page: SearchScreen());
+              },
+              child: CircleAvatar(
+                backgroundColor: Colors.black12,
+                child: Icon(CupertinoIcons.search, color: kWhiteColor),
+              ),
             ),
             10.hGap,
           ],

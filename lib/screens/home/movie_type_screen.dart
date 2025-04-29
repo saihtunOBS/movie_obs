@@ -49,8 +49,8 @@ class MovieTypeScreen extends StatelessWidget {
                           width: double.infinity,
                           child: ClipRRect(
                             borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(40),
-                              bottomRight: Radius.circular(40),
+                              bottomLeft: Radius.circular(35),
+                              bottomRight: Radius.circular(35),
                             ),
                             child: cacheImage(movie?.posterImageUrl ?? ''),
                           ),
@@ -171,34 +171,52 @@ class MovieTypeScreen extends StatelessWidget {
           _buildTypeAndWatchList(),
           1.vGap,
           _buildWatchNowButton(context),
-          1.vGap,
           _buildCastView(bloc),
           _buildDescription(bloc),
           5.vGap,
-          _buildRecommendedView(bloc)
+          _buildRecommendedView(bloc),
         ],
       ),
     );
   }
 
   Widget _buildRecommendedView(MovieDetailBloc bloc) {
-    return bloc.recommendedList?.isEmpty ?? true ? SizedBox.shrink() : Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Recommended', style: TextStyle(fontWeight: FontWeight.w700,fontSize: kTextRegular18)),
-        7.vGap,
-        SizedBox(
-          height: 170,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: bloc.recommendedList?.length,
-            itemBuilder: (context, index) {
-              return recommendedMovieListItem(bloc.recommendedList?[index] ?? MovieVO());
-            },
-          ),
-        ),
-      ],
-    );
+    return bloc.recommendedList?.isEmpty ?? true
+        ? SizedBox.shrink()
+        : Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Recommended',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: kTextRegular18,
+              ),
+            ),
+            7.vGap,
+            SizedBox(
+              height: 170,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: bloc.recommendedList?.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      PageNavigator(ctx: context).nextPage(
+                        page: MovieTypeScreen(
+                          movie: bloc.recommendedList?[index],
+                        ),
+                      );
+                    },
+                    child: recommendedMovieListItem(
+                      bloc.recommendedList?[index] ?? MovieVO(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
   }
 
   Widget _buildCastView(MovieDetailBloc bloc) {

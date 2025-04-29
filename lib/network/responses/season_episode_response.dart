@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 

@@ -22,52 +22,69 @@ Widget movieFilterSheet() {
               vertical: kMarginMedium2,
             ),
             child: Column(
-              spacing: 5,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //title
-                Row(
-                  children: [
-                    Text(
-                      'FILTER',
-                      style: TextStyle(
-                        fontSize: kTextRegular22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Spacer(),
-                    Chip(
-                      label: Text(
-                        'Filter',
-                        style: TextStyle(color: kWhiteColor),
-                      ),
-                      backgroundColor: kSecondaryColor,
-                    ),
-                    10.hGap,
-                    Chip(
-                      label: Text(
-                        'Clear',
-                        style: TextStyle(color: kWhiteColor),
-                      ),
-                      backgroundColor: Colors.transparent,
-                      side: BorderSide(color: kWhiteColor),
-                    ),
-                  ],
+                Container(
+                  width: 30,
+                  height: 3,
+                  decoration: BoxDecoration(
+                    color: kWhiteColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
+                15.vGap,
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      spacing: 5,
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //title
+                        Row(
+                          children: [
+                            Text(
+                              'FILTER',
+                              style: TextStyle(
+                                fontSize: kTextRegular22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Spacer(),
+                            Chip(
+                              label: Text(
+                                'Filter',
+                                style: TextStyle(color: kWhiteColor),
+                              ),
+                              backgroundColor: kSecondaryColor,
+                            ),
+                            10.hGap,
+                            Chip(
+                              label: Text(
+                                'Clear',
+                                style: TextStyle(color: kWhiteColor),
+                              ),
+                              backgroundColor: Colors.transparent,
+                              side: BorderSide(color: kWhiteColor,width: 0.8),
+                            ),
+                          ],
+                        ),
 
-                //movie session
-                _buildMovieSession(),
-                Divider(thickness: 0.5),
+                        //movie session
+                        _buildMovieSession(),
+                        Divider(thickness: 0.5),
 
-                //type session
-                buildTypeSession(categoryData: bloc.categoryLists),
-                Divider(thickness: 0.5),
+                        //type session
+                        buildTypeSession(categoryData: bloc.categoryLists),
+                        Divider(thickness: 0.5),
 
-                //genre session
-                buildGenreSession(genreData: bloc.genreLists),
+                        //genre session
+                        buildGenreSession(genreData: bloc.genreLists),
 
-                20.vGap
+                        20.vGap,
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

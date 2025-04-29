@@ -44,8 +44,8 @@ class PremiumScreen extends StatelessWidget {
                           width: double.infinity,
                           child: ClipRRect(
                             borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(40),
-                              bottomRight: Radius.circular(40),
+                              bottomLeft: Radius.circular(35),
+                              bottomRight: Radius.circular(35),
                             ),
                             child: cacheImage(series?.posterImageUrl ?? ''),
                           ),
@@ -224,7 +224,10 @@ class PremiumScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: seasonListItem(data: bloc.seriesResponse?.seasons?[index]),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 5),
+                child: seasonListItem(data: bloc.seriesResponse?.seasons?[index]),
+              ),
             );
           },
         );

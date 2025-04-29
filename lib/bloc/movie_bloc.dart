@@ -32,6 +32,11 @@ class MovieBloc extends ChangeNotifier {
     });
   }
 
+  clearFilter() {
+    filteredSuggestions.clear();
+    notifyListeners();
+  }
+
   getAllCategory() {
     _movieModel.getAllCategory(token).then((response) {
       categoryLists = response.data ?? [];

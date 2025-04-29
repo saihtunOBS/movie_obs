@@ -10,7 +10,7 @@ class CustomTextfield extends StatelessWidget {
       height: 50,
       decoration: BoxDecoration(
         color: Colors.grey.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(8),
         // border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
       ),
       child: TextField(
