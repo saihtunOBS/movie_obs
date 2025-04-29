@@ -5,6 +5,7 @@ import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/change_language_screen.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
+import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/screens/profile/promotion_screen.dart';
 import 'package:movie_obs/screens/profile/user_profile_screen.dart';
 import 'package:movie_obs/screens/profile/watch_list_screen.dart';
@@ -110,9 +111,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 vertical: kMarginMedium2,
               ),
               child: customButton(
-                onPress: () {
-                  // PersistenceData.shared.clearToken();
-                  PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
+                onPress: () async {
+                  tab.value = false;
+                  PersistenceData.shared.clearToken();
+                  await PageNavigator(
+                    ctx: context,
+                  ).nextPageOnly(page: LoginScreen());
                 },
                 context: context,
                 backgroundColor: kSecondaryColor,

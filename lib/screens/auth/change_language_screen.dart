@@ -27,7 +27,12 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
 
   @override
   void initState() {
-    _selectedValue = PersistenceData.shared.getLocale() == null ? 1 : PersistenceData.shared.getLocale() == 'en' ? 1  : 0;
+    _selectedValue =
+        PersistenceData.shared.getLocale() == null
+            ? 1
+            : PersistenceData.shared.getLocale() == 'en'
+            ? 1
+            : 0;
     languages = [
       _buildLanguageRow(title: 'Myanmar'),
       _buildLanguageRow(title: 'English'),
@@ -113,6 +118,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
               children: [
                 customButton(
                   onPress: () {
+                    tab.value = true;
                     PageNavigator(
                       ctx: context,
                     ).nextPageOnly(page: BottomNavScreen());

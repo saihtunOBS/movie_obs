@@ -12,6 +12,8 @@ import 'package:movie_obs/utils/images.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+final ValueNotifier<bool> tab = ValueNotifier(true);
+
 class BottomNavScreen extends StatefulWidget {
   const BottomNavScreen({super.key});
 
@@ -29,28 +31,23 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        PersistentTabView(
-          backgroundColor: Colors.transparent,
-          context,
-          screens: screens,
-          items: _navBarsItems(context),
-          onItemSelected: (value) {
-            // if (value != 0) {
-            //   controller.stop();
-            // } else {
-            //   controller.reset();
-            // }
-          },
-        ),
-        Positioned(
-          bottom: 87,
-          left: 0,
-          right: 0,
-          child: Image.asset(kBottomShadowImage, fit: BoxFit.contain),
-        ),
-      ],
+    return ValueListenableBuilder(
+      valueListenable: tab,
+      builder: (context, value, child) => 
+       PersistentTabView(
+        backgroundColor: Colors.transparent,
+        context,
+        isVisible: value,
+        screens: screens,
+        items: _navBarsItems(context),
+        onItemSelected: (value) {
+          // if (value != 0) {
+          //   controller.stop();
+          // } else {
+          //   controller.reset();
+          // }
+        },
+      ),
     );
   }
 }

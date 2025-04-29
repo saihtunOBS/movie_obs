@@ -11,9 +11,9 @@ Widget cacheImage(String url, {BoxFit? boxFit}) {
     placeholder:
         (context, url) => Shimmer.fromColors(
           direction: ShimmerDirection.ltr,
-          baseColor: kSecondaryColor.withValues(alpha: 0.3),
-          highlightColor: kBlackColor,
-          child: Container(color: kBlackColor),
+          baseColor: kSecondaryColor.withValues(alpha: 0.5),
+          highlightColor: kBlackColor.withValues(alpha: 0.2),
+          child: Container(color: kBlackColor.withValues(alpha: 0.2)),
         ),
     errorWidget:
         (context, url, error) => Container(
