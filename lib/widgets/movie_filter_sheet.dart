@@ -66,6 +66,8 @@ Widget movieFilterSheet() {
 
                 //genre session
                 buildGenreSession(genreData: bloc.genreLists),
+
+                20.vGap
               ],
             ),
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/utils/calculate_time.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 
@@ -11,7 +12,6 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data}) {
   return Column(
     spacing: 7,
     children: [
-      1.vGap,
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         spacing: 10,
@@ -47,14 +47,14 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data}) {
                             height: 23,
                             padding: EdgeInsets.symmetric(horizontal: 10),
                             decoration: BoxDecoration(
-                              color: kBlackColor,
+                              color: kSecondaryColor.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Center(
                               child: Text(
                                 'Free',
                                 style: TextStyle(
-                                  color: kWhiteColor,
+                                  color: kThirdColor,
                                   fontSize: 13,
                                 ),
                               ),
@@ -63,7 +63,7 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data}) {
                           SizedBox(
                             width: 5,
                             height: 5,
-                            child: CircleAvatar(backgroundColor: kBlackColor),
+                            child: CircleAvatar(backgroundColor: kWhiteColor),
                           ),
                           1.hGap,
                         ],
@@ -71,14 +71,16 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data}) {
                     ),
 
                     Text(
-                      isSeries == false ? '30 mins' : '25 Episodes',
+                      isSeries == false
+                          ? formatMinutesToHoursAndMinutes(data?.duration ?? 0)
+                          : '25 Episodes',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     10.hGap,
                     SizedBox(
                       width: 5,
                       height: 5,
-                      child: CircleAvatar(backgroundColor: kBlackColor),
+                      child: CircleAvatar(backgroundColor: kWhiteColor),
                     ),
                     10.hGap,
                     Row(
@@ -86,7 +88,7 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data}) {
                       children: [
                         Icon(CupertinoIcons.eye, size: 20),
                         Text(
-                          '35',
+                          data?.viewCount.toString() ?? '',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -98,7 +100,7 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data}) {
           ),
         ],
       ),
-      Divider( thickness: 0.5),
+      Divider(thickness: 0.5),
     ],
   );
 }

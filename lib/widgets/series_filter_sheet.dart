@@ -1,57 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:movie_obs/bloc/movie_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/images.dart';
 
 Widget seriesFilterSheet() {
-  return Container(
-    margin: EdgeInsets.symmetric(
-      horizontal: kMarginMedium2,
-      vertical: kMarginMedium2,
-    ),
-    child: Column(
-      spacing: 5,
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        //title
-        Row(
+  return ChangeNotifierProvider(
+    create: (context) => MovieBloc(),
+    child: Consumer<MovieBloc>(
+      builder: (context, bloc, child) => 
+       Container(
+        margin: EdgeInsets.symmetric(
+          horizontal: kMarginMedium2,
+          vertical: kMarginMedium2,
+        ),
+        child: Column(
+          spacing: 5,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'FILTER',
-              style: TextStyle(
-                fontSize: kTextRegular22,
-                fontWeight: FontWeight.bold,
-              ),
+            //title
+            Row(
+              children: [
+                Text(
+                  'FILTER',
+                  style: TextStyle(
+                    fontSize: kTextRegular22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Spacer(),
+                Chip(
+                  label: Text('Filter', style: TextStyle(color: kWhiteColor)),
+                  backgroundColor: kSecondaryColor,
+                ),
+                10.hGap,
+                Chip(
+                  label: Text('Clear', style: TextStyle(color: kWhiteColor)),
+                  backgroundColor: kBlackColor,
+                  side: BorderSide(color: kWhiteColor),
+                ),
+              ],
             ),
-            Spacer(),
-            Chip(
-              label: Text('Filter', style: TextStyle(color: kWhiteColor)),
-              backgroundColor: kSecondaryColor,
-            ),
-            10.hGap,
-            Chip(
-              label: Text('Clear', style: TextStyle(color: kWhiteColor)),
-              backgroundColor: kBlackColor,
-              side: BorderSide(color: kWhiteColor),
-            ),
+      
+            //movie session
+            _buildSeriesSession(),
+            Divider(),
+      
+            //type session
+            buildTypeSession(categoryData: bloc.categoryLists),
+            Divider(),
+      
+            //genre session
+            buildGenreSession(genreData: bloc.genreLists),
+
+            20.vGap
           ],
         ),
-
-        //movie session
-        _buildSeriesSession(),
-        Divider(),
-
-        //type session
-        buildTypeSession(),
-        Divider(),
-
-        //genre session
-        buildGenreSession(),
-      ],
+      ),
     ),
   );
 }

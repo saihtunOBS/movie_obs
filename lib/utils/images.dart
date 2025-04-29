@@ -27,4 +27,5 @@ const kGoogleIcon = 'assets/images/google.png';
 const kProfileCoverIcon = 'assets/images/profile_cover.png';
 const kPictureInPictureIcon = 'assets/images/picture.png';
 
-
+const kHomePromotionIcon = 'assets/images/home_promotion.png';
+const kAppIcon = 'assets/images/app_icon.png';

@@ -5,7 +5,7 @@ import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/recommended_movie_list_item.dart';
 import 'package:movie_obs/list_items/series_list_item.dart';
-import 'package:movie_obs/screens/series/episode_screen.dart';
+import 'package:movie_obs/screens/series/season_episode_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
@@ -177,23 +177,33 @@ class PremiumScreen extends StatelessWidget {
   }
 
   Widget _buildRecommendedView(SeriesDetailBloc bloc) {
-    return bloc.seasons.isEmpty ? SizedBox.shrink() : Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Recommended', style: TextStyle(fontWeight: FontWeight.w700,fontSize: kTextRegular18)),
-        7.vGap,
-        SizedBox(
-          height: 170,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: bloc.seasons.length,
-            itemBuilder: (context, index) {
-              return recommendedMovieListItem(bloc.seasons[index]);
-            },
-          ),
-        ),
-      ],
-    );
+    return bloc.recommendedList?.isEmpty ?? true
+        ? SizedBox.shrink()
+        : Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Recommended',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: kTextRegular18,
+              ),
+            ),
+            7.vGap,
+            SizedBox(
+              height: 170,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: bloc.recommendedList?.length,
+                itemBuilder: (context, index) {
+                  return recommendedMovieListItem(
+                    bloc.recommendedList?[index] ?? MovieVO(),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
   }
 
   Widget _buildSeasonListView(SeriesDetailBloc bloc) {
@@ -208,7 +218,11 @@ class PremiumScreen extends StatelessWidget {
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
-                PageNavigator(ctx: context).nextPage(page: EpisodeScreen());
+                PageNavigator(ctx: context).nextPage(
+                  page: SeasonEpisodeScreen(
+                    season: bloc.seriesResponse?.seasons?[index],
+                  ),
+                );
               },
               child: seasonListItem(data: bloc.seriesResponse?.seasons?[index]),
             );
@@ -225,7 +239,7 @@ class PremiumScreen extends StatelessWidget {
           'Director : ${bloc.seriesResponse?.director ?? ''}',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
-        Divider(thickness: 0.5,),
+        Divider(thickness: 0.5),
         Text(
           'Script Writer : ${bloc.seriesResponse?.scriptWriter ?? ''}',
           style: TextStyle(fontWeight: FontWeight.w700),

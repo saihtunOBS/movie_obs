@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
-import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 
@@ -8,10 +7,7 @@ Widget movieListItem({bool? isMovieScreen, MovieVO? movies}) {
   return Container(
     height: 180,
     margin: EdgeInsets.only(right: isMovieScreen == true ? 0 : kMarginMedium),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(kMargin10),
-      color: kWhiteColor,
-    ),
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(kMargin10)),
     child: Stack(
       fit: StackFit.passthrough,
       children: [

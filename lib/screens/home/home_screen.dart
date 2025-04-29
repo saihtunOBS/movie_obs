@@ -6,6 +6,7 @@ import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/screens/home/notification_screen.dart';
+import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/banner_image_animation.dart';
 import 'package:movie_obs/screens/home/movie_type_screen.dart';
 import 'package:movie_obs/screens/home/new_release_screen.dart';
@@ -25,11 +26,24 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => HomeBloc(context),
+      create: (context) => HomeBloc(context: context),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         appBar: AppBar(
-          title: Text('LOGO'),
+          title: Row(
+            spacing: 10,
+            children: [
+              Image.asset(kAppIcon, width: 40, height: 40),
+              Text(
+                'Tuu Tu TV',
+                style: TextStyle(
+                  color: kThirdColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: kTextRegular3x
+                ),
+              ),
+            ],
+          ),
           centerTitle: false,
           backgroundColor: Colors.transparent,
           surfaceTintColor: kBackgroundColor,
@@ -37,9 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             CircleAvatar(
               backgroundColor: Colors.black12,
-              child: Icon(CupertinoIcons.layers),
+              child: Image.asset(kHomePromotionIcon, width: 35, height: 35),
             ),
-            10.hGap,
+            5.hGap,
             InkWell(
               onTap: () {
                 PageNavigator(
@@ -48,13 +62,13 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: CircleAvatar(
                 backgroundColor: Colors.black12,
-                child: Icon(CupertinoIcons.bell),
+                child: Icon(CupertinoIcons.bell, color: kWhiteColor),
               ),
             ),
-            10.hGap,
+            5.hGap,
             CircleAvatar(
               backgroundColor: Colors.black12,
-              child: Icon(CupertinoIcons.search),
+              child: Icon(CupertinoIcons.search, color: kWhiteColor),
             ),
             10.hGap,
           ],
@@ -70,10 +84,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   //carousel
                   SliverToBoxAdapter(
-                    child: Container(
-                      height: getDeviceType() == 'phone' ? 220 : 350,
-                      color: Colors.transparent,
-                      child: BannerImageAnimation(),
+                    child: Visibility(
+                      visible: bloc.bannerList.isNotEmpty,
+                      child: Container(
+                        height: getDeviceType() == 'phone' ? 220 : 350,
+                        color: Colors.transparent,
+                        child: BannerImageAnimation(),
+                      ),
                     ),
                   ),
 
@@ -120,9 +137,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Visibility(
                       visible: bloc.newReleaseMoviesList.isNotEmpty,
                       child: _buildMovieOptions('New Releases', () {
-                        PageNavigator(
-                          ctx: context,
-                        ).nextPage(page: NewReleaseScreen(movieLists: bloc.newReleaseMoviesList,));
+                        PageNavigator(ctx: context).nextPage(
+                          page: NewReleaseScreen(
+                            movieLists: bloc.newReleaseMoviesList,
+                          ),
+                        );
                       }, bloc.newReleaseMoviesList),
                     ),
                   ),

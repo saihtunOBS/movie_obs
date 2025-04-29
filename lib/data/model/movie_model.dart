@@ -1,11 +1,14 @@
+import 'package:movie_obs/data/vos/movie_vo.dart' show MovieVO;
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 
 import '../../network/requests/send_otp_request.dart' show SendOtpRequest;
 import '../../network/requests/verify_otp_request.dart';
+import '../../network/responses/ads_banner_response.dart';
 import '../../network/responses/category_response.dart';
 import '../../network/responses/genre_response.dart';
 import '../../network/responses/movie_detail_response.dart';
+import '../../network/responses/season_episode_response.dart';
 import '../../network/responses/season_response.dart';
 
 abstract class MovieModel {
@@ -23,4 +26,11 @@ abstract class MovieModel {
 
   Future<CategoryResponse> getAllCategory(String token);
   Future<GenreResponse> getAllGenre(String token);
+
+  Future<AdsBannerResponse> getBanner(String token);
+  Future<AdsBannerResponse> getAds(String token);
+
+  Future<List<MovieVO>> getRecommendedMovie(String id);
+  Future<List<MovieVO>> getRecommendedSeries(String id);
+  Future<SeasonEpisodeResponse> getSeasonEpisode(String id);
 }

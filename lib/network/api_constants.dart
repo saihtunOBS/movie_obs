@@ -13,5 +13,8 @@ const String kEndPointHomeMovieAndSeries = '/videos/movies-series';
 const String kEndPointCategory = '/videos/categories';
 const String kEndPointGenre = '/videos/genres';
 
+const String kEndPointAds = '/cms/ads';
+const String kEndPointBanner = '/cms/banners';
+
 const String kHeaderAuthorization = "Authorization";
 const String kHeaderAcceptLanguage = "Accept-Language";

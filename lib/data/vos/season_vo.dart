@@ -55,6 +55,9 @@ class SeasonVO {
   @JsonKey(name: "updatedAt")
   final String? updatedAt;
 
+  @JsonKey(name: "duration")
+  final int? duration;
+
   SeasonVO({
     this.id,
     this.name,
@@ -73,6 +76,7 @@ class SeasonVO {
     this.supports,
     this.createdAt,
     this.updatedAt,
+    this.duration
   });
 
   factory SeasonVO.fromJson(Map<String, dynamic> json) => _$SeasonVOFromJson(json);

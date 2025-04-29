@@ -3,8 +3,8 @@ import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:provider/provider.dart';
 
-class BannerImageAnimation extends StatelessWidget {
-  const BannerImageAnimation({super.key});
+class AdsImageAnimation extends StatelessWidget {
+  const AdsImageAnimation({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
         });
       } else if (status == AnimationStatus.dismissed) {
         setState(() {
-          currentIndex = (currentIndex + 1) % bloc.bannerList.length;
+          currentIndex = (currentIndex + 1) % bloc.adsLists.length;
         });
         _controller.forward();
       }
@@ -78,15 +78,16 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
         body: Consumer<HomeBloc>(
           builder:
               (context, bloc, child) =>
-                  bloc.bannerList.isEmpty
+                  bloc.adsLists.isEmpty
                       ? SizedBox.shrink()
-                      : Center(
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: FadeTransition(
-                            opacity: _animation,
+                      : SizedBox(
+                        height: MediaQuery.sizeOf(context).height * 0.6,
+                        child: FadeTransition(
+                          opacity: _animation,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
                             child: cacheImage(
-                              bloc.bannerList[currentIndex].image ?? '',
+                              bloc.adsLists[currentIndex].image ?? '',
                             ),
                           ),
                         ),

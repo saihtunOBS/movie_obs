@@ -15,6 +15,7 @@ import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:provider/provider.dart';
 
+import '../../list_items/recommended_movie_list_item.dart';
 import '../../widgets/expandable_text.dart';
 
 class MovieTypeScreen extends StatelessWidget {
@@ -173,8 +174,30 @@ class MovieTypeScreen extends StatelessWidget {
           1.vGap,
           _buildCastView(bloc),
           _buildDescription(bloc),
+          5.vGap,
+          _buildRecommendedView(bloc)
         ],
       ),
+    );
+  }
+
+  Widget _buildRecommendedView(MovieDetailBloc bloc) {
+    return bloc.recommendedList?.isEmpty ?? true ? SizedBox.shrink() : Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Recommended', style: TextStyle(fontWeight: FontWeight.w700,fontSize: kTextRegular18)),
+        7.vGap,
+        SizedBox(
+          height: 170,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: bloc.recommendedList?.length,
+            itemBuilder: (context, index) {
+              return recommendedMovieListItem(bloc.recommendedList?[index] ?? MovieVO());
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -223,7 +246,7 @@ class MovieTypeScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
         5.vGap,
-        Divider(thickness: 0.5,),
+        Divider(thickness: 0.5),
         5.vGap,
         Text(
           'Script Writer : ${bloc.moviesResponse?.scriptWriter ?? ''}',

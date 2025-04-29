@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/bloc/series_detail_bloc.dart';
+import 'package:movie_obs/bloc/season_episode_bloc.dart';
+import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/series_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
@@ -8,23 +9,22 @@ import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/vos/movie_vo.dart';
 import '../../extension/page_navigator.dart';
 import '../../list_items/cast_list_item.dart';
 import '../../widgets/expandable_text.dart';
 import '../home/actor_view_screen.dart';
 
-class EpisodeOrSeriesLockScreen extends StatelessWidget {
-  const EpisodeOrSeriesLockScreen({super.key, this.series});
-  final MovieVO? series;
+class SeasonEpisodeScreen extends StatelessWidget {
+  const SeasonEpisodeScreen({super.key, this.season});
+  final SeasonVO? season;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => SeriesDetailBloc(series?.id),
+      create: (context) => SeasonEpisodeBloc(season?.id),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
-        body: Consumer<SeriesDetailBloc>(
+        body: Consumer<SeasonEpisodeBloc>(
           builder:
               (context, bloc, child) => CustomScrollView(
                 slivers: [
@@ -48,7 +48,7 @@ class EpisodeOrSeriesLockScreen extends StatelessWidget {
                               bottomLeft: Radius.circular(40),
                               bottomRight: Radius.circular(40),
                             ),
-                            child: cacheImage(series?.posterImageUrl ?? ''),
+                            child: cacheImage(season?.bannerImageUrl ?? ''),
                           ),
                         ),
                         Positioned(
@@ -131,12 +131,15 @@ class EpisodeOrSeriesLockScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEpisodeAndViewCount() {
+  Widget _buildEpisodeAndViewCount(SeasonEpisodeBloc bloc) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       spacing: kMargin12 + 4,
       children: [
-        Text('30 episodes', style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          '${bloc.seasonEpisodeResponse?.episodes?.length ?? 0} episodes',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         SizedBox(
           width: 5,
           height: 5,
@@ -146,14 +149,17 @@ class EpisodeOrSeriesLockScreen extends StatelessWidget {
           spacing: kMargin5,
           children: [
             Icon(CupertinoIcons.eye, size: 20),
-            Text('35', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              '${bloc.seasonEpisodeResponse?.viewCount ?? 0}',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildCastView(SeriesDetailBloc bloc) {
+  Widget _buildCastView(SeasonEpisodeBloc bloc) {
     return SizedBox(
       height: 100,
       child: Column(
@@ -163,7 +169,7 @@ class EpisodeOrSeriesLockScreen extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: bloc.seriesResponse?.tags?.length,
+              itemCount: bloc.seasonEpisodeResponse?.actors?.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,
@@ -175,7 +181,7 @@ class EpisodeOrSeriesLockScreen extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 10),
                     child: castListItem(
-                      actor: bloc.seriesResponse?.actors?[index],
+                      actor: bloc.seasonEpisodeResponse?.actors?[index],
                     ),
                   ),
                 );
@@ -187,7 +193,7 @@ class EpisodeOrSeriesLockScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, SeriesDetailBloc bloc) {
+  Widget _buildBody(BuildContext context, SeasonEpisodeBloc bloc) {
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: kMarginMedium2,
@@ -199,54 +205,62 @@ class EpisodeOrSeriesLockScreen extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              series?.name ?? '',
+              season?.name ?? '',
               style: TextStyle(fontSize: kTextRegular18 + 2),
             ),
           ),
-          _buildEpisodeAndViewCount(),
+          _buildEpisodeAndViewCount(bloc),
           1.vGap,
           _buildTypeAndWatchList(),
           1.vGap,
           _buildCastView(bloc),
           1.vGap,
           _buildDescription(bloc),
-          Text(
-            'Episodes',
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: kTextRegular18,
-            ),
-          ),
-          _seriesListView(),
+          5.vGap,
+          bloc.seasonEpisodeResponse?.episodes?.isEmpty ?? true
+              ? SizedBox.shrink()
+              : Text(
+                'Episodes',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: kTextRegular18,
+                ),
+              ),
+          _episodeListView(bloc),
         ],
       ),
     );
   }
 
-  Widget _seriesListView() {
-    return ListView.builder(
-      padding: EdgeInsets.zero,
-      physics: NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: 5,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            // PageNavigator(ctx: context).nextPage(page: SeasonEpisodeScreen());
+  Widget _episodeListView(SeasonEpisodeBloc bloc) {
+    return bloc.seasonEpisodeResponse?.episodes?.isEmpty ?? true
+        ? SizedBox.shrink()
+        : ListView.builder(
+          padding: EdgeInsets.zero,
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: bloc.seasonEpisodeResponse?.episodes?.length,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                // PageNavigator(ctx: context).nextPage(page: SeasonEpisodeScreen());
+              },
+              child: seasonListItem(
+                isSeries: false,
+                data: bloc.seasonEpisodeResponse?.episodes?[index],
+              ),
+            );
           },
-          child: seasonListItem(isSeries: false),
         );
-      },
-    );
   }
 
-  Widget _buildDescription(SeriesDetailBloc bloc) {
+  Widget _buildDescription(SeasonEpisodeBloc bloc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ExpandableText(
-          text: bloc.seriesResponse?.description ?? '',
+          text: bloc.seasonEpisodeResponse?.description ?? '',
           style: TextStyle(fontSize: 14),
         ),
       ],
