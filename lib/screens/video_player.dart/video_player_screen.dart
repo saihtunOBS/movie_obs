@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
-import 'package:movie_obs/data/videoPlayer/video_player.dart';
+// import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/screens/video_player.dart/popup_video_player.dart';
@@ -22,7 +22,7 @@ import 'package:video_player/video_player.dart';
 final ValueNotifier<bool> isPlay = ValueNotifier(false);
 double progress = 0.0;
 double bufferedProgress = 0.0;
-bool showControl = false;
+bool showControl = true;
 bool isAutoRotateEnabled = false;
 
 class VideoPlayerScreen extends StatefulWidget {
@@ -46,7 +46,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   double _dragOffset = 1.0;
   double _newDragOffset = 0.0;
   Orientation? _lastOrientation;
-  VideoProgress? _savedVideo;
+  //VideoProgress? _savedVideo;
   bool isLock = false;
 
   StreamSubscription<bool>? _subscription;
@@ -54,7 +54,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      bloc.resetControlVisibility(isSeek: true);
+      //bloc.resetControlVisibility(isSeek: true);
       if (Platform.isIOS) {
         SystemChrome.setPreferredOrientations([]);
       }
@@ -116,6 +116,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   @override
   void initState() {
+    setState(() {
+      if (!mounted) return;
+      showControl = true;
+    });
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
@@ -155,37 +159,38 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      bloc.resetControlVisibility();
       bloc.currentUrl = widget.url ?? '';
-      bloc.updateListener();
       MiniVideoPlayer.removeMiniPlayer();
       isPlay.value = true;
       if (widget.isFirstTime == true) {
-        _loadCurrentPosition();
+        //_loadCurrentPosition();
+        bloc.initializeVideo(widget.url ?? '');
       } else {
-        bloc.resetControlVisibility();
+        //bloc.resetControlVisibility();
       }
     });
     super.initState();
   }
 
-  Future<void> _loadCurrentPosition() async {
-    final savedProgressList = await loadVideoProgress();
-    _savedVideo = savedProgressList.firstWhere(
-      (progress) => progress.videoId == '1',
-      orElse: () => VideoProgress(videoId: '1', position: Duration.zero),
-    );
+  // Future<void> _loadCurrentPosition() async {
+  //   final savedProgressList = await loadVideoProgress();
+  //   _savedVideo = savedProgressList.firstWhere(
+  //     (progress) => progress.videoId == '1',
+  //     orElse: () => VideoProgress(videoId: '1', position: Duration.zero),
+  //   );
 
-    if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
-      selectedQuality = 'Auto';
-      bloc.fetchQualityOptions();
-      bloc.changeQuality(widget.url ?? '', _savedVideo?.position);
-      bloc.resetControlVisibility(isSeek: true);
-      bloc.updateListener();
-    } else {
-      bloc.initializeVideo(widget.url ?? '');
-      bloc.updateListener();
-    }
-  }
+  //   if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
+  //     selectedQuality = 'Auto';
+  //     bloc.fetchQualityOptions();
+  //     bloc.changeQuality(widget.url ?? '', _savedVideo?.position);
+  //     bloc.resetControlVisibility(isSeek: true);
+  //     bloc.updateListener();
+  //   } else {
+  //     bloc.initializeVideo(widget.url ?? '');
+  //     bloc.updateListener();
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -241,10 +246,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
             !videoPlayerController.value.isInitialized
                 ? SizedBox()
-                : _buildPlayPauseControls(),
-            _buildTopLeftControls(),
-            _buildTopRightControls(),
-            _buildProgressBar(),
+                : showControl == true
+                ? _buildPlayPauseControls()
+                : SizedBox.shrink(),
+            showControl == true ? _buildTopLeftControls() : SizedBox.shrink(),
+            showControl == true ? _buildTopRightControls() : SizedBox.shrink(),
+            showControl == true ? _buildProgressBar() : SizedBox.shrink(),
           ],
         ),
       ),
@@ -362,10 +369,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildPlayPauseControls() {
-    return Align(
-      alignment: Alignment.center,
-      child: showControl ? _buildControlButtons() : const SizedBox(),
-    );
+    return Align(alignment: Alignment.center, child: _buildControlButtons());
   }
 
   Widget _buildControlButtons() {
@@ -469,7 +473,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return Positioned(
       top: bloc.isFullScreen ? 20 : 60,
       left: bloc.isFullScreen ? 20 : 10,
-      child: showControl ? _buildExitButton() : const SizedBox(),
+      child: _buildExitButton(),
     );
   }
 
@@ -483,7 +487,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           onTap: () {
             Navigator.pop(context);
             videoPlayerController.pause();
-            videoPlayerController.dispose();
+            //videoPlayerController.dispose();
           },
           child: Container(
             height: 30,
@@ -541,7 +545,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return Positioned(
       top: bloc.isFullScreen ? 20 : 60,
       right: bloc.isFullScreen ? 20 : 10,
-      child: showControl ? _buildSettingsButtons() : const SizedBox(),
+      child: _buildSettingsButtons(),
     );
   }
 
@@ -553,7 +557,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildMuteButton() {
-    return InkWell(
+    return GestureDetector(
       onTap: () => bloc.toggleMute(),
       child: Container(
         //margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
@@ -575,7 +579,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildSettingsButton() {
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         showControl = true;
         showModalBottomSheet(
@@ -615,7 +619,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       bottom: bloc.isFullScreen ? 20 : 30,
       left: 0,
       right: 0,
-      child: showControl ? _buildProgressBarContent() : const SizedBox(),
+      child: _buildProgressBarContent(),
     );
   }
 
@@ -730,7 +734,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildFullScreenButton() {
-    return InkWell(
+    return GestureDetector(
       onTap: () => bloc.toggleFullScreen(),
       child: SizedBox(
         // height: bloc.isFullScreen ? 42 : 30,
@@ -832,7 +836,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                     ),
                   ),
                   SizedBox(height: 10),
-                  InkWell(
+                  GestureDetector(
                     onTap: () async {
                       bloc.isQualityClick = 1;
                       Navigator.of(context).pop();
@@ -844,7 +848,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                     ),
                   ),
                   SizedBox(height: 25),
-                  InkWell(
+                  GestureDetector(
                     onTap: () async {
                       bloc.isQualityClick = 2;
                       Navigator.pop(context);
@@ -923,7 +927,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                           padding: const EdgeInsets.only(bottom: 5),
                           child: SizedBox(
                             height: 35,
-                            child: InkWell(
+                            child: GestureDetector(
                               onTap: () {
                                 Navigator.pop(context);
                                 if (selectedQuality == 'Auto') return;
@@ -962,7 +966,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                       int qualityIndex = index - 1;
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 5),
-                        child: InkWell(
+                        child: GestureDetector(
                           onTap: () {
                             Navigator.pop(context);
                             String selectedUrl =
@@ -1078,7 +1082,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                     children:
                         speeds
                             .map(
-                              (value) => InkWell(
+                              (value) => GestureDetector(
                                 onTap: () {
                                   bloc.updateSpeed(value);
                                 },

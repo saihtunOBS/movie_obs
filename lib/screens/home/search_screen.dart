@@ -9,6 +9,7 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:provider/provider.dart';
+import 'package:substring_highlight/substring_highlight.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -77,7 +78,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   child: TextField(
                     controller: _controller,
 
-                    onChanged: (value) => bloc.onSearchChanged(value,isSearchScreen: true),
+                    onChanged:
+                        (value) =>
+                            bloc.onSearchChanged(value, isSearchScreen: true),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Search Movies & Series',
@@ -86,7 +89,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 Visibility(
                   visible: _controller.text.isNotEmpty,
-                  child: InkWell(
+                  child: GestureDetector(
                     onTap: () {
                       _controller.clear();
                       bloc.clearFilter();
@@ -169,9 +172,13 @@ class _SearchScreenState extends State<SearchScreen> {
                           horizontal: kMarginMedium,
                           vertical: kMarginMedium,
                         ),
-                        child: Text(
-                          value.name ?? '',
-                          style: TextStyle(color: kBlackColor),
+                        child: SubstringHighlight(
+                          text: value.name ?? '',
+                          term: _controller.text,
+                          textStyleHighlight: TextStyle(
+                            color: kSecondaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       );
                     }).toList(),

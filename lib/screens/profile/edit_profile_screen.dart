@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/widgets/custom_textfield.dart';
+import 'package:provider/provider.dart';
 
 import '../../utils/colors.dart';
 import '../../utils/dimens.dart';
@@ -12,24 +14,27 @@ class EditProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildAppBar(context),
-          30.vGap,
-          _buildUserInfo('Username', 'Username', context),
-          10.vGap,
-          _buildUserInfo('Phone Number', '+95 0976666677', context),
-          10.vGap,
-          _buildUserInfo(
-            'Email Address',
-            'user@gmail.com',
-            context,
-            isLast: true,
-          ),
-        ],
+    return ChangeNotifierProvider(
+      create: (context) => UserBloc(),
+      child: Scaffold(
+        backgroundColor: kBackgroundColor,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildAppBar(context),
+            30.vGap,
+            _buildUserInfo('Username', 'Username', context),
+            10.vGap,
+            _buildUserInfo('Phone Number', '+95 0976666677', context),
+            10.vGap,
+            _buildUserInfo(
+              'Email Address',
+              'user@gmail.com',
+              context,
+              isLast: true,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -42,7 +47,7 @@ class EditProfileScreen extends StatelessWidget {
           child: Row(
             spacing: 10,
             children: [
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
                 },
@@ -64,40 +69,51 @@ class EditProfileScreen extends StatelessWidget {
           ),
         ),
 
-        Padding(
-          padding: const EdgeInsets.only(top: 70),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(30),
-              child: Stack(
-                children: [
-                  Container(
-                    height: 74,
-                    width: 74,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.3),
+        Consumer<UserBloc>(
+          builder:
+              (context, bloc, child) => Padding(
+                padding: const EdgeInsets.only(top: 70),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: 74,
+                          width: 74,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withValues(alpha: 0.3),
+                          ),
+                          child:
+                              bloc.imgFile == null
+                                  ? Image.asset(kProfileCoverIcon)
+                                  : Image.file(bloc.imgFile!, fit: BoxFit.fill),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: () {
+                              _showCupertinoActionSheet(context, bloc);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 3),
+                              color: Colors.black54,
+                              child: Icon(
+                                CupertinoIcons.camera_fill,
+                                color: kWhiteColor,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: Center(child: Image.asset(kProfileCoverIcon)),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 3),
-                      color: Colors.black54,
-                      child: Icon(
-                        CupertinoIcons.camera_fill,
-                        color: kWhiteColor,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
         ),
         Positioned(
           top: 65,
@@ -105,7 +121,7 @@ class EditProfileScreen extends StatelessWidget {
           child: Row(
             spacing: 10,
             children: [
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
                 },
@@ -124,6 +140,55 @@ class EditProfileScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  _showCupertinoActionSheet(BuildContext context, UserBloc bloc) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoActionSheet(
+          title: Text(
+            'Choose Option',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: kTextRegular18,
+            ),
+          ),
+          message: Text(
+            'Select one of the options below.',
+            style: TextStyle(fontSize: kTextRegular2x),
+          ),
+          actions: <CupertinoActionSheetAction>[
+            CupertinoActionSheetAction(
+              onPressed: () {
+                bloc.selectImage(0);
+                Navigator.pop(context);
+              },
+              child: Text(
+                'Camera',
+                style: TextStyle(
+                  fontSize: kTextRegular2x,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            CupertinoActionSheetAction(
+              onPressed: () {
+                bloc.selectImage(1);
+                Navigator.pop(context);
+              },
+              child: Text(
+                'Gallery',
+                style: TextStyle(
+                  fontSize: kTextRegular2x,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

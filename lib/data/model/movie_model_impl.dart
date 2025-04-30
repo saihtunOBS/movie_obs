@@ -1,5 +1,6 @@
 import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart' show MovieVO;
+import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents_impl.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
@@ -132,5 +133,10 @@ class MovieModelImpl extends MovieModel {
   @override
   Future<PackageResponse> getAllPackage(String token) {
     return movieDataAgent.getAllPackage(token);
+  }
+
+  @override
+  Future<UserVO> getUser(String token) {
+    return movieDataAgent.getUser(token);
   }
 }

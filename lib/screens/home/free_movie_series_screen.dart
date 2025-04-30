@@ -13,7 +13,7 @@ import '../../extension/page_navigator.dart';
 import '../home/movie_type_screen.dart';
 
 class FreeMovieSeriesScreen extends StatefulWidget {
-  const FreeMovieSeriesScreen({super.key,});
+  const FreeMovieSeriesScreen({super.key});
   @override
   State<FreeMovieSeriesScreen> createState() => _FreeMovieSeriesScreenState();
 }
@@ -37,7 +37,7 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
           title: Text('Free Movies & Series'),
           centerTitle: false,
           actions: [
-            InkWell(
+            GestureDetector(
               onTap: () {
                 if (getDeviceType() == 'phone') {
                   showModalBottomSheet(

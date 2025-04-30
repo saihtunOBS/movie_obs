@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
+import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/exception/custom_exception.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/movie_api.dart';
@@ -286,6 +287,18 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   Future<PackageResponse> getAllPackage(String token) {
     return movieApi
         .getPackages('Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<UserVO> getUser(String token) {
+return movieApi
+        .getUser('Bearer $token')
         .asStream()
         .map((response) => response)
         .first

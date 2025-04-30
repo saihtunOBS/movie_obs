@@ -12,6 +12,8 @@ import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
 
+import '../../data/vos/user_vo.dart';
+
 abstract class MovieDataAgents {
   Future<OTPResponse> sendOtp(SendOtpRequest request);
   Future<OTPResponse> verifyOtp(VerifyOtpRequest request);
@@ -46,4 +48,7 @@ abstract class MovieDataAgents {
   Future<ActorDataResponse> getActorDetail(String token, String id);
 
   Future<PackageResponse> getAllPackage(String token);
+
+  Future<UserVO> getUser(String token);
+
 }

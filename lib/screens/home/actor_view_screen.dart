@@ -65,6 +65,7 @@ class ActorViewScreen extends StatelessWidget {
           return movieListItem(
             isHomeScreen: true,
             movies: bloc.actorData?.movies?[index],
+            type: bloc.actorData?.movies?[index].plan
           );
         },
       ),

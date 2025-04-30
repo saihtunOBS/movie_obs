@@ -44,7 +44,7 @@ class _FilterScreenState extends State<FilterScreen> {
           ),
           centerTitle: false,
           actions: [
-            InkWell(
+            GestureDetector(
               onTap: () {
                 if (getDeviceType() == 'phone') {
                   showModalBottomSheet(

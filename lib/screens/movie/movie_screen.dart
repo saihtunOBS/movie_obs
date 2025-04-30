@@ -7,6 +7,7 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:substring_highlight/substring_highlight.dart';
 
 import '../../extension/page_navigator.dart';
 import '../home/movie_type_screen.dart';
@@ -39,7 +40,7 @@ class _MovieScreenState extends State<MovieScreen> {
           title: Text('Tuu Tu\'s Movies'),
           centerTitle: false,
           actions: [
-            InkWell(
+            GestureDetector(
               onTap: () {
                 if (getDeviceType() == 'phone') {
                   showModalBottomSheet(
@@ -96,7 +97,7 @@ class _MovieScreenState extends State<MovieScreen> {
                         trailing: [
                           Visibility(
                             visible: _controller.text.isNotEmpty,
-                            child: InkWell(
+                            child: GestureDetector(
                               onTap: () {
                                 _controller.clear();
                                 bloc.clearFilter();
@@ -191,9 +192,13 @@ class _MovieScreenState extends State<MovieScreen> {
                                       horizontal: kMarginMedium,
                                       vertical: kMarginMedium,
                                     ),
-                                    child: Text(
-                                      value.name ?? '',
-                                      style: TextStyle(color: kBlackColor),
+                                    child: SubstringHighlight(
+                                      text: value.name ?? '',
+                                      term: _controller.text,
+                                      textStyleHighlight: TextStyle(
+                                        color: kSecondaryColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   );
                                 }).toList(),

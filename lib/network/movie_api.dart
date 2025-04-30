@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
+import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/api_constants.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart'
     show SendOtpRequest;
@@ -16,8 +17,6 @@ import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
 import 'package:retrofit/error_logger.dart';
 import 'package:retrofit/http.dart';
-
-import 'responses/user_response.dart';
 
 part 'movie_api.g.dart';
 
@@ -115,7 +114,7 @@ abstract class MovieApi {
   );
 
   @GET(kEndPointUser)
-  Future<UserResponse> getUser(
+  Future<UserVO> getUser(
    @Header(kHeaderAuthorization) String token,
   );
 }

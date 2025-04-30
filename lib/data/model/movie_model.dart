@@ -1,4 +1,5 @@
 import 'package:movie_obs/data/vos/movie_vo.dart' show MovieVO;
+import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 
@@ -46,4 +47,5 @@ abstract class MovieModel {
   Future<ActorDataResponse> getActorDetail(String token, String id);
 
   Future<PackageResponse> getAllPackage(String token);
+  Future<UserVO> getUser(String token);
 }

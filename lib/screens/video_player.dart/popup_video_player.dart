@@ -235,7 +235,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                         Positioned(
                           right: 0,
                           left: 0,
-                          child: InkWell(
+                          child: GestureDetector(
                             onTap: () {
                               context.pushTransparentRoute(
                                 VideoPlayerScreen(url: '', isFirstTime: false),

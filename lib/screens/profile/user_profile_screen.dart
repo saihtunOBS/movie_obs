@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/profile/edit_profile_screen.dart';
@@ -9,7 +10,8 @@ import '../../utils/dimens.dart';
 import '../../utils/images.dart';
 
 class UserProfileScreen extends StatelessWidget {
-  const UserProfileScreen({super.key});
+  const UserProfileScreen({super.key, required this.userData});
+  final UserVO userData;
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +22,13 @@ class UserProfileScreen extends StatelessWidget {
         children: [
           _buildAppBar(context),
           20.vGap,
-          _buildUserInfo('Username', 'Username', context),
+          _buildUserInfo('Username', userData.name ?? '', context),
           10.vGap,
-          _buildUserInfo('Phone Number', '+95 0976666677', context),
+          _buildUserInfo('Phone Number', userData.phone ?? '', context),
           10.vGap,
           _buildUserInfo(
             'Email Address',
-            'user@gmail.com',
+            userData.email ?? '',
             context,
             isLast: true,
           ),
@@ -43,7 +45,7 @@ class UserProfileScreen extends StatelessWidget {
           child: Row(
             spacing: 10,
             children: [
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
                 },

@@ -9,6 +9,7 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/series_filter_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:substring_highlight/substring_highlight.dart';
 
 class SeriesScreen extends StatefulWidget {
   const SeriesScreen({super.key});
@@ -38,7 +39,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
           title: Text('Tuu Tu\'s Series'),
           centerTitle: false,
           actions: [
-            InkWell(
+            GestureDetector(
               onTap: () {
                 if (getDeviceType() == 'phone') {
                   showModalBottomSheet(
@@ -92,7 +93,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                         trailing: [
                           Visibility(
                             visible: _controller.text.isNotEmpty,
-                            child: InkWell(
+                            child: GestureDetector(
                               onTap: () {
                                 _controller.clear();
                                 bloc.clearFilter();
@@ -152,7 +153,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                           child: movieListItem(
                             isHomeScreen: true,
                             movies: bloc.seriesLists[index],
-                            type: bloc.seriesLists[index].plan
+                            type: bloc.seriesLists[index].plan,
                           ),
                         );
                       },
@@ -189,9 +190,13 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                       horizontal: kMarginMedium,
                                       vertical: kMarginMedium,
                                     ),
-                                    child: Text(
-                                      value.name ?? '',
-                                      style: TextStyle(color: kBlackColor),
+                                    child: SubstringHighlight(
+                                      text: value.name ?? '',
+                                      term: _controller.text,
+                                      textStyleHighlight: TextStyle(
+                                        color: kSecondaryColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   );
                                 }).toList(),

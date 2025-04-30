@@ -198,6 +198,7 @@ class VideoBloc extends ChangeNotifier {
 
   /// Initialize video player
   void initializeVideo(String url) {
+    resetControlVisibility();
     isLoading = true;
     notifyListeners();
     videoPlayerController = VideoPlayerController.networkUrl(
@@ -212,14 +213,12 @@ class VideoBloc extends ChangeNotifier {
         useRootNavigator: false,
         allowFullScreen: false,
         draggableProgressBar: false,
-        
       );
 
       fetchQualityOptions();
     });
 
     isLoading = false;
-    resetControlVisibility();
 
     videoPlayerController.addListener(() {
       if (videoPlayerController.value.isPlaying) {

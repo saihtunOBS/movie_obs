@@ -68,7 +68,7 @@ class PromotionScreen extends StatelessWidget {
           child: Row(
             spacing: 10,
             children: [
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
                 },

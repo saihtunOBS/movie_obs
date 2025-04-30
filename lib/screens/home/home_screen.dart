@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
           surfaceTintColor: kBackgroundColor,
           foregroundColor: kWhiteColor,
           actions: [
-            InkWell(
+            GestureDetector(
               onTap: () {
                 PageNavigator(ctx: context).nextPage(page: PromotionScreen());
               },
@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             5.hGap,
-            InkWell(
+            GestureDetector(
               onTap: () {
                 PageNavigator(
                   ctx: context,
@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             5.hGap,
-            InkWell(
+            GestureDetector(
               onTap: () {
                 PageNavigator(ctx: context).nextPage(page: SearchScreen());
               },

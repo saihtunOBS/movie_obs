@@ -623,13 +623,13 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<UserResponse> getUser(String token) async {
+  Future<UserVO> getUser(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<UserResponse>(
+    final _options = _setStreamType<UserVO>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -640,9 +640,9 @@ class _MovieApi implements MovieApi {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late UserResponse _value;
+    late UserVO _value;
     try {
-      _value = UserResponse.fromJson(_result.data!);
+      _value = UserVO.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

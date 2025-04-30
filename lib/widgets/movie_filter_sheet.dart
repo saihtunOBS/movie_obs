@@ -32,6 +32,41 @@ Widget movieFilterSheet() {
                   ),
                 ),
                 15.vGap,
+                //title
+                Row(
+                  children: [
+                    Text(
+                      'FILTER',
+                      style: TextStyle(
+                        fontSize: kTextRegular22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Spacer(),
+                    Chip(
+                      label: Text(
+                        'Filter',
+                        style: TextStyle(color: kWhiteColor),
+                      ),
+                      backgroundColor: kSecondaryColor,
+                    ),
+                    10.hGap,
+                    GestureDetector(
+                      onTap: () {
+                        selectedType.value = '';
+                        selectedGenre.value = -1;
+                      },
+                      child: Chip(
+                        label: Text(
+                          'Clear',
+                          style: TextStyle(color: kWhiteColor),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        side: BorderSide(color: kWhiteColor, width: 0.8),
+                      ),
+                    ),
+                  ],
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
@@ -39,45 +74,6 @@ Widget movieFilterSheet() {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        //title
-                        Row(
-                          children: [
-                            Text(
-                              'FILTER',
-                              style: TextStyle(
-                                fontSize: kTextRegular22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Spacer(),
-                            Chip(
-                              label: Text(
-                                'Filter',
-                                style: TextStyle(color: kWhiteColor),
-                              ),
-                              backgroundColor: kSecondaryColor,
-                            ),
-                            10.hGap,
-                            GestureDetector(
-                              onTap: () {
-                                selectedType.value = '';
-                                selectedGenre.value = -1;
-                              },
-                              child: Chip(
-                                label: Text(
-                                  'Clear',
-                                  style: TextStyle(color: kWhiteColor),
-                                ),
-                                backgroundColor: Colors.transparent,
-                                side: BorderSide(
-                                  color: kWhiteColor,
-                                  width: 0.8,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
                         //movie session
                         buildMovieSession(),
                         Divider(thickness: 0.5),
@@ -183,7 +179,7 @@ Widget buildMovieAndSeriesSession() {
   );
 }
 
-List<String> typeArray = ['Free','Paid','Pay per view'];
+List<String> typeArray = ['Free', 'Paid', 'Pay per view'];
 Widget buildTypeSession({List<CategoryVO>? categoryData}) {
   return Column(
     spacing: 5,
@@ -257,7 +253,7 @@ Widget buildGenreSession({List<GenreVO>? genreData}) {
       ),
       Wrap(
         spacing: kMarginMedium,
-        runSpacing: kMarginMedium,
+        runSpacing: kMarginMedium - 10,
         alignment: WrapAlignment.start,
         children:
             genreData?.asMap().entries.map((value) {

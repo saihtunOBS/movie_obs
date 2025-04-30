@@ -33,22 +33,22 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: tab,
-      builder: (context, value, child) => 
-       PersistentTabView(
-        backgroundColor: Colors.transparent,
-        context,
-        isVisible: value,
-        screens: screens,
-        navBarStyle: NavBarStyle.style9,
-        items: _navBarsItems(context),
-        onItemSelected: (value) {
-          // if (value != 0) {
-          //   controller.stop();
-          // } else {
-          //   controller.reset();
-          // }
-        },
-      ),
+      builder:
+          (context, value, child) => PersistentTabView(
+            backgroundColor: Colors.transparent,
+            context,
+            isVisible: value,
+            screens: screens,
+            navBarStyle: NavBarStyle.style9,
+            items: _navBarsItems(context),
+            onItemSelected: (value) {
+              // if (value != 0) {
+              //   controller.stop();
+              // } else {
+              //   controller.reset();
+              // }
+            },
+          ),
     );
   }
 }
@@ -56,8 +56,8 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 List<PersistentBottomNavBarItem> _navBarsItems(BuildContext context) {
   return [
     PersistentBottomNavBarItem(
-      icon: Image.asset(kHomeFillIcon, color: kSecondaryColor),
-      inactiveIcon: Image.asset(kHomeIcon, color: kWhiteColor),
+      icon: Image.asset(kHomeFillIcon, color: kSecondaryColor,width: 25,height: 25,),
+      inactiveIcon: Image.asset(kHomeIcon, color: kWhiteColor,width: 25,height: 25),
       title: (AppLocalizations.of(context)?.home ?? ''),
       activeColorPrimary: kWhiteColor,
       textStyle:
@@ -66,8 +66,8 @@ List<PersistentBottomNavBarItem> _navBarsItems(BuildContext context) {
               : GoogleFonts.poppins(fontSize: kTextSmall),
     ),
     PersistentBottomNavBarItem(
-      icon: Image.asset(kMovieFillIcon, color: kSecondaryColor),
-      inactiveIcon: Image.asset(kMovieIcon, color: kWhiteColor),
+      icon: Image.asset(kMovieFillIcon, color: kSecondaryColor,width: 25,height: 25),
+      inactiveIcon: Image.asset(kMovieIcon, color: kWhiteColor,width: 25,height: 25),
       title: (AppLocalizations.of(context)?.movies ?? ''),
       activeColorPrimary: kWhiteColor,
       textStyle:
@@ -76,8 +76,8 @@ List<PersistentBottomNavBarItem> _navBarsItems(BuildContext context) {
               : GoogleFonts.poppins(fontSize: kTextSmall),
     ),
     PersistentBottomNavBarItem(
-      icon: Image.asset(kSeriesFillIcon, color: kSecondaryColor),
-      inactiveIcon: Image.asset(kSeriesIcon, color: kWhiteColor),
+      icon: Image.asset(kSeriesFillIcon, color: kSecondaryColor,width: 25,height: 25),
+      inactiveIcon: Image.asset(kSeriesIcon, color: kWhiteColor,width: 25,height: 25),
       title: (AppLocalizations.of(context)?.series ?? ''),
       activeColorPrimary: kWhiteColor,
       textStyle:

@@ -51,7 +51,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
         title: Text('Watchlist'),
         centerTitle: false,
         actions: [
-          InkWell(
+          GestureDetector(
             onTap: () {
               if (getDeviceType() == 'phone') {
                 showModalBottomSheet(

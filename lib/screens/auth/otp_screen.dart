@@ -112,7 +112,7 @@ class _OTPScreenState extends State<OTPScreen> {
                               timerText,
                               style: TextStyle(fontWeight: FontWeight.w700),
                             ),
-                            InkWell(
+                            GestureDetector(
                               onTap: () {
                                 if (_start == 60) {
                                   startTimer();
