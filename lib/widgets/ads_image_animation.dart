@@ -52,6 +52,7 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         Future.delayed(const Duration(seconds: 2), () {
+          if (!mounted) return;
           _controller.reverse();
         });
       } else if (status == AnimationStatus.dismissed) {

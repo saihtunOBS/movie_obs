@@ -8,7 +8,7 @@ import 'package:movie_obs/widgets/cache_image.dart';
 
 import '../utils/colors.dart';
 
-Widget seasonListItem({bool? isSeries, SeasonVO? data,bool? isLast}) {
+Widget seasonListItem({bool? isSeries, SeasonVO? data, bool? isLast}) {
   return Column(
     spacing: 7,
     children: [
@@ -54,7 +54,7 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data,bool? isLast}) {
                               child: Text(
                                 'Free',
                                 style: TextStyle(
-                                  color: kThirdColor,
+                                  color: kPrimaryColor,
                                   fontSize: 13,
                                 ),
                               ),
@@ -74,7 +74,11 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data,bool? isLast}) {
                       isSeries == false
                           ? formatMinutesToHoursAndMinutes(data?.duration ?? 0)
                           : '25 Episodes',
-                      style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13,color: Colors.grey),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                        color: Colors.grey,
+                      ),
                     ),
                     10.hGap,
                     SizedBox(
@@ -86,10 +90,14 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data,bool? isLast}) {
                     Row(
                       spacing: kMargin5,
                       children: [
-                        Icon(CupertinoIcons.eye, size: 20,color: Colors.grey,),
+                        Icon(CupertinoIcons.eye, size: 20, color: Colors.grey),
                         Text(
                           data?.viewCount.toString() ?? '',
-                          style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13,color: Colors.grey),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),

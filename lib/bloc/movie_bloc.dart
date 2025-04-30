@@ -29,14 +29,14 @@ class MovieBloc extends ChangeNotifier {
   }
 
   getMovieSeries() {
-    _movieModel.getAllMovie(token).then((response) {
+    _movieModel.getAllMovie(token,'').then((response) {
       movieSeriesList = response.data ?? [];
       notifyListeners();
     });
   }
 
   getAllMovie() {
-    _movieModel.getMovieLists(token).then((response) {
+    _movieModel.getMovieLists(token,'').then((response) {
       movieLists = response.data ?? [];
       notifyListeners();
     });

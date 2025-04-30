@@ -6,6 +6,9 @@ class MovieVO {
   @JsonKey(name: "_id")
   final String? id;
 
+  @JsonKey(name: "type")
+  final String? type;
+
   @JsonKey(name: "name")
   final String? name;
 
@@ -77,6 +80,7 @@ class MovieVO {
   final String? updatedAt;
 
   MovieVO({
+    this.type,
     this.id,
     this.name,
     this.description,

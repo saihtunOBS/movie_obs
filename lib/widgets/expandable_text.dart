@@ -47,7 +47,7 @@ class _ExpandableTextState extends State<ExpandableText>
                 style:
                     widget.linkStyle ??
                     const TextStyle(
-                      color: kThirdColor,
+                      color: kPrimaryColor,
                       fontWeight: FontWeight.w500,
                       fontSize: kTextSmall,
                     ),

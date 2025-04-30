@@ -11,10 +11,13 @@ import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
+import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
 import 'package:retrofit/error_logger.dart';
 import 'package:retrofit/http.dart';
+
+import 'responses/user_response.dart';
 
 part 'movie_api.g.dart';
 
@@ -29,7 +32,10 @@ abstract class MovieApi {
   Future<OTPResponse> verifyOTP(@Body() VerifyOtpRequest request);
 
   @GET(kEndPointMovie)
-  Future<MovieResponse> getMovies();
+  Future<MovieResponse> getMovies(
+    @Query('plan') String plan,
+    @Query('limit') int limit,
+  );
 
   @GET('$kEndPointMovie/{id}')
   Future<MovieDetailResponse> getMovieDetail(@Path() String id);
@@ -47,7 +53,10 @@ abstract class MovieApi {
   Future<List<MovieVO>> getRecommendedMovies(@Path() String id);
 
   @GET(kEndPointHomeMovieAndSeries)
-  Future<MovieResponse> getAllMovies();
+  Future<MovieResponse> getAllMovies(
+    @Query('plan') String plan,
+    @Query('limit') int limit,
+  );
 
   @GET(kEndPointAds)
   Future<AdsBannerResponse> getAds();
@@ -90,8 +99,23 @@ abstract class MovieApi {
   Future<MovieResponse> getNewRelease(
     @Query('sortBy') String sortBy,
     @Query('sortOrder') String sortOrder,
+    @Query('plan') String plan,
+    @Query('limit') int limit,
   );
 
   @GET(kEndPointSeries)
-  Future<MovieResponse> getSeries();
+  Future<MovieResponse> getSeries(
+    @Query('plan') String plan,
+    @Query('limit') int limit,
+  );
+
+  @GET(kEndPointPackage)
+  Future<PackageResponse> getPackages(
+   @Header(kHeaderAuthorization) String token,
+  );
+
+  @GET(kEndPointUser)
+  Future<UserResponse> getUser(
+   @Header(kHeaderAuthorization) String token,
+  );
 }

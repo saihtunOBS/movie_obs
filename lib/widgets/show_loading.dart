@@ -12,7 +12,7 @@ class LoadingView extends StatelessWidget {
       child: Center(
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          color: kThirdColor,
+          color: kPrimaryColor,
           backgroundColor: kWhiteColor,
         ),
       ),

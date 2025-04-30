@@ -7,6 +7,7 @@ part of 'movie_vo.dart';
 // **************************************************************************
 
 MovieVO _$MovieVOFromJson(Map<String, dynamic> json) => MovieVO(
+  type: json['type'] as String?,
   id: json['_id'] as String?,
   name: json['name'] as String?,
   description: json['description'] as String?,
@@ -46,6 +47,7 @@ MovieVO _$MovieVOFromJson(Map<String, dynamic> json) => MovieVO(
 
 Map<String, dynamic> _$MovieVOToJson(MovieVO instance) => <String, dynamic>{
   '_id': instance.id,
+  'type': instance.type,
   'name': instance.name,
   'description': instance.description,
   'plan': instance.plan,

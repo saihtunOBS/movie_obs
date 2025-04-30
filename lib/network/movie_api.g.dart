@@ -76,9 +76,9 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getMovies() async {
+  Future<MovieResponse> getMovies(String plan, int limit) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'plan': plan, r'limit': limit};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(
@@ -222,9 +222,9 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getAllMovies() async {
+  Future<MovieResponse> getAllMovies(String plan, int limit) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'plan': plan, r'limit': limit};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(
@@ -531,11 +531,18 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getNewRelease(String sortBy, String sortOrder) async {
+  Future<MovieResponse> getNewRelease(
+    String sortBy,
+    String sortOrder,
+    String plan,
+    int limit,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'sortBy': sortBy,
       r'sortOrder': sortOrder,
+      r'plan': plan,
+      r'limit': limit,
     };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
@@ -561,9 +568,9 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getSeries() async {
+  Future<MovieResponse> getSeries(String plan, int limit) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'plan': plan, r'limit': limit};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(
@@ -580,6 +587,62 @@ class _MovieApi implements MovieApi {
     late MovieResponse _value;
     try {
       _value = MovieResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PackageResponse> getPackages(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PackageResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/packages/plans',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PackageResponse _value;
+    try {
+      _value = PackageResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<UserResponse> getUser(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<UserResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/auth/me',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late UserResponse _value;
+    try {
+      _value = UserResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

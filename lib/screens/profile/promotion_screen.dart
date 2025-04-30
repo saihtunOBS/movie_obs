@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/bloc/package_bloc.dart';
+import 'package:movie_obs/data/vos/package_vo.dart';
 import 'package:movie_obs/list_items/promotion_list_items.dart';
 import 'package:movie_obs/utils/colors.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
+import 'package:provider/provider.dart';
 
 import '../../extension/extension.dart';
 import '../../utils/dimens.dart';
@@ -13,33 +17,44 @@ class PromotionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      body: Column(
-        children: [
-          _buildAppBar(context),
-          20.vGap,
-          Expanded(child: _buildListView(context)),
-        ],
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: kMarginMedium2,
-          vertical: kMarginMedium2 + 5,
+    return ChangeNotifierProvider(
+      create: (context) => PackageBloc(),
+      child: Scaffold(
+        backgroundColor: kBackgroundColor,
+        body: Consumer<PackageBloc>(
+          builder:
+              (context, bloc, child) => Column(
+                children: [
+                  _buildAppBar(context),
+                  20.vGap,
+                  Expanded(
+                    child:
+                        bloc.isLoading
+                            ? LoadingView()
+                            : _buildListView(context, bloc),
+                  ),
+                ],
+              ),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 2,
-          children: [
-            customButton(
-              onPress: () {},
-              context: context,
-              backgroundColor: kSecondaryColor,
-              title: 'Continue for Payment',
-              textColor: kWhiteColor,
-            ),
-            Image.asset(kShadowImage),
-          ],
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: kMarginMedium2,
+            vertical: kMarginMedium2 + 5,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 2,
+            children: [
+              customButton(
+                onPress: () {},
+                context: context,
+                backgroundColor: kSecondaryColor,
+                title: 'Continue for Payment',
+                textColor: kWhiteColor,
+              ),
+              Image.asset(kShadowImage),
+            ],
+          ),
         ),
       ),
     );
@@ -111,8 +126,9 @@ class PromotionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildListView(BuildContext context) {
+  Widget _buildListView(BuildContext context, PackageBloc bloc) {
     return ListView.builder(
+      physics: ClampingScrollPhysics(),
       padding: EdgeInsets.only(
         top: 30,
         left:
@@ -125,9 +141,13 @@ class PromotionScreen extends StatelessWidget {
                 : MediaQuery.of(context).size.width * 0.15,
         bottom: kMarginMedium2,
       ),
-      itemCount: 3,
+      itemCount: bloc.packages?.length,
       itemBuilder: (context, index) {
-        return promotionListItem(index == 2 ? true : false, context);
+        return promotionListItem(
+          false,
+          context,
+          bloc.packages?[index] ?? PackageVO(),
+        );
       },
     );
   }

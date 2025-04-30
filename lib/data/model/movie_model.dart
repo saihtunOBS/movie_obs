@@ -9,14 +9,15 @@ import '../../network/responses/ads_banner_response.dart';
 import '../../network/responses/category_response.dart';
 import '../../network/responses/genre_response.dart';
 import '../../network/responses/movie_detail_response.dart';
+import '../../network/responses/package_response.dart';
 import '../../network/responses/season_episode_response.dart';
 import '../../network/responses/season_response.dart';
 
 abstract class MovieModel {
   Future<OTPResponse> sendOtp(SendOtpRequest request);
   Future<OTPResponse> verifyOtp(VerifyOtpRequest request);
-  Future<MovieResponse> getMovieLists(String token);
-  Future<MovieResponse> getSeriesLists(String token);
+  Future<MovieResponse> getMovieLists(String token,String plan);
+  Future<MovieResponse> getSeriesLists(String token,String plan);
   Future<MovieDetailResponse> getMovieDetail(String token, String id);
   Future<MovieDetailResponse> getSeriesDetail(
     String token,
@@ -25,9 +26,9 @@ abstract class MovieModel {
   );
   Future<SeasonResponse> getSeason(String token);
 
-  Future<MovieResponse> getAllMovie(String token);
+  Future<MovieResponse> getAllMovie(String token,String plan);
   Future<MovieResponse> getTopTrending(String token);
-  Future<MovieResponse> getNewRelease(String token);
+  Future<MovieResponse> getNewRelease(String token,String plan);
 
   Future<CategoryResponse> getAllCategory(String token);
   Future<GenreResponse> getAllGenre(String token);
@@ -43,4 +44,6 @@ abstract class MovieModel {
   Future<SeasonEpisodeResponse> getSeasonEpisode(String id);
 
   Future<ActorDataResponse> getActorDetail(String token, String id);
+
+  Future<PackageResponse> getAllPackage(String token);
 }

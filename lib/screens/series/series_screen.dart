@@ -61,7 +61,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                 ),
                 child: Icon(
                   CupertinoIcons.slider_horizontal_3,
-                  color: kThirdColor,
+                  color: kPrimaryColor,
                   size: 19,
                 ),
               ),
@@ -97,7 +97,10 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                 _controller.clear();
                                 bloc.clearFilter();
                               },
-                              child: Icon(CupertinoIcons.clear_circled,color: kWhiteColor,),
+                              child: Icon(
+                                CupertinoIcons.clear_circled,
+                                color: kWhiteColor,
+                              ),
                             ),
                           ),
                         ],
@@ -133,9 +136,9 @@ class _SeriesScreenState extends State<SeriesScreen> {
                         crossAxisSpacing: 10,
                       ),
                       padding: EdgeInsets.only(
-                       left: kMarginMedium2,
+                        left: kMarginMedium2,
                         right: kMarginMedium2,
-                        bottom: 20
+                        bottom: 20,
                       ),
                       itemBuilder: (context, index) {
                         return GestureDetector(
@@ -147,8 +150,9 @@ class _SeriesScreenState extends State<SeriesScreen> {
                             );
                           },
                           child: movieListItem(
-                            isMovieScreen: true,
+                            isHomeScreen: true,
                             movies: bloc.seriesLists[index],
+                            type: bloc.seriesLists[index].plan
                           ),
                         );
                       },

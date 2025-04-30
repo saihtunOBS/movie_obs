@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               letterSpacing: 10.0,
                               fontSize: kTextRegular32,
                               fontWeight: FontWeight.bold,
-                              color: kThirdColor,
+                              color: kPrimaryColor,
                             ),
                           ),
                           Text(
@@ -278,9 +278,9 @@ class _LoginScreenState extends State<LoginScreen> {
               Row(
                 spacing: kMargin24,
                 children: [
-                  Expanded(child: Divider(color: kWhiteColor,thickness: 0.5,)),
+                  Expanded(child: Divider(color: kWhiteColor, thickness: 0.5)),
                   Text('Or', style: TextStyle(fontSize: kTextRegular2x)),
-                  Expanded(child: Divider(color: kWhiteColor,thickness: 0.5,)),
+                  Expanded(child: Divider(color: kWhiteColor, thickness: 0.5)),
                 ],
               ),
               GestureDetector(

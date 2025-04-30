@@ -255,7 +255,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return const Center(
       child: CircularProgressIndicator(
         strokeWidth: 2,
-        color: kThirdColor,
+        color: kPrimaryColor,
         backgroundColor: kWhiteColor,
       ),
     );
@@ -407,7 +407,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }) {
     return IconButton.filled(
       onPressed: onPressed,
-      icon: Icon(icon, color: kWhiteColor,size: 27,),
+      icon: Icon(icon, color: kWhiteColor, size: 27),
       style: IconButton.styleFrom(backgroundColor: Colors.black45),
     );
   }
@@ -659,13 +659,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
         allowedInteraction: SliderInteraction.slideOnly,
-        trackHeight: bloc.isFullScreen ? 2.0:  3.0,
+        trackHeight: bloc.isFullScreen ? 2.0 : 3.0,
         inactiveTrackColor: Colors.white.withValues(alpha: 0.5),
-        activeTrackColor: kThirdColor,
+        activeTrackColor: kPrimaryColor,
         overlayColor: Colors.grey.withValues(alpha: 0.5),
         secondaryActiveTrackColor:
             bloc.isSeeking ? Colors.transparent : Colors.white,
-        thumbColor: kThirdColor,
+        thumbColor: kPrimaryColor,
         trackShape: const RoundedRectSliderTrackShape(),
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7.0),
       ),
@@ -795,7 +795,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                 itemCount: 5,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return movieListItem(isMovieScreen: true);
+                  return movieListItem(isHomeScreen: true);
                 },
               ),
               const SizedBox(height: 20),

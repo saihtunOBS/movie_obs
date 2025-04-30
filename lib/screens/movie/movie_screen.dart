@@ -62,7 +62,7 @@ class _MovieScreenState extends State<MovieScreen> {
                 ),
                 child: Icon(
                   CupertinoIcons.slider_horizontal_3,
-                  color: kThirdColor,
+                  color: kPrimaryColor,
                   size: 19,
                 ),
               ),
@@ -101,7 +101,10 @@ class _MovieScreenState extends State<MovieScreen> {
                                 _controller.clear();
                                 bloc.clearFilter();
                               },
-                              child: Icon(CupertinoIcons.clear_circled,color: kWhiteColor,),
+                              child: Icon(
+                                CupertinoIcons.clear_circled,
+                                color: kWhiteColor,
+                              ),
                             ),
                           ),
                         ],
@@ -136,7 +139,7 @@ class _MovieScreenState extends State<MovieScreen> {
                       padding: EdgeInsets.only(
                         left: kMarginMedium2,
                         right: kMarginMedium2,
-                        bottom: 20
+                        bottom: 20,
                       ),
                       itemBuilder: (context, index) {
                         return GestureDetector(
@@ -148,8 +151,9 @@ class _MovieScreenState extends State<MovieScreen> {
                             );
                           },
                           child: movieListItem(
-                            isMovieScreen: true,
+                            isHomeScreen: true,
                             movies: bloc.movieLists[index],
+                            type: bloc.movieLists[index].plan,
                           ),
                         );
                       },

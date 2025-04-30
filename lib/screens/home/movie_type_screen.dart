@@ -162,7 +162,7 @@ class MovieTypeScreen extends StatelessWidget {
                     '',
                 style: TextStyle(
                   fontSize: kTextSmall,
-                  color: kThirdColor,
+                  color: kPrimaryColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -238,7 +238,9 @@ class MovieTypeScreen extends StatelessWidget {
                       onTap: () {
                         PageNavigator(ctx: context).nextPage(
                           page: ActorViewScreen(
-                            id: bloc.moviesResponse?.actors?[index].cast?.id ?? '',
+                            id:
+                                bloc.moviesResponse?.actors?[index].cast?.id ??
+                                '',
                           ),
                         );
                       },
@@ -393,7 +395,7 @@ class MovieTypeScreen extends StatelessWidget {
               spacing: kMargin5,
               children: [
                 //Icon(CupertinoIcons.lock, color: kWhiteColor, size: 18),
-                Text('Free', style: TextStyle(color: kThirdColor)),
+                Text('Free', style: TextStyle(color: kPrimaryColor)),
               ],
             ),
           ),

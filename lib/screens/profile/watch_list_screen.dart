@@ -75,7 +75,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
               ),
               child: Icon(
                 CupertinoIcons.slider_horizontal_3,
-                color: kThirdColor,
+                color: kPrimaryColor,
                 size: 19,
               ),
             ),
@@ -107,7 +107,9 @@ class _WatchListScreenState extends State<WatchListScreen> {
                 onChanged: _onSearchChanged,
                 shape: WidgetStateProperty.all(
                   RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16), // your border radius
+                    borderRadius: BorderRadius.circular(
+                      16,
+                    ), // your border radius
                   ),
                 ),
               ),
@@ -132,7 +134,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
                 vertical: kMarginMedium2 - 5,
               ),
               itemBuilder: (context, index) {
-                return movieListItem(isMovieScreen: true);
+                return movieListItem(isHomeScreen: true);
               },
             ),
             filteredSuggestions.isEmpty

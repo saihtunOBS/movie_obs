@@ -114,7 +114,7 @@ class PremiumScreen extends StatelessWidget {
                     '',
                 style: TextStyle(
                   fontSize: kTextSmall,
-                  color: kThirdColor,
+                  color: kPrimaryColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -226,7 +226,9 @@ class PremiumScreen extends StatelessWidget {
               },
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 5),
-                child: seasonListItem(data: bloc.seriesResponse?.seasons?[index]),
+                child: seasonListItem(
+                  data: bloc.seriesResponse?.seasons?[index],
+                ),
               ),
             );
           },

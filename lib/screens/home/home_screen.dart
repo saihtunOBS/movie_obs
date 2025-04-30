@@ -5,8 +5,10 @@ import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
+import 'package:movie_obs/screens/home/free_movie_series_screen.dart';
 import 'package:movie_obs/screens/home/notification_screen.dart';
 import 'package:movie_obs/screens/home/search_screen.dart';
+import 'package:movie_obs/screens/profile/promotion_screen.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/banner_image_animation.dart';
 import 'package:movie_obs/screens/home/movie_type_screen.dart';
@@ -38,9 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(
                 'Tuu Tu TV',
                 style: TextStyle(
-                  color: kThirdColor,
+                  color: kPrimaryColor,
                   fontWeight: FontWeight.bold,
-                  fontSize: kTextRegular3x
+                  fontSize: kTextRegular3x,
                 ),
               ),
             ],
@@ -50,9 +52,14 @@ class _HomeScreenState extends State<HomeScreen> {
           surfaceTintColor: kBackgroundColor,
           foregroundColor: kWhiteColor,
           actions: [
-            CircleAvatar(
-              backgroundColor: Colors.black12,
-              child: Image.asset(kHomePromotionIcon, width: 35, height: 35),
+            InkWell(
+              onTap: () {
+                PageNavigator(ctx: context).nextPage(page: PromotionScreen());
+              },
+              child: CircleAvatar(
+                backgroundColor: Colors.black12,
+                child: Image.asset(kHomePromotionIcon, width: 35, height: 35),
+              ),
             ),
             5.hGap,
             InkWell(
@@ -69,9 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
             5.hGap,
             InkWell(
               onTap: () {
-                PageNavigator(
-                  ctx: context,
-                ).nextPage(page: SearchScreen());
+                PageNavigator(ctx: context).nextPage(page: SearchScreen());
               },
               child: CircleAvatar(
                 backgroundColor: Colors.black12,
@@ -108,11 +113,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   //free movie & series
                   SliverToBoxAdapter(
-                    child: _buildMovieOptions(
-                      'Free Movie & Series',
-                      () {},
-                      bloc.movieLists,
-                    ),
+                    child: _buildMovieOptions('Free Movie & Series', () {
+                      PageNavigator(
+                        ctx: context,
+                      ).nextPage(page: FreeMovieSeriesScreen());
+                    }, bloc.freeMovieLists),
                   ),
                   SliverToBoxAdapter(
                     child: SizedBox(
@@ -149,6 +154,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           page: NewReleaseScreen(
                             movieLists: bloc.newReleaseMoviesList,
                           ),
+                        );
+                      }, bloc.newReleaseMoviesList),
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: getDeviceType() == 'phone' ? 10 : 20,
+                    ),
+                  ),
+                  //all movie and series
+                  SliverToBoxAdapter(
+                    child: Visibility(
+                      visible: bloc.movieLists.isNotEmpty,
+                      child: _buildAllMovieSeries('All Movies & Series', () {
+                        PageNavigator(ctx: context).nextPage(
+                          page: NewReleaseScreen(movieLists: bloc.movieLists),
                         );
                       }, bloc.newReleaseMoviesList),
                     ),
@@ -263,7 +285,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   child: SizedBox(
                     width: 180,
-                    child: movieListItem(movies: movies[index]),
+                    child: movieListItem(
+                      movies: movies[index],
+                      padding: kMarginMedium,
+                      type: movies[index].type,
+                    ),
                   ),
                 );
               },
@@ -273,4 +299,59 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
+
+Widget _buildAllMovieSeries(
+  String title,
+  VoidCallback onPress,
+  List<MovieVO> movies,
+) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: kTextRegular3x - 1,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            IconButton(onPressed: onPress, icon: Icon(null, size: 20)),
+          ],
+        ),
+      ),
+
+      GridView.builder(
+        padding: EdgeInsets.symmetric(horizontal: kMarginMedium2),
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: movies.length,
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              PageNavigator(
+                ctx: context,
+              ).nextPage(page: MovieTypeScreen(movie: movies[index]));
+            },
+            child: movieListItem(
+              movies: movies[index],
+              isHomeScreen: true,
+              type: movies[index].type,
+            ),
+          );
+        },
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          mainAxisExtent: 220,
+        ),
+      ),
+    ],
+  );
 }

@@ -299,7 +299,7 @@ class SeasonEpisodeScreen extends StatelessWidget {
               spacing: kMargin5,
               children: [
                 //Icon(CupertinoIcons.lock, color: kWhiteColor, size: 18),
-                Text('Free', style: TextStyle(color: kThirdColor)),
+                Text('Free', style: TextStyle(color: kPrimaryColor)),
               ],
             ),
           ),

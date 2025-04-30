@@ -20,7 +20,7 @@ class SeriesBloc extends ChangeNotifier {
   }
 
   getAllMovie() {
-    _movieModel.getSeriesLists(token).then((response) {
+    _movieModel.getSeriesLists(token,'').then((response) {
       seriesLists = response.data ?? [];
       notifyListeners();
     });

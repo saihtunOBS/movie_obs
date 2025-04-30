@@ -96,7 +96,7 @@ class _OTPScreenState extends State<OTPScreen> {
                             letterSpacing: 10.0,
                             fontSize: kTextRegular32,
                             fontWeight: FontWeight.bold,
-                            color: kThirdColor,
+                            color: kPrimaryColor,
                           ),
                         ),
                         Text(

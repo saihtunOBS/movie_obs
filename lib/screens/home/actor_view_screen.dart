@@ -63,7 +63,7 @@ class ActorViewScreen extends StatelessWidget {
         ),
         itemBuilder: (context, index) {
           return movieListItem(
-            isMovieScreen: true,
+            isHomeScreen: true,
             movies: bloc.actorData?.movies?[index],
           );
         },
@@ -84,9 +84,12 @@ class ActorViewScreen extends StatelessWidget {
               color: Colors.grey.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Center(child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: cacheImage(bloc.actorData?.profilePictureUrl ?? ''))),
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: cacheImage(bloc.actorData?.profilePictureUrl ?? ''),
+              ),
+            ),
           ),
           Column(
             spacing: 10,

@@ -8,6 +8,7 @@ import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
+import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
 
@@ -15,8 +16,8 @@ abstract class MovieDataAgents {
   Future<OTPResponse> sendOtp(SendOtpRequest request);
   Future<OTPResponse> verifyOtp(VerifyOtpRequest request);
 
-  Future<MovieResponse> getMovies(String token);
-  Future<MovieResponse> getSeries(String token);
+  Future<MovieResponse> getMovies(String token, String plan);
+  Future<MovieResponse> getSeries(String token, String plan);
   Future<MovieDetailResponse> getMovieDetail(String token, String id);
   Future<MovieDetailResponse> getSeriesDetail(
     String token,
@@ -25,9 +26,9 @@ abstract class MovieDataAgents {
   );
   Future<SeasonResponse> getSeason(String token);
 
-  Future<MovieResponse> getAllMovie(String token);
-  Future<MovieResponse> getTopTrending(String token);
-  Future<MovieResponse> getNewRelease(String token);
+  Future<MovieResponse> getAllMovie(String token, String plan);
+  Future<MovieResponse> getTopTrending(String token, String plan);
+  Future<MovieResponse> getNewRelease(String token, String plan);
 
   Future<MovieResponse> getMovieSeriesByGenre(String id);
   Future<MovieResponse> getMovieSeriesByCategory(String id);
@@ -43,4 +44,6 @@ abstract class MovieDataAgents {
   Future<SeasonEpisodeResponse> getSeasonEpisode(String id);
 
   Future<ActorDataResponse> getActorDetail(String token, String id);
+
+  Future<PackageResponse> getAllPackage(String token);
 }

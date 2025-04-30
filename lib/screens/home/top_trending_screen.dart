@@ -77,7 +77,7 @@ class _TopTrendingScreenState extends State<TopTrendingScreen> {
           Text(
             'Action, Romance, Drama',
             textAlign: TextAlign.center,
-            style: TextStyle(color: kThirdColor),
+            style: TextStyle(color: kPrimaryColor),
           ),
           20.vGap,
           _buildUnlockAndWishlist(),
@@ -144,7 +144,7 @@ Widget _buildUnlockAndWishlist() {
             spacing: kMargin5,
             children: [
               Icon(CupertinoIcons.lock, color: kWhiteColor, size: 18),
-              Text('2000 Ks to unlock', style: TextStyle(color: kThirdColor)),
+              Text('2000 Ks to unlock', style: TextStyle(color: kPrimaryColor)),
             ],
           ),
         ),

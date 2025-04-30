@@ -11,6 +11,7 @@ import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
+import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
 
@@ -35,28 +36,28 @@ class MovieModelImpl extends MovieModel {
   }
 
   @override
-  Future<MovieResponse> getAllMovie(String token) {
-    return movieDataAgent.getAllMovie(token);
+  Future<MovieResponse> getAllMovie(String token, String plan) {
+    return movieDataAgent.getAllMovie(token, plan);
   }
 
   @override
-  Future<MovieResponse> getMovieLists(String token) {
-    return movieDataAgent.getMovies(token);
+  Future<MovieResponse> getMovieLists(String token, String plan) {
+    return movieDataAgent.getMovies(token, plan);
   }
 
   @override
-  Future<MovieResponse> getNewRelease(String token) {
-    return movieDataAgent.getNewRelease(token);
+  Future<MovieResponse> getNewRelease(String token, String plan) {
+    return movieDataAgent.getNewRelease(token, plan);
   }
 
   @override
   Future<MovieResponse> getTopTrending(String token) {
-    return movieDataAgent.getTopTrending(token);
+    return movieDataAgent.getTopTrending(token, '');
   }
 
   @override
-  Future<MovieResponse> getSeriesLists(String token) {
-    return movieDataAgent.getSeries(token);
+  Future<MovieResponse> getSeriesLists(String token, String plan) {
+    return movieDataAgent.getSeries(token, plan);
   }
 
   @override
@@ -126,5 +127,10 @@ class MovieModelImpl extends MovieModel {
   @override
   Future<ActorDataResponse> getActorDetail(String token, String id) {
     return movieDataAgent.getActorDetail(token, id);
+  }
+
+  @override
+  Future<PackageResponse> getAllPackage(String token) {
+    return movieDataAgent.getAllPackage(token);
   }
 }

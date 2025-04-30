@@ -1,27 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/bloc/search_bloc.dart';
+import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
-import 'package:movie_obs/widgets/search_filter_sheet.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/page_navigator.dart';
 import '../home/movie_type_screen.dart';
 
-class FilterScreen extends StatefulWidget {
-  const FilterScreen({super.key, required this.id, required this.title});
-  final String id;
-  final String title;
+class FreeMovieSeriesScreen extends StatefulWidget {
+  const FreeMovieSeriesScreen({super.key,});
   @override
-  State<FilterScreen> createState() => _FilterScreenState();
+  State<FreeMovieSeriesScreen> createState() => _FreeMovieSeriesScreenState();
 }
 
-class _FilterScreenState extends State<FilterScreen> {
+class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
   @override
   void initState() {
     super.initState();
@@ -30,18 +27,14 @@ class _FilterScreenState extends State<FilterScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => SearchBloc(movieId: widget.id),
+      create: (context) => HomeBloc(),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         appBar: AppBar(
           backgroundColor: kBackgroundColor,
           surfaceTintColor: kBackgroundColor,
           foregroundColor: kWhiteColor,
-          title: Consumer<SearchBloc>(
-            builder:
-                (context, bloc, child) =>
-                    Text('${widget.title} (${bloc.movieLists.length})'),
-          ),
+          title: Text('Free Movies & Series'),
           centerTitle: false,
           actions: [
             InkWell(
@@ -51,7 +44,7 @@ class _FilterScreenState extends State<FilterScreen> {
                     useRootNavigator: true,
                     context: context,
                     builder: (context) {
-                      return searchFilterSheet();
+                      return movieFilterSheet();
                     },
                   );
                 } else {
@@ -75,7 +68,7 @@ class _FilterScreenState extends State<FilterScreen> {
             kMarginMedium2.hGap,
           ],
         ),
-        body: Consumer<SearchBloc>(
+        body: Consumer<HomeBloc>(
           builder:
               (context, bloc, child) => Padding(
                 padding: const EdgeInsets.only(top: 10),
@@ -84,9 +77,9 @@ class _FilterScreenState extends State<FilterScreen> {
                         ? LoadingView()
                         : Stack(
                           children: [
-                            bloc.movieLists.isNotEmpty
+                            bloc.freeMovieLists.isNotEmpty
                                 ? GridView.builder(
-                                  itemCount: bloc.movieLists.length,
+                                  itemCount: bloc.freeMovieLists.length,
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount:
@@ -105,14 +98,14 @@ class _FilterScreenState extends State<FilterScreen> {
                                       onTap: () {
                                         PageNavigator(ctx: context).nextPage(
                                           page: MovieTypeScreen(
-                                            movie: bloc.movieLists[index],
+                                            movie: bloc.freeMovieLists[index],
                                           ),
                                         );
                                       },
                                       child: movieListItem(
                                         isHomeScreen: true,
-                                        movies: bloc.movieLists[index],
-                                        type: bloc.movieLists[index].plan,
+                                        movies: bloc.freeMovieLists[index],
+                                        type: bloc.freeMovieLists[index].plan,
                                       ),
                                     );
                                   },

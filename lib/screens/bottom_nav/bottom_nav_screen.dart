@@ -39,6 +39,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
         context,
         isVisible: value,
         screens: screens,
+        navBarStyle: NavBarStyle.style9,
         items: _navBarsItems(context),
         onItemSelected: (value) {
           // if (value != 0) {

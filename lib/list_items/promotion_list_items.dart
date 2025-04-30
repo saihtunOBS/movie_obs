@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:movie_obs/data/vos/package_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 
-Widget promotionListItem(bool isPremium, BuildContext context) {
+Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
   return Container(
     margin: EdgeInsets.only(bottom: 40),
     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -46,14 +47,14 @@ Widget promotionListItem(bool isPremium, BuildContext context) {
                       Row(
                         children: [
                           Text(
-                            'Basic Plan',
+                            data.name ?? '',
                             style: TextStyle(
                               fontSize: kTextRegular18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
-                            '+ 10 days',
+                            '',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -73,7 +74,7 @@ Widget promotionListItem(bool isPremium, BuildContext context) {
                               )
                               : SizedBox.shrink(),
                           Text(
-                            'Essentials features, limited access',
+                            data.description ?? '',
                             style: TextStyle(fontSize: 12),
                           ),
                         ],
@@ -86,13 +87,13 @@ Widget promotionListItem(bool isPremium, BuildContext context) {
                   spacing: 5,
                   children: [
                     Text(
-                      '10,000 Ks',
+                      '${data.price} ${data.currency}',
                       style: TextStyle(
                         fontSize: kTextRegular2x,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text('/ for 30 days', style: TextStyle(fontSize: 12)),
+                    Text('/ for ${data.duration} days', style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ],
@@ -106,7 +107,7 @@ Widget promotionListItem(bool isPremium, BuildContext context) {
               ),
               child: Text(
                 'Within April 1, 2025 - April 5, 2025',
-                style: TextStyle(color: kThirdColor),
+                style: TextStyle(color: kPrimaryColor),
                 textAlign: TextAlign.justify,
               ),
             ),

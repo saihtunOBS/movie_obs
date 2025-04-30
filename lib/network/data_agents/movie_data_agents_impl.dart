@@ -14,6 +14,7 @@ import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
+import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
 
@@ -60,9 +61,9 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<MovieResponse> getMovies(String token) {
+  Future<MovieResponse> getMovies(String token, String plan) {
     return movieApi
-        .getMovies()
+        .getMovies(plan, 10)
         .asStream()
         .map((response) => response)
         .first
@@ -72,9 +73,9 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<MovieResponse> getAllMovie(String token) {
+  Future<MovieResponse> getAllMovie(String token, String plan) {
     return movieApi
-        .getAllMovies()
+        .getAllMovies(plan, 10)
         .asStream()
         .map((response) => response)
         .first
@@ -84,9 +85,9 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<MovieResponse> getNewRelease(String token) {
+  Future<MovieResponse> getNewRelease(String token, String plan) {
     return movieApi
-        .getNewRelease('createdAt', 'desc')
+        .getNewRelease('createdAt', 'desc', plan, 10)
         .asStream()
         .map((response) => response)
         .first
@@ -96,7 +97,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<MovieResponse> getTopTrending(String token) {
+  Future<MovieResponse> getTopTrending(String token, String plan) {
     return movieApi
         .getTopTrending(true)
         .asStream()
@@ -108,9 +109,9 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<MovieResponse> getSeries(String token) {
+  Future<MovieResponse> getSeries(String token, String plan) {
     return movieApi
-        .getSeries()
+        .getSeries(plan, 10)
         .asStream()
         .map((response) => response)
         .first
@@ -277,7 +278,18 @@ class MovieDataAgentsImpl extends MovieDataAgents {
         .map((response) => response)
         .first
         .catchError((error) {
-          print('error is....$error');
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<PackageResponse> getAllPackage(String token) {
+    return movieApi
+        .getPackages('Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
           throw _createException(error);
         });
   }
