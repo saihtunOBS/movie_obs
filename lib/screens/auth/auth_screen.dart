@@ -68,6 +68,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                   20.vGap,
                   //indicator
+                 if( bloc.bannerList.isNotEmpty)
                   ValueListenableBuilder(
                     valueListenable: sliderIndex,
                     builder:

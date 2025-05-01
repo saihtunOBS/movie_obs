@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
+import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 
 import '../extension/page_navigator.dart';
 import '../utils/colors.dart';
@@ -60,26 +61,27 @@ class ErrorDialogView extends StatelessWidget {
             Center(
               child: GestureDetector(
                 onTap: () {
-                  isLogin == true
-                      ? PageNavigator(
+                  if(isLogin == true){
+                    tab.value = false;
+                    PageNavigator(
                         ctx: context,
-                      ).nextPageOnly(page: LoginScreen())
-                      : Navigator.of(context).pop();
+                      ).nextPageOnly(page: LoginScreen());
+                  }else {
+                    Navigator.of(context).pop();
+                  }
+                 
                 },
                 child: Container(
                   height: 40,
-                  width: double.infinity,
+                  width: MediaQuery.of(context).size.width / 1.5,
                   decoration: BoxDecoration(
                     color: kSecondaryColor,
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
                     child: Text(
                       'Ok',
-                      style: TextStyle(
-                        color: kBackgroundColor,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

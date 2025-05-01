@@ -197,7 +197,7 @@ class VideoBloc extends ChangeNotifier {
   }
 
   /// Initialize video player
-  void initializeVideo(String url) {
+  void initializeVideo(String url, {String? videoId}) {
     resetControlVisibility();
     isLoading = true;
     notifyListeners();
@@ -224,7 +224,7 @@ class VideoBloc extends ChangeNotifier {
       if (videoPlayerController.value.isPlaying) {
         saveVideoProgress([
           VideoProgress(
-            videoId: '1',
+            videoId: videoId ?? '',
             position: videoPlayerController.value.position,
           ),
         ]);
@@ -255,8 +255,10 @@ class VideoBloc extends ChangeNotifier {
   //quality change
   void changeQuality(
     String url,
+    String? videoId,
     Duration? currentDuration, [
     String? quality,
+    
   ]) async {
     // showMiniControl = true;
     isLoading = true;
@@ -297,7 +299,7 @@ class VideoBloc extends ChangeNotifier {
       if (videoPlayerController.value.isPlaying) {
         saveVideoProgress([
           VideoProgress(
-            videoId: '1',
+            videoId: videoId ?? '',
             position: videoPlayerController.value.position,
           ),
         ]);

@@ -19,6 +19,8 @@ import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../data/videoPlayer/video_player.dart';
+
 final ValueNotifier<bool> isPlay = ValueNotifier(false);
 double progress = 0.0;
 double bufferedProgress = 0.0;
@@ -46,7 +48,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   double _dragOffset = 1.0;
   double _newDragOffset = 0.0;
   Orientation? _lastOrientation;
-  //VideoProgress? _savedVideo;
+  VideoProgress? _savedVideo;
   bool isLock = false;
 
   StreamSubscription<bool>? _subscription;
@@ -118,7 +120,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   void initState() {
     setState(() {
       if (!mounted) return;
-      showControl = true;
+      setState(() {
+        showControl = true;
+      });
     });
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -159,13 +163,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      bloc.resetControlVisibility();
+     // bloc.resetControlVisibility();
       bloc.currentUrl = widget.url ?? '';
       MiniVideoPlayer.removeMiniPlayer();
       isPlay.value = true;
       if (widget.isFirstTime == true) {
-        //_loadCurrentPosition();
-        bloc.initializeVideo(widget.url ?? '');
+        _loadCurrentPosition();
       } else {
         //bloc.resetControlVisibility();
       }
@@ -173,24 +176,32 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     super.initState();
   }
 
-  // Future<void> _loadCurrentPosition() async {
-  //   final savedProgressList = await loadVideoProgress();
-  //   _savedVideo = savedProgressList.firstWhere(
-  //     (progress) => progress.videoId == '1',
-  //     orElse: () => VideoProgress(videoId: '1', position: Duration.zero),
-  //   );
+  Future<void> _loadCurrentPosition() async {
+    final savedProgressList = await loadVideoProgress();
+    _savedVideo = savedProgressList.firstWhere(
+      (progress) => progress.videoId == widget.videoId,
+      orElse:
+          () => VideoProgress(
+            videoId: widget.videoId ?? '',
+            position: Duration.zero,
+          ),
+    );
 
-  //   if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
-  //     selectedQuality = 'Auto';
-  //     bloc.fetchQualityOptions();
-  //     bloc.changeQuality(widget.url ?? '', _savedVideo?.position);
-  //     bloc.resetControlVisibility(isSeek: true);
-  //     bloc.updateListener();
-  //   } else {
-  //     bloc.initializeVideo(widget.url ?? '');
-  //     bloc.updateListener();
-  //   }
-  // }
+    if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
+      selectedQuality = 'Auto';
+      bloc.fetchQualityOptions();
+      bloc.changeQuality(
+        widget.url ?? '',
+        widget.videoId,
+        _savedVideo?.position,
+      );
+     // bloc.resetControlVisibility(isSeek: true);
+      bloc.updateListener();
+    } else {
+      bloc.initializeVideo(widget.url ?? '', videoId: widget.videoId);
+      bloc.updateListener();
+    }
+  }
 
   @override
   void dispose() {
@@ -289,6 +300,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
               context,
               bloc.currentUrl,
               isPlay.value,
+              widget.videoId ?? '',
             );
           }
         });
@@ -517,6 +529,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                 videoPlayerController.value.isPlaying
                     ? isPlay.value = true
                     : isPlay.value = false,
+                widget.videoId ?? '',
               );
               SystemChrome.setPreferredOrientations([
                 DeviceOrientation.portraitUp,
@@ -933,6 +946,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                                 if (selectedQuality == 'Auto') return;
                                 bloc.changeQuality(
                                   widget.url ?? '',
+                                  widget.videoId,
                                   null,
                                   'Auto',
                                 );
@@ -983,6 +997,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
                             bloc.changeQuality(
                               selectedUrl,
+                              widget.videoId,
                               null,
                               bloc.qualityOptions[qualityIndex]['quality'] ??
                                   '',

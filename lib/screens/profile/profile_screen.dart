@@ -53,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => UserBloc(),
+      create: (_) => UserBloc(context: context),
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(

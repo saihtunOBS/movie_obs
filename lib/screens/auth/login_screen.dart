@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             ),
                                           ),
                                         ),
-
+    
                                         textStyle: TextStyle(
                                           fontSize:
                                               getDeviceType() == 'phone'
@@ -260,7 +260,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-
+    
                       //show lading
                       bloc.isLoading ? LoadingView() : SizedBox.shrink(),
                     ],

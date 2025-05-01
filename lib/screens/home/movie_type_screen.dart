@@ -170,7 +170,7 @@ class MovieTypeScreen extends StatelessWidget {
           ),
           _buildTypeAndWatchList(),
           1.vGap,
-          _buildWatchNowButton(context),
+          _buildWatchNowButton(context, movie?.id ?? '',movie?.videoUrl ?? ''),
           _buildCastView(bloc),
           _buildDescription(bloc),
           5.vGap,
@@ -307,15 +307,13 @@ class MovieTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWatchNowButton(BuildContext context) {
+  //https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8
+  Widget _buildWatchNowButton(BuildContext context, String videoId,
+  String url) {
     return GestureDetector(
       onTap: () {
         context.pushTransparentRoute(
-          VideoPlayerScreen(
-            url:
-                'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
-            isFirstTime: true,
-          ),
+          VideoPlayerScreen(url: url, isFirstTime: true,videoId: videoId,),
         );
       },
       child: Column(

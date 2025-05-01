@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bot_toast/bot_toast.dart';
-import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,11 +27,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => VideoBloc(),
-        
-        ),
+        ChangeNotifierProvider(create: (_) => VideoBloc()),
         ChangeNotifierProvider(create: (_) => HomeBloc()),
-        ],
+      ],
       child: const MovieOBS(),
     ),
   );
@@ -63,12 +60,12 @@ class _MovieOBSState extends State<MovieOBS> {
           debugShowCheckedModeBanner: false,
           localizationsDelegates: [
             AppLocalizations.delegate,
-            CountryLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
           ],
           locale: Locale(localString),
-          supportedLocales: [Locale('en'), Locale('my')],
+          supportedLocales: [Locale('en', 'US'), Locale('my', 'MM')],
           builder: (context, child) {
             child = BotToastInit()(context, child);
             return MediaQuery(

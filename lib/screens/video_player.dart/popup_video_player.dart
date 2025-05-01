@@ -15,11 +15,13 @@ class MiniVideoPlayer {
   static late Animation<double> _fadeAnimation;
   static late Animation<Offset> _slideAnimation;
   static late bool isPlay;
+  static late String videoId;
 
   static void showMiniPlayer(
     BuildContext context,
     String videoUrl,
     bool isPlaying,
+    String id
   ) {
     if (_overlayEntry != null) return;
 
@@ -56,6 +58,7 @@ class MiniVideoPlayer {
     Overlay.of(context).insert(_overlayEntry!);
     _animationController.forward();
     isPlay = isPlaying;
+    videoId = id;
   }
 
   static void removeMiniPlayer({bool? isClose}) {
@@ -117,7 +120,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
       if (videoPlayerController.value.isPlaying) {
         saveVideoProgress([
           VideoProgress(
-            videoId: '1',
+            videoId: MiniVideoPlayer.videoId,
             position: videoPlayerController.value.position,
           ),
         ]);
