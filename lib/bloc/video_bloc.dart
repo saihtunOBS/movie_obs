@@ -198,7 +198,7 @@ class VideoBloc extends ChangeNotifier {
 
   /// Initialize video player
   void initializeVideo(String url, {String? videoId}) {
-    resetControlVisibility();
+    //resetControlVisibility();
     isLoading = true;
     notifyListeners();
     videoPlayerController = VideoPlayerController.networkUrl(

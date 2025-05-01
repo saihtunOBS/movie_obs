@@ -78,6 +78,7 @@ class _MovieOBSState extends State<MovieOBS> {
             );
           },
           theme: ThemeData(
+            scaffoldBackgroundColor: kBlackColor,
             actionIconTheme: ActionIconThemeData(
               backButtonIconBuilder:
                   (BuildContext context) => Icon(
