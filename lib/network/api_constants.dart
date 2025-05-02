@@ -17,11 +17,10 @@ const String kEndPointAds = '/cms/ads';
 const String kEndPointBanner = '/cms/banners';
 
 const String kEndPointUser = '/auth/me';
-
+const String kEndPointFaq = '/contents/faqs';
 
 const String kEndPointCast = '/videos/casts';
 const String kEndPointPackage = '/packages/plans';
-
 
 const String kHeaderAuthorization = "Authorization";
 const String kHeaderAcceptLanguage = "Accept-Language";

@@ -8,6 +8,7 @@ import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/change_language_screen.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
 import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
+import 'package:movie_obs/screens/profile/faq_screen.dart';
 import 'package:movie_obs/screens/profile/promotion_screen.dart';
 import 'package:movie_obs/screens/profile/user_profile_screen.dart';
 import 'package:movie_obs/screens/profile/watch_list_screen.dart';
@@ -101,12 +102,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 PageNavigator(
                                   ctx: context,
                                 ).nextPage(page: ChangeLanguageScreen());
+                              case 5:
+                                PageNavigator(
+                                  ctx: context,
+                                ).nextPage(page: FaqScreen());
                               case 8:
                                 showDialog(
                                   useRootNavigator: true,
                                   context: context,
                                   builder:
-                                      (builder) => Dialog(child: _buildAlert()),
+                                      (builder) => Dialog(
+                                        insetPadding: const EdgeInsets.all(10),
+                                        child: _buildAlert(),
+                                      ),
                                 );
                                 break;
                               default:
@@ -177,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   width: 30,
                                   height: 30,
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(10),
                                     child: cacheImage(
                                       bloc.userData?.profilePictureUrl,
                                     ),
@@ -286,8 +294,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       height: null,
 
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.grey.withValues(alpha: 0.2),
+        // borderRadius: BorderRadius.circular(10),
+        // color: Colors.grey.withValues(alpha: 0.2),
       ),
       padding: EdgeInsets.all(20),
       child: SingleChildScrollView(

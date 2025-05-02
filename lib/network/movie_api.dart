@@ -8,6 +8,7 @@ import 'package:movie_obs/network/requests/verify_otp_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
+import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
@@ -116,5 +117,9 @@ abstract class MovieApi {
   @GET(kEndPointUser)
   Future<UserVO> getUser(
    @Header(kHeaderAuthorization) String token,
+  );
+
+  @GET(kEndPointFaq)
+  Future<FaqResponse> getFaqs(
   );
 }

@@ -7,9 +7,9 @@ import 'package:shimmer/shimmer.dart';
 Widget cacheImage(String? url, {BoxFit? boxFit}) {
   if (url == null || url.isEmpty || !url.startsWith('http')) {
     // Return a fallback image or asset when URL is invalid
-    return Container(
-      padding: EdgeInsets.all(10),
-      color: kSecondaryColor.withValues(alpha: 0.2),
+    return SizedBox(
+      // padding: EdgeInsets.all(7),
+      // color: kSecondaryColor.withValues(alpha: 0.2),
       child: Image.asset(kAppIcon, fit: BoxFit.contain),
     );
   }

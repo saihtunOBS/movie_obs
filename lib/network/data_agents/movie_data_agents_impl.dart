@@ -11,6 +11,7 @@ import 'package:movie_obs/network/requests/verify_otp_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
+import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
@@ -297,8 +298,20 @@ class MovieDataAgentsImpl extends MovieDataAgents {
 
   @override
   Future<UserVO> getUser(String token) {
-return movieApi
+    return movieApi
         .getUser('Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<FaqResponse> getFaq() {
+    return movieApi
+        .getFaqs()
         .asStream()
         .map((response) => response)
         .first

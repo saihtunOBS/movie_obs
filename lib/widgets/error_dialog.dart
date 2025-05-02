@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
 import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 
@@ -15,81 +16,73 @@ class ErrorDialogView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: const EdgeInsets.all(10),
-      surfaceTintColor: Colors.white,
-      child: Container(
-        padding: const EdgeInsets.all(kMarginMedium2),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(kMarginMedium2),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(kMarginMedium2),
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-              ),
-              child: const Center(
-                child: Icon(Icons.error_outline, color: Colors.white),
-              ),
+      // surfaceTintColor: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          20.vGap,
+          Container(
+            padding: const EdgeInsets.all(kMarginMedium2),
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              color: Colors.red,
+              shape: BoxShape.circle,
             ),
-            const SizedBox(height: 20),
-            Text(
-              "Oops...",
-              style: TextStyle(
-                fontSize: kTextRegular,
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
-              ),
+            child: const Center(
+              child: Icon(Icons.error_outline, color: Colors.white),
             ),
-            const SizedBox(height: 4),
-            Text(
-              errorMessage ?? "",
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: kTextRegular,
-                color: Colors.black,
-                fontWeight: FontWeight.normal,
-              ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            "Oops...",
+            style: TextStyle(
+              fontSize: kTextRegular,
+              fontWeight: FontWeight.w600,
             ),
-            const SizedBox(height: 20),
-            Center(
-              child: GestureDetector(
-                onTap: () {
-                  if(isLogin == true){
-                    tab.value = false;
-                    PageNavigator(
-                        ctx: context,
-                      ).nextPageOnly(page: LoginScreen());
-                  }else {
-                    Navigator.of(context).pop();
-                  }
-                 
-                },
-                child: Container(
-                  height: 40,
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  decoration: BoxDecoration(
-                    color: kSecondaryColor,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Ok',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            errorMessage ?? "",
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: kTextRegular,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Center(
+            child: GestureDetector(
+              onTap: () {
+                if(isLogin == true){
+                  tab.value = false;
+                  PageNavigator(
+                      ctx: context,
+                    ).nextPageOnly(page: LoginScreen());
+                }else {
+                  Navigator.of(context).pop();
+                }
+               
+              },
+              child: Container(
+                height: 40,
+                width: MediaQuery.of(context).size.width / 1.5,
+                decoration: BoxDecoration(
+                  color: kSecondaryColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    'Ok',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-          ],
-        ),
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }

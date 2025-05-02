@@ -8,6 +8,7 @@ import 'package:movie_obs/network/requests/verify_otp_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
+import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
@@ -138,5 +139,10 @@ class MovieModelImpl extends MovieModel {
   @override
   Future<UserVO> getUser(String token) {
     return movieDataAgent.getUser(token);
+  }
+
+  @override
+  Future<FaqResponse> getFaqs() {
+    return movieDataAgent.getFaq();
   }
 }
