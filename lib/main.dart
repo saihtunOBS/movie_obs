@@ -94,7 +94,10 @@ class _MovieOBSState extends State<MovieOBS> {
               primary: kSecondaryColor,
               brightness: Brightness.dark,
             ),
-            fontFamily: GoogleFonts.poppins().fontFamily,
+            fontFamily:
+                PersistenceData.shared.getLocale() == 'my'
+                    ? GoogleFonts.notoSansMyanmar().fontFamily
+                    : GoogleFonts.poppins().fontFamily,
           ),
           home: SplashScreen(),
         );

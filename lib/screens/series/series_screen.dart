@@ -4,12 +4,15 @@ import 'package:movie_obs/bloc/series_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
-import 'package:movie_obs/screens/series/permium_screen.dart';
+import 'package:movie_obs/screens/series/series_detail_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/series_filter_sheet.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 import 'package:substring_highlight/substring_highlight.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SeriesScreen extends StatefulWidget {
   const SeriesScreen({super.key});
@@ -86,7 +89,8 @@ class _SeriesScreenState extends State<SeriesScreen> {
                       child: SearchBar(
                         controller: _controller,
                         leading: Icon(CupertinoIcons.search),
-                        hintText: 'Search by series title',
+                        hintText:
+                            AppLocalizations.of(context)?.searchSeriesTitle,
                         backgroundColor: WidgetStateProperty.all(
                           Colors.grey.withValues(alpha: 0.2),
                         ),
@@ -124,87 +128,95 @@ class _SeriesScreenState extends State<SeriesScreen> {
         ),
         body: Consumer<SeriesBloc>(
           builder:
-              (context, bloc, child) => Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Stack(
-                  children: [
-                    GridView.builder(
-                      itemCount: bloc.seriesLists.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: getDeviceType() == 'phone' ? 2 : 3,
-                        mainAxisExtent: 200,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                      ),
-                      padding: EdgeInsets.only(
-                        left: kMarginMedium2,
-                        right: kMarginMedium2,
-                        bottom: 20,
-                      ),
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            PageNavigator(ctx: context).nextPage(
-                              page: PremiumScreen(
-                                series: bloc.seriesLists[index],
+              (context, bloc, child) =>
+                  bloc.isLoading
+                      ? LoadingView()
+                      : Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Stack(
+                          children: [
+                            GridView.builder(
+                              itemCount: bloc.seriesLists.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:
+                                        getDeviceType() == 'phone' ? 2 : 3,
+                                    mainAxisExtent: 200,
+                                    mainAxisSpacing: 10,
+                                    crossAxisSpacing: 10,
+                                  ),
+                              padding: EdgeInsets.only(
+                                left: kMarginMedium2,
+                                right: kMarginMedium2,
+                                bottom: 20,
                               ),
-                            );
-                          },
-                          child: movieListItem(
-                            isHomeScreen: true,
-                            movies: bloc.seriesLists[index],
-                            type: bloc.seriesLists[index].plan,
-                          ),
-                        );
-                      },
-                    ),
-                    bloc.filteredSuggestions.isEmpty
-                        ? SizedBox.shrink()
-                        : Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.black38,
-                          ),
-                        ),
-                    bloc.filteredSuggestions.isEmpty
-                        ? SizedBox()
-                        : Container(
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                            horizontal: kMarginMedium2,
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            vertical: kMarginMedium,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(kMargin10),
-                            color: kWhiteColor,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children:
-                                bloc.filteredSuggestions.map((value) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: kMarginMedium,
-                                      vertical: kMarginMedium,
-                                    ),
-                                    child: SubstringHighlight(
-                                      text: value.name ?? '',
-                                      term: _controller.text,
-                                      textStyleHighlight: TextStyle(
-                                        color: kSecondaryColor,
-                                        fontWeight: FontWeight.w600,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    PageNavigator(ctx: context).nextPage(
+                                      page: SeriesDetailScreen(
+                                        series: bloc.seriesLists[index],
                                       ),
+                                    );
+                                  },
+                                  child: movieListItem(
+                                    isHomeScreen: true,
+                                    movies: bloc.seriesLists[index],
+                                    type: bloc.seriesLists[index].plan,
+                                  ),
+                                );
+                              },
+                            ),
+                            bloc.filteredSuggestions.isEmpty
+                                ? SizedBox.shrink()
+                                : Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.black38,
+                                  ),
+                                ),
+                            bloc.filteredSuggestions.isEmpty
+                                ? SizedBox()
+                                : Container(
+                                  width: double.infinity,
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: kMarginMedium2,
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: kMarginMedium,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      kMargin10,
                                     ),
-                                  );
-                                }).toList(),
-                          ),
+                                    color: kWhiteColor,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children:
+                                        bloc.filteredSuggestions.map((value) {
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: kMarginMedium,
+                                              vertical: kMarginMedium,
+                                            ),
+                                            child: SubstringHighlight(
+                                              text: value.name ?? '',
+                                              term: _controller.text,
+                                              textStyleHighlight: TextStyle(
+                                                color: kSecondaryColor,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                  ),
+                                ),
+                          ],
                         ),
-                  ],
-                ),
-              ),
+                      ),
         ),
       ),
     );

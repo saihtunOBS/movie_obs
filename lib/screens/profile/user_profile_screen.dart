@@ -8,6 +8,7 @@ import 'package:movie_obs/screens/profile/edit_profile_screen.dart';
 import '../../utils/colors.dart';
 import '../../utils/dimens.dart';
 import '../../utils/images.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key, required this.userData});
@@ -22,12 +23,20 @@ class UserProfileScreen extends StatelessWidget {
         children: [
           _buildAppBar(context),
           20.vGap,
-          _buildUserInfo('Username', userData.name ?? '', context),
-          10.vGap,
-          _buildUserInfo('Phone Number', userData.phone ?? '', context),
+          _buildUserInfo(
+            AppLocalizations.of(context)?.username ?? '',
+            userData.name ?? '',
+            context,
+          ),
           10.vGap,
           _buildUserInfo(
-            'Email Address',
+            AppLocalizations.of(context)?.phone ?? '',
+            userData.phone ?? '',
+            context,
+          ),
+          10.vGap,
+          _buildUserInfo(
+            AppLocalizations.of(context)?.email ?? '',
             userData.email ?? '',
             context,
             isLast: true,
@@ -149,7 +158,7 @@ class UserProfileScreen extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(color: Colors.grey, fontSize: kTextRegular2x),
+            style: TextStyle(color: Colors.grey, fontSize: kTextRegular),
           ),
           5.vGap,
           Text(

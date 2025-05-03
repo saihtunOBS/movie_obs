@@ -29,16 +29,18 @@ class MovieBloc extends ChangeNotifier {
   }
 
   getMovieSeries() {
-    _movieModel.getAllMovie(token,'').then((response) {
+    _showLoading();
+    _movieModel.getAllMovie(token, '').then((response) {
       movieSeriesList = response.data ?? [];
-      notifyListeners();
+      _hideLoading();
     });
   }
 
   getAllMovie() {
-    _movieModel.getMovieLists(token,'').then((response) {
+    _showLoading();
+    _movieModel.getMovieLists(token, '').then((response) {
       movieLists = response.data ?? [];
-      notifyListeners();
+      _hideLoading();
     });
   }
 
@@ -82,6 +84,22 @@ class MovieBloc extends ChangeNotifier {
                 )
                 .toList();
     notifyListeners();
+  }
+
+  _showLoading() {
+    isLoading = true;
+    _notifySafely();
+  }
+
+  _hideLoading() {
+    isLoading = false;
+    _notifySafely();
+  }
+
+  void _notifySafely() {
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   @override

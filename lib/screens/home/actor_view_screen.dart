@@ -8,6 +8,8 @@ import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../list_items/movie_list_item.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class ActorViewScreen extends StatelessWidget {
   const ActorViewScreen({super.key, required this.id});
@@ -22,7 +24,7 @@ class ActorViewScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: kBackgroundColor,
           surfaceTintColor: kBackgroundColor,
-          title: Text('Back'),
+          title: Text(AppLocalizations.of(context)?.back ?? ''),
           centerTitle: false,
         ),
         body: Consumer<ActorBloc>(

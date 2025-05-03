@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import '../../utils/colors.dart';
 import '../../utils/dimens.dart';
 import '../../utils/images.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
@@ -23,12 +25,12 @@ class EditProfileScreen extends StatelessWidget {
           children: [
             _buildAppBar(context),
             30.vGap,
-            _buildUserInfo('Username', 'Username', context),
+            _buildUserInfo(AppLocalizations.of(context)?.username ?? '', AppLocalizations.of(context)?.username ?? '', context),
             10.vGap,
-            _buildUserInfo('Phone Number', '+95 0976666677', context),
+            _buildUserInfo(AppLocalizations.of(context)?.phone ?? '', '+95 0976666677', context),
             10.vGap,
             _buildUserInfo(
-              'Email Address',
+              AppLocalizations.of(context)?.email ?? '',
               'user@gmail.com',
               context,
               isLast: true,
@@ -132,7 +134,7 @@ class EditProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(kMarginMedium + 8),
                   ),
                   child: Center(
-                    child: Text('Save', style: TextStyle(color: kWhiteColor)),
+                    child: Text(AppLocalizations.of(context)?.save ?? '', style: TextStyle(color: kWhiteColor)),
                   ),
                 ),
               ),
@@ -212,7 +214,7 @@ class EditProfileScreen extends StatelessWidget {
             title,
             style: TextStyle(
               fontWeight: FontWeight.w700,
-              fontSize: kTextRegular2x,
+              fontSize: kTextRegular,
             ),
           ),
           5.vGap,

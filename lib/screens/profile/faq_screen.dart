@@ -36,15 +36,13 @@ class FaqScreen extends StatelessWidget {
         return Column(
           children: [
             Theme(
-              data: Theme.of(context).copyWith(
-                dividerColor: Colors.transparent, // Removes default dividers
-              ),
+              data: Theme.of(
+                context,
+              ).copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(
-                tilePadding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                ), // Adjust horizontal padding
+                tilePadding: EdgeInsets.symmetric(horizontal: 16),
                 title: SizedBox(
-                  height: 40, // Set custom height
+                  height: 40,
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -53,9 +51,7 @@ class FaqScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                childrenPadding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                ), // Optional: padding for children
+                childrenPadding: EdgeInsets.symmetric(horizontal: 16),
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,

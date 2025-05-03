@@ -18,6 +18,8 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -86,16 +88,12 @@ class _HomeScreenState extends State<HomeScreen> {
             10.hGap,
           ],
         ),
-
         body: Consumer<HomeBloc>(
           builder:
               (context, bloc, child) => CustomScrollView(
                 physics: ClampingScrollPhysics(),
                 slivers: [
-                  SliverToBoxAdapter(
-                    child: Container(height: 15, color: kBackgroundColor),
-                  ),
-                  //carousel
+                  SliverToBoxAdapter(child: SizedBox(height: 15)),
                   SliverToBoxAdapter(
                     child: Visibility(
                       visible: bloc.bannerList.isNotEmpty,
@@ -106,75 +104,80 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-
-                  SliverToBoxAdapter(child: SizedBox(height: 0)),
-                  //options
                   SliverToBoxAdapter(child: _buildOptions()),
 
-                  //free movie & series
-                  SliverToBoxAdapter(
-                    child: _buildMovieOptions('Free Movie & Series', () {
-                      PageNavigator(
-                        ctx: context,
-                      ).nextPage(page: FreeMovieSeriesScreen());
-                    }, bloc.freeMovieLists),
-                  ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: getDeviceType() == 'phone' ? 10 : 20,
+                  if (bloc.freeMovieLists.isNotEmpty) ...[
+                    SliverPersistentHeader(
+                      pinned: false,
+                      delegate: _SliverHeader(
+                        title:
+                            AppLocalizations.of(context)?.freeMovieSeries ?? '',
+                        onPress: () {
+                          PageNavigator(
+                            ctx: context,
+                          ).nextPage(page: FreeMovieSeriesScreen());
+                        },
+                      ),
                     ),
-                  ),
-                  //top trending
-                  SliverToBoxAdapter(
-                    child: Visibility(
-                      visible: bloc.topTrendingMoviesList.isNotEmpty,
-                      child: _buildMovieOptions('Top Trending', () {
-                        PageNavigator(
-                          ctx: context,
-                        ).nextPage(page: TopTrendingScreen());
-                      }, bloc.topTrendingMoviesList),
+                    SliverToBoxAdapter(
+                      child: _buildMovieOptions(bloc.freeMovieLists),
                     ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height:
-                          bloc.topTrendingMoviesList.isNotEmpty
-                              ? getDeviceType() == 'phone'
-                                  ? 10
-                                  : 20
-                              : 0,
+                    SliverToBoxAdapter(child: SizedBox(height: 10)),
+                  ],
+                  if (bloc.topTrendingMoviesList.isNotEmpty) ...[
+                    SliverPersistentHeader(
+                      pinned: false,
+                      delegate: _SliverHeader(
+                        title: 'Top Trending',
+                        onPress: () {
+                          PageNavigator(
+                            ctx: context,
+                          ).nextPage(page: TopTrendingScreen());
+                        },
+                      ),
                     ),
-                  ),
-                  //new release
-                  SliverToBoxAdapter(
-                    child: Visibility(
-                      visible: bloc.newReleaseMoviesList.isNotEmpty,
-                      child: _buildMovieOptions('New Releases', () {
-                        PageNavigator(ctx: context).nextPage(
-                          page: NewReleaseScreen(
-                            movieLists: bloc.newReleaseMoviesList,
-                          ),
-                        );
-                      }, bloc.newReleaseMoviesList),
+                    SliverToBoxAdapter(
+                      child: _buildMovieOptions(bloc.topTrendingMoviesList),
                     ),
-                  ),
-
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: getDeviceType() == 'phone' ? 10 : 20,
+                    SliverToBoxAdapter(child: SizedBox(height: 10)),
+                  ],
+                  if (bloc.newReleaseMoviesList.isNotEmpty) ...[
+                    SliverPersistentHeader(
+                      pinned: false,
+                      delegate: _SliverHeader(
+                        title: AppLocalizations.of(context)?.newRelease ?? '',
+                        onPress: () {
+                          PageNavigator(ctx: context).nextPage(
+                            page: NewReleaseScreen(
+                              movieLists: bloc.newReleaseMoviesList,
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  //all movie and series
-                  SliverToBoxAdapter(
-                    child: Visibility(
-                      visible: bloc.movieLists.isNotEmpty,
-                      child: _buildAllMovieSeries('All Movies & Series', () {
-                        PageNavigator(ctx: context).nextPage(
-                          page: NewReleaseScreen(movieLists: bloc.movieLists),
-                        );
-                      }, bloc.newReleaseMoviesList),
+                    SliverToBoxAdapter(
+                      child: _buildMovieOptions(bloc.newReleaseMoviesList),
                     ),
-                  ),
+                    SliverToBoxAdapter(child: SizedBox(height: 10)),
+                  ],
+                  if (bloc.movieLists.isNotEmpty) ...[
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _SliverHeader(
+                        title:
+                            AppLocalizations.of(context)?.allMovieSeries ?? '',
+                        isAllMovie: true,
+                        onPress: () {
+                          PageNavigator(ctx: context).nextPage(
+                            page: NewReleaseScreen(movieLists: bloc.movieLists),
+                          );
+                        },
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: _buildAllMovieSeries(bloc.movieLists),
+                    ),
+                  ],
                   SliverToBoxAdapter(child: SizedBox(height: 20)),
                 ],
               ),
@@ -190,147 +193,96 @@ class _HomeScreenState extends State<HomeScreen> {
         vertical: kMarginMedium2,
       ),
       child: Row(
-        spacing: 20,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            spacing: 5,
-            children: [
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.black12,
-                  borderRadius: BorderRadius.circular(kMarginMedium + 5),
-                ),
-                child: Center(
-                  child: Icon(CupertinoIcons.dot_radiowaves_left_right),
-                ),
-              ),
-              Text('Live'),
-            ],
-          ),
-          Column(
-            spacing: 5,
-            children: [
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.black12,
-                  borderRadius: BorderRadius.circular(kMarginMedium + 5),
-                ),
-                child: Center(child: Icon(CupertinoIcons.app_badge)),
-              ),
-              Text('Program'),
-            ],
-          ),
-          Column(
-            spacing: 5,
-            children: [
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.black12,
-                  borderRadius: BorderRadius.circular(kMarginMedium + 5),
-                ),
-                child: Center(child: Icon(CupertinoIcons.bookmark)),
-              ),
-              Text('Watchlist'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMovieOptions(
-    String title,
-    VoidCallback onPress,
-    List<MovieVO> movies,
-  ) {
-    return SizedBox(
-      height: 250,
-      width: double.infinity,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          SizedBox(
+            width: 80,
+            child: Column(
+              spacing: 10,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: kTextRegular3x - 1,
-                    fontWeight: FontWeight.w800,
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: kSecondaryColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      CupertinoIcons.dot_radiowaves_left_right,
+                      color: kPrimaryColor,
+                    ),
                   ),
                 ),
-                IconButton(
-                  onPressed: onPress,
-                  icon: Icon(CupertinoIcons.arrow_right, size: 20),
+                Text(
+                  AppLocalizations.of(context)?.live ?? '',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: kWhiteColor),
                 ),
               ],
             ),
           ),
-
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: kMarginMedium2),
-              scrollDirection: Axis.horizontal,
-              itemCount: movies.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    PageNavigator(
-                      ctx: context,
-                    ).nextPage(page: MovieTypeScreen(movie: movies[index]));
-                  },
-                  child: SizedBox(
-                    width: 180,
-                    child: movieListItem(
-                      movies: movies[index],
-                      padding: kMarginMedium,
-                      type: movies[index].type,
-                    ),
+          SizedBox(
+             width: 80,
+            child: Column(
+              spacing: 10,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: kSecondaryColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                );
-              },
+                  child: Center(
+                    child: Icon(CupertinoIcons.app_badge, color: kPrimaryColor),
+                  ),
+                ),
+                Text(
+                  AppLocalizations.of(context)?.program ?? '',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: kWhiteColor),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+             width: 80,
+            child: Column(
+              spacing: 10,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: kSecondaryColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Center(
+                    child: Icon(CupertinoIcons.bookmark, color: kPrimaryColor),
+                  ),
+                ),
+                Text(
+                  AppLocalizations.of(context)?.watchlist ?? '',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: kWhiteColor),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
-}
 
-Widget _buildAllMovieSeries(
-  String title,
-  VoidCallback onPress,
-  List<MovieVO> movies,
-) {
-  return Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: kTextRegular3x - 1,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            IconButton(onPressed: onPress, icon: Icon(null, size: 20)),
-          ],
-        ),
-      ),
-
-      GridView.builder(
+  Widget _buildMovieOptions(List<MovieVO> movies) {
+    return SizedBox(
+      height: 180,
+      width: double.infinity,
+      child: ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: kMarginMedium2),
-        physics: NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.horizontal,
         itemCount: movies.length,
-        shrinkWrap: true,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
@@ -338,20 +290,97 @@ Widget _buildAllMovieSeries(
                 ctx: context,
               ).nextPage(page: MovieTypeScreen(movie: movies[index]));
             },
-            child: movieListItem(
-              movies: movies[index],
-              isHomeScreen: true,
-              type: movies[index].type,
+            child: SizedBox(
+              width: 140,
+              child: movieListItem(
+                movies: movies[index],
+                padding: kMarginMedium,
+                type: movies[index].type,
+              ),
             ),
           );
         },
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-          mainAxisExtent: 220,
-        ),
       ),
-    ],
-  );
+    );
+  }
+
+  Widget _buildAllMovieSeries(List<MovieVO> movies) {
+    return GridView.builder(
+      padding: EdgeInsets.symmetric(horizontal: kMarginMedium2),
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: movies.length,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () {
+            PageNavigator(
+              ctx: context,
+            ).nextPage(page: MovieTypeScreen(movie: movies[index]));
+          },
+          child: movieListItem(
+            movies: movies[index],
+            isHomeScreen: true,
+            type: movies[index].type,
+          ),
+        );
+      },
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        mainAxisExtent: 220,
+      ),
+    );
+  }
+}
+
+class _SliverHeader extends SliverPersistentHeaderDelegate {
+  final String title;
+  final VoidCallback onPress;
+  final bool? isAllMovie;
+
+  _SliverHeader({required this.title, required this.onPress, this.isAllMovie});
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(
+      color: kBackgroundColor,
+      padding: const EdgeInsets.symmetric(
+        horizontal: kMarginMedium2,
+        vertical: 10,
+      ),
+      alignment: Alignment.centerLeft,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: kTextRegular3x - 1,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          IconButton(
+            onPressed: onPress,
+            icon: Icon(
+              isAllMovie == true ? null : CupertinoIcons.arrow_right,
+              size: 20,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => 50;
+  @override
+  double get minExtent => 50;
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
 }

@@ -12,6 +12,8 @@ import 'package:movie_obs/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
@@ -49,7 +51,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                     ),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(15),
-                                      child: cacheImage(data.image ?? '')),
+                                      child: cacheImage(data.image ?? ''),
+                                    ),
                                   );
                                 }).toList(),
                             options: CarouselOptions(
@@ -68,26 +71,26 @@ class _AuthScreenState extends State<AuthScreen> {
 
                   20.vGap,
                   //indicator
-                 if( bloc.bannerList.isNotEmpty)
-                  ValueListenableBuilder(
-                    valueListenable: sliderIndex,
-                    builder:
-                        (context, value, child) => AnimatedSmoothIndicator(
-                          effect: ExpandingDotsEffect(
-                            dotHeight: kMargin5,
-                            dotWidth: kMargin5,
-                            activeDotColor: kSecondaryColor,
-                            dotColor: kWhiteColor,
+                  if (bloc.bannerList.isNotEmpty)
+                    ValueListenableBuilder(
+                      valueListenable: sliderIndex,
+                      builder:
+                          (context, value, child) => AnimatedSmoothIndicator(
+                            effect: ExpandingDotsEffect(
+                              dotHeight: kMargin5,
+                              dotWidth: kMargin5,
+                              activeDotColor: kSecondaryColor,
+                              dotColor: kWhiteColor,
+                            ),
+                            activeIndex: value,
+                            count: bloc.bannerList.length,
                           ),
-                          activeIndex: value,
-                          count: bloc.bannerList.length,
-                        ),
-                  ),
+                    ),
 
                   20.vGap,
                   // label
                   Text(
-                    'Watch Anytime, Anywhere',
+                    'Welcome to Tuu Tu\'Tv',
                     style: TextStyle(
                       fontSize: kTextRegular3x,
                       fontWeight: FontWeight.bold,
@@ -99,7 +102,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       horizontal: kMarginMedium2,
                     ),
                     child: Text(
-                      'Enjoy movies on your phone, tablet, or smart TV whenever you want.',
+                      AppLocalizations.of(context)?.discoverLabel ?? '',
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -131,7 +134,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
                 },
                 context: context,
-                title: 'Login',
+                title: AppLocalizations.of(context)?.login,
                 backgroundColor: kSecondaryColor,
                 textColor: kWhiteColor,
               ),

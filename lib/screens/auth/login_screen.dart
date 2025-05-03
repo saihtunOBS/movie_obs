@@ -14,6 +14,8 @@ import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -66,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           Text(
-                            'Enter your phone number.\n We\'ll send you a verification code',
+                            AppLocalizations.of(context)?.enterPhoneNumber ?? '',
                             style: TextStyle(fontSize: kTextRegular2x),
                           ),
                           20.vGap,
@@ -213,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     keyboardType: TextInputType.phone,
                                     decoration: InputDecoration(
-                                      hintText: 'Phone Number',
+                                      hintText: AppLocalizations.of(context)?.phone,
                                       contentPadding: EdgeInsets.only(top: 4),
                                       hintStyle: TextStyle(color: kWhiteColor),
                                       border: InputBorder.none,
@@ -252,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                                 context: context,
                                 backgroundColor: kSecondaryColor,
-                                title: 'Send OTP',
+                                title: AppLocalizations.of(context)?.sendOtp,
                                 textColor: kWhiteColor,
                               ),
                               Image.asset(kShadowImage),

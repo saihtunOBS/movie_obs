@@ -13,6 +13,7 @@ import '../../extension/page_navigator.dart';
 import '../../list_items/cast_list_item.dart';
 import '../../widgets/expandable_text.dart';
 import '../home/actor_view_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SeasonEpisodeScreen extends StatelessWidget {
   const SeasonEpisodeScreen({super.key, this.season});
@@ -60,7 +61,7 @@ class SeasonEpisodeScreen extends StatelessWidget {
                               color: kWhiteColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: _buildWatchTrailerView(),
+                            child: _buildWatchTrailerView(context),
                           ),
                         ),
                         Positioned(
@@ -101,7 +102,7 @@ class SeasonEpisodeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWatchTrailerView() {
+  Widget _buildWatchTrailerView(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
@@ -119,7 +120,7 @@ class SeasonEpisodeScreen extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-              'Watch Trailer',
+              AppLocalizations.of(context)?.watchNow ?? '',
               style: TextStyle(
                 fontSize: kTextRegular2x - 3,
                 color: kBlackColor,

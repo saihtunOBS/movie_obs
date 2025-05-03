@@ -6,11 +6,14 @@ import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
 import '../../extension/page_navigator.dart';
 import '../home/movie_type_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class MovieScreen extends StatefulWidget {
   const MovieScreen({super.key});
@@ -87,7 +90,7 @@ class _MovieScreenState extends State<MovieScreen> {
                       child: SearchBar(
                         controller: _controller,
                         leading: Icon(CupertinoIcons.search),
-                        hintText: 'Search by movie title',
+                        hintText: AppLocalizations.of(context)?.searchMovieTitle,
                         backgroundColor: WidgetStateProperty.all(
                           Colors.grey.withValues(alpha: 0.2),
                         ),
@@ -125,7 +128,7 @@ class _MovieScreenState extends State<MovieScreen> {
         ),
         body: Consumer<MovieBloc>(
           builder:
-              (context, bloc, child) => Padding(
+              (context, bloc, child) => bloc.isLoading ? LoadingView() : Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: Stack(
                   children: [

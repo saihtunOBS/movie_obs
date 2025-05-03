@@ -12,9 +12,11 @@ import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/vos/movie_vo.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class PremiumScreen extends StatelessWidget {
-  const PremiumScreen({super.key, this.series});
+
+class SeriesDetailScreen extends StatelessWidget {
+  const SeriesDetailScreen({super.key, this.series});
   final MovieVO? series;
 
   @override
@@ -121,7 +123,7 @@ class PremiumScreen extends StatelessWidget {
             ],
           ),
           10.vGap,
-          _buildDescription(bloc),
+          _buildDescription(bloc,context),
           Text(
             'Seasons',
             style: TextStyle(
@@ -235,18 +237,18 @@ class PremiumScreen extends StatelessWidget {
         );
   }
 
-  Widget _buildDescription(SeriesDetailBloc bloc) {
+  Widget _buildDescription(SeriesDetailBloc bloc,BuildContext context) {
     return Column(
       spacing: 5,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Director : ${bloc.seriesResponse?.director ?? ''}',
+          '${AppLocalizations.of(context)?.director} ${bloc.seriesResponse?.director ?? ''}',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
         Divider(thickness: 0.5),
         Text(
-          'Script Writer : ${bloc.seriesResponse?.scriptWriter ?? ''}',
+          '${AppLocalizations.of(context)?.scriptWriter} ${bloc.seriesResponse?.scriptWriter ?? ''}',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
 

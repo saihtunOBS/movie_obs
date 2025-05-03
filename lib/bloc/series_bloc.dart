@@ -16,20 +16,21 @@ class SeriesBloc extends ChangeNotifier {
 
   SeriesBloc() {
     token = PersistenceData.shared.getToken();
-    getAllMovie();
+    getAllSeries();
   }
 
-  getAllMovie() {
-    _movieModel.getSeriesLists(token,'').then((response) {
+  getAllSeries() {
+    _showLoading();
+    _movieModel.getSeriesLists(token, '').then((response) {
       seriesLists = response.data ?? [];
-      notifyListeners();
+      _hideLoading();
     });
   }
+
   clearFilter() {
     filteredSuggestions.clear();
     notifyListeners();
   }
-
 
   void onSearchChanged(String value) {
     notifyListeners();
@@ -44,6 +45,22 @@ class SeriesBloc extends ChangeNotifier {
             )
             .toList();
     notifyListeners();
+  }
+
+  _showLoading() {
+    isLoading = true;
+    _notifySafely();
+  }
+
+  _hideLoading() {
+    isLoading = false;
+    _notifySafely();
+  }
+
+  void _notifySafely() {
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   @override

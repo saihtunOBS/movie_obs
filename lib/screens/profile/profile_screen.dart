@@ -19,6 +19,7 @@ import 'package:movie_obs/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/dimens.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -27,17 +28,6 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-var titleArray = [
-  'Profile',
-  'Promotion',
-  'Watchlist',
-  'History',
-  'Language',
-  'FAQ',
-  'Terms & Condition',
-  'Privacy Policy',
-  'Delete Account',
-];
 List<Widget> iconArray = [
   Icon(CupertinoIcons.person_fill, size: 20, color: kWhiteColor),
   Image.asset(kPromotionIcon, color: kWhiteColor),
@@ -53,12 +43,23 @@ List<Widget> iconArray = [
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    var titleArray = [
+      AppLocalizations.of(context)?.profile ?? '',
+      AppLocalizations.of(context)?.promotion ?? '',
+      AppLocalizations.of(context)?.watchlist ?? '',
+      AppLocalizations.of(context)?.history ?? '',
+      AppLocalizations.of(context)?.language ?? '',
+      AppLocalizations.of(context)?.faq ?? '',
+      AppLocalizations.of(context)?.term ?? '',
+      AppLocalizations.of(context)?.privacy ?? '',
+      AppLocalizations.of(context)?.deleteAccount ?? '',
+    ];
     return ChangeNotifierProvider(
       create: (_) => UserBloc(context: context),
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
-          toolbarHeight: 75,
+          toolbarHeight: 90,
           title: Consumer<UserBloc>(
             builder: (context, bloc, child) => _buildAppBar(bloc),
           ),
@@ -71,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 physics: ClampingScrollPhysics(),
                 child: Column(
                   children: [
-                    30.vGap,
+                    10.vGap,
                     ListView.builder(
                       padding: EdgeInsets.zero,
                       physics: NeverScrollableScrollPhysics(),
@@ -98,6 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 PageNavigator(
                                   ctx: context,
                                 ).nextPage(page: WatchListScreen());
+
                               case 4:
                                 PageNavigator(
                                   ctx: context,
@@ -110,8 +112,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 showDialog(
                                   useRootNavigator: true,
                                   context: context,
+
                                   builder:
                                       (builder) => Dialog(
+                                        backgroundColor: kWhiteColor,
                                         insetPadding: const EdgeInsets.all(10),
                                         child: _buildAlert(),
                                       ),
@@ -193,18 +197,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                       ),
                     ),
-                    Expanded(
-                      child: Text(
-                        bloc.userData?.name ?? '',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: true,
-                        style: TextStyle(
-                          color: kWhiteColor,
-                          fontSize: kTextRegular18,
-                          fontWeight: FontWeight.w700,
+                    5.hGap,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 5,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 2.8,
+                          child: Text(
+                            bloc.userData?.name ?? '',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                            style: TextStyle(
+                              color: kWhiteColor,
+                              fontSize: kTextRegular18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                         ),
-                      ),
+                        Container(
+                          height: 19,
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(26),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Free user',
+                              style: TextStyle(fontSize: 11),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -276,7 +302,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
-                Text(name, style: TextStyle(fontSize: kTextRegular2x)),
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: kTextRegular2x,
+                    color: kWhiteColor,
+                  ),
+                ),
               ],
             ),
             Divider(
@@ -292,30 +324,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildAlert() {
     return Container(
       height: null,
-
-      decoration: BoxDecoration(
-        // borderRadius: BorderRadius.circular(10),
-        // color: Colors.grey.withValues(alpha: 0.2),
-      ),
       padding: EdgeInsets.all(20),
       child: SingleChildScrollView(
         child: Column(
-          spacing: 30,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
-              backgroundColor: kWhiteColor,
-              child: Icon(
-                CupertinoIcons.delete_simple,
-                size: 26,
-                color: Colors.red,
+            Icon(CupertinoIcons.delete_simple, size: 38, color: Colors.red),
+            15.vGap,
+            Text(
+              'Delete Account?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: kTextRegular2x,
+                color: kBlackColor,
+                fontWeight: FontWeight.bold,
               ),
             ),
+            10.vGap,
             Text(
               'Are you sure you want to delete your account permanently?',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: kTextRegular2x),
+              style: TextStyle(fontSize: kTextRegular13, color: kBlackColor),
             ),
+            20.vGap,
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               spacing: 10,
@@ -328,10 +359,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.of(context, rootNavigator: true).pop();
                       }
                     },
-                    borderColor: kWhiteColor,
                     context: context,
-                    backgroundColor: Colors.transparent,
+                    backgroundColor: Colors.grey.withValues(alpha: 0.2),
                     title: 'No',
+                    textColor: kBlackColor,
                   ),
                 ),
                 Expanded(

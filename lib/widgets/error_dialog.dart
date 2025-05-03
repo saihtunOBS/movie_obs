@@ -15,6 +15,7 @@ class ErrorDialogView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: kWhiteColor,
       insetPadding: const EdgeInsets.all(10),
       // surfaceTintColor: Colors.white,
       child: Column(
@@ -34,20 +35,22 @@ class ErrorDialogView extends StatelessWidget {
               child: Icon(Icons.error_outline, color: Colors.white),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
           Text(
             "Oops...",
             style: TextStyle(
-              fontSize: kTextRegular,
+              color: kBlackColor,
+              fontSize: kTextRegular2x,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 10),
           Text(
             errorMessage ?? "",
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: kTextRegular,
+              color: kBlackColor,
+              fontSize: kTextSmall,
               fontWeight: FontWeight.normal,
             ),
           ),
@@ -67,7 +70,7 @@ class ErrorDialogView extends StatelessWidget {
               },
               child: Container(
                 height: 40,
-                width: MediaQuery.of(context).size.width / 1.5,
+                width: MediaQuery.of(context).size.width / 1.3,
                 decoration: BoxDecoration(
                   color: kSecondaryColor,
                   borderRadius: BorderRadius.circular(8),

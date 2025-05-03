@@ -17,6 +17,9 @@ import '../../utils/colors.dart';
 import '../../utils/dimens.dart';
 import '../../utils/images.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+
 class OTPScreen extends StatefulWidget {
   const OTPScreen({super.key, this.phone, this.requestId});
   final String? phone;
@@ -31,7 +34,7 @@ class _OTPScreenState extends State<OTPScreen> {
   bool isFilled = false;
   final focusNode = FocusNode();
   Timer? _timer;
-  int _start = 60;
+  int _start = 180;
 
   @override
   void dispose() {
@@ -42,7 +45,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   void initState() {
-    _start = 60;
+    pinController.clear();
+    _start = 180;
     super.initState();
   }
 
@@ -53,7 +57,7 @@ class _OTPScreenState extends State<OTPScreen> {
           _start--;
         } else {
           _timer?.cancel();
-          _start = 60;
+          _start = 180;
         }
       });
     });
@@ -100,7 +104,7 @@ class _OTPScreenState extends State<OTPScreen> {
                           ),
                         ),
                         Text(
-                          'Send OTP Code to ${widget.phone}.\n Enter your OTP Code here.',
+                          AppLocalizations.of(context)?.sendOtpCode ?? '',
                           style: TextStyle(fontSize: kTextRegular2x),
                         ),
                         10.vGap,
@@ -114,7 +118,8 @@ class _OTPScreenState extends State<OTPScreen> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                if (_start == 60) {
+                                if (_start == 180) {
+                                  pinController.clear();
                                   startTimer();
                                   bloc
                                       .userLogin(widget.phone ?? '')
@@ -131,7 +136,7 @@ class _OTPScreenState extends State<OTPScreen> {
                                 }
                               },
                               child: Text(
-                                'Resend',
+                                AppLocalizations.of(context)?.resend ?? '',
                                 style: TextStyle(fontWeight: FontWeight.w700),
                               ),
                             ),
@@ -191,7 +196,7 @@ class _OTPScreenState extends State<OTPScreen> {
                       },
                       context: context,
                       backgroundColor: kSecondaryColor,
-                      title: 'Confirm',
+                      title: AppLocalizations.of(context)?.confirm ?? '',
                       textColor: kWhiteColor,
                     ),
                     Image.asset(kShadowImage),
@@ -233,9 +238,6 @@ class _OTPScreenState extends State<OTPScreen> {
             defaultPinTheme: defaultPinTheme,
             submittedPinTheme: submittedPinTheme,
             focusedPinTheme: submittedPinTheme,
-            onClipboardFound: (value) {
-              pinController.setText(value);
-            },
             onCompleted: (pin) {
               setState(() {
                 isFilled = true;

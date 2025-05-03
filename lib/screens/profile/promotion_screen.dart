@@ -11,6 +11,8 @@ import '../../extension/extension.dart';
 import '../../utils/dimens.dart';
 import '../../utils/images.dart';
 import '../../widgets/custom_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class PromotionScreen extends StatelessWidget {
   const PromotionScreen({super.key});
@@ -102,7 +104,7 @@ class PromotionScreen extends StatelessWidget {
               spacing: 8,
               children: [
                 Text(
-                  'Special Promotion',
+                  AppLocalizations.of(context)?.specialPromotion ?? '',
                   style: TextStyle(
                     color: kWhiteColor,
                     fontWeight: FontWeight.bold,
@@ -110,7 +112,7 @@ class PromotionScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Unlock exclusive benefits with our limited-time promotion package!',
+                  AppLocalizations.of(context)?.unlockPromotion ?? '',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: kWhiteColor,

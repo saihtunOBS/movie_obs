@@ -61,7 +61,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
           spacing: kMarginMedium,
           children: [
             Text(
-              AppLocalizations.of(context)?.language ?? '',
+              'LANGUAGE',
               style: TextStyle(
                 letterSpacing: 10.0,
                 fontSize: kTextRegular32,

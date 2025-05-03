@@ -17,6 +17,8 @@ import 'package:provider/provider.dart';
 
 import '../../list_items/recommended_movie_list_item.dart';
 import '../../widgets/expandable_text.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class MovieTypeScreen extends StatelessWidget {
   const MovieTypeScreen({super.key, this.movie});
@@ -64,7 +66,7 @@ class MovieTypeScreen extends StatelessWidget {
                               color: kWhiteColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: _buildWatchTrailerView(),
+                            child: _buildWatchTrailerView(context),
                           ),
                         ),
                         Positioned(
@@ -105,7 +107,7 @@ class MovieTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWatchTrailerView() {
+  Widget _buildWatchTrailerView(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
@@ -123,7 +125,7 @@ class MovieTypeScreen extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-              'Watch Trailer',
+              AppLocalizations.of(context)?.watchTrailer ?? '',
               style: TextStyle(
                 fontSize: kTextRegular2x - 3,
                 color: kBlackColor,
@@ -172,7 +174,7 @@ class MovieTypeScreen extends StatelessWidget {
           1.vGap,
           _buildWatchNowButton(context, movie?.id ?? '',movie?.videoUrl ?? ''),
           _buildCastView(bloc),
-          _buildDescription(bloc),
+          _buildDescription(bloc,context),
           5.vGap,
           _buildRecommendedView(bloc),
         ],
@@ -259,19 +261,19 @@ class MovieTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDescription(MovieDetailBloc bloc) {
+  Widget _buildDescription(MovieDetailBloc bloc,BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Director : ${bloc.moviesResponse?.director ?? ''}',
+          '${AppLocalizations.of(context)?.director ?? ''} ${bloc.moviesResponse?.director ?? ''}',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
         5.vGap,
         Divider(thickness: 0.5),
         5.vGap,
         Text(
-          'Script Writer : ${bloc.moviesResponse?.scriptWriter ?? ''}',
+          '${AppLocalizations.of(context)?.scriptWriter ?? ''} ${bloc.moviesResponse?.scriptWriter ?? ''}',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
         20.vGap,
@@ -332,7 +334,7 @@ class MovieTypeScreen extends StatelessWidget {
               children: [
                 Icon(CupertinoIcons.video_camera, color: kWhiteColor, size: 27),
                 Text(
-                  'Watch Now',
+                   AppLocalizations.of(context)?.watchNow ?? '',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: kWhiteColor,
