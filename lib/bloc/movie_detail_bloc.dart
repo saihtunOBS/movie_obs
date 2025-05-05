@@ -17,10 +17,10 @@ class MovieDetailBloc extends ChangeNotifier {
   final MovieModel _movieModel = MovieModelImpl();
 
   MovieDetailBloc(id) {
-    movieId = id;
-    token = PersistenceData.shared.getToken();
-    getMovieDetail();
-    getRecommendedMovie();
+    // movieId = id;
+    // token = PersistenceData.shared.getToken();
+    // getMovieDetail();
+    // getRecommendedMovie();
   }
 
   getMovieDetail() {

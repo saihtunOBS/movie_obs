@@ -24,8 +24,8 @@ class SeriesDetailBloc extends ChangeNotifier {
   SeriesDetailBloc(id) {
     movieId = id;
     token = PersistenceData.shared.getToken();
-    getSeriesDetail();
-    getRecommendedSeries();
+    // getSeriesDetail();
+    // getRecommendedSeries();
   }
 
   getSeriesDetail() {

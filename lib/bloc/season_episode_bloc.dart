@@ -15,9 +15,9 @@ class SeasonEpisodeBloc extends ChangeNotifier {
   final MovieModel _movieModel = MovieModelImpl();
 
   SeasonEpisodeBloc(id) {
-    seasonId = id;
-    token = PersistenceData.shared.getToken();
-    getSeasonEpisode();
+    // seasonId = id;
+    // token = PersistenceData.shared.getToken();
+    // getSeasonEpisode();
   }
 
   getSeasonEpisode() {

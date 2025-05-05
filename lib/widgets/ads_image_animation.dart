@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:provider/provider.dart';
 
@@ -57,7 +58,8 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
         });
       } else if (status == AnimationStatus.dismissed) {
         setState(() {
-          currentIndex = (currentIndex + 1) % bloc.adsLists.length;
+          //currentIndex = (currentIndex + 1) % bloc.adsLists.length;
+          currentIndex = (currentIndex + 1) % imageArray.length;
         });
         _controller.forward();
       }
@@ -80,16 +82,18 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
         body: Consumer<HomeBloc>(
           builder:
               (context, bloc, child) =>
-                  bloc.adsLists.isEmpty
-                      ? SizedBox.shrink()
-                      : SizedBox(
+                  // bloc.adsLists.isEmpty
+                  //     ? SizedBox.shrink()
+                  //     : 
+                      SizedBox(
                         height: MediaQuery.sizeOf(context).height * 0.6,
                         child: FadeTransition(
                           opacity: _animation,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: cacheImage(
-                              bloc.adsLists[currentIndex].image ?? '',
+                              //bloc.adsLists[currentIndex].image ?? '',
+                              imageArray[currentIndex]
                             ),
                           ),
                         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
@@ -12,7 +13,7 @@ import 'package:movie_obs/screens/home/search_screen.dart';
 import 'package:movie_obs/screens/profile/promotion_screen.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/banner_image_animation.dart';
-import 'package:movie_obs/screens/home/movie_type_screen.dart';
+import 'package:movie_obs/screens/home/movie_detail_screen.dart';
 import 'package:movie_obs/screens/home/new_release_screen.dart';
 import 'package:movie_obs/screens/home/top_trending_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
@@ -284,13 +285,13 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: kMarginMedium2),
         scrollDirection: Axis.horizontal,
-        itemCount: movies.length,
+        itemCount: imageArray.length,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
               PageNavigator(
                 ctx: context,
-              ).nextPage(page: MovieTypeScreen(movie: movies[index]));
+              ).nextPage(page: MovieDetailScreen(movie: movies[index]));
             },
             child: SizedBox(
               width: 140,
@@ -310,14 +311,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return GridView.builder(
       padding: EdgeInsets.symmetric(horizontal: kMarginMedium2),
       physics: NeverScrollableScrollPhysics(),
-      itemCount: movies.length,
+      itemCount: imageArray.length,
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
             PageNavigator(
               ctx: context,
-            ).nextPage(page: MovieTypeScreen(movie: movies[index]));
+            ).nextPage(page: MovieDetailScreen(movie: movies[index]));
           },
           child: movieListItem(
             movies: movies[index],

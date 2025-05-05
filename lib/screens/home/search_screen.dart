@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/movie_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/genre_list_item.dart';
@@ -119,7 +120,7 @@ class _SearchScreenState extends State<SearchScreen> {
             10.vGap,
             Expanded(
               child: GridView.builder(
-                itemCount: bloc.genreLists.length,
+                itemCount: imageArray.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisExtent: 60,
@@ -129,14 +130,14 @@ class _SearchScreenState extends State<SearchScreen> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      PageNavigator(ctx: context).nextPage(
-                        page: FilterScreen(
-                          id: bloc.genreLists[index].id ?? '',
-                          title: bloc.genreLists[index].name ?? '',
-                        ),
-                      );
+                      // PageNavigator(ctx: context).nextPage(
+                      //   page: FilterScreen(
+                      //     id: bloc.genreLists[index].id ?? '',
+                      //     title: bloc.genreLists[index].name ?? '',
+                      //   ),
+                      // );
                     },
-                    child: genreListItem(bloc.genreLists[index]),
+                    child: Container(height: 50,color: Colors.grey.withValues(alpha: 0.2),),// genreListItem(bloc.genreLists[index])
                   );
                 },
               ),
@@ -144,46 +145,46 @@ class _SearchScreenState extends State<SearchScreen> {
           ],
         ),
         //filter
-        bloc.filteredSuggestions.isEmpty
-            ? SizedBox.shrink()
-            : Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: Colors.black38,
-              ),
-            ),
-        bloc.filteredSuggestions.isEmpty
-            ? SizedBox()
-            : Container(
-              width: double.infinity,
-              margin: EdgeInsets.only(top: 10),
-              padding: EdgeInsets.symmetric(vertical: kMarginMedium),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(kMargin10),
-                color: kWhiteColor,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children:
-                    bloc.filteredSuggestions.map((value) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: kMarginMedium,
-                          vertical: kMarginMedium,
-                        ),
-                        child: SubstringHighlight(
-                          text: value.name ?? '',
-                          term: _controller.text,
-                          textStyleHighlight: TextStyle(
-                            color: kSecondaryColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-              ),
-            ),
+        // bloc.filteredSuggestions.isEmpty
+        //     ? SizedBox.shrink()
+        //     : Container(
+        //       decoration: BoxDecoration(
+        //         borderRadius: BorderRadius.circular(15),
+        //         color: Colors.black38,
+        //       ),
+        //     ),
+        // bloc.filteredSuggestions.isEmpty
+        //     ? SizedBox()
+        //     : Container(
+        //       width: double.infinity,
+        //       margin: EdgeInsets.only(top: 10),
+        //       padding: EdgeInsets.symmetric(vertical: kMarginMedium),
+        //       decoration: BoxDecoration(
+        //         borderRadius: BorderRadius.circular(kMargin10),
+        //         color: kWhiteColor,
+        //       ),
+        //       child: Column(
+        //         mainAxisSize: MainAxisSize.min,
+        //         crossAxisAlignment: CrossAxisAlignment.start,
+        //         children:
+        //             bloc.filteredSuggestions.map((value) {
+        //               return Padding(
+        //                 padding: const EdgeInsets.symmetric(
+        //                   horizontal: kMarginMedium,
+        //                   vertical: kMarginMedium,
+        //                 ),
+        //                 child: SubstringHighlight(
+        //                   text: value.name ?? '',
+        //                   term: _controller.text,
+        //                   textStyleHighlight: TextStyle(
+        //                     color: kSecondaryColor,
+        //                     fontWeight: FontWeight.w600,
+        //                   ),
+        //                 ),
+        //               );
+        //             }).toList(),
+        //       ),
+        //     ),
       ],
     );
   }

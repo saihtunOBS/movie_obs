@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/season_episode_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/series_list_item.dart';
@@ -49,7 +50,7 @@ class SeasonEpisodeScreen extends StatelessWidget {
                               bottomLeft: Radius.circular(35),
                               bottomRight: Radius.circular(35),
                             ),
-                            child: cacheImage(season?.bannerImageUrl ?? ''),
+                            child: cacheImage(imageArray.last),
                           ),
                         ),
                         Positioned(
@@ -170,22 +171,22 @@ class SeasonEpisodeScreen extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: bloc.seasonEpisodeResponse?.actors?.length,
+              itemCount: imageArray.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
-                    PageNavigator(ctx: context).nextPage(
-                      page: ActorViewScreen(
-                        id:
-                            bloc
-                                .seasonEpisodeResponse
-                                ?.actors?[index]
-                                .cast
-                                ?.id ??
-                            '',
-                      ),
-                    );
+                    // PageNavigator(ctx: context).nextPage(
+                    //   page: ActorViewScreen(
+                    //     id:
+                    //         bloc
+                    //             .seasonEpisodeResponse
+                    //             ?.actors?[index]
+                    //             .cast
+                    //             ?.id ??
+                    //         '',
+                    //   ),
+                    // );
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(right: 10),
@@ -221,34 +222,38 @@ class SeasonEpisodeScreen extends StatelessWidget {
           _buildEpisodeAndViewCount(bloc),
           1.vGap,
           _buildTypeAndWatchList(),
-          bloc.seasonEpisodeResponse?.actors?.isEmpty ?? true
-              ? SizedBox.shrink()
-              : _buildCastView(bloc),
+          // bloc.seasonEpisodeResponse?.actors?.isEmpty ?? true
+          //     ? SizedBox.shrink()
+          //     :
+               _buildCastView(bloc),
           _buildDescription(bloc),
           5.vGap,
-          bloc.seasonEpisodeResponse?.episodes?.isEmpty ?? true
-              ? SizedBox.shrink()
-              : Text(
-                'Episodes (${bloc.seasonEpisodeResponse?.episodes?.length})',
+          // bloc.seasonEpisodeResponse?.episodes?.isEmpty ?? true
+          //     ? SizedBox.shrink()
+          //     : 
+              Text(
+                'Episodes (${bloc.seasonEpisodeResponse?.episodes?.length ?? 3})',
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: kTextRegular18,
                 ),
               ),
-          _episodeListView(bloc),
+         _episodeListView(bloc),
         ],
       ),
     );
   }
 
   Widget _episodeListView(SeasonEpisodeBloc bloc) {
-    return bloc.seasonEpisodeResponse?.episodes?.isEmpty ?? true
-        ? SizedBox.shrink()
-        : ListView.builder(
+    return 
+    // bloc.seasonEpisodeResponse?.episodes?.isEmpty ?? true
+    //     ? SizedBox.shrink()
+    //     : 
+        ListView.builder(
           padding: EdgeInsets.zero,
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemCount: bloc.seasonEpisodeResponse?.episodes?.length,
+          itemCount: imageArray.length,
           itemBuilder: (context, index) {
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
@@ -276,7 +281,7 @@ class SeasonEpisodeScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ExpandableText(
-          text: bloc.seasonEpisodeResponse?.description ?? '',
+          text:  'hello test test test test test test test... hello test test test test test test test...hello test test test test test test test...hello test test test test test test test...hello test test test test test test test...hello test test test test test test test...hello test test test test test test test...hello test test test test test test test...hello test test test test test test test...hello test test test test test test test...',
           style: TextStyle(fontSize: 14),
         ),
       ],

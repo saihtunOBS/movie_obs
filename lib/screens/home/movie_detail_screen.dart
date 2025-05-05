@@ -2,6 +2,7 @@ import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/movie_detail_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
@@ -19,9 +20,8 @@ import '../../list_items/recommended_movie_list_item.dart';
 import '../../widgets/expandable_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
-class MovieTypeScreen extends StatelessWidget {
-  const MovieTypeScreen({super.key, this.movie});
+class MovieDetailScreen extends StatelessWidget {
+  const MovieDetailScreen({super.key, this.movie});
   final MovieVO? movie;
 
   @override
@@ -54,7 +54,7 @@ class MovieTypeScreen extends StatelessWidget {
                               bottomLeft: Radius.circular(35),
                               bottomRight: Radius.circular(35),
                             ),
-                            child: cacheImage(movie?.posterImageUrl ?? ''),
+                            child: cacheImage(imageArray.last),
                           ),
                         ),
                         Positioned(
@@ -172,9 +172,9 @@ class MovieTypeScreen extends StatelessWidget {
           ),
           _buildTypeAndWatchList(),
           1.vGap,
-          _buildWatchNowButton(context, movie?.id ?? '',movie?.videoUrl ?? ''),
+          _buildWatchNowButton(context, movie?.id ?? '', movie?.videoUrl ?? ''),
           _buildCastView(bloc),
-          _buildDescription(bloc,context),
+          _buildDescription(bloc, context),
           5.vGap,
           _buildRecommendedView(bloc),
         ],
@@ -183,9 +183,11 @@ class MovieTypeScreen extends StatelessWidget {
   }
 
   Widget _buildRecommendedView(MovieDetailBloc bloc) {
-    return bloc.recommendedList?.isEmpty ?? true
-        ? SizedBox.shrink()
-        : Column(
+    return 
+    // bloc.recommendedList?.isEmpty ?? true
+    //     ? SizedBox.shrink()
+    //     :
+         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -200,12 +202,12 @@ class MovieTypeScreen extends StatelessWidget {
               height: 170,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: bloc.recommendedList?.length,
+                itemCount: imageArray.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
                       PageNavigator(ctx: context).nextPage(
-                        page: MovieTypeScreen(
+                        page: MovieDetailScreen(
                           movie: bloc.recommendedList?[index],
                         ),
                       );
@@ -228,12 +230,13 @@ class MovieTypeScreen extends StatelessWidget {
         spacing: 10,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          bloc.moviesResponse?.actors?.isEmpty ?? true
-              ? SizedBox.shrink()
-              : Expanded(
+          // bloc.moviesResponse?.actors?.isEmpty ?? true
+          //     ? SizedBox.shrink()
+          //     : 
+              Expanded(
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: bloc.moviesResponse?.actors?.length,
+                  itemCount: imageArray.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       behavior: HitTestBehavior.opaque,
@@ -261,7 +264,7 @@ class MovieTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDescription(MovieDetailBloc bloc,BuildContext context) {
+  Widget _buildDescription(MovieDetailBloc bloc, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -278,7 +281,7 @@ class MovieTypeScreen extends StatelessWidget {
         ),
         20.vGap,
         ExpandableText(
-          text: bloc.moviesResponse?.description ?? '',
+          text: 'testing testingtestingtestingtestingtestingtestingtestingtestingtestingtestingtestingtestingtestingtestingtestingtestingtesting',
           style: TextStyle(fontSize: 14),
         ),
         10.vGap,
@@ -310,12 +313,15 @@ class MovieTypeScreen extends StatelessWidget {
   }
 
   //https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8
-  Widget _buildWatchNowButton(BuildContext context, String videoId,
-  String url) {
+  Widget _buildWatchNowButton(
+    BuildContext context,
+    String videoId,
+    String url,
+  ) {
     return GestureDetector(
       onTap: () {
         context.pushTransparentRoute(
-          VideoPlayerScreen(url: url, isFirstTime: true,videoId: videoId,),
+          VideoPlayerScreen(url: 'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8', isFirstTime: true, videoId: videoId),
         );
       },
       child: Column(
@@ -334,7 +340,7 @@ class MovieTypeScreen extends StatelessWidget {
               children: [
                 Icon(CupertinoIcons.video_camera, color: kWhiteColor, size: 27),
                 Text(
-                   AppLocalizations.of(context)?.watchNow ?? '',
+                  AppLocalizations.of(context)?.watchNow ?? '',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: kWhiteColor,

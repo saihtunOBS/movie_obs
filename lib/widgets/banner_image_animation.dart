@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:provider/provider.dart';
 
@@ -57,7 +58,7 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
         });
       } else if (status == AnimationStatus.dismissed) {
         setState(() {
-          currentIndex = (currentIndex + 1) % bloc.bannerList.length;
+          currentIndex = (currentIndex + 1) % imageArray.length;
         });
         _controller.forward();
       }
@@ -80,15 +81,16 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
         body: Consumer<HomeBloc>(
           builder:
               (context, bloc, child) =>
-                  bloc.bannerList.isEmpty
-                      ? SizedBox.shrink()
-                      : Center(
+                  // bloc.bannerList.isEmpty
+                  //     ? SizedBox.shrink()
+                  //     : 
+                      Center(
                         child: SizedBox(
                           width: double.infinity,
                           child: FadeTransition(
                             opacity: _animation,
                             child: cacheImage(
-                              bloc.bannerList[currentIndex].image ?? '',
+                              imageArray[currentIndex],
                             ),
                           ),
                         ),

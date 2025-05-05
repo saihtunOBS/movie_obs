@@ -23,9 +23,9 @@ Widget genreListItem(GenreVO data) {
             color: kSecondaryColor,
             borderRadius: BorderRadius.circular(5),
           ),
-          child: cacheImage(data.genreIconUrl ?? ''),
+          child: cacheImage(''),
         ),
-        Text(data.name ?? '', style: TextStyle(fontWeight: FontWeight.w700)),
+        Text( 'hello', style: TextStyle(fontWeight: FontWeight.w700)),
       ],
     ),
   );

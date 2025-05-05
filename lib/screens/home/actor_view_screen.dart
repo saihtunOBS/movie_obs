@@ -30,9 +30,10 @@ class ActorViewScreen extends StatelessWidget {
         body: Consumer<ActorBloc>(
           builder:
               (context, bloc, child) =>
-                  bloc.isLoading
-                      ? LoadingView()
-                      : Column(
+                  // bloc.isLoading
+                  //     ? LoadingView()
+                  //     : 
+                      Column(
                         spacing: 15,
                         children: [
                           _buildActorView(context, bloc),
@@ -100,14 +101,14 @@ class ActorViewScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                bloc.actorData?.name ?? '',
+                bloc.actorData?.name ?? 'Test',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: kTextRegular2x,
                 ),
               ),
               Text(
-                bloc.actorData?.role?.role ?? '',
+                bloc.actorData?.role?.role ?? 'Actor',
                 style: TextStyle(fontSize: kTextSmall),
               ),
               Container(

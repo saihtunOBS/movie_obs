@@ -175,23 +175,26 @@ class _OTPScreenState extends State<OTPScreen> {
                       onPress: () {
                         FocusScope.of(context).unfocus();
                         Future.delayed(Duration(milliseconds: 300), () {
-                          bloc
-                              .verifyOtp(
-                                widget.phone ?? '',
-                                widget.requestId ?? '',
-                                pinController.text,
-                              )
-                              .then((response) {
-                                PersistenceData.shared.saveToken(
-                                  response.accessToken ?? '',
-                                );
-                                PageNavigator(
+                          PageNavigator(
                                   ctx: context,
                                 ).nextPage(page: ChangeLanguageScreen());
-                              })
-                              .catchError((error) {
-                                ToastService.warningToast(error.toString());
-                              });
+                          // bloc
+                          //     .verifyOtp(
+                          //       widget.phone ?? '',
+                          //       widget.requestId ?? '',
+                          //       pinController.text,
+                          //     )
+                          //     .then((response) {
+                          //       PersistenceData.shared.saveToken(
+                          //         response.accessToken ?? '',
+                          //       );
+                          //       PageNavigator(
+                          //         ctx: context,
+                          //       ).nextPage(page: ChangeLanguageScreen());
+                          //     })
+                          //     .catchError((error) {
+                          //       ToastService.warningToast(error.toString());
+                          //     });
                         });
                       },
                       context: context,

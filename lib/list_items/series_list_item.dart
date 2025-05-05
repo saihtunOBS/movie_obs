@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/calculate_time.dart';
@@ -21,7 +22,7 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data, bool? isLast}) {
             child: SizedBox(
               height: 80,
               width: 120,
-              child: cacheImage(data?.bannerImageUrl ?? ''),
+              child: cacheImage(imageArray.last),
             ),
           ),
           Expanded(
@@ -30,7 +31,7 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data, bool? isLast}) {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  data?.name ?? '',
+                  data?.name ?? 'title',
                   style: TextStyle(
                     fontSize: kTextRegular2x,
                     fontWeight: FontWeight.w600,

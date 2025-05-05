@@ -10,7 +10,7 @@ import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/page_navigator.dart';
-import '../home/movie_type_screen.dart';
+import 'movie_detail_screen.dart';
 
 class FreeMovieSeriesScreen extends StatefulWidget {
   const FreeMovieSeriesScreen({super.key});
@@ -44,7 +44,7 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                     useRootNavigator: true,
                     context: context,
                     builder: (context) {
-                      return movieFilterSheet((){});
+                      return movieFilterSheet(() {});
                     },
                   );
                 } else {
@@ -97,7 +97,7 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                                     return GestureDetector(
                                       onTap: () {
                                         PageNavigator(ctx: context).nextPage(
-                                          page: MovieTypeScreen(
+                                          page: MovieDetailScreen(
                                             movie: bloc.freeMovieLists[index],
                                           ),
                                         );

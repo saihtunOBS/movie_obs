@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/series_detail_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/recommended_movie_list_item.dart';
@@ -13,7 +14,6 @@ import 'package:provider/provider.dart';
 
 import '../../data/vos/movie_vo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 
 class SeriesDetailScreen extends StatelessWidget {
   const SeriesDetailScreen({super.key, this.series});
@@ -113,7 +113,7 @@ class SeriesDetailScreen extends StatelessWidget {
                 bloc.seriesResponse?.genres
                         ?.map((genre) => genre.name ?? '')
                         .join(', ') ??
-                    '',
+                    'something',
                 style: TextStyle(
                   fontSize: kTextSmall,
                   color: kPrimaryColor,
@@ -123,7 +123,7 @@ class SeriesDetailScreen extends StatelessWidget {
             ],
           ),
           10.vGap,
-          _buildDescription(bloc,context),
+          _buildDescription(bloc, context),
           Text(
             'Seasons',
             style: TextStyle(
@@ -179,9 +179,11 @@ class SeriesDetailScreen extends StatelessWidget {
   }
 
   Widget _buildRecommendedView(SeriesDetailBloc bloc) {
-    return bloc.recommendedList?.isEmpty ?? true
-        ? SizedBox.shrink()
-        : Column(
+    return
+    //  bloc.recommendedList?.isEmpty ?? true
+    //     ? SizedBox.shrink()
+    //     :
+         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -196,7 +198,7 @@ class SeriesDetailScreen extends StatelessWidget {
               height: 170,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: bloc.recommendedList?.length,
+                itemCount: imageArray.length,
                 itemBuilder: (context, index) {
                   return recommendedMovieListItem(
                     bloc.recommendedList?[index] ?? MovieVO(),
@@ -209,13 +211,15 @@ class SeriesDetailScreen extends StatelessWidget {
   }
 
   Widget _buildSeasonListView(SeriesDetailBloc bloc) {
-    return bloc.seriesResponse?.seasons?.isEmpty ?? true
-        ? SizedBox.shrink()
-        : ListView.builder(
+    return 
+    // bloc.seriesResponse?.seasons?.isEmpty ?? true
+    //     ? SizedBox.shrink()
+    //     : 
+        ListView.builder(
           padding: EdgeInsets.zero,
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemCount: bloc.seriesResponse?.seasons?.length,
+          itemCount: imageArray.length,
           itemBuilder: (context, index) {
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
@@ -237,18 +241,18 @@ class SeriesDetailScreen extends StatelessWidget {
         );
   }
 
-  Widget _buildDescription(SeriesDetailBloc bloc,BuildContext context) {
+  Widget _buildDescription(SeriesDetailBloc bloc, BuildContext context) {
     return Column(
       spacing: 5,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '${AppLocalizations.of(context)?.director} ${bloc.seriesResponse?.director ?? ''}',
+          '${AppLocalizations.of(context)?.director} ${bloc.seriesResponse?.director ?? 'someone'}',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
         Divider(thickness: 0.5),
         Text(
-          '${AppLocalizations.of(context)?.scriptWriter} ${bloc.seriesResponse?.scriptWriter ?? ''}',
+          '${AppLocalizations.of(context)?.scriptWriter} ${bloc.seriesResponse?.scriptWriter ?? 'someone'}',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
 

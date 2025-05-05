@@ -68,7 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           Text(
-                            AppLocalizations.of(context)?.enterPhoneNumber ?? '',
+                            AppLocalizations.of(context)?.enterPhoneNumber ??
+                                '',
                             style: TextStyle(fontSize: kTextRegular2x),
                           ),
                           20.vGap,
@@ -115,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             ),
                                           ),
                                         ),
-    
+
                                         textStyle: TextStyle(
                                           fontSize:
                                               getDeviceType() == 'phone'
@@ -215,7 +216,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     keyboardType: TextInputType.phone,
                                     decoration: InputDecoration(
-                                      hintText: AppLocalizations.of(context)?.phone,
+                                      hintText:
+                                          AppLocalizations.of(context)?.phone,
                                       contentPadding: EdgeInsets.only(top: 4),
                                       hintStyle: TextStyle(color: kWhiteColor),
                                       border: InputBorder.none,
@@ -232,25 +234,28 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               customButton(
                                 onPress: () {
-                                  FocusScope.of(context).unfocus();
-                                  bloc
-                                      .userLogin(
-                                        '${selectedCountryCode?.phoneCode ?? '+95'}${_phoneController.text.trim()}',
-                                      )
-                                      .then((response) {
-                                        PageNavigator(ctx: context).nextPage(
-                                          page: OTPScreen(
-                                            phone:
-                                                '${selectedCountryCode?.phoneCode ?? '+95'}${_phoneController.text.trim()}',
-                                            requestId: '${response.requestId}',
-                                          ),
-                                        );
-                                      })
-                                      .catchError((error) {
-                                        ToastService.warningToast(
-                                          error.toString(),
-                                        );
-                                      });
+                                  PageNavigator(
+                                    ctx: context,
+                                  ).nextPage(page: OTPScreen());
+                                  // FocusScope.of(context).unfocus();
+                                  // bloc
+                                  //     .userLogin(
+                                  //       '${selectedCountryCode?.phoneCode ?? '+95'}${_phoneController.text.trim()}',
+                                  //     )
+                                  //     .then((response) {
+                                  //       PageNavigator(ctx: context).nextPage(
+                                  //         page: OTPScreen(
+                                  //           phone:
+                                  //               '${selectedCountryCode?.phoneCode ?? '+95'}${_phoneController.text.trim()}',
+                                  //           requestId: '${response.requestId}',
+                                  //         ),
+                                  //       );
+                                  //     })
+                                  //     .catchError((error) {
+                                  //       ToastService.warningToast(
+                                  //         error.toString(),
+                                  //       );
+                                  //     });
                                 },
                                 context: context,
                                 backgroundColor: kSecondaryColor,
@@ -262,7 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-    
+
                       //show lading
                       bloc.isLoading ? LoadingView() : SizedBox.shrink(),
                     ],

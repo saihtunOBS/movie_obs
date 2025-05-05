@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/movie_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
@@ -11,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
 import '../../extension/page_navigator.dart';
-import '../home/movie_type_screen.dart';
+import '../home/movie_detail_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MovieScreen extends StatefulWidget {
@@ -49,9 +50,7 @@ class _MovieScreenState extends State<MovieScreen> {
                     useRootNavigator: true,
                     context: context,
                     builder: (context) {
-                      return movieFilterSheet((){
-                        
-                      });
+                      return movieFilterSheet(() {});
                     },
                   );
                 } else {
@@ -114,7 +113,7 @@ class _MovieScreenState extends State<MovieScreen> {
                             ),
                           ),
                         ],
-                        onChanged: (value) => bloc.onSearchChanged(value),
+                        // onChanged: (value) => bloc.onSearchChanged(value),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
@@ -138,7 +137,7 @@ class _MovieScreenState extends State<MovieScreen> {
                         child: Stack(
                           children: [
                             GridView.builder(
-                              itemCount: bloc.movieLists.length,
+                              itemCount: imageArray.length,
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount:
@@ -156,7 +155,7 @@ class _MovieScreenState extends State<MovieScreen> {
                                 return GestureDetector(
                                   onTap: () {
                                     PageNavigator(ctx: context).nextPage(
-                                      page: MovieTypeScreen(
+                                      page: MovieDetailScreen(
                                         movie: bloc.movieLists[index],
                                       ),
                                     );
@@ -205,7 +204,9 @@ class _MovieScreenState extends State<MovieScreen> {
                                               PageNavigator(
                                                 ctx: context,
                                               ).nextPage(
-                                                page: MovieTypeScreen(movie: value,),
+                                                page: MovieDetailScreen(
+                                                  movie: value,
+                                                ),
                                               );
                                             },
                                             child: Padding(

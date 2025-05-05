@@ -35,15 +35,15 @@ class UserBloc extends ChangeNotifier {
           notifyListeners();
         })
         .catchError((_) {
-          PersistenceData.shared.clearToken();
-          showCommonDialog(
-            context: myContext!,
-            isBarrierDismiss: false,
-            dialogWidget: ErrorDialogView(
-              errorMessage: 'Session Expired. Please Login Again',
-              isLogin: true,
-            ),
-          );
+          // PersistenceData.shared.clearToken();
+          // showCommonDialog(
+          //   context: myContext!,
+          //   isBarrierDismiss: false,
+          //   dialogWidget: ErrorDialogView(
+          //     errorMessage: 'Session Expired. Please Login Again',
+          //     isLogin: true,
+          //   ),
+          // );
         })
         .whenComplete(() {
           _hideLoading();

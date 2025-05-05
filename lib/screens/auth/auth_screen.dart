@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
@@ -43,7 +44,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       builder:
                           (context, value, child) => CarouselSlider(
                             items:
-                                bloc.bannerList.map((data) {
+                                imageArray.map((data) {
                                   return Container(
                                     decoration: BoxDecoration(
                                       borderRadius:
@@ -51,7 +52,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                     ),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(15),
-                                      child: cacheImage(data.image ?? ''),
+                                      child: cacheImage(data ?? ''),
                                     ),
                                   );
                                 }).toList(),
@@ -83,7 +84,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               dotColor: kWhiteColor,
                             ),
                             activeIndex: value,
-                            count: bloc.bannerList.length,
+                            count: imageArray.length,
                           ),
                     ),
 

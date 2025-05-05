@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 
@@ -14,7 +15,7 @@ Widget castListItem({ActorVO? actor}) {
           width: 70,
           decoration: BoxDecoration(color: Colors.grey.withValues(alpha: 0.2)),
           child: Center(
-            child: cacheImage(actor?.cast?.profilePictureUrl ?? ''),
+            child: cacheImage(''),
           ),
         ),
       ),
@@ -23,8 +24,8 @@ Widget castListItem({ActorVO? actor}) {
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 3,
         children: [
-          Text(actor?.cast?.name ?? ''),
-          Text(actor?.characterName ?? ''),
+          Text(actor?.cast?.name ?? 'test'),
+          Text(actor?.characterName ?? 'test'),
         ],
       ),
     ],

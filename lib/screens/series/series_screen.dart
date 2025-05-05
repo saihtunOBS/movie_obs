@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/series_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
@@ -112,7 +113,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                         hintStyle: WidgetStateProperty.resolveWith<TextStyle>(
                           (_) => TextStyle(color: kWhiteColor),
                         ),
-                        onChanged: (value) => bloc.onSearchChanged(value),
+                        //onChanged: (value) => bloc.onSearchChanged(value),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
@@ -136,7 +137,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                         child: Stack(
                           children: [
                             GridView.builder(
-                              itemCount: bloc.seriesLists.length,
+                              itemCount: imageArray.length,
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount:

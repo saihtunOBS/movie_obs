@@ -25,7 +25,7 @@ class MovieBloc extends ChangeNotifier {
     getAllMovie();
     getMovieSeries();
     getAllCategory();
-    getAllGenre();
+    //getAllGenre();
   }
 
   getMovieSeries() {

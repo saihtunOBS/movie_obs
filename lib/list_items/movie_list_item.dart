@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -20,7 +21,7 @@ Widget movieListItem({
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(kMargin10),
-          child: cacheImage(movies?.posterImageUrl ?? ''),
+          child: cacheImage(imageArray.last),
         ),
         Positioned(
           left: 10,
