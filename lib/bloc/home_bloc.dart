@@ -34,7 +34,7 @@ class HomeBloc extends ChangeNotifier {
 
   getAllMovie() {
     _movieModel
-        .getAllMovie(token, '')
+        .getAllMovie(token, '','')
         .then((response) {
           movieLists = response.data ?? [];
           notifyListeners();
@@ -57,7 +57,7 @@ class HomeBloc extends ChangeNotifier {
   getFreeMovie() {
     _showLoading();
     _movieModel
-        .getAllMovie(token, 'FREE')
+        .getAllMovie(token, 'FREE','')
         .then((response) {
           freeMovieLists = response.data ?? [];
           _hideLoading();

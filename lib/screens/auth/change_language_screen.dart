@@ -85,6 +85,9 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                 children:
                     languages.asMap().entries.map((entry) {
                       return RadioListTile(
+                        hoverColor: Colors.transparent,
+                        tileColor: Colors.transparent,
+                        selectedTileColor: Colors.transparent,
                         value: entry.key,
                         visualDensity: VisualDensity(
                           horizontal: -4,

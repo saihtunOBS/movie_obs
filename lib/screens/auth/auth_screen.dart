@@ -104,6 +104,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     child: Text(
                       AppLocalizations.of(context)?.discoverLabel ?? '',
                       textAlign: TextAlign.center,
+                      style: TextStyle(height: 1.8,color: kWhiteColor),
                     ),
                   ),
 

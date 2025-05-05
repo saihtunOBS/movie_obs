@@ -21,7 +21,7 @@ class SeriesBloc extends ChangeNotifier {
 
   getAllSeries() {
     _showLoading();
-    _movieModel.getSeriesLists(token, '').then((response) {
+    _movieModel.getSeriesLists(token, '', '').then((response) {
       seriesLists = response.data ?? [];
       _hideLoading();
     });

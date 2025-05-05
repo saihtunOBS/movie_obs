@@ -44,7 +44,7 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                     useRootNavigator: true,
                     context: context,
                     builder: (context) {
-                      return movieFilterSheet();
+                      return movieFilterSheet((){});
                     },
                   );
                 } else {

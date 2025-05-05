@@ -35,6 +35,7 @@ abstract class MovieApi {
   Future<MovieResponse> getMovies(
     @Query('plan') String plan,
     @Query('limit') int limit,
+    @Query('genres') String genres,
   );
 
   @GET('$kEndPointMovie/{id}')
@@ -56,6 +57,7 @@ abstract class MovieApi {
   Future<MovieResponse> getAllMovies(
     @Query('plan') String plan,
     @Query('limit') int limit,
+    @Query('genres') String genres,
   );
 
   @GET(kEndPointAds)
@@ -107,6 +109,7 @@ abstract class MovieApi {
   Future<MovieResponse> getSeries(
     @Query('plan') String plan,
     @Query('limit') int limit,
+    @Query('genres') String genres,
   );
 
   @GET(kEndPointPackage)

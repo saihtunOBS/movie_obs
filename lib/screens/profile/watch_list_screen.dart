@@ -59,7 +59,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
                   showDragHandle: true,
                   context: context,
                   builder: (context) {
-                    return movieFilterSheet();
+                    return movieFilterSheet(() {});
                   },
                 );
               } else {

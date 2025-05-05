@@ -30,15 +30,23 @@ class MovieBloc extends ChangeNotifier {
 
   getMovieSeries() {
     _showLoading();
-    _movieModel.getAllMovie(token, '').then((response) {
+    _movieModel.getAllMovie(token, '','').then((response) {
       movieSeriesList = response.data ?? [];
       _hideLoading();
     });
   }
 
+  filterMovies(String type, String genre) {
+    movieLists =
+        movieLists.where((movie) {
+          return movie.type == type && (movie.genres?.contains(genre) ?? true);
+        }).toList();
+    notifyListeners();
+  }
+
   getAllMovie() {
     _showLoading();
-    _movieModel.getMovieLists(token, '').then((response) {
+    _movieModel.getMovieLists(token, '','').then((response) {
       movieLists = response.data ?? [];
       _hideLoading();
     });

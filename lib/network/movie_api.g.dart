@@ -76,9 +76,13 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getMovies(String plan, int limit) async {
+  Future<MovieResponse> getMovies(String plan, int limit, String genres) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'plan': plan, r'limit': limit};
+    final queryParameters = <String, dynamic>{
+      r'plan': plan,
+      r'limit': limit,
+      r'genres': genres,
+    };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(
@@ -222,9 +226,17 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getAllMovies(String plan, int limit) async {
+  Future<MovieResponse> getAllMovies(
+    String plan,
+    int limit,
+    String genres,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'plan': plan, r'limit': limit};
+    final queryParameters = <String, dynamic>{
+      r'plan': plan,
+      r'limit': limit,
+      r'genres': genres,
+    };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(
@@ -568,9 +580,13 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getSeries(String plan, int limit) async {
+  Future<MovieResponse> getSeries(String plan, int limit, String genres) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'plan': plan, r'limit': limit};
+    final queryParameters = <String, dynamic>{
+      r'plan': plan,
+      r'limit': limit,
+      r'genres': genres,
+    };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(

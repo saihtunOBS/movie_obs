@@ -18,8 +18,8 @@ import '../../network/responses/season_response.dart';
 abstract class MovieModel {
   Future<OTPResponse> sendOtp(SendOtpRequest request);
   Future<OTPResponse> verifyOtp(VerifyOtpRequest request);
-  Future<MovieResponse> getMovieLists(String token, String plan);
-  Future<MovieResponse> getSeriesLists(String token, String plan);
+  Future<MovieResponse> getMovieLists(String token, String plan,String genre);
+  Future<MovieResponse> getSeriesLists(String token, String plan,String genre);
   Future<MovieDetailResponse> getMovieDetail(String token, String id);
   Future<MovieDetailResponse> getSeriesDetail(
     String token,
@@ -28,7 +28,7 @@ abstract class MovieModel {
   );
   Future<SeasonResponse> getSeason(String token);
 
-  Future<MovieResponse> getAllMovie(String token, String plan);
+  Future<MovieResponse> getAllMovie(String token, String plan,String genre);
   Future<MovieResponse> getTopTrending(String token);
   Future<MovieResponse> getNewRelease(String token, String plan);
 

@@ -50,7 +50,7 @@ class ErrorDialogView extends StatelessWidget {
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: kBlackColor,
-              fontSize: kTextSmall,
+              fontSize: kTextRegular,
               fontWeight: FontWeight.normal,
             ),
           ),

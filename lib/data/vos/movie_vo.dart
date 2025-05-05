@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+
+import '../../network/responses/movie_detail_response.dart';
 part 'movie_vo.g.dart';
 
 @JsonSerializable()
@@ -57,9 +59,8 @@ class MovieVO {
   @JsonKey(name: "scheduleAt")
   final String? scheduleAt;
 
-  // @GenreListConverter()
-  // @JsonKey(name: "genres")
-  // final List<GenreVO>? genres;
+  @JsonKey(name: "genres")
+  final List<GenreVO>? genres;
 
   @JsonKey(name: "director")
   final String? director;
@@ -98,7 +99,7 @@ class MovieVO {
     this.duration,
     this.publishedYear,
     this.scheduleAt,
-    // this.genres,
+    this.genres,
     this.director,
     this.actors,
     this.actresses,

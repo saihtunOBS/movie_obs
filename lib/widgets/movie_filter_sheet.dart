@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 final ValueNotifier<String> selectedType = ValueNotifier('');
 final ValueNotifier<int> selectedGenre = ValueNotifier(-1);
 
-Widget movieFilterSheet() {
+Widget movieFilterSheet(VoidCallback onFilter) {
   return ChangeNotifierProvider(
     create: (context) => MovieBloc(),
     child: Consumer<MovieBloc>(
@@ -43,12 +43,15 @@ Widget movieFilterSheet() {
                       ),
                     ),
                     Spacer(),
-                    Chip(
-                      label: Text(
-                        'Filter',
-                        style: TextStyle(color: kWhiteColor),
+                    GestureDetector(
+                      onTap: onFilter,
+                      child: Chip(
+                        label: Text(
+                          'Filter',
+                          style: TextStyle(color: kWhiteColor),
+                        ),
+                        backgroundColor: kSecondaryColor,
                       ),
-                      backgroundColor: kSecondaryColor,
                     ),
                     10.hGap,
                     GestureDetector(
@@ -301,7 +304,7 @@ void showMovieRightSideSheet(BuildContext context) {
             width: MediaQuery.of(context).size.width / 2,
             height: double.infinity,
             padding: const EdgeInsets.all(20),
-            child: movieFilterSheet(),
+            child: movieFilterSheet((){}),
           ),
         ),
       );

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
+import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
@@ -188,8 +189,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildOptions() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: kMarginMedium2,
+      padding: EdgeInsets.symmetric(
+        horizontal:
+            PersistenceData.shared.getLocale() != 'en' ? kMarginMedium2 : 0,
         vertical: kMarginMedium2,
       ),
       child: Row(
@@ -223,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           SizedBox(
-             width: 80,
+            width: 80,
             child: Column(
               spacing: 10,
               children: [
@@ -247,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           SizedBox(
-             width: 80,
+            width: 80,
             child: Column(
               spacing: 10,
               children: [
