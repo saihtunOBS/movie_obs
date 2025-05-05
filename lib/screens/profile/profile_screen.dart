@@ -116,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   builder:
                                       (builder) => Dialog(
                                         backgroundColor: kWhiteColor,
-                                        insetPadding: const EdgeInsets.all(10),
+                                        // insetPadding: const EdgeInsets.all(20),
                                         child: _buildAlert(),
                                       ),
                                 );
@@ -137,11 +137,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: customButton(
                         onPress: () async {
-                          tab.value = false;
-                          PersistenceData.shared.clearToken();
-                          await PageNavigator(
-                            ctx: context,
-                          ).nextPageOnly(page: LoginScreen());
+                          //tab.value = false;
+                          // PersistenceData.shared.clearToken();
+                          // await PageNavigator(
+                          //   ctx: context,
+                          // ).nextPageOnly(page: LoginScreen());
                         },
                         context: context,
                         backgroundColor: kSecondaryColor,
@@ -205,7 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width / 2.8,
                           child: Text(
-                            bloc.userData?.name ?? '',
+                            bloc.userData?.name ?? 'User',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             softWrap: true,
@@ -324,7 +324,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildAlert() {
     return Container(
       height: null,
-      padding: EdgeInsets.all(20),
+      margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
       child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

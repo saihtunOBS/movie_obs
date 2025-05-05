@@ -158,10 +158,8 @@ class MovieDetailScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                bloc.moviesResponse?.genres
-                        ?.map((genre) => genre.name ?? '')
-                        .join(', ') ??
-                    '',
+                
+                    'something',
                 style: TextStyle(
                   fontSize: kTextSmall,
                   color: kPrimaryColor,
@@ -290,7 +288,7 @@ class MovieDetailScreen extends StatelessWidget {
           height: 50,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: bloc.moviesResponse?.tags?.length,
+            itemCount: imageArray.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
@@ -299,7 +297,7 @@ class MovieDetailScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   label: Text(
-                    '#${bloc.moviesResponse?.tags?[index]}',
+                    '# tag',
                     style: TextStyle(color: kWhiteColor),
                   ),
                   backgroundColor: kBlackColor,

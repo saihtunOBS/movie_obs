@@ -56,7 +56,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
               if (getDeviceType() == 'phone') {
                 showModalBottomSheet(
                   useRootNavigator: true,
-                  showDragHandle: true,
+                  // showDragHandle: true,
                   context: context,
                   builder: (context) {
                     return movieFilterSheet(() {});

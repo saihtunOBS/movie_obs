@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/faq_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/data/vos/faq_vo.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
@@ -23,7 +24,7 @@ class FaqScreen extends StatelessWidget {
         body: Consumer<FaqBloc>(
           builder:
               (context, bloc, child) =>
-                  bloc.isLoading ? LoadingView() : _buildBody(bloc.faqs),
+                  _buildBody(bloc.faqs),
         ),
       ),
     );
@@ -31,7 +32,7 @@ class FaqScreen extends StatelessWidget {
 
   Widget _buildBody(List<FaqVO> data) {
     return ListView.builder(
-      itemCount: data.length,
+      itemCount: imageArray.length,
       itemBuilder: (context, index) {
         return Column(
           children: [
@@ -46,7 +47,7 @@ class FaqScreen extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      data[index].question ?? '',
+                       'testing',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -55,7 +56,7 @@ class FaqScreen extends StatelessWidget {
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Text(data[index].answer ?? ''),
+                    child: Text('this is testing.....'),
                   ),
                 ],
               ),

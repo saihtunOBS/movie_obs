@@ -156,14 +156,14 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                   onTap: () {
                                     PageNavigator(ctx: context).nextPage(
                                       page: SeriesDetailScreen(
-                                        series: bloc.seriesLists[index],
+                                        //series: bloc.seriesLists[index],
                                       ),
                                     );
                                   },
                                   child: movieListItem(
                                     isHomeScreen: true,
-                                    movies: bloc.seriesLists[index],
-                                    type: bloc.seriesLists[index].plan,
+                                    // movies: bloc.seriesLists[index],
+                                    // type: bloc.seriesLists[index].plan,
                                   ),
                                 );
                               },

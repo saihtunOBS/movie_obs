@@ -156,14 +156,14 @@ class _MovieScreenState extends State<MovieScreen> {
                                   onTap: () {
                                     PageNavigator(ctx: context).nextPage(
                                       page: MovieDetailScreen(
-                                        movie: bloc.movieLists[index],
+                                        //movie: bloc.movieLists[index],
                                       ),
                                     );
                                   },
                                   child: movieListItem(
                                     isHomeScreen: true,
-                                    movies: bloc.movieLists[index],
-                                    type: bloc.movieLists[index].plan,
+                                    // movies: bloc.movieLists[index],
+                                    // type: bloc.movieLists[index].plan,
                                   ),
                                 );
                               },

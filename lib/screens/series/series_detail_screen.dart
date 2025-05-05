@@ -22,7 +22,7 @@ class SeriesDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => SeriesDetailBloc(series?.id),
+      create: (context) => SeriesDetailBloc(),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         body: Consumer<SeriesDetailBloc>(
@@ -49,7 +49,7 @@ class SeriesDetailScreen extends StatelessWidget {
                               bottomLeft: Radius.circular(35),
                               bottomRight: Radius.circular(35),
                             ),
-                            child: cacheImage(series?.posterImageUrl ?? ''),
+                            child: cacheImage(imageArray.last),
                           ),
                         ),
                         Positioned(
@@ -102,7 +102,7 @@ class SeriesDetailScreen extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              series?.name ?? '',
+              series?.name ?? 'Series title',
               style: TextStyle(fontSize: kTextRegular18 + 2),
             ),
           ),
@@ -150,13 +150,11 @@ class SeriesDetailScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Tags', style: TextStyle(fontWeight: FontWeight.w700)),
-        bloc.seriesResponse?.tags?.isEmpty ?? true
-            ? SizedBox.shrink()
-            : SizedBox(
+       SizedBox(
               height: 50,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: bloc.seriesResponse?.tags?.length,
+                itemCount: imageArray.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
@@ -165,7 +163,7 @@ class SeriesDetailScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       label: Text(
-                        '#${bloc.seriesResponse?.tags?[index]}',
+                        '# tag',
                         style: TextStyle(color: kWhiteColor),
                       ),
                       backgroundColor: kBlackColor,
@@ -183,62 +181,60 @@ class SeriesDetailScreen extends StatelessWidget {
     //  bloc.recommendedList?.isEmpty ?? true
     //     ? SizedBox.shrink()
     //     :
-         Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Recommended',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: kTextRegular18,
-              ),
-            ),
-            7.vGap,
-            SizedBox(
-              height: 170,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: imageArray.length,
-                itemBuilder: (context, index) {
-                  return recommendedMovieListItem(
-                    bloc.recommendedList?[index] ?? MovieVO(),
-                  );
-                },
-              ),
-            ),
-          ],
-        );
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Recommended',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: kTextRegular18,
+          ),
+        ),
+        7.vGap,
+        SizedBox(
+          height: 170,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: imageArray.length,
+            itemBuilder: (context, index) {
+              return recommendedMovieListItem(
+                bloc.recommendedList?[index] ?? MovieVO(),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildSeasonListView(SeriesDetailBloc bloc) {
-    return 
+    return
     // bloc.seriesResponse?.seasons?.isEmpty ?? true
     //     ? SizedBox.shrink()
-    //     : 
-        ListView.builder(
-          padding: EdgeInsets.zero,
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: imageArray.length,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                PageNavigator(ctx: context).nextPage(
-                  page: SeasonEpisodeScreen(
-                    season: bloc.seriesResponse?.seasons?[index],
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 5),
-                child: seasonListItem(
-                  data: bloc.seriesResponse?.seasons?[index],
-                ),
+    //     :
+    ListView.builder(
+      padding: EdgeInsets.zero,
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: imageArray.length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            PageNavigator(ctx: context).nextPage(
+              page: SeasonEpisodeScreen(
+                season: bloc.seriesResponse?.seasons?[index],
               ),
             );
           },
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: seasonListItem(data: bloc.seriesResponse?.seasons?[index]),
+          ),
         );
+      },
+    );
   }
 
   Widget _buildDescription(SeriesDetailBloc bloc, BuildContext context) {

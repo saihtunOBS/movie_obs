@@ -12,8 +12,8 @@ class PackageBloc extends ChangeNotifier {
   final MovieModel _movieModel = MovieModelImpl();
 
   PackageBloc({BuildContext? context}) {
-    token = PersistenceData.shared.getToken();
-    getPackage();
+    // token = PersistenceData.shared.getToken();
+    // getPackage();
   }
 
   getPackage() {

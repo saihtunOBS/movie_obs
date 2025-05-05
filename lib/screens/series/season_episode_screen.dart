@@ -215,7 +215,7 @@ class SeasonEpisodeScreen extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              season?.name ?? '',
+              season?.name ?? 'Season title',
               style: TextStyle(fontSize: kTextRegular18 + 2),
             ),
           ),

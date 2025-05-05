@@ -33,8 +33,8 @@ Widget movieListItem({
             ),
             padding: type == ('PAY_PER_VIEW')? EdgeInsets.all(3) : EdgeInsets.symmetric(horizontal: 10, vertical: 2),
             child: Center(
-              child: type == ('PAY_PER_VIEW') ? Icon(Icons.lock,size: 15,) : Text(
-                type == 'PAID' ? 'Premium' : type ?? '',
+              child: Text(
+               'something',
                 style: TextStyle(
                   fontSize: kTextSmall,
                   fontWeight: FontWeight.w600,

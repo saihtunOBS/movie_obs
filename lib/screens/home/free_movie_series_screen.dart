@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
@@ -73,13 +74,10 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
               (context, bloc, child) => Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child:
-                    bloc.isLoading
-                        ? LoadingView()
-                        : Stack(
+                     Stack(
                           children: [
-                            bloc.freeMovieLists.isNotEmpty
-                                ? GridView.builder(
-                                  itemCount: bloc.freeMovieLists.length,
+                           GridView.builder(
+                                  itemCount: imageArray.length,
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount:
@@ -96,25 +94,21 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                                   itemBuilder: (context, index) {
                                     return GestureDetector(
                                       onTap: () {
-                                        PageNavigator(ctx: context).nextPage(
-                                          page: MovieDetailScreen(
-                                            movie: bloc.freeMovieLists[index],
-                                          ),
-                                        );
+                                        // PageNavigator(ctx: context).nextPage(
+                                        //   page: MovieDetailScreen(
+                                        //     movie: bloc.freeMovieLists[index],
+                                        //   ),
+                                        // );
                                       },
                                       child: movieListItem(
                                         isHomeScreen: true,
-                                        movies: bloc.freeMovieLists[index],
-                                        type: bloc.freeMovieLists[index].plan,
+                                        // movies: bloc.freeMovieLists[index],
+                                        // type: bloc.freeMovieLists[index].plan,
                                       ),
                                     );
                                   },
                                 )
-                                : Center(
-                                  child: Text(
-                                    'There is no movies and series to show.',
-                                  ),
-                                ),
+                               
                           ],
                         ),
               ),

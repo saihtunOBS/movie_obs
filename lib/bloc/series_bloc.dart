@@ -16,7 +16,7 @@ class SeriesBloc extends ChangeNotifier {
 
   SeriesBloc() {
     token = PersistenceData.shared.getToken();
-    getAllSeries();
+    //getAllSeries();
   }
 
   getAllSeries() {

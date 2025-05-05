@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/package_bloc.dart';
+import 'package:movie_obs/data/dummy/dummy_data.dart';
 import 'package:movie_obs/data/vos/package_vo.dart';
 import 'package:movie_obs/list_items/promotion_list_items.dart';
 import 'package:movie_obs/utils/colors.dart';
@@ -143,7 +144,7 @@ class PromotionScreen extends StatelessWidget {
                 : MediaQuery.of(context).size.width * 0.15,
         bottom: kMarginMedium2,
       ),
-      itemCount: bloc.packages?.length,
+      itemCount: imageArray.length,
       itemBuilder: (context, index) {
         return promotionListItem(
           false,

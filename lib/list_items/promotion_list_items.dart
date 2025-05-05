@@ -4,7 +4,7 @@ import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 
-Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
+Widget promotionListItem(bool isPremium, BuildContext context, PackageVO? data) {
   return Container(
     margin: EdgeInsets.only(bottom: 40),
     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -47,7 +47,7 @@ Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
                       Row(
                         children: [
                           Text(
-                            data.name ?? '',
+                            data?.name ?? 'Test',
                             style: TextStyle(
                               fontSize: kTextRegular18,
                               fontWeight: FontWeight.bold,
@@ -74,7 +74,7 @@ Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
                               )
                               : SizedBox.shrink(),
                           Text(
-                            data.description ?? '',
+                            data?.description ?? 'description',
                             style: TextStyle(fontSize: 12),
                           ),
                         ],
@@ -87,13 +87,13 @@ Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
                   spacing: 5,
                   children: [
                     Text(
-                      '${data.price} ${data.currency}',
+                      '100000 Ks',
                       style: TextStyle(
                         fontSize: kTextRegular2x,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text('/ for ${data.duration} days', style: TextStyle(fontSize: 12)),
+                    Text('/ for 10 days', style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ],

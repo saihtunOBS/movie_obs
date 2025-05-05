@@ -97,89 +97,77 @@ class _HomeScreenState extends State<HomeScreen> {
                 slivers: [
                   SliverToBoxAdapter(child: SizedBox(height: 15)),
                   SliverToBoxAdapter(
-                    child: Visibility(
-                      visible: bloc.bannerList.isNotEmpty,
-                      child: Container(
-                        height: getDeviceType() == 'phone' ? 220 : 350,
-                        color: Colors.transparent,
-                        child: BannerImageAnimation(),
-                      ),
+                    child: Container(
+                      height: getDeviceType() == 'phone' ? 220 : 350,
+                      color: Colors.transparent,
+                      child: BannerImageAnimation(),
                     ),
                   ),
                   SliverToBoxAdapter(child: _buildOptions()),
 
-                  if (bloc.freeMovieLists.isNotEmpty) ...[
-                    SliverPersistentHeader(
-                      pinned: false,
-                      delegate: _SliverHeader(
-                        title:
-                            AppLocalizations.of(context)?.freeMovieSeries ?? '',
-                        onPress: () {
-                          PageNavigator(
-                            ctx: context,
-                          ).nextPage(page: FreeMovieSeriesScreen());
-                        },
-                      ),
+                  SliverPersistentHeader(
+                    pinned: false,
+                    delegate: _SliverHeader(
+                      title:
+                          AppLocalizations.of(context)?.freeMovieSeries ?? '',
+                      onPress: () {
+                        PageNavigator(
+                          ctx: context,
+                        ).nextPage(page: FreeMovieSeriesScreen());
+                      },
                     ),
-                    SliverToBoxAdapter(
-                      child: _buildMovieOptions(bloc.freeMovieLists),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _buildMovieOptions(bloc.freeMovieLists),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 10)),
+                  SliverPersistentHeader(
+                    pinned: false,
+                    delegate: _SliverHeader(
+                      title: 'Top Trending',
+                      onPress: () {
+                        PageNavigator(
+                          ctx: context,
+                        ).nextPage(page: TopTrendingScreen());
+                      },
                     ),
-                    SliverToBoxAdapter(child: SizedBox(height: 10)),
-                  ],
-                  if (bloc.topTrendingMoviesList.isNotEmpty) ...[
-                    SliverPersistentHeader(
-                      pinned: false,
-                      delegate: _SliverHeader(
-                        title: 'Top Trending',
-                        onPress: () {
-                          PageNavigator(
-                            ctx: context,
-                          ).nextPage(page: TopTrendingScreen());
-                        },
-                      ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _buildMovieOptions(bloc.topTrendingMoviesList),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 10)),
+
+                  SliverPersistentHeader(
+                    pinned: false,
+                    delegate: _SliverHeader(
+                      title: AppLocalizations.of(context)?.newRelease ?? '',
+                      onPress: () {
+                        PageNavigator(
+                          ctx: context,
+                        ).nextPage(page: TopTrendingScreen());
+                      },
                     ),
-                    SliverToBoxAdapter(
-                      child: _buildMovieOptions(bloc.topTrendingMoviesList),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _buildMovieOptions(bloc.newReleaseMoviesList),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 10)),
+
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _SliverHeader(
+                      title: AppLocalizations.of(context)?.allMovieSeries ?? '',
+                      isAllMovie: true,
+                      onPress: () {
+                        PageNavigator(ctx: context).nextPage(
+                          page: NewReleaseScreen(movieLists: bloc.movieLists),
+                        );
+                      },
                     ),
-                    SliverToBoxAdapter(child: SizedBox(height: 10)),
-                  ],
-                  if (bloc.newReleaseMoviesList.isNotEmpty) ...[
-                    SliverPersistentHeader(
-                      pinned: false,
-                      delegate: _SliverHeader(
-                        title: AppLocalizations.of(context)?.newRelease ?? '',
-                        onPress: () {
-                          PageNavigator(ctx: context).nextPage(
-                            page: NewReleaseScreen(
-                              movieLists: bloc.newReleaseMoviesList,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: _buildMovieOptions(bloc.newReleaseMoviesList),
-                    ),
-                    SliverToBoxAdapter(child: SizedBox(height: 10)),
-                  ],
-                  if (bloc.movieLists.isNotEmpty) ...[
-                    SliverPersistentHeader(
-                      pinned: true,
-                      delegate: _SliverHeader(
-                        title:
-                            AppLocalizations.of(context)?.allMovieSeries ?? '',
-                        isAllMovie: true,
-                        onPress: () {
-                          PageNavigator(ctx: context).nextPage(
-                            page: NewReleaseScreen(movieLists: bloc.movieLists),
-                          );
-                        },
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: _buildAllMovieSeries(bloc.movieLists),
-                    ),
-                  ],
+                  ),
+                  SliverToBoxAdapter(
+                    child: _buildAllMovieSeries(bloc.movieLists),
+                  ),
                   SliverToBoxAdapter(child: SizedBox(height: 20)),
                 ],
               ),
@@ -289,16 +277,15 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              PageNavigator(
-                ctx: context,
-              ).nextPage(page: MovieDetailScreen(movie: movies[index]));
+              PageNavigator(ctx: context).nextPage(page: MovieDetailScreen());
             },
             child: SizedBox(
               width: 140,
               child: movieListItem(
-                movies: movies[index],
-                padding: kMarginMedium,
-                type: movies[index].type,
+                padding: 10,
+                // movies: movies[index],
+                // padding: kMarginMedium,
+                // type: movies[index].type,
               ),
             ),
           );
@@ -321,9 +308,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ).nextPage(page: MovieDetailScreen(movie: movies[index]));
           },
           child: movieListItem(
-            movies: movies[index],
-            isHomeScreen: true,
-            type: movies[index].type,
+            // movies: movies[index],
+            // isHomeScreen: true,
+            // type: movies[index].type,
           ),
         );
       },

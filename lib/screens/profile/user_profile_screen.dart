@@ -25,19 +25,19 @@ class UserProfileScreen extends StatelessWidget {
           20.vGap,
           _buildUserInfo(
             AppLocalizations.of(context)?.username ?? '',
-            userData.name ?? '',
+            userData.name ?? 'userName',
             context,
           ),
           10.vGap,
           _buildUserInfo(
             AppLocalizations.of(context)?.phone ?? '',
-            userData.phone ?? '',
+            userData.phone ?? '09888888888',
             context,
           ),
           10.vGap,
           _buildUserInfo(
             AppLocalizations.of(context)?.email ?? '',
-            userData.email ?? '',
+            userData.email ?? 'user@gmail.com',
             context,
             isLast: true,
           ),

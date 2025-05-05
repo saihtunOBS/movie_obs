@@ -21,7 +21,7 @@ class MiniVideoPlayer {
     BuildContext context,
     String videoUrl,
     bool isPlaying,
-    String id
+    String id,
   ) {
     if (_overlayEntry != null) return;
 
@@ -239,6 +239,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                           right: 0,
                           left: 0,
                           child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
                             onTap: () {
                               context.pushTransparentRoute(
                                 VideoPlayerScreen(url: '', isFirstTime: false),

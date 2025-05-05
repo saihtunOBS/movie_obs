@@ -24,12 +24,12 @@ class HomeBloc extends ChangeNotifier {
   HomeBloc({BuildContext? context}) {
     _context = context;
     token = PersistenceData.shared.getToken();
-    getBanner();
-    getFreeMovie();
-    getAllMovie();
-    getTopTrending();
-    getNewRelease();
-    getAds();
+    // getBanner();
+    // getFreeMovie();
+    // getAllMovie();
+    // getTopTrending();
+    // getNewRelease();
+    // getAds();
   }
 
   getAllMovie() {

@@ -22,9 +22,9 @@ class MovieBloc extends ChangeNotifier {
 
   MovieBloc() {
     token = PersistenceData.shared.getToken();
-    getAllMovie();
-    getMovieSeries();
-    getAllCategory();
+    // getAllMovie();
+    // getMovieSeries();
+    // getAllCategory();
     //getAllGenre();
   }
 

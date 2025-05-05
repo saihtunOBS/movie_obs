@@ -163,7 +163,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-     // bloc.resetControlVisibility();
+      // bloc.resetControlVisibility();
       bloc.currentUrl = widget.url ?? '';
       MiniVideoPlayer.removeMiniPlayer();
       isPlay.value = true;
@@ -195,7 +195,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         widget.videoId,
         _savedVideo?.position,
       );
-     // bloc.resetControlVisibility(isSeek: true);
+      // bloc.resetControlVisibility(isSeek: true);
       bloc.updateListener();
     } else {
       bloc.initializeVideo(widget.url ?? '', videoId: widget.videoId);
@@ -257,9 +257,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
             !videoPlayerController.value.isInitialized
                 ? SizedBox()
-                : showControl == true
-                ? _buildPlayPauseControls()
-                : SizedBox.shrink(),
+                : showControl == false
+                ? SizedBox.shrink()
+                : _buildPlayPauseControls(),
+
             showControl == true ? _buildTopLeftControls() : SizedBox.shrink(),
             showControl == true ? _buildTopRightControls() : SizedBox.shrink(),
             showControl == true ? _buildProgressBar() : SizedBox.shrink(),
@@ -942,6 +943,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                             height: 35,
                             child: GestureDetector(
                               onTap: () {
+                                setState(() {
+                                  showControl = false;
+                                });
+
                                 Navigator.pop(context);
                                 if (selectedQuality == 'Auto') return;
                                 bloc.changeQuality(
