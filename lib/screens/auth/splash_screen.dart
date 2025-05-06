@@ -17,6 +17,8 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
   late Animation<double> _opacityAnimation;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _rotationAnimation;
 
   @override
   void initState() {
@@ -39,9 +41,19 @@ class _SplashScreenState extends State<SplashScreen>
       end: 1,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
-    _controller.forward(); // Start animation
+    _scaleAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
-    Future.delayed(Duration(milliseconds: 2500), () {
+    _rotationAnimation = Tween<double>(
+      begin: -0.2, // slight counter-clockwise
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    _controller.forward();
+
+    Future.delayed(Duration(milliseconds: 2800), () {
       PageNavigator(ctx: context).nextPageOnly(page: AdsScreen());
     });
   }
@@ -60,7 +72,18 @@ class _SplashScreenState extends State<SplashScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(kAppIcon, width: 90, height: 90),
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: _scaleAnimation.value,
+                  child: Transform.rotate(
+                    angle: _rotationAnimation.value,
+                    child: Image.asset(kAppIcon, width: 90, height: 90),
+                  ),
+                );
+              },
+            ),
             const SizedBox(height: 10),
             SlideTransition(
               position: _offsetAnimation,
