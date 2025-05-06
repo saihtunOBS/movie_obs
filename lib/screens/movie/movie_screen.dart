@@ -42,35 +42,42 @@ class _MovieScreenState extends State<MovieScreen> {
           title: Text('Tuu Tu\'s Movies'),
           centerTitle: false,
           actions: [
-            GestureDetector(
-              onTap: () {
-                if (getDeviceType() == 'phone') {
-                  showModalBottomSheet(
-                    useRootNavigator: true,
-                    context: context,
-                    builder: (context) {
-                      return movieFilterSheet((){
-                        
-                      });
+            Consumer<MovieBloc>(
+              builder:
+                  (context, bloc, child) => GestureDetector(
+                    onTap: () {
+                      if (getDeviceType() == 'phone') {
+                        showModalBottomSheet(
+                          useRootNavigator: true,
+                          context: context,
+                          builder: (context) {
+                            return movieFilterSheet(
+                              () {},
+                              filter: (data) {
+                                bloc.filterMovies(data.type.toUpperCase(), data.genre);
+                                return data;
+                              },
+                            );
+                          },
+                        );
+                      } else {
+                        showMovieRightSideSheet(context);
+                      }
                     },
-                  );
-                } else {
-                  showMovieRightSideSheet(context);
-                }
-              },
-              child: Container(
-                width: 42,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Icon(
-                  CupertinoIcons.slider_horizontal_3,
-                  color: kPrimaryColor,
-                  size: 19,
-                ),
-              ),
+                    child: Container(
+                      width: 42,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Icon(
+                        CupertinoIcons.slider_horizontal_3,
+                        color: kPrimaryColor,
+                        size: 19,
+                      ),
+                    ),
+                  ),
             ),
             kMarginMedium2.hGap,
           ],
@@ -205,7 +212,9 @@ class _MovieScreenState extends State<MovieScreen> {
                                               PageNavigator(
                                                 ctx: context,
                                               ).nextPage(
-                                                page: MovieTypeScreen(movie: value,),
+                                                page: MovieTypeScreen(
+                                                  movie: value,
+                                                ),
                                               );
                                             },
                                             child: Padding(

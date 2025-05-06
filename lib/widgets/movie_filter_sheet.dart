@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/movie_bloc.dart';
+import 'package:movie_obs/data/vos/filter_vo.dart';
 import 'package:movie_obs/data/vos/genre_vo.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
@@ -10,8 +11,12 @@ import 'package:provider/provider.dart';
 
 final ValueNotifier<String> selectedType = ValueNotifier('');
 final ValueNotifier<int> selectedGenre = ValueNotifier(-1);
+String genre = '';
 
-Widget movieFilterSheet(VoidCallback onFilter) {
+Widget movieFilterSheet(
+  VoidCallback onFilter, {
+  FilterVo Function(FilterVo data)? filter,
+}) {
   return ChangeNotifierProvider(
     create: (context) => MovieBloc(),
     child: Consumer<MovieBloc>(
@@ -44,7 +49,16 @@ Widget movieFilterSheet(VoidCallback onFilter) {
                     ),
                     Spacer(),
                     GestureDetector(
-                      onTap: onFilter,
+                      onTap: () {
+                        onFilter();
+                        if (filter != null) {
+                          filter(FilterVo(selectedType.value, genre));
+                        }
+                        selectedType.value = '';
+                        selectedGenre.value = -1;
+                        genre = '';
+                        Navigator.pop(context);
+                      },
                       child: Chip(
                         label: Text(
                           'Filter',
@@ -262,6 +276,7 @@ Widget buildGenreSession({List<GenreVO>? genreData}) {
             genreData?.asMap().entries.map((value) {
               return GestureDetector(
                 onTap: () {
+                  genre = value.value.id ?? '';
                   selectedGenre.value = value.key;
                 },
                 child: ValueListenableBuilder(
@@ -304,7 +319,7 @@ void showMovieRightSideSheet(BuildContext context) {
             width: MediaQuery.of(context).size.width / 2,
             height: double.infinity,
             padding: const EdgeInsets.all(20),
-            child: movieFilterSheet((){}),
+            child: movieFilterSheet(() {}),
           ),
         ),
       );
