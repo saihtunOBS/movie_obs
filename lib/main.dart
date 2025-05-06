@@ -11,7 +11,6 @@ import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/screens/auth/splash_screen.dart';
-import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -100,7 +99,7 @@ class _MovieOBSState extends State<MovieOBS> {
                     ? GoogleFonts.notoSansMyanmar().fontFamily
                     : GoogleFonts.poppins().fontFamily,
           ),
-          home: BottomNavScreen(),
+          home: SplashScreen(),
         );
       },
     );

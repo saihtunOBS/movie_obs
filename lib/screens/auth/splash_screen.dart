@@ -28,11 +28,16 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 2200),
+    );
+
+    final curve = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutBack,
     );
 
     _offsetAnimation = Tween<Offset>(
-      begin: Offset(0.0, -1.5),
+      begin: const Offset(0.0, -1.5),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
@@ -42,19 +47,19 @@ class _SplashScreenState extends State<SplashScreen>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
     _scaleAnimation = Tween<double>(
-      begin: 0.5,
+      begin: 0.0, // start from 0 for full scale-in
       end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    ).animate(curve);
 
     _rotationAnimation = Tween<double>(
-      begin: -0.2, // slight counter-clockwise
+      begin: -3.14, // -2π radians = full counter-clockwise rotation
       end: 0.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(curve);
 
     _controller.forward();
 
-    Future.delayed(Duration(milliseconds: 2800), () {
-      PageNavigator(ctx: context).nextPageOnly(page: AdsScreen());
+    Future.delayed(const Duration(milliseconds: 3200), () {
+      PageNavigator(ctx: context).nextPageOnly(page: const AdsScreen());
     });
   }
 
@@ -91,7 +96,7 @@ class _SplashScreenState extends State<SplashScreen>
                 opacity: _opacityAnimation,
                 child: Text(
                   "Tuu Tu TV",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 23,
                     fontWeight: FontWeight.bold,
                     color: kPrimaryColor,
