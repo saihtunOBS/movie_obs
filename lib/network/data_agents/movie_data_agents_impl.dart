@@ -63,9 +63,9 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<MovieResponse> getMovies(String token, String plan,String genre) {
+  Future<MovieResponse> getMovies(String token, String plan, String genre) {
     return movieApi
-        .getMovies(plan, 10,genre)
+        .getMovies(plan, 10, genre)
         .asStream()
         .map((response) => response)
         .first
@@ -75,9 +75,15 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<MovieResponse> getAllMovie(String token, String plan,String genre) {
+  Future<MovieResponse> getAllMovieAndSeries(
+    String token,
+    String plan,
+    String genre,
+    String type,
+    bool getAll
+  ) {
     return movieApi
-        .getAllMovies(plan, 10,genre)
+        .getAllMoviesAndSeries(plan, 10, genre, type,getAll)
         .asStream()
         .map((response) => response)
         .first
@@ -111,9 +117,9 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<MovieResponse> getSeries(String token, String plan,String genre) {
+  Future<MovieResponse> getSeries(String token, String plan, String genre) {
     return movieApi
-        .getSeries(plan, 10,genre)
+        .getSeries(plan, 10, genre)
         .asStream()
         .map((response) => response)
         .first

@@ -28,7 +28,7 @@ abstract class MovieModel {
   );
   Future<SeasonResponse> getSeason(String token);
 
-  Future<MovieResponse> getAllMovie(String token, String plan,String genre);
+  Future<MovieResponse> getAllMovieAndSeries(String token, String plan,String genre,String type,bool getAll);
   Future<MovieResponse> getTopTrending(String token);
   Future<MovieResponse> getNewRelease(String token, String plan);
 

@@ -15,77 +15,82 @@ class ErrorDialogView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: kWhiteColor,
       insetPadding: const EdgeInsets.all(10),
-      // surfaceTintColor: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          20.vGap,
-          Container(
-            padding: const EdgeInsets.all(kMarginMedium2),
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: Colors.red,
-              shape: BoxShape.circle,
+      backgroundColor: kWhiteColor,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            20.vGap,
+            Container(
+              padding: const EdgeInsets.all(kMarginMedium2),
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Icon(Icons.error_outline, color: Colors.white),
+              ),
             ),
-            child: const Center(
-              child: Icon(Icons.error_outline, color: Colors.white),
+            const SizedBox(height: 15),
+            Text(
+              "Oops...",
+              style: TextStyle(
+                color: kBlackColor,
+                fontSize: kTextRegular2x,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: 15),
-          Text(
-            "Oops...",
-            style: TextStyle(
-              color: kBlackColor,
-              fontSize: kTextRegular2x,
-              fontWeight: FontWeight.w600,
+            const SizedBox(height: 10),
+            Text(
+              errorMessage ?? "",
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: kBlackColor,
+                fontSize: kTextRegular13,
+                fontWeight: FontWeight.normal,
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            errorMessage ?? "",
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: kBlackColor,
-              fontSize: kTextRegular,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Center(
-            child: GestureDetector(
-              onTap: () {
-                if(isLogin == true){
-                  tab.value = false;
-                  PageNavigator(
+            const SizedBox(height: 20),
+            Center(
+              child: GestureDetector(
+                onTap: () {
+                  if (isLogin == true) {
+                    tab.value = false;
+                    PageNavigator(
                       ctx: context,
                     ).nextPageOnly(page: LoginScreen());
-                }else {
-                  Navigator.of(context).pop();
-                }
-               
-              },
-              child: Container(
-                height: 40,
-                width: MediaQuery.of(context).size.width / 1.3,
-                decoration: BoxDecoration(
-                  color: kSecondaryColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    'Ok',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Container(
+                  height: 40,
+                  width: MediaQuery.of(context).size.width / 1.3,
+                  decoration: BoxDecoration(
+                    color: kSecondaryColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Ok',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: kTextRegular2x,
+                        color: kWhiteColor,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 20),
-        ],
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }

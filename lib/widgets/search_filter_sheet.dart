@@ -7,9 +7,14 @@ import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
 import 'package:provider/provider.dart';
 
+import '../data/vos/filter_vo.dart';
+
 final ValueNotifier<String> _selectedCategory = ValueNotifier('');
 
-Widget searchFilterSheet() {
+Widget searchFilterSheet(
+  VoidCallback onFilter, {
+  FilterVo Function(FilterVo data)? filter,
+}) {
   return ChangeNotifierProvider(
     create: (context) => MovieBloc(),
     child: Consumer<MovieBloc>(
@@ -48,12 +53,29 @@ Widget searchFilterSheet() {
                               ),
                             ),
                             Spacer(),
-                            Chip(
-                              label: Text(
-                                'Filter',
-                                style: TextStyle(color: kWhiteColor),
+                            GestureDetector(
+                              onTap: () {
+                                if (filter != null) {
+                                  filter(
+                                    FilterVo(
+                                      selectedType.value,
+                                      _selectedCategory.value,
+                                    ),
+                                  );
+                                }
+                                selectedType.value = '';
+                                selectedGenre.value = -1;
+                                _selectedCategory.value = '';
+                                genre = '';
+                                Navigator.pop(context);
+                              },
+                              child: Chip(
+                                label: Text(
+                                  'Filter',
+                                  style: TextStyle(color: kWhiteColor),
+                                ),
+                                backgroundColor: kSecondaryColor,
                               ),
-                              backgroundColor: kSecondaryColor,
                             ),
                             10.hGap,
                             GestureDetector(
@@ -85,7 +107,7 @@ Widget searchFilterSheet() {
                         Divider(thickness: 0.5),
 
                         //type session
-                        buildTypeSession(categoryData: bloc.categoryLists),
+                        buildTypeSession(),
                         Divider(thickness: 0.5),
 
                         20.vGap,
@@ -100,7 +122,7 @@ Widget searchFilterSheet() {
   );
 }
 
-List<String> categoryArray = ['Both', 'Movies', 'Series'];
+List<String> categoryArray = ['Both', 'Movie', 'Series'];
 
 Widget _buildCategorySession() {
   return Column(

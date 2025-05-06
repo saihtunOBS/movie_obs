@@ -25,16 +25,16 @@ class HomeBloc extends ChangeNotifier {
     _context = context;
     token = PersistenceData.shared.getToken();
     getBanner();
-    getFreeMovie();
-    getAllMovie();
+    getFreeMovieAndSeries();
+    getAllMovieAndSeries();
     getTopTrending();
     getNewRelease();
     getAds();
   }
 
-  getAllMovie() {
+  getAllMovieAndSeries() {
     _movieModel
-        .getAllMovie(token, '','')
+        .getAllMovieAndSeries(token, '', '', 'BOTH', false)
         .then((response) {
           movieLists = response.data ?? [];
           notifyListeners();
@@ -54,10 +54,10 @@ class HomeBloc extends ChangeNotifier {
         });
   }
 
-  getFreeMovie() {
+  getFreeMovieAndSeries() {
     _showLoading();
     _movieModel
-        .getAllMovie(token, 'FREE','')
+        .getAllMovieAndSeries(token, 'FREE', '', 'BOTH', false)
         .then((response) {
           freeMovieLists = response.data ?? [];
           _hideLoading();
@@ -93,10 +93,6 @@ class HomeBloc extends ChangeNotifier {
       adsLists = response.data ?? [];
       notifyListeners();
     });
-  }
-
-  filterMovie(String type, String genre){
-
   }
 
   _showLoading() {

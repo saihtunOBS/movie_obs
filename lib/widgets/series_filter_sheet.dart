@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/movie_bloc.dart';
+import 'package:movie_obs/data/vos/filter_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -8,7 +9,10 @@ import 'package:provider/provider.dart';
 
 import '../utils/images.dart';
 
-Widget seriesFilterSheet() {
+Widget seriesFilterSheet(
+  VoidCallback onFilter, {
+  FilterVo Function(FilterVo data)? filter,
+}) {
   return ChangeNotifierProvider(
     create: (context) => MovieBloc(),
     child: Consumer<MovieBloc>(
@@ -40,21 +44,38 @@ Widget seriesFilterSheet() {
                       ),
                     ),
                     Spacer(),
-                    Chip(
-                      label: Text(
-                        'Filter',
-                        style: TextStyle(color: kWhiteColor),
+                    GestureDetector(
+                      onTap: () {
+                        if (filter != null) {
+                          filter(FilterVo(selectedType.value, genre));
+                        }
+                        selectedType.value = '';
+                        selectedGenre.value = -1;
+                        genre = '';
+                        Navigator.pop(context);
+                      },
+                      child: Chip(
+                        label: Text(
+                          'Filter',
+                          style: TextStyle(color: kWhiteColor),
+                        ),
+                        backgroundColor: kSecondaryColor,
                       ),
-                      backgroundColor: kSecondaryColor,
                     ),
                     10.hGap,
-                    Chip(
-                      label: Text(
-                        'Clear',
-                        style: TextStyle(color: kWhiteColor),
+                    GestureDetector(
+                      onTap: () {
+                        selectedType.value = '';
+                        selectedGenre.value = -1;
+                      },
+                      child: Chip(
+                        label: Text(
+                          'Clear',
+                          style: TextStyle(color: kWhiteColor),
+                        ),
+                        backgroundColor: kBlackColor,
+                        side: BorderSide(color: kWhiteColor, width: 0.8),
                       ),
-                      backgroundColor: kBlackColor,
-                      side: BorderSide(color: kWhiteColor, width: 0.8),
                     ),
                   ],
                 ),
@@ -150,7 +171,7 @@ void showSeriesRightSideSheet(BuildContext context) {
             width: MediaQuery.of(context).size.width / 2,
             height: double.infinity,
             padding: const EdgeInsets.all(20),
-            child: seriesFilterSheet(),
+            // child: seriesFilterSheet(),
           ),
         ),
       );

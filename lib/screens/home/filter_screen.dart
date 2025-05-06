@@ -5,6 +5,7 @@ import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
+import 'package:movie_obs/widgets/empty_view.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
 import 'package:movie_obs/widgets/search_filter_sheet.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
@@ -30,7 +31,7 @@ class _FilterScreenState extends State<FilterScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => SearchBloc(movieId: widget.id),
+      create: (context) => SearchBloc(genreId: widget.id),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         appBar: AppBar(
@@ -40,37 +41,53 @@ class _FilterScreenState extends State<FilterScreen> {
           title: Consumer<SearchBloc>(
             builder:
                 (context, bloc, child) =>
-                    Text('${widget.title} (${bloc.movieLists.length})'),
+                    Text('${widget.title} (${bloc.movieSeriesLists.length})'),
           ),
           centerTitle: false,
           actions: [
-            GestureDetector(
-              onTap: () {
-                if (getDeviceType() == 'phone') {
-                  showModalBottomSheet(
-                    useRootNavigator: true,
-                    context: context,
-                    builder: (context) {
-                      return searchFilterSheet();
+            Consumer<SearchBloc>(
+              builder:
+                  (context, bloc, child) => GestureDetector(
+                    onTap: () {
+                      if (getDeviceType() == 'phone') {
+                        showModalBottomSheet(
+                          useRootNavigator: true,
+                          context: context,
+                          builder: (context) {
+                            return searchFilterSheet(
+                              () {},
+                              filter: (data) {
+                                bloc.filter(
+                                  data.plan == 'Pay per view'
+                                      ? 'PAY_PER_VIEW'
+                                      : data.plan.toUpperCase(),
+                                  data.genreOrContentType == ''
+                                      ? 'BOTH'
+                                      : data.genreOrContentType.toUpperCase(),
+                                );
+                                return data;
+                              },
+                            );
+                          },
+                        );
+                      } else {
+                        showMovieRightSideSheet(context);
+                      }
                     },
-                  );
-                } else {
-                  showMovieRightSideSheet(context);
-                }
-              },
-              child: Container(
-                width: 42,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Icon(
-                  CupertinoIcons.slider_horizontal_3,
-                  color: kPrimaryColor,
-                  size: 19,
-                ),
-              ),
+                    child: Container(
+                      width: 42,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Icon(
+                        CupertinoIcons.slider_horizontal_3,
+                        color: kPrimaryColor,
+                        size: 19,
+                      ),
+                    ),
+                  ),
             ),
             kMarginMedium2.hGap,
           ],
@@ -82,11 +99,12 @@ class _FilterScreenState extends State<FilterScreen> {
                 child:
                     bloc.isLoading
                         ? LoadingView()
-                        : Stack(
+                        : bloc.movieSeriesLists.isNotEmpty
+                        ? Stack(
                           children: [
-                            bloc.movieLists.isNotEmpty
+                            bloc.movieSeriesLists.isNotEmpty
                                 ? GridView.builder(
-                                  itemCount: bloc.movieLists.length,
+                                  itemCount: bloc.movieSeriesLists.length,
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount:
@@ -105,14 +123,14 @@ class _FilterScreenState extends State<FilterScreen> {
                                       onTap: () {
                                         PageNavigator(ctx: context).nextPage(
                                           page: MovieTypeScreen(
-                                            movie: bloc.movieLists[index],
+                                            movie: bloc.movieSeriesLists[index],
                                           ),
                                         );
                                       },
                                       child: movieListItem(
                                         isHomeScreen: true,
-                                        movies: bloc.movieLists[index],
-                                        type: bloc.movieLists[index].plan,
+                                        movies: bloc.movieSeriesLists[index],
+                                        type: bloc.movieSeriesLists[index].plan,
                                       ),
                                     );
                                   },
@@ -123,6 +141,12 @@ class _FilterScreenState extends State<FilterScreen> {
                                   ),
                                 ),
                           ],
+                        )
+                        : EmptyView(
+                          reload: () {
+                            bloc.getMovieByGenre();
+                          },
+                          title: 'There is no movie to show.',
                         ),
               ),
         ),

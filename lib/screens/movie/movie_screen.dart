@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
 import '../../extension/page_navigator.dart';
+import '../../widgets/empty_view.dart';
 import '../home/movie_type_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -54,7 +55,10 @@ class _MovieScreenState extends State<MovieScreen> {
                             return movieFilterSheet(
                               () {},
                               filter: (data) {
-                                bloc.filterMovies(data.type.toUpperCase(), data.genre);
+                                bloc.filterMovies(
+                                  data.plan.toUpperCase(),
+                                  data.genreOrContentType,
+                                );
                                 return data;
                               },
                             );
@@ -137,108 +141,120 @@ class _MovieScreenState extends State<MovieScreen> {
         ),
         body: Consumer<MovieBloc>(
           builder:
-              (context, bloc, child) =>
-                  bloc.isLoading
-                      ? LoadingView()
-                      : Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Stack(
-                          children: [
-                            GridView.builder(
-                              itemCount: bloc.movieLists.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                        getDeviceType() == 'phone' ? 2 : 3,
-                                    mainAxisExtent: 200,
-                                    mainAxisSpacing: 10,
-                                    crossAxisSpacing: 10,
-                                  ),
-                              padding: EdgeInsets.only(
-                                left: kMarginMedium2,
-                                right: kMarginMedium2,
-                                bottom: 20,
-                              ),
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    PageNavigator(ctx: context).nextPage(
-                                      page: MovieTypeScreen(
-                                        movie: bloc.movieLists[index],
-                                      ),
-                                    );
-                                  },
-                                  child: movieListItem(
-                                    isHomeScreen: true,
-                                    movies: bloc.movieLists[index],
-                                    type: bloc.movieLists[index].plan,
-                                  ),
-                                );
-                              },
-                            ),
-
-                            bloc.filteredSuggestions.isEmpty
-                                ? SizedBox.shrink()
-                                : Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Colors.black38,
-                                  ),
-                                ),
-                            bloc.filteredSuggestions.isEmpty
-                                ? SizedBox()
-                                : Container(
-                                  width: double.infinity,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: kMarginMedium2,
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: kMarginMedium,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                      kMargin10,
+              (context, bloc, child) => RefreshIndicator(
+                onRefresh: () async {
+                  bloc.getAllMovie();
+                },
+                child:
+                    bloc.isLoading
+                        ? LoadingView()
+                        : bloc.movieLists.isNotEmpty
+                        ? Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Stack(
+                            children: [
+                              GridView.builder(
+                                itemCount: bloc.movieLists.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount:
+                                          getDeviceType() == 'phone' ? 2 : 3,
+                                      mainAxisExtent: 200,
+                                      mainAxisSpacing: 10,
+                                      crossAxisSpacing: 10,
                                     ),
-                                    color: kWhiteColor,
+                                padding: EdgeInsets.only(
+                                  left: kMarginMedium2,
+                                  right: kMarginMedium2,
+                                  bottom: 20,
+                                ),
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      PageNavigator(ctx: context).nextPage(
+                                        page: MovieTypeScreen(
+                                          movie: bloc.movieLists[index],
+                                        ),
+                                      );
+                                    },
+                                    child: movieListItem(
+                                      isHomeScreen: true,
+                                      movies: bloc.movieLists[index],
+                                      type: bloc.movieLists[index].plan,
+                                    ),
+                                  );
+                                },
+                              ),
+
+                              bloc.filteredSuggestions.isEmpty
+                                  ? SizedBox.shrink()
+                                  : Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.black38,
+                                    ),
                                   ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children:
-                                        bloc.filteredSuggestions.map((value) {
-                                          return GestureDetector(
-                                            onTap: () {
-                                              PageNavigator(
-                                                ctx: context,
-                                              ).nextPage(
-                                                page: MovieTypeScreen(
-                                                  movie: value,
-                                                ),
-                                              );
-                                            },
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: kMarginMedium,
-                                                    vertical: kMarginMedium,
+                              bloc.filteredSuggestions.isEmpty
+                                  ? SizedBox()
+                                  : Container(
+                                    width: double.infinity,
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: kMarginMedium2,
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: kMarginMedium,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                        kMargin10,
+                                      ),
+                                      color: kWhiteColor,
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children:
+                                          bloc.filteredSuggestions.map((value) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                PageNavigator(
+                                                  ctx: context,
+                                                ).nextPage(
+                                                  page: MovieTypeScreen(
+                                                    movie: value,
                                                   ),
-                                              child: SubstringHighlight(
-                                                text: value.name ?? '',
-                                                term: _controller.text,
-                                                textStyleHighlight: TextStyle(
-                                                  color: kSecondaryColor,
-                                                  fontWeight: FontWeight.w600,
+                                                );
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: kMarginMedium,
+                                                      vertical: kMarginMedium,
+                                                    ),
+                                                child: SubstringHighlight(
+                                                  text: value.name ?? '',
+                                                  term: _controller.text,
+                                                  textStyleHighlight: TextStyle(
+                                                    color: kSecondaryColor,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          );
-                                        }).toList(),
+                                            );
+                                          }).toList(),
+                                    ),
                                   ),
-                                ),
-                          ],
+                            ],
+                          ),
+                        )
+                        : EmptyView(
+                          title: 'There is no movie to show.',
+                          reload: () {
+                            bloc.getAllMovie();
+                          },
                         ),
-                      ),
+              ),
         ),
       ),
     );

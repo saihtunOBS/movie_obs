@@ -38,8 +38,8 @@ class MovieModelImpl extends MovieModel {
   }
 
   @override
-  Future<MovieResponse> getAllMovie(String token, String plan,String genre) {
-    return movieDataAgent.getAllMovie(token, plan,genre);
+  Future<MovieResponse> getAllMovieAndSeries(String token, String plan,String genre,String type,bool getAll) {
+    return movieDataAgent.getAllMovieAndSeries(token, plan,genre,type,getAll);
   }
 
   @override

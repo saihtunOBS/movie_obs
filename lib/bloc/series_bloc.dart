@@ -27,6 +27,18 @@ class SeriesBloc extends ChangeNotifier {
     });
   }
 
+  filterSeries(String plan, String genre) async {
+    _showLoading();
+    await _movieModel
+        .getSeriesLists(token, plan, genre)
+        .then((response) {
+          seriesLists = response.data ?? [];
+        })
+        .whenComplete(() {
+          _hideLoading();
+        });
+  }
+
   clearFilter() {
     filteredSuggestions.clear();
     notifyListeners();

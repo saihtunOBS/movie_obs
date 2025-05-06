@@ -23,25 +23,21 @@ class MovieBloc extends ChangeNotifier {
   MovieBloc() {
     token = PersistenceData.shared.getToken();
     getAllMovie();
-    getMovieSeries();
     getAllCategory();
     getAllGenre();
   }
 
-  getMovieSeries() {
-    _showLoading();
-    _movieModel.getAllMovie(token, '', '').then((response) {
-      movieSeriesList = response.data ?? [];
-      _hideLoading();
-    });
-  }
 
-  filterMovies(String type, String genre) {
+  filterMovies(String plan, String genre) async {
     _showLoading();
-    _movieModel.getAllMovie(token, type, genre).then((response) {
-      movieSeriesList = response.data ?? [];
-      _hideLoading();
-    });
+    await _movieModel
+        .getMovieLists(token, plan, genre)
+        .then((response) {
+          movieLists = response.data ?? [];
+        })
+        .whenComplete(() {
+          _hideLoading();
+        });
     // movieLists =
     //     movieLists.where((movie) {
     //       return movie.type == type && (movie.genres?.contains(genre) ?? true);

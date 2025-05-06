@@ -54,10 +54,12 @@ abstract class MovieApi {
   Future<List<MovieVO>> getRecommendedMovies(@Path() String id);
 
   @GET(kEndPointHomeMovieAndSeries)
-  Future<MovieResponse> getAllMovies(
+  Future<MovieResponse> getAllMoviesAndSeries(
     @Query('plan') String plan,
     @Query('limit') int limit,
     @Query('genres') String genres,
+    @Query('contentType') String type,
+    @Query('getAll') bool getAll,
   );
 
   @GET(kEndPointAds)
@@ -82,7 +84,7 @@ abstract class MovieApi {
     @Query('include_contents') bool isSeasonInclude,
   );
 
-  @GET(kEndPointMovie)
+  @GET(kEndPointHomeMovieAndSeries)
   Future<MovieResponse> getMovieSeriesByGenre(@Query('genre') String id);
 
   @GET(kEndPointSeason)
@@ -114,15 +116,12 @@ abstract class MovieApi {
 
   @GET(kEndPointPackage)
   Future<PackageResponse> getPackages(
-   @Header(kHeaderAuthorization) String token,
+    @Header(kHeaderAuthorization) String token,
   );
 
   @GET(kEndPointUser)
-  Future<UserVO> getUser(
-   @Header(kHeaderAuthorization) String token,
-  );
+  Future<UserVO> getUser(@Header(kHeaderAuthorization) String token);
 
   @GET(kEndPointFaq)
-  Future<FaqResponse> getFaqs(
-  );
+  Future<FaqResponse> getFaqs();
 }

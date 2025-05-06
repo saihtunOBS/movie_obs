@@ -226,16 +226,20 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getAllMovies(
+  Future<MovieResponse> getAllMoviesAndSeries(
     String plan,
     int limit,
     String genres,
+    String type,
+    bool getAll,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'plan': plan,
       r'limit': limit,
       r'genres': genres,
+      r'contentType': type,
+      r'getAll': getAll,
     };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
@@ -417,7 +421,7 @@ class _MovieApi implements MovieApi {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/videos/movies',
+            '/videos/movies-series',
             queryParameters: queryParameters,
             data: _data,
           )

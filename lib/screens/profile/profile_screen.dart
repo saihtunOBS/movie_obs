@@ -203,7 +203,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       spacing: 5,
                       children: [
                         SizedBox(
-                          width: MediaQuery.of(context).size.width / 2.8,
+                          width: MediaQuery.of(context).size.width * 0.32,
                           child: Text(
                             bloc.userData?.name ?? '',
                             maxLines: 2,

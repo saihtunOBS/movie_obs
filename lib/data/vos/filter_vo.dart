@@ -1,6 +1,6 @@
 class FilterVo {
-  final String type;
-  final String genre;
+  final String plan;
+  final String genreOrContentType;
 
-  FilterVo(this.type, this.genre);
+  FilterVo(this.plan, this.genreOrContentType);
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/bloc/movie_bloc.dart';
+import 'package:movie_obs/bloc/search_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/genre_list_item.dart';
 import 'package:movie_obs/screens/home/filter_screen.dart';
+import 'package:movie_obs/screens/home/movie_type_screen.dart';
+import 'package:movie_obs/screens/series/series_detail_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
@@ -23,7 +25,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MovieBloc(),
+      create: (context) => SearchBloc(),
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
@@ -38,7 +40,7 @@ class _SearchScreenState extends State<SearchScreen> {
             horizontal: kMarginMedium2,
             vertical: kMarginMedium2 - 5,
           ),
-          child: Consumer<MovieBloc>(
+          child: Consumer<SearchBloc>(
             builder:
                 (context, bloc, child) => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +56,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildSearchView(BuildContext context, MovieBloc bloc) {
+  Widget _buildSearchView(BuildContext context, SearchBloc bloc) {
     return Row(
       children: [
         IconButton(
@@ -77,10 +79,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-
-                    onChanged:
-                        (value) =>
-                            bloc.onSearchChanged(value, isSearchScreen: true),
+                    onChanged: (value) => bloc.onSearchChanged(value),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Search Movies & Series',
@@ -105,7 +104,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildGenre(MovieBloc bloc) {
+  Widget _buildGenre(SearchBloc bloc) {
     return Stack(
       children: [
         Column(
@@ -167,17 +166,28 @@ class _SearchScreenState extends State<SearchScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children:
                     bloc.filteredSuggestions.map((value) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: kMarginMedium,
-                          vertical: kMarginMedium,
-                        ),
-                        child: SubstringHighlight(
-                          text: value.name ?? '',
-                          term: _controller.text,
-                          textStyleHighlight: TextStyle(
-                            color: kSecondaryColor,
-                            fontWeight: FontWeight.w600,
+                      return GestureDetector(
+                        onTap: () {
+                          value.type == 'movie'
+                              ? PageNavigator(
+                                ctx: context,
+                              ).nextPage(page: MovieTypeScreen(movie: value))
+                              : PageNavigator(ctx: context).nextPage(
+                                page: SeriesDetailScreen(series: value),
+                              );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: kMarginMedium,
+                            vertical: kMarginMedium,
+                          ),
+                          child: SubstringHighlight(
+                            text: value.name ?? '',
+                            term: _controller.text,
+                            textStyleHighlight: TextStyle(
+                              color: kSecondaryColor,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       );

@@ -17,8 +17,6 @@ Future<bool?> showCommonDialog({
         child: SizedBox.expand(child: dialogWidget),
       );
     },
-    // transitionBuilder: (context, anim1, anim2, child) {
-    //   return FadeTransition(opacity: anim1);
-    // },
+    
   );
 }
