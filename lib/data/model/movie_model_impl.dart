@@ -201,7 +201,7 @@ class MovieModelImpl extends MovieModel {
   @override
   Future<UserVO> updateUser(
     String token,
-    File photo,
+    File? photo,
     String name,
     String email,
     String language,

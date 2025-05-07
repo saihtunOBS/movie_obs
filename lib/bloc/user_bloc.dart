@@ -53,7 +53,7 @@ class UserBloc extends ChangeNotifier {
   Future<UserVO> updateUser(String name, String email) {
     _showLoading();
     return _movieModel
-        .updateUser(token, imgFile!, name, email, '')
+        .updateUser(token, imgFile, name, email, 'ENG')
         .whenComplete(() {
           _hideLoading();
         });

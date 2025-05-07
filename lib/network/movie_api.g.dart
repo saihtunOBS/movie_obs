@@ -822,25 +822,28 @@ class _MovieApi implements MovieApi {
   @override
   Future<UserVO> updateProfile(
     String token,
-    File profilePicture,
+    File? profilePicture,
     String name,
     String email,
     String languagePreference,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = FormData();
-    _data.files.add(
-      MapEntry(
-        'profilePicture',
-        MultipartFile.fromFileSync(
-          profilePicture.path,
-          filename: profilePicture.path.split(Platform.pathSeparator).last,
+    if (profilePicture != null) {
+      _data.files.add(
+        MapEntry(
+          'profilePicture',
+          MultipartFile.fromFileSync(
+            profilePicture.path,
+            filename: profilePicture.path.split(Platform.pathSeparator).last,
+          ),
         ),
-      ),
-    );
+      );
+    }
     _data.fields.add(MapEntry('name', name));
     _data.fields.add(MapEntry('email', email));
     _data.fields.add(MapEntry('languagePreference', languagePreference));

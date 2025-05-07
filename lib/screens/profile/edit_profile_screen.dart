@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
-import 'package:movie_obs/widgets/common_dialog.dart';
 import 'package:movie_obs/widgets/custom_textfield.dart';
-import 'package:movie_obs/widgets/error_dialog.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
+import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/colors.dart';
@@ -42,29 +42,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         backgroundColor: kBackgroundColor,
         body: Consumer<UserBloc>(
           builder:
-              (context, bloc, child) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              (context, bloc, child) => Stack(
                 children: [
-                  _buildAppBar(context, bloc),
-                  30.vGap,
-                  _buildUserInfo(
-                    AppLocalizations.of(context)?.username ?? '',
-                    context,
-                    controller: _nameController,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildAppBar(context, bloc),
+                      30.vGap,
+                      _buildUserInfo(
+                        AppLocalizations.of(context)?.username ?? '',
+                        context,
+                        controller: _nameController,
+                      ),
+                      10.vGap,
+                      _buildUserInfo(
+                        AppLocalizations.of(context)?.phone ?? '',
+                        controller: _phoneController,
+                        context,
+                      ),
+                      10.vGap,
+                      _buildUserInfo(
+                        AppLocalizations.of(context)?.email ?? '',
+                        controller: _emailController,
+                        context,
+                        isLast: true,
+                      ),
+                    ],
                   ),
-                  10.vGap,
-                  _buildUserInfo(
-                    AppLocalizations.of(context)?.phone ?? '',
-                    controller: _phoneController,
-                    context,
-                  ),
-                  10.vGap,
-                  _buildUserInfo(
-                    AppLocalizations.of(context)?.email ?? '',
-                    controller: _emailController,
-                    context,
-                    isLast: true,
-                  ),
+
+                  //loading
+                  bloc.isLoading ? LoadingView() : SizedBox.shrink(),
                 ],
               ),
         ),
@@ -161,17 +168,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         _nameController.text.trim(),
                         _emailController.text.trim(),
                       )
-                      // ignore: body_might_complete_normally_catch_error
-                      .catchError((error) {
-                        showCommonDialog(
-                          context: context,
-                          dialogWidget: ErrorDialogView(
-                            errorMessage: error.toString(),
-                          ),
-                        );
-                      })
-                      .whenComplete(() {
+                      .then((_) {
                         Navigator.of(context).pop();
+                      })
+                      .catchError((error) {
+                        ToastService.warningToast(error.toString());
                       });
                 },
                 child: Container(

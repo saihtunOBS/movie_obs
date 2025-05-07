@@ -165,7 +165,7 @@ abstract class MovieApi {
   @PUT(kEndPointUpdateUser)
   Future<UserVO> updateProfile(
     @Header(kHeaderAuthorization) String token,
-    @Part() File profilePicture,
+    @Part() File? profilePicture,
     @Part() String name,
     @Part() String email,
     @Part() String languagePreference,
