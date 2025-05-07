@@ -78,7 +78,7 @@ class UserProfileScreen extends StatelessWidget {
                 onTap: () {
                   PageNavigator(
                     ctx: context,
-                  ).nextPage(page: EditProfileScreen());
+                  ).nextPage(page: EditProfileScreen(userData: userData));
                 },
                 child: Hero(
                   tag: 'animate',

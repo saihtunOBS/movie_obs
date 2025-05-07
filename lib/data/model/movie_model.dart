@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:movie_obs/data/vos/movie_vo.dart' show MovieVO;
 import 'package:movie_obs/data/vos/user_vo.dart';
+import 'package:movie_obs/network/requests/history_request.dart' show HistoryRequest;
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 
 import '../../network/requests/send_otp_request.dart' show SendOtpRequest;
 import '../../network/requests/verify_otp_request.dart';
+import '../../network/requests/watchlist_request.dart';
 import '../../network/responses/actor_data_response.dart';
 import '../../network/responses/ads_banner_response.dart';
 import '../../network/responses/category_response.dart';
@@ -14,6 +18,7 @@ import '../../network/responses/movie_detail_response.dart';
 import '../../network/responses/package_response.dart';
 import '../../network/responses/season_episode_response.dart';
 import '../../network/responses/season_response.dart';
+import '../../network/responses/watchlist_history_response.dart';
 
 abstract class MovieModel {
   Future<OTPResponse> sendOtp(SendOtpRequest request);
@@ -50,4 +55,29 @@ abstract class MovieModel {
   Future<PackageResponse> getAllPackage(String token);
   Future<UserVO> getUser(String token);
   Future<FaqResponse> getFaqs();
+
+  Future<WatchlistHistoryResponse> getWatchlist(
+    String token,
+    String plan,
+    String genres,
+    String type,
+    bool getAll,
+    String user,
+  );
+  Future<WatchlistHistoryResponse> getHistory(
+    String token,
+    bool getAll,
+    String user,
+  );
+
+  Future<void> toggleWatchlist(String token, WatchlistRequest request);
+  Future<void> toggleHistory(String token, HistoryRequest request);
+
+  Future<UserVO> updateUser(
+    String token,
+    File photo,
+    String name,
+    String email,
+    String language,
+  );
 }

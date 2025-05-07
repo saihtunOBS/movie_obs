@@ -50,6 +50,15 @@ class UserBloc extends ChangeNotifier {
         });
   }
 
+  Future<UserVO> updateUser(String name, String email) {
+    _showLoading();
+    return _movieModel
+        .updateUser(token, imgFile!, name, email, '')
+        .whenComplete(() {
+          _hideLoading();
+        });
+  }
+
   void selectImage(int type) async {
     final ImagePicker picker = ImagePicker();
     final XFile? img = await picker.pickImage(source: ImageSource.values[type]);

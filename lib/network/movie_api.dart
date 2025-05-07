@@ -1,10 +1,14 @@
+import 'dart:io' show File, Platform;
+
 import 'package:dio/dio.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/api_constants.dart';
+import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart'
     show SendOtpRequest;
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
@@ -16,6 +20,7 @@ import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
+import 'package:movie_obs/network/responses/watchlist_history_response.dart';
 import 'package:retrofit/error_logger.dart';
 import 'package:retrofit/http.dart';
 
@@ -124,4 +129,45 @@ abstract class MovieApi {
 
   @GET(kEndPointFaq)
   Future<FaqResponse> getFaqs();
+
+  @GET(kEndPointWatchLists)
+  Future<WatchlistHistoryResponse> getWatchLists(
+    @Header(kHeaderAuthorization) String token,
+    @Query('plan') String plan,
+    @Query('limit') int limit,
+    @Query('genres') String genres,
+    @Query('contentType') String type,
+    @Query('getAll') bool getAll,
+    @Query('user') String user,
+  );
+
+  @POST(kEndPointWatchlistToggle)
+  Future<void> toggleWatchList(
+    @Header(kHeaderAuthorization) String token,
+    @Body() WatchlistRequest request,
+  );
+
+  @GET(kEndPointHistory)
+  Future<WatchlistHistoryResponse> getHistory(
+    @Header(kHeaderAuthorization) String token,
+    @Query('limit') int limit,
+    @Query('getAll') bool getAll,
+    @Query('user') String user,
+  );
+
+  @POST(kEndPointHistoryToggle)
+  Future<void> toggleHistory(
+    @Header(kHeaderAuthorization) String token,
+    @Body() HistoryRequest request,
+  );
+
+  @MultiPart()
+  @PUT(kEndPointUpdateUser)
+  Future<UserVO> updateProfile(
+    @Header(kHeaderAuthorization) String token,
+    @Part() File profilePicture,
+    @Part() String name,
+    @Part() String email,
+    @Part() String languagePreference,
+  );
 }

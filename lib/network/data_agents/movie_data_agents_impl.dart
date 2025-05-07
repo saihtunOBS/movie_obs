@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
@@ -6,8 +7,10 @@ import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/exception/custom_exception.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/movie_api.dart';
+import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
@@ -19,6 +22,8 @@ import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
+import 'package:movie_obs/network/responses/watchlist_history_response.dart';
+import 'package:movie_obs/widgets/movie_filter_sheet.dart';
 
 import '../../data/vos/error_vo.dart';
 
@@ -80,10 +85,10 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     String plan,
     String genre,
     String type,
-    bool getAll
+    bool getAll,
   ) {
     return movieApi
-        .getAllMoviesAndSeries(plan, 10, genre, type,getAll)
+        .getAllMoviesAndSeries(plan, 10, genre, type, getAll)
         .asStream()
         .map((response) => response)
         .first
@@ -318,6 +323,83 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   Future<FaqResponse> getFaq() {
     return movieApi
         .getFaqs()
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<WatchlistHistoryResponse> getHistory(
+    String token,
+    bool getAll,
+    String user,
+  ) {
+    return movieApi
+        .getHistory(token, 10, getAll, user)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<WatchlistHistoryResponse> getWatchlist(
+    String token,
+    String plan,
+    String genres,
+    String type,
+    bool getAll,
+    String user,
+  ) {
+    return movieApi
+        .getWatchLists(token, plan, 10, genre, user, getAll, user)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<void> toggleHistory(String token, HistoryRequest request) {
+    return movieApi
+        .toggleHistory(token, request)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<void> toggleWatchlist(String token, WatchlistRequest request) {
+    return movieApi
+        .toggleWatchList(token, request)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<UserVO> updateUser(
+    String token,
+    File photo,
+    String name,
+    String email,
+    String language,
+  ) {
+    return movieApi
+        .updateProfile(token, photo, name, email, language)
         .asStream()
         .map((response) => response)
         .first

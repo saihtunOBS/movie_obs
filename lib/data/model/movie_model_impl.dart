@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart' show MovieVO;
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents_impl.dart';
+import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
@@ -16,6 +20,7 @@ import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
+import 'package:movie_obs/network/responses/watchlist_history_response.dart';
 
 class MovieModelImpl extends MovieModel {
   static final MovieModelImpl _singleton = MovieModelImpl._internal();
@@ -38,13 +43,25 @@ class MovieModelImpl extends MovieModel {
   }
 
   @override
-  Future<MovieResponse> getAllMovieAndSeries(String token, String plan,String genre,String type,bool getAll) {
-    return movieDataAgent.getAllMovieAndSeries(token, plan,genre,type,getAll);
+  Future<MovieResponse> getAllMovieAndSeries(
+    String token,
+    String plan,
+    String genre,
+    String type,
+    bool getAll,
+  ) {
+    return movieDataAgent.getAllMovieAndSeries(
+      token,
+      plan,
+      genre,
+      type,
+      getAll,
+    );
   }
 
   @override
-  Future<MovieResponse> getMovieLists(String token, String plan,String genre) {
-    return movieDataAgent.getMovies(token, plan,genre);
+  Future<MovieResponse> getMovieLists(String token, String plan, String genre) {
+    return movieDataAgent.getMovies(token, plan, genre);
   }
 
   @override
@@ -58,8 +75,12 @@ class MovieModelImpl extends MovieModel {
   }
 
   @override
-  Future<MovieResponse> getSeriesLists(String token, String plan,String genre) {
-    return movieDataAgent.getSeries(token, plan,genre);
+  Future<MovieResponse> getSeriesLists(
+    String token,
+    String plan,
+    String genre,
+  ) {
+    return movieDataAgent.getSeries(token, plan, genre);
   }
 
   @override
@@ -144,5 +165,47 @@ class MovieModelImpl extends MovieModel {
   @override
   Future<FaqResponse> getFaqs() {
     return movieDataAgent.getFaq();
+  }
+
+  @override
+  Future<WatchlistHistoryResponse> getHistory(
+    String token,
+    bool getAll,
+    String user,
+  ) {
+    return movieDataAgent.getHistory(token, getAll, user);
+  }
+
+  @override
+  Future<WatchlistHistoryResponse> getWatchlist(
+    String token,
+    String plan,
+    String genres,
+    String type,
+    bool getAll,
+    String user,
+  ) {
+    return movieDataAgent.getWatchlist(token, plan, genres, type, getAll, user);
+  }
+
+  @override
+  Future<void> toggleHistory(String token, HistoryRequest request) {
+    return movieDataAgent.toggleHistory(token, request);
+  }
+
+  @override
+  Future<void> toggleWatchlist(String token, WatchlistRequest request) {
+    return movieDataAgent.toggleWatchlist(token, request);
+  }
+
+  @override
+  Future<UserVO> updateUser(
+    String token,
+    File photo,
+    String name,
+    String email,
+    String language,
+  ) {
+    return movieDataAgent.updateUser(token, photo, name, email, language);
   }
 }

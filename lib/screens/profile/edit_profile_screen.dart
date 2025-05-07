@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
+import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/widgets/common_dialog.dart';
 import 'package:movie_obs/widgets/custom_textfield.dart';
+import 'package:movie_obs/widgets/error_dialog.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/colors.dart';
@@ -10,9 +13,26 @@ import '../../utils/dimens.dart';
 import '../../utils/images.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+class EditProfileScreen extends StatefulWidget {
+  const EditProfileScreen({super.key, required this.userData});
+  final UserVO userData;
 
-class EditProfileScreen extends StatelessWidget {
-  const EditProfileScreen({super.key});
+  @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+final _nameController = TextEditingController();
+final _phoneController = TextEditingController();
+final _emailController = TextEditingController();
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  @override
+  void initState() {
+    _nameController.text = widget.userData.name ?? '';
+    _phoneController.text = widget.userData.phone ?? '';
+    _emailController.text = widget.userData.email ?? '';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,28 +40,39 @@ class EditProfileScreen extends StatelessWidget {
       create: (context) => UserBloc(),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildAppBar(context),
-            30.vGap,
-            _buildUserInfo(AppLocalizations.of(context)?.username ?? '', AppLocalizations.of(context)?.username ?? '', context),
-            10.vGap,
-            _buildUserInfo(AppLocalizations.of(context)?.phone ?? '', '+95 0976666677', context),
-            10.vGap,
-            _buildUserInfo(
-              AppLocalizations.of(context)?.email ?? '',
-              'user@gmail.com',
-              context,
-              isLast: true,
-            ),
-          ],
+        body: Consumer<UserBloc>(
+          builder:
+              (context, bloc, child) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildAppBar(context, bloc),
+                  30.vGap,
+                  _buildUserInfo(
+                    AppLocalizations.of(context)?.username ?? '',
+                    context,
+                    controller: _nameController,
+                  ),
+                  10.vGap,
+                  _buildUserInfo(
+                    AppLocalizations.of(context)?.phone ?? '',
+                    controller: _phoneController,
+                    context,
+                  ),
+                  10.vGap,
+                  _buildUserInfo(
+                    AppLocalizations.of(context)?.email ?? '',
+                    controller: _emailController,
+                    context,
+                    isLast: true,
+                  ),
+                ],
+              ),
         ),
       ),
     );
   }
 
-  Widget _buildAppBar(BuildContext context) {
+  Widget _buildAppBar(BuildContext context, UserBloc bloc) {
     return Stack(
       children: [
         Padding(
@@ -125,7 +156,23 @@ class EditProfileScreen extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.pop(context);
+                  bloc
+                      .updateUser(
+                        _nameController.text.trim(),
+                        _emailController.text.trim(),
+                      )
+                      // ignore: body_might_complete_normally_catch_error
+                      .catchError((error) {
+                        showCommonDialog(
+                          context: context,
+                          dialogWidget: ErrorDialogView(
+                            errorMessage: error.toString(),
+                          ),
+                        );
+                      })
+                      .whenComplete(() {
+                        Navigator.of(context).pop();
+                      });
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -134,7 +181,10 @@ class EditProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(kMarginMedium + 8),
                   ),
                   child: Center(
-                    child: Text(AppLocalizations.of(context)?.save ?? '', style: TextStyle(color: kWhiteColor)),
+                    child: Text(
+                      AppLocalizations.of(context)?.save ?? '',
+                      style: TextStyle(color: kWhiteColor),
+                    ),
                   ),
                 ),
               ),
@@ -196,9 +246,9 @@ class EditProfileScreen extends StatelessWidget {
 
   Widget _buildUserInfo(
     String title,
-    String name,
     BuildContext context, {
     bool? isLast,
+    TextEditingController? controller,
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -218,7 +268,7 @@ class EditProfileScreen extends StatelessWidget {
             ),
           ),
           5.vGap,
-          CustomTextfield(hint: title),
+          CustomTextfield(hint: title, controller: controller),
           10.vGap,
         ],
       ),
