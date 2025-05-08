@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/utils/validator.dart';
+import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:movie_obs/widgets/custom_textfield.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
@@ -24,6 +27,7 @@ class EditProfileScreen extends StatefulWidget {
 final _nameController = TextEditingController();
 final _phoneController = TextEditingController();
 final _emailController = TextEditingController();
+final _formKey = GlobalKey<FormState>();
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
@@ -44,30 +48,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           builder:
               (context, bloc, child) => Stack(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildAppBar(context, bloc),
-                      30.vGap,
-                      _buildUserInfo(
-                        AppLocalizations.of(context)?.username ?? '',
-                        context,
-                        controller: _nameController,
-                      ),
-                      10.vGap,
-                      _buildUserInfo(
-                        AppLocalizations.of(context)?.phone ?? '',
-                        controller: _phoneController,
-                        context,
-                      ),
-                      10.vGap,
-                      _buildUserInfo(
-                        AppLocalizations.of(context)?.email ?? '',
-                        controller: _emailController,
-                        context,
-                        isLast: true,
-                      ),
-                    ],
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildAppBar(context, bloc),
+                        30.vGap,
+                        _buildUserInfo(
+                          AppLocalizations.of(context)?.username ?? '',
+                          nameValidator,
+                          TextInputType.text,
+                          controller: _nameController,
+                          context,
+                        ),
+                        10.vGap,
+                        IgnorePointer(
+                          ignoring: true,
+                          child: _buildUserInfo(
+                            AppLocalizations.of(context)?.phone ?? '',
+                            phoneValidator,
+                            controller: _phoneController,
+                            TextInputType.phone,
+                            context,
+                          ),
+                        ),
+                        10.vGap,
+                        _buildUserInfo(
+                          AppLocalizations.of(context)?.email ?? '',
+                          emailValidator,
+                          controller: _emailController,
+                          TextInputType.emailAddress,
+                          context,
+                        ),
+                      ],
+                    ),
                   ),
 
                   //loading
@@ -126,10 +141,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             color: Colors.grey.withValues(alpha: 0.3),
                           ),
                           child:
-                              bloc.imgFile == null
+                              bloc.imgFile != null
+                                  ? Image.file(bloc.imgFile!, fit: BoxFit.cover)
+                                  : widget.userData.profilePictureUrl == ''
                                   ? Image.asset(kProfileCoverIcon)
-                                  : Image.file(bloc.imgFile!, fit: BoxFit.fill),
+                                  : cacheImage(
+                                    widget.userData.profilePictureUrl,
+                                  ),
                         ),
+
                         Positioned(
                           bottom: 0,
                           left: 0,
@@ -163,18 +183,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             children: [
               GestureDetector(
                 onTap: () {
-                  bloc
-                      .updateUser(
-                        _nameController.text.trim(),
-                        _emailController.text.trim(),
-                      )
-                      .then((_) {
-                        bloc.getUser(context);
-                        Navigator.of(context).pop();
-                      })
-                      .catchError((error) {
-                        ToastService.warningToast(error.toString());
-                      });
+                  if (_formKey.currentState?.validate() ?? false) {
+                    bloc
+                        .updateUser(
+                          _nameController.text.trim(),
+                          _emailController.text.trim(),
+                        )
+                        .then((_) {
+                          bloc.updateToken();
+                          bloc.getUser(context);
+                          Future.delayed(Duration(milliseconds: 300), () {
+                            Navigator.of(context).pop();
+                          });
+                        })
+                        .catchError((error) {
+                          ToastService.warningToast(error.toString());
+                        });
+                  }
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -248,8 +273,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Widget _buildUserInfo(
     String title,
+    String? Function(String?)? validator,
+    TextInputType type,
     BuildContext context, {
-    bool? isLast,
     TextEditingController? controller,
   }) {
     return Padding(
@@ -270,7 +296,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           ),
           5.vGap,
-          CustomTextfield(hint: title, controller: controller),
+          CustomTextfield(
+            hint: title,
+            keyboardType: type,
+            controller: controller,
+            validator: validator,
+          ),
           10.vGap,
         ],
       ),

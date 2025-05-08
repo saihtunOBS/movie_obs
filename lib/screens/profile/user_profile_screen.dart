@@ -4,6 +4,7 @@ import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/profile/edit_profile_screen.dart';
+import 'package:movie_obs/widgets/cache_image.dart';
 
 import '../../utils/colors.dart';
 import '../../utils/dimens.dart';
@@ -134,7 +135,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         color: Colors.grey.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(19),
                       ),
-                      child: Center(child: Image.asset(kProfileCoverIcon)),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(19),
+                        child:
+                            data.profilePictureUrl == ''
+                                ? Image.asset(kProfileCoverIcon)
+                                : cacheImage(data.profilePictureUrl ?? ''),
+                      ),
                     ),
                     Align(
                       alignment: Alignment.center,

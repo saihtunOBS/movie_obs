@@ -8,6 +8,7 @@ import 'package:movie_obs/screens/auth/change_language_screen.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
 import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/screens/profile/faq_screen.dart';
+import 'package:movie_obs/screens/profile/history_screen.dart';
 import 'package:movie_obs/screens/profile/promotion_screen.dart';
 import 'package:movie_obs/screens/profile/user_profile_screen.dart';
 import 'package:movie_obs/screens/profile/watch_list_screen.dart';
@@ -106,7 +107,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 PageNavigator(
                                   ctx: context,
                                 ).nextPage(page: WatchListScreen());
-
+                              case 3:
+                                PageNavigator(
+                                  ctx: context,
+                                ).nextPage(page: HistoryScreen());
                               case 4:
                                 PageNavigator(
                                   ctx: context,
@@ -184,7 +188,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         spacing: 5,
                         children: [
                           Container(
-                            padding: EdgeInsets.all(10),
+                            margin: EdgeInsets.only(
+                              left:
+                                  userData.profilePictureUrl == ''
+                                      ? 0
+                                      : kMarginMedium2,
+                            ),
+                            padding:
+                                userData.profilePictureUrl == ''
+                                    ? EdgeInsets.all(10)
+                                    : EdgeInsets.all(0),
                             decoration: BoxDecoration(
                               color: Colors.grey.withValues(alpha: 0.3),
                               borderRadius: BorderRadius.circular(
@@ -200,8 +213,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         height: 30,
                                       )
                                       : SizedBox(
-                                        width: 30,
-                                        height: 30,
+                                        width: 50,
+                                        height: 50,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(
                                             10,
@@ -276,6 +289,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
+                  kMarginMedium.hGap,
                 ],
               ),
               10.vGap,

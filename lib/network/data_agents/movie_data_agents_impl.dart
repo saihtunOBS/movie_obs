@@ -399,7 +399,14 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     String language,
   ) {
     return movieApi
-        .updateProfile(token, photo, name, email, language)
+        .updateProfile(
+          token,
+          'multipart/form-data',
+          photo,
+          name,
+          email,
+          language,
+        )
         .asStream()
         .map((response) => response)
         .first

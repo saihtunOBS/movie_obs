@@ -40,7 +40,7 @@ class UserBloc extends ChangeNotifier {
           notifyListeners();
         })
         .catchError((_) {
-          PersistenceData.shared.clearToken();
+          //PersistenceData.shared.clearToken();
           showCommonDialog(
             context: context!,
             isBarrierDismiss: false,
@@ -55,7 +55,7 @@ class UserBloc extends ChangeNotifier {
         });
   }
 
-  Future<UserVO> updateUser(String name, String email) {
+  Future<UserVO> updateUser(String name, String email) async {
     _showLoading();
     return _movieModel
         .updateUser(token, imgFile, name, email, 'ENG')

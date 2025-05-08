@@ -13,6 +13,7 @@ import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/screens/auth/splash_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
+import 'package:movie_obs/utils/dimens.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -80,7 +81,10 @@ class _MovieOBSState extends State<MovieOBS> {
             );
           },
           theme: ThemeData(
-            appBarTheme: AppBarTheme(titleSpacing: 0),
+            appBarTheme: AppBarTheme(
+              titleSpacing: 0,
+              titleTextStyle: TextStyle(fontSize: kTextRegular3x),
+            ),
             scaffoldBackgroundColor: kBlackColor,
             actionIconTheme: ActionIconThemeData(
               backButtonIconBuilder:

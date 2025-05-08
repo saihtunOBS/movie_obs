@@ -11,7 +11,7 @@ Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
     decoration: BoxDecoration(
       color: Colors.grey.withValues(alpha: 0.2),
       borderRadius: BorderRadius.circular(15),
-      border: Border.all(color: Colors.grey, width: 0.3),
+      // border: Border.all(color: Colors.grey, width: 0.3),
     ),
     child: Stack(
       clipBehavior: Clip.none,
@@ -93,7 +93,10 @@ Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text('/ for ${data.duration} days', style: TextStyle(fontSize: 12)),
+                    Text(
+                      '/ for ${data.duration} days',
+                      style: TextStyle(fontSize: 12),
+                    ),
                   ],
                 ),
               ],

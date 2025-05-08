@@ -39,13 +39,14 @@ class _HomeScreenState extends State<HomeScreen> {
           title: Row(
             spacing: 10,
             children: [
+              kMarginMedium.hGap,
               Image.asset(kAppIcon, width: 40, height: 40),
               Text(
                 'Tuu Tu TV',
                 style: TextStyle(
                   color: kPrimaryColor,
                   fontWeight: FontWeight.bold,
-                  fontSize: kTextRegular3x,
+                  fontSize: kTextRegular3x + 3,
                 ),
               ),
             ],

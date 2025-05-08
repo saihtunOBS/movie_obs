@@ -34,8 +34,11 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
   @override
   void initState() {
-    context.read<UserBloc>().updateToken();
-    context.read<UserBloc>().getUser(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<UserBloc>().updateToken();
+      context.read<UserBloc>().getUser(context);
+    });
+
     super.initState();
   }
 

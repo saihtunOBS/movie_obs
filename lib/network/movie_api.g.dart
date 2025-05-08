@@ -822,6 +822,7 @@ class _MovieApi implements MovieApi {
   @override
   Future<UserVO> updateProfile(
     String token,
+    String contentType,
     File? profilePicture,
     String name,
     String email,
@@ -830,7 +831,10 @@ class _MovieApi implements MovieApi {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{r'Authorization': token};
+    final _headers = <String, dynamic>{
+      r'Authorization': token,
+      r'Content-Type': contentType,
+    };
     _headers.removeWhere((k, v) => v == null);
     final _data = FormData();
     if (profilePicture != null) {
@@ -840,6 +844,7 @@ class _MovieApi implements MovieApi {
           MultipartFile.fromFileSync(
             profilePicture.path,
             filename: profilePicture.path.split(Platform.pathSeparator).last,
+            contentType: DioMediaType.parse('image/jpg'),
           ),
         ),
       );

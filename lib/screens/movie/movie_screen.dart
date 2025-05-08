@@ -40,7 +40,10 @@ class _MovieScreenState extends State<MovieScreen> {
           backgroundColor: kBackgroundColor,
           surfaceTintColor: kBackgroundColor,
           foregroundColor: kWhiteColor,
-          title: Text('Tuu Tu\'s Movies'),
+          title: Padding(
+            padding: const EdgeInsets.only(left: kMarginMedium2),
+            child: Text('Tuu Tu\'s Movies'),
+          ),
           centerTitle: false,
           actions: [
             Consumer<MovieBloc>(

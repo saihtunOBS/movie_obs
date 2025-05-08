@@ -133,6 +133,7 @@ abstract class MovieApi {
   @GET(kEndPointWatchLists)
   Future<WatchlistHistoryResponse> getWatchLists(
     @Header(kHeaderAuthorization) String token,
+
     @Query('plan') String plan,
     @Query('limit') int limit,
     @Query('genres') String genres,
@@ -165,7 +166,8 @@ abstract class MovieApi {
   @PUT(kEndPointUpdateUser)
   Future<UserVO> updateProfile(
     @Header(kHeaderAuthorization) String token,
-    @Part() File? profilePicture,
+    @Header(kHeaderContentType) String contentType,
+    @Part(contentType: "image/jpg") File? profilePicture,
     @Part() String name,
     @Part() String email,
     @Part() String languagePreference,

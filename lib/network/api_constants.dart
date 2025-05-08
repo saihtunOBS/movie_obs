@@ -30,3 +30,4 @@ const String kEndPointHistoryToggle = '/history/toggle';
 
 const String kHeaderAuthorization = "Authorization";
 const String kHeaderAcceptLanguage = "Accept-Language";
+const String kHeaderContentType = "Content-Type";
