@@ -5,7 +5,7 @@ import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/genre_list_item.dart';
 import 'package:movie_obs/screens/home/filter_screen.dart';
-import 'package:movie_obs/screens/home/movie_type_screen.dart';
+import 'package:movie_obs/screens/home/movie_detail_screen.dart';
 import 'package:movie_obs/screens/series/series_detail_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -29,7 +29,10 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
-          title: Image.asset(kAppIcon, width: 40, height: 40),
+          title: Padding(
+            padding: const EdgeInsets.only(left: kMarginMedium2),
+            child: Image.asset(kAppIcon, width: 40, height: 40),
+          ),
           automaticallyImplyLeading: false,
           backgroundColor: kBlackColor,
           surfaceTintColor: kBlackColor,
@@ -171,7 +174,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           value.type == 'movie'
                               ? PageNavigator(
                                 ctx: context,
-                              ).nextPage(page: MovieTypeScreen(movie: value))
+                              ).nextPage(page: MovieDetailScreen(movie: value))
                               : PageNavigator(ctx: context).nextPage(
                                 page: SeriesDetailScreen(series: value),
                               );

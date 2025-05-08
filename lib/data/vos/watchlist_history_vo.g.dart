@@ -15,6 +15,14 @@ WatchlistHistoryVo _$WatchlistHistoryVoFromJson(Map<String, dynamic> json) =>
           json['reference'] == null
               ? null
               : MovieVO.fromJson(json['reference'] as Map<String, dynamic>),
+      createdAt:
+          json['createdAt'] == null
+              ? null
+              : DateTime.parse(json['createdAt'] as String),
+      updatedAt:
+          json['updatedAt'] == null
+              ? null
+              : DateTime.parse(json['updatedAt'] as String),
     );
 
 Map<String, dynamic> _$WatchlistHistoryVoToJson(WatchlistHistoryVo instance) =>
@@ -23,4 +31,6 @@ Map<String, dynamic> _$WatchlistHistoryVoToJson(WatchlistHistoryVo instance) =>
       'user': instance.user,
       'type': instance.type,
       'reference': instance.reference,
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'updatedAt': instance.updatedAt?.toIso8601String(),
     };

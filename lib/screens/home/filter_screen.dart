@@ -12,7 +12,7 @@ import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/page_navigator.dart';
-import '../home/movie_type_screen.dart';
+import 'movie_detail_screen.dart';
 
 class FilterScreen extends StatefulWidget {
   const FilterScreen({super.key, required this.id, required this.title});
@@ -122,7 +122,7 @@ class _FilterScreenState extends State<FilterScreen> {
                                     return GestureDetector(
                                       onTap: () {
                                         PageNavigator(ctx: context).nextPage(
-                                          page: MovieTypeScreen(
+                                          page: MovieDetailScreen(
                                             movie: bloc.movieSeriesLists[index],
                                           ),
                                         );

@@ -11,6 +11,8 @@ import 'package:movie_obs/data/vos/user_vo.dart';
 import '../widgets/common_dialog.dart';
 import '../widgets/error_dialog.dart';
 
+final ValueNotifier<UserVO> userDataListener = ValueNotifier(UserVO());
+
 class UserBloc extends ChangeNotifier {
   bool isLoading = false;
   bool isDisposed = false;
@@ -18,26 +20,29 @@ class UserBloc extends ChangeNotifier {
   UserVO? userData;
   File? imgFile;
   final MovieModel _movieModel = MovieModelImpl();
-  BuildContext? myContext;
 
   UserBloc({BuildContext? context}) {
-    myContext = context;
-    token = PersistenceData.shared.getToken();
-    getUser();
+    updateToken();
   }
 
-  getUser() {
+  updateToken() {
+    token = PersistenceData.shared.getToken();
+    notifyListeners();
+  }
+
+  getUser(BuildContext? context) {
     _showLoading();
     _movieModel
         .getUser(token)
         .then((response) {
           userData = response;
+          userDataListener.value = response;
           notifyListeners();
         })
         .catchError((_) {
           PersistenceData.shared.clearToken();
           showCommonDialog(
-            context: myContext!,
+            context: context!,
             isBarrierDismiss: false,
             dialogWidget: ErrorDialogView(
               errorMessage: 'Session Expired. Please Login Again',

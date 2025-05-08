@@ -12,7 +12,7 @@ import 'package:substring_highlight/substring_highlight.dart';
 
 import '../../extension/page_navigator.dart';
 import '../../widgets/empty_view.dart';
-import '../home/movie_type_screen.dart';
+import '../home/movie_detail_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MovieScreen extends StatefulWidget {
@@ -172,7 +172,7 @@ class _MovieScreenState extends State<MovieScreen> {
                                   return GestureDetector(
                                     onTap: () {
                                       PageNavigator(ctx: context).nextPage(
-                                        page: MovieTypeScreen(
+                                        page: MovieDetailScreen(
                                           movie: bloc.movieLists[index],
                                         ),
                                       );
@@ -221,7 +221,7 @@ class _MovieScreenState extends State<MovieScreen> {
                                                 PageNavigator(
                                                   ctx: context,
                                                 ).nextPage(
-                                                  page: MovieTypeScreen(
+                                                  page: MovieDetailScreen(
                                                     movie: value,
                                                   ),
                                                 );

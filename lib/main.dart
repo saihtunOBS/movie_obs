@@ -8,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
+import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/screens/auth/splash_screen.dart';
@@ -29,6 +30,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => VideoBloc()),
         ChangeNotifierProvider(create: (_) => HomeBloc()),
+        ChangeNotifierProvider(create: (_) => UserBloc()),
       ],
       child: const MovieOBS(),
     ),
@@ -78,6 +80,7 @@ class _MovieOBSState extends State<MovieOBS> {
             );
           },
           theme: ThemeData(
+            appBarTheme: AppBarTheme(titleSpacing: 0),
             scaffoldBackgroundColor: kBlackColor,
             actionIconTheme: ActionIconThemeData(
               backButtonIconBuilder:

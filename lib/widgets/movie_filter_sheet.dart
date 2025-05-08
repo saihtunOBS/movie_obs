@@ -52,7 +52,7 @@ Widget movieFilterSheet(
                       onTap: () {
                         onFilter();
                         if (filter != null) {
-                          filter(FilterVo(selectedType.value, genre));
+                          filter(FilterVo(selectedType.value, genre, ''));
                         }
                         selectedType.value = '';
                         selectedGenre.value = -1;
@@ -86,6 +86,7 @@ Widget movieFilterSheet(
                 ),
                 Expanded(
                   child: SingleChildScrollView(
+                    physics: ClampingScrollPhysics(),
                     child: Column(
                       spacing: 5,
                       mainAxisSize: MainAxisSize.min,

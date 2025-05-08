@@ -12,7 +12,7 @@ import 'package:movie_obs/screens/home/search_screen.dart';
 import 'package:movie_obs/screens/profile/promotion_screen.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/banner_image_animation.dart';
-import 'package:movie_obs/screens/home/movie_type_screen.dart';
+import 'package:movie_obs/screens/home/movie_detail_screen.dart';
 import 'package:movie_obs/screens/home/new_release_screen.dart';
 import 'package:movie_obs/screens/home/top_trending_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
@@ -290,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: () {
               PageNavigator(
                 ctx: context,
-              ).nextPage(page: MovieTypeScreen(movie: movies[index]));
+              ).nextPage(page: MovieDetailScreen(movie: movies[index]));
             },
             child: SizedBox(
               width: 140,
@@ -317,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: () {
             PageNavigator(
               ctx: context,
-            ).nextPage(page: MovieTypeScreen(movie: movies[index]));
+            ).nextPage(page: MovieDetailScreen(movie: movies[index]));
           },
           child: movieListItem(
             movies: movies[index],

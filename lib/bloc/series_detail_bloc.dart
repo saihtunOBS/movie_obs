@@ -7,6 +7,10 @@ import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 
 import '../data/vos/movie_vo.dart';
+import '../network/requests/history_request.dart';
+import '../network/requests/watchlist_request.dart';
+import '../widgets/toast_service.dart';
+import 'user_bloc.dart';
 
 class SeriesDetailBloc extends ChangeNotifier {
   bool isLoading = false;
@@ -48,6 +52,65 @@ class SeriesDetailBloc extends ChangeNotifier {
       recommendedList = response;
       notifyListeners();
     });
+  }
+
+  toggleWatchlist() {
+    _showLoading();
+    var request = WatchlistRequest(
+      userDataListener.value.id ?? '',
+      movieId,
+      'MOVIE',
+    );
+    _movieModel
+        .toggleWatchlist(token, request)
+        .then((_) {
+          ToastService.successToast('Success');
+        })
+        .whenComplete(() {
+          _hideLoading();
+        })
+        .catchError((error) {
+          _hideLoading();
+          ToastService.warningToast(error.toString());
+        });
+  }
+
+  toggleHistory() {
+    _showLoading();
+    var request = HistoryRequest(
+      userDataListener.value.id ?? '',
+      movieId,
+      0,
+      'MOVIE',
+    );
+    _movieModel
+        .toggleHistory(token, request)
+        .then((_) {
+          ToastService.successToast('Success');
+        })
+        .whenComplete(() {
+          _hideLoading();
+        })
+        .catchError((error) {
+          _hideLoading();
+          ToastService.warningToast(error.toString());
+        });
+  }
+
+  _showLoading() {
+    isLoading = true;
+    _notifySafely();
+  }
+
+  _hideLoading() {
+    isLoading = false;
+    _notifySafely();
+  }
+
+  void _notifySafely() {
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   @override

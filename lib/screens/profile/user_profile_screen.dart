@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
-import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/profile/edit_profile_screen.dart';
-import 'package:provider/provider.dart';
 
 import '../../utils/colors.dart';
 import '../../utils/dimens.dart';
@@ -13,60 +11,59 @@ import '../../utils/images.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen({super.key, required this.userData});
-  final UserVO userData;
+  const UserProfileScreen({super.key});
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  UserVO? data;
   @override
   void initState() {
-    data = widget.userData;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => UserBloc(),
-      child: Scaffold(
-        backgroundColor: kBackgroundColor,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildAppBar(context),
-            20.vGap,
-            _buildUserInfo(
-              AppLocalizations.of(context)?.username ?? '',
-              data?.name ?? '',
-              context,
+    return Scaffold(
+      backgroundColor: kBackgroundColor,
+      body: ValueListenableBuilder(
+        valueListenable: userDataListener,
+        builder:
+            (context, data, child) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildAppBar(context),
+                20.vGap,
+                _buildUserInfo(
+                  AppLocalizations.of(context)?.username ?? '',
+                  data.name ?? '',
+                  context,
+                ),
+                10.vGap,
+                _buildUserInfo(
+                  AppLocalizations.of(context)?.phone ?? '',
+                  data.phone ?? '',
+                  context,
+                ),
+                10.vGap,
+                _buildUserInfo(
+                  AppLocalizations.of(context)?.email ?? '',
+                  data.email ?? '',
+                  context,
+                  isLast: true,
+                ),
+              ],
             ),
-            10.vGap,
-            _buildUserInfo(
-              AppLocalizations.of(context)?.phone ?? '',
-              data?.phone ?? '',
-              context,
-            ),
-            10.vGap,
-            _buildUserInfo(
-              AppLocalizations.of(context)?.email ?? '',
-              data?.email ?? '',
-              context,
-              isLast: true,
-            ),
-          ],
-        ),
       ),
     );
   }
 
   Widget _buildAppBar(BuildContext context) {
-    return Consumer<UserBloc>(
+    return ValueListenableBuilder(
+      valueListenable: userDataListener,
       builder:
-          (context, bloc, child) => Stack(
+          (context, data, child) => Stack(
             children: [
               Padding(
                 padding: EdgeInsets.only(top: 55, left: 10, right: 10),
@@ -97,18 +94,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     Spacer(),
                     GestureDetector(
                       onTap: () {
-                        PageNavigator(ctx: context)
-                            .nextPage(
-                              page: EditProfileScreen(
-                                userData: widget.userData,
-                              ),
-                            )
-                            .whenComplete(() {
-                              setState(() {
-                                bloc.getUser();
-                                data = bloc.userData;
-                              });
-                            });
+                        PageNavigator(
+                          ctx: context,
+                        ).nextPage(page: EditProfileScreen(userData: data));
                       },
                       child: Hero(
                         tag: 'animate',

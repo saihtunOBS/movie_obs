@@ -1,10 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/bloc/watchlist_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
+import 'package:provider/provider.dart';
+import 'package:substring_highlight/substring_highlight.dart';
+
+import '../../extension/page_navigator.dart';
+import '../../widgets/empty_view.dart';
+import '../../widgets/search_filter_sheet.dart';
+import '../../widgets/show_loading.dart';
+import '../home/movie_detail_screen.dart';
+import '../series/series_detail_screen.dart';
 
 class WatchListScreen extends StatefulWidget {
   const WatchListScreen({super.key});
@@ -15,165 +25,277 @@ class WatchListScreen extends StatefulWidget {
 
 class _WatchListScreenState extends State<WatchListScreen> {
   final TextEditingController _controller = TextEditingController();
-  final List<String> suggestions = [
-    'Apple',
-    'Banana',
-    'Cherry',
-    'Date',
-    'Grape',
-    'Mango',
-    'Orange',
-  ];
-  List<String> filteredSuggestions = [];
-
-  void _onSearchChanged(String value) {
-    setState(() {
-      filteredSuggestions =
-          suggestions
-              .where((item) => item.toLowerCase().contains(value.toLowerCase()))
-              .toList();
-    });
-  }
 
   @override
   void initState() {
-    filteredSuggestions.clear();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      appBar: AppBar(
+    return ChangeNotifierProvider(
+      create: (context) => WatchlistBloc(),
+      child: Scaffold(
         backgroundColor: kBackgroundColor,
-        surfaceTintColor: kBackgroundColor,
-        title: Text('Watchlist'),
-        centerTitle: false,
-        actions: [
-          GestureDetector(
-            onTap: () {
-              if (getDeviceType() == 'phone') {
-                showModalBottomSheet(
-                  useRootNavigator: true,
-                  showDragHandle: true,
-                  context: context,
-                  builder: (context) {
-                    return movieFilterSheet(() {});
-                  },
-                );
-              } else {
-                showMovieRightSideSheet(context);
-              }
-            },
-            child: Container(
-              width: 42,
-              height: 32,
-              decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Icon(
-                CupertinoIcons.slider_horizontal_3,
-                color: kPrimaryColor,
-                size: 19,
-              ),
-            ),
-          ),
-          kMarginMedium2.hGap,
-        ],
-        bottom: PreferredSize(
-          preferredSize: Size(double.infinity, 50),
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: kMarginMedium2,
-              right:
-                  getDeviceType() == 'phone'
-                      ? kMarginMedium2
-                      : MediaQuery.sizeOf(context).width / 2,
-            ),
-            child: SizedBox(
-              height: 50,
-              child: SearchBar(
-                controller: _controller,
-                leading: Icon(CupertinoIcons.search),
-                hintText: 'Search by movie & series',
-                backgroundColor: WidgetStateProperty.all(
-                  Colors.grey.withValues(alpha: 0.2),
-                ),
-                hintStyle: WidgetStateProperty.resolveWith<TextStyle>(
-                  (_) => TextStyle(color: kWhiteColor),
-                ),
-                onChanged: _onSearchChanged,
-                shape: WidgetStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      16,
-                    ), // your border radius
+        appBar: AppBar(
+          backgroundColor: kBackgroundColor,
+          surfaceTintColor: kBackgroundColor,
+          title: Text('Watchlist'),
+          centerTitle: false,
+          actions: [
+            Consumer<WatchlistBloc>(
+              builder:
+                  (context, bloc, child) => GestureDetector(
+                    onTap: () {
+                      if (getDeviceType() == 'phone') {
+                        showModalBottomSheet(
+                          useRootNavigator: true,
+                          context: context,
+                          builder: (context) {
+                            return searchFilterSheet(
+                              () {},
+                              isWatchList: true,
+                              filter: (data) {
+                                bloc.filter(
+                                  data.plan == 'Pay per view'
+                                      ? 'PAY_PER_VIEW'
+                                      : data.plan.toUpperCase(),
+                                  data.newGenre ?? '',
+                                  data.genreOrContentType == ''
+                                      ? 'BOTH'
+                                      : data.genreOrContentType.toUpperCase(),
+                                );
+                                return data;
+                              },
+                            );
+                          },
+                        );
+                      } else {
+                        showMovieRightSideSheet(context);
+                      }
+                    },
+                    child: Container(
+                      width: 42,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Icon(
+                        CupertinoIcons.slider_horizontal_3,
+                        color: kPrimaryColor,
+                        size: 19,
+                      ),
+                    ),
                   ),
-                ),
+            ),
+            kMarginMedium2.hGap,
+          ],
+          bottom: PreferredSize(
+            preferredSize: Size(double.infinity, 55),
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: kMarginMedium2,
+                right:
+                    getDeviceType() == 'phone'
+                        ? kMarginMedium2
+                        : MediaQuery.sizeOf(context).width / 2,
+              ),
+              child: Consumer<WatchlistBloc>(
+                builder:
+                    (context, bloc, child) => SizedBox(
+                      height: 50,
+                      child: SearchBar(
+                        controller: _controller,
+                        leading: Icon(CupertinoIcons.search),
+                        hintText: 'Search by movie & series',
+                        backgroundColor: WidgetStateProperty.all(
+                          Colors.grey.withValues(alpha: 0.2),
+                        ),
+                        trailing: [
+                          Visibility(
+                            visible: _controller.text.isNotEmpty,
+                            child: GestureDetector(
+                              onTap: () {
+                                _controller.clear();
+                                bloc.clearFilter();
+                              },
+                              child: Icon(
+                                CupertinoIcons.clear_circled,
+                                color: kWhiteColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                        hintStyle: WidgetStateProperty.resolveWith<TextStyle>(
+                          (_) => TextStyle(color: kWhiteColor),
+                        ),
+                        onChanged: (value) => bloc.onSearchChanged(value),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              8,
+                            ), // your border radius
+                          ),
+                        ),
+                      ),
+                    ),
               ),
             ),
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 10),
-        child: Stack(
-          children: [
-            GridView.builder(
-              itemCount: 10,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: getDeviceType() == 'phone' ? 2 : 3,
-                mainAxisExtent: 230,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
+        body: Consumer<WatchlistBloc>(
+          builder:
+              (context, bloc, child) => RefreshIndicator(
+                onRefresh: () async {
+                  bloc.getWatchList();
+                },
+                child:
+                    bloc.isLoading
+                        ? LoadingView()
+                        : bloc.watchListData?.data?.isNotEmpty ?? true
+                        ? Padding(
+                          padding: const EdgeInsets.only(),
+                          child: Stack(
+                            children: [
+                              GridView.builder(
+                                itemCount:
+                                    bloc.watchListData?.data?.length ?? 0,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount:
+                                          getDeviceType() == 'phone' ? 2 : 3,
+                                      mainAxisExtent: 230,
+                                      mainAxisSpacing: 10,
+                                      crossAxisSpacing: 10,
+                                    ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: kMarginMedium2,
+                                  vertical: kMarginMedium2 - 5,
+                                ),
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      bloc.watchListData?.data?[index].type ==
+                                              'MOVIE'
+                                          ? PageNavigator(
+                                            ctx: context,
+                                          ).nextPage(
+                                            page: MovieDetailScreen(
+                                              movie:
+                                                  bloc
+                                                      .watchListData
+                                                      ?.data?[index]
+                                                      .reference,
+                                            ),
+                                          )
+                                          : PageNavigator(
+                                            ctx: context,
+                                          ).nextPage(
+                                            page: SeriesDetailScreen(
+                                              series:
+                                                  bloc
+                                                      .watchListData
+                                                      ?.data?[index]
+                                                      .reference,
+                                            ),
+                                          );
+                                    },
+                                    child: movieListItem(
+                                      movies:
+                                          bloc
+                                              .watchListData
+                                              ?.data?[index]
+                                              .reference,
+                                      type:
+                                          bloc
+                                              .watchListData
+                                              ?.data?[index]
+                                              .type ??
+                                          '',
+                                    ),
+                                  );
+                                },
+                              ),
+                              bloc.filteredSuggestions.isEmpty
+                                  ? SizedBox.shrink()
+                                  : Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.black12,
+                                    ),
+                                  ),
+                              bloc.filteredSuggestions.isEmpty
+                                  ? SizedBox()
+                                  : Container(
+                                    width: double.infinity,
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: kMarginMedium2,
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: kMarginMedium,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                        kMargin10,
+                                      ),
+                                      color: kWhiteColor,
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children:
+                                          bloc.filteredSuggestions.map((value) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                value.type == 'MOVIE'
+                                                    ? PageNavigator(
+                                                      ctx: context,
+                                                    ).nextPage(
+                                                      page: MovieDetailScreen(
+                                                        movie: value.reference,
+                                                      ),
+                                                    )
+                                                    : PageNavigator(
+                                                      ctx: context,
+                                                    ).nextPage(
+                                                      page: SeriesDetailScreen(
+                                                        series: value.reference,
+                                                      ),
+                                                    );
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: kMarginMedium,
+                                                      vertical: kMarginMedium,
+                                                    ),
+                                                child: SubstringHighlight(
+                                                  text:
+                                                      value.reference?.name ??
+                                                      '',
+                                                  term: _controller.text,
+                                                  textStyleHighlight: TextStyle(
+                                                    color: kSecondaryColor,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                    ),
+                                  ),
+                            ],
+                          ),
+                        )
+                        : EmptyView(
+                          title: 'There is no movie to show.',
+                          reload: () {
+                            bloc.getWatchList();
+                          },
+                        ),
               ),
-              padding: EdgeInsets.symmetric(
-                horizontal: kMarginMedium2,
-                vertical: kMarginMedium2 - 5,
-              ),
-              itemBuilder: (context, index) {
-                return movieListItem(isHomeScreen: true);
-              },
-            ),
-            filteredSuggestions.isEmpty
-                ? SizedBox.shrink()
-                : Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.black12,
-                  ),
-                ),
-            filteredSuggestions.isEmpty
-                ? SizedBox()
-                : Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.symmetric(horizontal: kMarginMedium2),
-                  padding: EdgeInsets.symmetric(vertical: kMarginMedium),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(kMargin10),
-                    color: kWhiteColor,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children:
-                        filteredSuggestions.map((value) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: kMarginMedium,
-                              vertical: kMarginMedium,
-                            ),
-                            child: Text(
-                              value,
-                              style: TextStyle(color: kBlackColor),
-                            ),
-                          );
-                        }).toList(),
-                  ),
-                ),
-          ],
         ),
       ),
     );

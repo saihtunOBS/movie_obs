@@ -357,7 +357,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     String user,
   ) {
     return movieApi
-        .getWatchLists(token, plan, 10, genre, user, getAll, user)
+        .getWatchLists(token, plan, 10, genre, type, getAll, user)
         .asStream()
         .map((response) => response)
         .first

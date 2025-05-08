@@ -13,8 +13,12 @@ class WatchlistHistoryVo {
   final String? type;
   @JsonKey(name: "reference")
   final MovieVO? reference;
+  @JsonKey(name: "createdAt")
+  final DateTime? createdAt;
+  @JsonKey(name: "updatedAt")
+  final DateTime? updatedAt;
 
-  WatchlistHistoryVo({this.id, this.user, this.type, this.reference});
+  WatchlistHistoryVo({this.id, this.user, this.type, this.reference,this.createdAt,this.updatedAt});
 
   factory WatchlistHistoryVo.fromJson(Map<String, dynamic> json) =>
       _$WatchlistHistoryVoFromJson(json);

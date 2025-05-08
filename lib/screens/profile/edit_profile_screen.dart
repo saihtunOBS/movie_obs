@@ -37,7 +37,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => UserBloc(),
+      create: (context) => UserBloc(context: context),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         body: Consumer<UserBloc>(
@@ -169,6 +169,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         _emailController.text.trim(),
                       )
                       .then((_) {
+                        bloc.getUser(context);
                         Navigator.of(context).pop();
                       })
                       .catchError((error) {

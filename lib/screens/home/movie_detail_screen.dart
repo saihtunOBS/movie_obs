@@ -13,15 +13,15 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../list_items/recommended_movie_list_item.dart';
 import '../../widgets/expandable_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
-class MovieTypeScreen extends StatelessWidget {
-  const MovieTypeScreen({super.key, this.movie});
+class MovieDetailScreen extends StatelessWidget {
+  const MovieDetailScreen({super.key, this.movie});
   final MovieVO? movie;
 
   @override
@@ -32,74 +32,82 @@ class MovieTypeScreen extends StatelessWidget {
         builder:
             (context, bloc, child) => Scaffold(
               backgroundColor: kBackgroundColor,
-              body: CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    expandedHeight: getDeviceType() == 'phone' ? 250 : 380,
-                    automaticallyImplyLeading: false,
-                    foregroundColor: Colors.white,
-                    backgroundColor: kBackgroundColor,
-                    pinned: true,
-                    stretch: true,
-                    floating: true,
-                    flexibleSpace: Stack(
-                      clipBehavior: Clip.none,
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          height: double.infinity,
-                          width: double.infinity,
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(35),
-                              bottomRight: Radius.circular(35),
-                            ),
-                            child: cacheImage(movie?.posterImageUrl ?? ''),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: -17,
-                          child: Container(
-                            height: 35,
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: kWhiteColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: _buildWatchTrailerView(context),
-                          ),
-                        ),
-                        Positioned(
-                          left: 20,
-                          top: 55,
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              height: 35,
-                              width: 35,
-                              decoration: BoxDecoration(
-                                color: kWhiteColor,
-                                shape: BoxShape.circle,
+              body: Stack(
+                children: [
+                  CustomScrollView(
+                    slivers: [
+                      SliverAppBar(
+                        expandedHeight: getDeviceType() == 'phone' ? 250 : 380,
+                        automaticallyImplyLeading: false,
+                        foregroundColor: Colors.white,
+                        backgroundColor: kBackgroundColor,
+                        pinned: true,
+                        stretch: true,
+                        floating: true,
+                        flexibleSpace: Stack(
+                          clipBehavior: Clip.none,
+                          alignment: Alignment.center,
+                          children: [
+                            SizedBox(
+                              height: double.infinity,
+                              width: double.infinity,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(35),
+                                  bottomRight: Radius.circular(35),
+                                ),
+                                child: cacheImage(movie?.posterImageUrl ?? ''),
                               ),
-                              child: Center(
-                                child: Icon(
-                                  CupertinoIcons.arrow_left,
-                                  size: 20,
-                                  color: kBlackColor,
+                            ),
+                            Positioned(
+                              bottom: -17,
+                              child: Container(
+                                height: 35,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: kWhiteColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: _buildWatchTrailerView(context),
+                              ),
+                            ),
+                            Positioned(
+                              left: 20,
+                              top: 55,
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  height: 35,
+                                  width: 35,
+                                  decoration: BoxDecoration(
+                                    color: kWhiteColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      CupertinoIcons.arrow_left,
+                                      size: 20,
+                                      color: kBlackColor,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
 
-                  //body
-                  SliverToBoxAdapter(child: _buildBody(context, bloc)),
+                      //body
+                      SliverToBoxAdapter(child: _buildBody(context, bloc)),
+                    ],
+                  ),
+                  //loading
+                  bloc.isLoading ? LoadingView() : SizedBox.shrink(),
                 ],
               ),
             ),
@@ -170,11 +178,11 @@ class MovieTypeScreen extends StatelessWidget {
               ),
             ],
           ),
-          _buildTypeAndWatchList(),
+          _buildTypeAndWatchList(bloc),
           1.vGap,
-          _buildWatchNowButton(context, movie?.id ?? '',movie?.videoUrl ?? ''),
+          _buildWatchNowButton(context, movie?.id ?? '', movie?.videoUrl ?? ''),
           _buildCastView(bloc),
-          _buildDescription(bloc,context),
+          _buildDescription(bloc, context),
           5.vGap,
           _buildRecommendedView(bloc),
         ],
@@ -205,7 +213,7 @@ class MovieTypeScreen extends StatelessWidget {
                   return GestureDetector(
                     onTap: () {
                       PageNavigator(ctx: context).nextPage(
-                        page: MovieTypeScreen(
+                        page: MovieDetailScreen(
                           movie: bloc.recommendedList?[index],
                         ),
                       );
@@ -261,7 +269,7 @@ class MovieTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDescription(MovieDetailBloc bloc,BuildContext context) {
+  Widget _buildDescription(MovieDetailBloc bloc, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -310,12 +318,15 @@ class MovieTypeScreen extends StatelessWidget {
   }
 
   //https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8
-  Widget _buildWatchNowButton(BuildContext context, String videoId,
-  String url) {
+  Widget _buildWatchNowButton(
+    BuildContext context,
+    String videoId,
+    String url,
+  ) {
     return GestureDetector(
       onTap: () {
         context.pushTransparentRoute(
-          VideoPlayerScreen(url: url, isFirstTime: true,videoId: videoId,),
+          VideoPlayerScreen(url: url, isFirstTime: true, videoId: videoId),
         );
       },
       child: Column(
@@ -334,7 +345,7 @@ class MovieTypeScreen extends StatelessWidget {
               children: [
                 Icon(CupertinoIcons.video_camera, color: kWhiteColor, size: 27),
                 Text(
-                   AppLocalizations.of(context)?.watchNow ?? '',
+                  AppLocalizations.of(context)?.watchNow ?? '',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: kWhiteColor,
@@ -378,7 +389,7 @@ class MovieTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTypeAndWatchList() {
+  Widget _buildTypeAndWatchList(MovieDetailBloc bloc) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       spacing: kMarginMedium2 - 3,
@@ -395,26 +406,34 @@ class MovieTypeScreen extends StatelessWidget {
               spacing: kMargin5,
               children: [
                 //Icon(CupertinoIcons.lock, color: kWhiteColor, size: 18),
-                Text('Free', style: TextStyle(color: kPrimaryColor)),
+                Text(
+                  bloc.moviesResponse?.plan ?? '',
+                  style: TextStyle(color: kPrimaryColor),
+                ),
               ],
             ),
           ),
         ),
-        Container(
-          height: 30,
-          padding: EdgeInsets.symmetric(horizontal: kMarginMedium),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.transparent,
-            border: Border.all(color: kWhiteColor),
-          ),
-          child: Center(
-            child: Row(
-              spacing: kMargin5,
-              children: [
-                Icon(CupertinoIcons.bookmark, size: 18),
-                Text('Watchlist', style: TextStyle()),
-              ],
+        GestureDetector(
+          onTap: () {
+            bloc.toggleWatchlist();
+          },
+          child: Container(
+            height: 30,
+            padding: EdgeInsets.symmetric(horizontal: kMarginMedium),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.transparent,
+              border: Border.all(color: kWhiteColor),
+            ),
+            child: Center(
+              child: Row(
+                spacing: kMargin5,
+                children: [
+                  Icon(CupertinoIcons.bookmark, size: 18),
+                  Text('Watchlist', style: TextStyle()),
+                ],
+              ),
             ),
           ),
         ),

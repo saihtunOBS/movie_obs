@@ -14,6 +14,7 @@ final ValueNotifier<String> _selectedCategory = ValueNotifier('');
 Widget searchFilterSheet(
   VoidCallback onFilter, {
   FilterVo Function(FilterVo data)? filter,
+  bool? isWatchList,
 }) {
   return ChangeNotifierProvider(
     create: (context) => MovieBloc(),
@@ -37,6 +38,7 @@ Widget searchFilterSheet(
                 15.vGap,
                 Expanded(
                   child: SingleChildScrollView(
+                    physics: ClampingScrollPhysics(),
                     child: Column(
                       spacing: 5,
                       mainAxisSize: MainAxisSize.min,
@@ -60,6 +62,7 @@ Widget searchFilterSheet(
                                     FilterVo(
                                       selectedType.value,
                                       _selectedCategory.value,
+                                      genre,
                                     ),
                                   );
                                 }
@@ -83,6 +86,7 @@ Widget searchFilterSheet(
                                 _selectedCategory.value = '';
                                 selectedType.value = '';
                                 selectedGenre.value = -1;
+                                genre = '';
                               },
                               child: Chip(
                                 label: Text(
@@ -108,7 +112,13 @@ Widget searchFilterSheet(
 
                         //type session
                         buildTypeSession(),
-                        Divider(thickness: 0.5),
+                        isWatchList == true
+                            ? Divider(thickness: 0.5)
+                            : SizedBox.shrink(),
+
+                        isWatchList == true
+                            ? buildGenreSession(genreData: bloc.genreLists)
+                            : SizedBox.shrink(),
 
                         20.vGap,
                       ],

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
-import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/change_language_screen.dart';
@@ -42,6 +41,16 @@ List<Widget> iconArray = [
 
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<UserBloc>().updateToken();
+      context.read<UserBloc>().getUser(context);
+    });
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var titleArray = [
       AppLocalizations.of(context)?.profile ?? '',
@@ -61,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         appBar: AppBar(
           toolbarHeight: 90,
           title: Consumer<UserBloc>(
-            builder: (context, bloc, child) => _buildAppBar(bloc),
+            builder: (context, bloc, child) => _buildAppBar(),
           ),
           backgroundColor: Colors.transparent,
           surfaceTintColor: Colors.transparent,
@@ -86,11 +95,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onPress: () {
                             switch (index) {
                               case 0:
-                                PageNavigator(ctx: context).nextPage(
-                                  page: UserProfileScreen(
-                                    userData: bloc.userData ?? UserVO(),
-                                  ),
-                                );
+                                PageNavigator(
+                                  ctx: context,
+                                ).nextPage(page: UserProfileScreen());
                               case 1:
                                 PageNavigator(
                                   ctx: context,
@@ -157,114 +164,124 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildAppBar(UserBloc bloc) {
-    return Column(
-      children: [
-        Row(
-          spacing: 10,
-          children: [
-            Expanded(
-              flex: 2,
-              child: GestureDetector(
-                onTap:
-                    () => PageNavigator(ctx: context).nextPage(
-                      page: UserProfileScreen(
-                        userData: bloc.userData ?? UserVO(),
-                      ),
-                    ),
-                child: Row(
-                  spacing: 5,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(kMarginMedium + 8),
-                      ),
-                      child: Center(
-                        child:
-                            bloc.userData?.profilePictureUrl == ''
-                                ? Image.asset(kAppIcon, width: 30, height: 30)
-                                : SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: cacheImage(
-                                      bloc.userData?.profilePictureUrl,
-                                    ),
+  Widget _buildAppBar() {
+    return ValueListenableBuilder(
+      valueListenable: userDataListener,
+      builder:
+          (context, userData, child) => Column(
+            children: [
+              Row(
+                spacing: 10,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: GestureDetector(
+                      onTap:
+                          () => PageNavigator(
+                            ctx: context,
+                          ).nextPage(page: UserProfileScreen()),
+                      child: Row(
+                        spacing: 5,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(
+                                kMarginMedium + 8,
+                              ),
+                            ),
+                            child: Center(
+                              child:
+                                  userData.profilePictureUrl == ''
+                                      ? Image.asset(
+                                        kAppIcon,
+                                        width: 30,
+                                        height: 30,
+                                      )
+                                      : SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          child: cacheImage(
+                                            userData.profilePictureUrl,
+                                          ),
+                                        ),
+                                      ),
+                            ),
+                          ),
+                          5.hGap,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 5,
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.32,
+                                child: Text(
+                                  userData.name ?? '',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: true,
+                                  style: TextStyle(
+                                    color: kWhiteColor,
+                                    fontSize: kTextRegular18,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
+                              ),
+                              Container(
+                                height: 19,
+                                padding: EdgeInsets.symmetric(horizontal: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withValues(alpha: 0.3),
+                                  borderRadius: BorderRadius.circular(26),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Free user',
+                                    style: TextStyle(fontSize: 11),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    5.hGap,
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 5,
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.32,
-                          child: Text(
-                            bloc.userData?.name ?? '',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: true,
-                            style: TextStyle(
-                              color: kWhiteColor,
-                              fontSize: kTextRegular18,
-                              fontWeight: FontWeight.w700,
-                            ),
+                  ),
+                  GestureDetector(
+                    onTap:
+                        () => PageNavigator(
+                          ctx: context,
+                        ).nextPage(page: PromotionScreen()),
+                    child: Container(
+                      height: 40,
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey.withValues(alpha: 0.3),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Upgrade Premium',
+                          style: TextStyle(
+                            color: kWhiteColor,
+                            fontSize: kTextRegular,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        Container(
-                          height: 19,
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withValues(alpha: 0.3),
-                            borderRadius: BorderRadius.circular(26),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Free user',
-                              style: TextStyle(fontSize: 11),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap:
-                  () => PageNavigator(
-                    ctx: context,
-                  ).nextPage(page: PromotionScreen()),
-              child: Container(
-                height: 40,
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.grey.withValues(alpha: 0.3),
-                ),
-                child: Center(
-                  child: Text(
-                    'Upgrade Premium',
-                    style: TextStyle(
-                      color: kWhiteColor,
-                      fontSize: kTextRegular,
-                      fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ),
-          ],
-        ),
-        10.vGap,
-        Image.asset(kShadowImage),
-      ],
+              10.vGap,
+              Image.asset(kShadowImage),
+            ],
+          ),
     );
   }
 
