@@ -25,7 +25,7 @@ class MovieDetailBloc extends ChangeNotifier {
     token = PersistenceData.shared.getToken();
     getMovieDetail();
     getRecommendedMovie();
-    toggleHistory();
+    //toggleHistory();
   }
 
   getMovieDetail() {

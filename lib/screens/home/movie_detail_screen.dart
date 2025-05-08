@@ -1,4 +1,3 @@
-import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/movie_detail_bloc.dart';
@@ -325,9 +324,24 @@ class MovieDetailScreen extends StatelessWidget {
   ) {
     return GestureDetector(
       onTap: () {
-        context.pushTransparentRoute(
-          VideoPlayerScreen(url: url, isFirstTime: true, videoId: videoId),
+        PageNavigator(ctx: context).nextPage(
+          page: VideoPlayerScreen(
+            url:
+                'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
+            isFirstTime: true,
+            videoId: videoId,
+            type: 'MOVIE',
+          ),
         );
+        // context.pushTransparentRoute(
+        //   VideoPlayerScreen(
+        //     url:
+        //         'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
+        //     isFirstTime: true,
+        //     videoId: videoId,
+        //     type: 'MOVIE',
+        //   ),
+        // );
       },
       child: Column(
         spacing: 2,

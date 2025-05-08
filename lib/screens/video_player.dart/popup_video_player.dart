@@ -1,9 +1,9 @@
-import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
@@ -21,7 +21,7 @@ class MiniVideoPlayer {
     BuildContext context,
     String videoUrl,
     bool isPlaying,
-    String id
+    String id,
   ) {
     if (_overlayEntry != null) return;
 
@@ -239,9 +239,14 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                           right: 0,
                           left: 0,
                           child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
                             onTap: () {
-                              context.pushTransparentRoute(
-                                VideoPlayerScreen(url: '', isFirstTime: false),
+                              PageNavigator(ctx: context).nextPage(
+                                page: VideoPlayerScreen(
+                                  url: '',
+                                  isFirstTime: false,
+                                  type: '',
+                                ),
                               );
                             },
                             child: SizedBox(height: 230),
@@ -256,6 +261,57 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                                 () => MiniVideoPlayer.removeMiniPlayer(
                                   isClose: true,
                                 ),
+                          ),
+                        ),
+                        Positioned(
+                          right: -23,
+                          left: -23,
+                          bottom: -20,
+                          child: IgnorePointer(
+                            ignoring: true,
+                            child: SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                trackHeight: 1.0,
+                                inactiveTrackColor: Colors.transparent,
+                                activeTrackColor: Colors.red,
+                                trackShape: const RoundedRectSliderTrackShape(),
+                                thumbShape: const RoundSliderThumbShape(
+                                  enabledThumbRadius: 0.0,
+                                ),
+                              ),
+                              child: ValueListenableBuilder(
+                                valueListenable: videoPlayerController,
+                                builder: (
+                                  context,
+                                  VideoPlayerValue value,
+                                  child,
+                                ) {
+                                  if (value.isInitialized) {
+                                    final duration = value.duration;
+                                    final position = value.position;
+
+                                    if (duration.inMilliseconds > 0 &&
+                                        !bloc.isSeeking) {
+                                      progress = (position.inMilliseconds /
+                                              duration.inMilliseconds)
+                                          .clamp(0.0, 1.0);
+                                    } else {
+                                      progress = bloc.manualSeekProgress;
+                                    }
+                                  }
+
+                                  return Slider(
+                                    value: progress,
+                                    onChanged: (newValue) {
+                                      bloc.resetControlVisibility(isSeek: true);
+                                      bloc.isSeeking = true;
+                                      bloc.manualSeekProgress = newValue;
+                                      bloc.throttleSliderUpdate();
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -307,7 +363,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                                   icon: Icon(
                                     value.isCompleted
                                         ? CupertinoIcons.arrow_clockwise
-                                        : MiniVideoPlayer.isPlay
+                                        : value.isPlaying
                                         ? CupertinoIcons.pause
                                         : CupertinoIcons.play,
                                     size: 25,

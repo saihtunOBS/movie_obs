@@ -191,6 +191,7 @@ class EpisodeScreen extends StatelessWidget {
             url:
                 'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
             isFirstTime: true,
+            type: 'SERIES',
           ),
         );
       },

@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
-// import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/screens/video_player.dart/popup_video_player.dart';
@@ -33,10 +32,12 @@ class VideoPlayerScreen extends StatefulWidget {
     this.url,
     this.videoId,
     required this.isFirstTime,
+    required this.type,
   });
   final String? url;
   final String? videoId;
   final bool isFirstTime;
+  final String type;
 
   @override
   State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
@@ -163,7 +164,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-     // bloc.resetControlVisibility();
+       bloc.isMuted = false;
       bloc.currentUrl = widget.url ?? '';
       MiniVideoPlayer.removeMiniPlayer();
       isPlay.value = true;
@@ -193,12 +194,17 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       bloc.changeQuality(
         widget.url ?? '',
         widget.videoId,
+        true,
         _savedVideo?.position,
       );
-     // bloc.resetControlVisibility(isSeek: true);
+      // bloc.resetControlVisibility(isSeek: true);
       bloc.updateListener();
     } else {
-      bloc.initializeVideo(widget.url ?? '', videoId: widget.videoId);
+      bloc.initializeVideo(
+        widget.url ?? '',
+        videoId: widget.videoId,
+        type: widget.type,
+      );
       bloc.updateListener();
     }
   }
@@ -235,13 +241,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return Container(
       color: Colors.transparent,
 
-      // height:
-      //     bloc.isFullScreen
-      //         ? MediaQuery.of(context).size.height
-      //         : getDeviceType() == 'phone'
-      //         ? 245
-      //         : MediaQuery.of(context).size.width * 10 / 16,
-      // width: MediaQuery.of(context).size.width,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
@@ -280,69 +279,24 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildVideoPlayer() {
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    return Dismissible(
-      direction:
-          bloc.isFullScreen ||
-                  bloc.isLoading == true ||
-                  !videoPlayerController.value.isInitialized
-              ? DismissDirection.none
-              : DismissDirection.down,
-      dismissThresholds: const {DismissDirection.down: 0.1},
-      movementDuration: const Duration(milliseconds: 300),
-      onDismissed: (direction) async {},
-      confirmDismiss: (direction) async {
-        Future.delayed(Duration(milliseconds: 10), () {
-          if (mounted) {
-            Navigator.of(context).pop();
-            MiniVideoPlayer.showMiniPlayer(
-              context,
-              bloc.currentUrl,
-              isPlay.value,
-              widget.videoId ?? '',
-            );
-          }
-        });
-        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-        return true;
-      },
-      onUpdate: (details) {
-        showControl = false;
-        onStartDrag.value = details.progress <= 0.0;
-        setState(() {
-          if (mounted) {
-            _newDragOffset = details.progress * (screenHeight * 1);
-            _dragOffset = 1.0 - details.progress;
-          }
-        });
-      },
-      key: const Key('video_player_dismissible'),
-      child: Transform.translate(
-        offset: Offset(0, _newDragOffset),
-        child: Padding(
-          padding: EdgeInsets.only(
-            right: _newDragOffset == 0 ? 0 : _newDragOffset,
-            left: _newDragOffset == 0 ? 0 : 20,
-          ),
-          child: Stack(
+    return Padding(
+      padding: EdgeInsets.only(
+        right: _newDragOffset == 0 ? 0 : _newDragOffset,
+        left: _newDragOffset == 0 ? 0 : 20,
+      ),
+      child: Stack(
+        children: [
+          Stack(
             children: [
-              Stack(
-                children: [
-                  GestureDetector(
-                    onDoubleTap: _handleDoubleTap,
-                    onDoubleTapDown: _handleDoubleTapDown,
-                    behavior: HitTestBehavior.opaque,
-                    child: IgnorePointer(
-                      ignoring: true,
-                      child: Player(bloc: bloc),
-                    ),
-                  ),
-                ],
+              GestureDetector(
+                onDoubleTap: _handleDoubleTap,
+                onDoubleTapDown: _handleDoubleTapDown,
+                behavior: HitTestBehavior.opaque,
+                child: IgnorePointer(ignoring: true, child: Player(bloc: bloc)),
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
@@ -440,13 +394,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                 videoPlayerController.value.isCompleted
                     ? const Icon(
                       CupertinoIcons.arrow_counterclockwise,
-                      size: 30,
+                      size: 35,
                       color: kWhiteColor,
                     )
                     : bloc.seekCount != 0
                     ? const Icon(
                       CupertinoIcons.pause,
-                      size: 30,
+                      size: 35,
                       color: kWhiteColor,
                     )
                     : Icon(
@@ -499,7 +453,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           onTap: () {
             Navigator.pop(context);
             videoPlayerController.pause();
-            //videoPlayerController.dispose();
           },
           child: Container(
             height: 30,
@@ -519,10 +472,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           behavior: HitTestBehavior.opaque,
           onTap: () {
             if (videoPlayerController.value.isInitialized) {
+              Navigator.pop(context);
               isPlay.value = !videoPlayerController.value.isPlaying;
               showControl = false;
               bloc.updateListener();
-              Navigator.pop(context);
               MiniVideoPlayer.showMiniPlayer(
                 context,
                 bloc.currentUrl,
@@ -947,6 +900,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                                 bloc.changeQuality(
                                   widget.url ?? '',
                                   widget.videoId,
+                                  false,
                                   null,
                                   'Auto',
                                 );
@@ -998,6 +952,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                             bloc.changeQuality(
                               selectedUrl,
                               widget.videoId,
+                              false,
                               null,
                               bloc.qualityOptions[qualityIndex]['quality'] ??
                                   '',

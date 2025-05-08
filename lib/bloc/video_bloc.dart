@@ -5,9 +5,15 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:movie_obs/bloc/user_bloc.dart';
+import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:video_player/video_player.dart';
+
+import '../data/model/movie_model_impl.dart';
+import '../data/persistence/persistence_data.dart' show PersistenceData;
+import '../network/requests/history_request.dart';
 
 bool showMiniControl = false;
 final ValueNotifier<bool> showVisibleMiniControl = ValueNotifier(true);
@@ -68,23 +74,30 @@ class VideoBloc extends ChangeNotifier {
   int seekCount = 0;
   Timer? seekTimer;
 
+  final MovieModel _movieModel = MovieModelImpl();
+  String token = '';
+
   VideoBloc() {
     initializeVideo(currentUrl);
+    token = PersistenceData.shared.getToken();
   }
 
-  void igNorePointerToggle() {
-    igNorePointer = !igNorePointer;
-    notifyListeners();
+  toggleHistory(String id, String type) {
+    var request = HistoryRequest(userDataListener.value.id ?? '', id, 0, type);
+    _movieModel
+        .toggleHistory(token, request)
+        .then((_) {
+          // ToastService.successToast('Success');
+        })
+        .whenComplete(() {})
+        .catchError((error) {
+          //ToastService.warningToast(error.toString());
+        });
   }
 
   void onVerticalDragStart(ForcePressDetails details) {
     initialPosition = details.localPosition.dy;
     initialScale = scale;
-  }
-
-  void toggleLockScreen() {
-    showLock.value = !showLock.value;
-    notifyListeners();
   }
 
   void onVerticalDragUpdateFullScreen(DragUpdateDetails details) {
@@ -197,8 +210,7 @@ class VideoBloc extends ChangeNotifier {
   }
 
   /// Initialize video player
-  void initializeVideo(String url, {String? videoId}) {
-    //resetControlVisibility();
+  void initializeVideo(String url, {String? videoId, String? type}) {
     isLoading = true;
     notifyListeners();
     videoPlayerController = VideoPlayerController.networkUrl(
@@ -216,6 +228,7 @@ class VideoBloc extends ChangeNotifier {
       );
 
       fetchQualityOptions();
+      //toggleHistory(videoId ?? '', type?.toUpperCase() ?? '');
     });
 
     isLoading = false;
@@ -230,7 +243,7 @@ class VideoBloc extends ChangeNotifier {
         ]);
       } else if (videoPlayerController.value.isCompleted) {
         isPlay.value = false;
-        //showControl.value = true;
+        showControl = true;
         notifyListeners();
       }
     });
@@ -246,8 +259,13 @@ class VideoBloc extends ChangeNotifier {
     // Cancel the previous timer before creating a new one
     hideControlTimer?.cancel();
     hideControlTimer = Timer(const Duration(seconds: 6), () {
-      showControl = false;
-      notifyListeners();
+      if (videoPlayerController.value.isCompleted) {
+        showControl = true;
+        notifyListeners();
+      } else {
+        showControl = false;
+        notifyListeners();
+      }
     });
     notifyListeners();
   }
@@ -256,13 +274,12 @@ class VideoBloc extends ChangeNotifier {
   void changeQuality(
     String url,
     String? videoId,
+    bool isFirstTime,
     Duration? currentDuration, [
     String? quality,
-    
   ]) async {
-    // showMiniControl = true;
+    if (isFirstTime == true) {}
     isLoading = true;
-
     updateListener();
     selectedQuality = quality ?? selectedQuality;
     currentUrl = url;
