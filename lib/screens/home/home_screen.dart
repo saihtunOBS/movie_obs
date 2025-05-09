@@ -10,6 +10,7 @@ import 'package:movie_obs/screens/home/free_movie_series_screen.dart';
 import 'package:movie_obs/screens/home/notification_screen.dart';
 import 'package:movie_obs/screens/home/search_screen.dart';
 import 'package:movie_obs/screens/profile/promotion_screen.dart';
+import 'package:movie_obs/screens/series/series_detail_screen.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/banner_image_animation.dart';
 import 'package:movie_obs/screens/home/movie_detail_screen.dart';
@@ -289,9 +290,15 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              PageNavigator(
-                ctx: context,
-              ).nextPage(page: MovieDetailScreen(movie: movies[index]));
+              if (movies[index].type == 'movie') {
+                PageNavigator(
+                  ctx: context,
+                ).nextPage(page: MovieDetailScreen(movie: movies[index]));
+              } else {
+                PageNavigator(
+                  ctx: context,
+                ).nextPage(page: SeriesDetailScreen(series: movies[index]));
+              }
             },
             child: SizedBox(
               width: 140,
@@ -316,9 +323,15 @@ class _HomeScreenState extends State<HomeScreen> {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            PageNavigator(
-              ctx: context,
-            ).nextPage(page: MovieDetailScreen(movie: movies[index]));
+            if (movies[index].type == 'movie') {
+              PageNavigator(
+                ctx: context,
+              ).nextPage(page: MovieDetailScreen(movie: movies[index]));
+            } else {
+              PageNavigator(
+                ctx: context,
+              ).nextPage(page: SeriesDetailScreen(series: movies[index]));
+            }
           },
           child: movieListItem(
             movies: movies[index],

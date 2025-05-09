@@ -14,7 +14,6 @@ import 'package:provider/provider.dart';
 import '../../data/vos/movie_vo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 class SeriesDetailScreen extends StatelessWidget {
   const SeriesDetailScreen({super.key, this.series});
   final MovieVO? series;
@@ -123,7 +122,7 @@ class SeriesDetailScreen extends StatelessWidget {
             ],
           ),
           10.vGap,
-          _buildDescription(bloc,context),
+          _buildDescription(bloc, context),
           Text(
             'Seasons',
             style: TextStyle(
@@ -223,6 +222,7 @@ class SeriesDetailScreen extends StatelessWidget {
                 PageNavigator(ctx: context).nextPage(
                   page: SeasonEpisodeScreen(
                     season: bloc.seriesResponse?.seasons?[index],
+                    seriesId: bloc.seriesResponse?.id,
                   ),
                 );
               },
@@ -237,7 +237,7 @@ class SeriesDetailScreen extends StatelessWidget {
         );
   }
 
-  Widget _buildDescription(SeriesDetailBloc bloc,BuildContext context) {
+  Widget _buildDescription(SeriesDetailBloc bloc, BuildContext context) {
     return Column(
       spacing: 5,
       crossAxisAlignment: CrossAxisAlignment.start,

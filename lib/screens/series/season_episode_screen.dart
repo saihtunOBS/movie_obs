@@ -4,6 +4,7 @@ import 'package:movie_obs/bloc/season_episode_bloc.dart';
 import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/series_list_item.dart';
+import 'package:movie_obs/screens/series/episode_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
@@ -16,13 +17,15 @@ import '../home/actor_view_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SeasonEpisodeScreen extends StatelessWidget {
-  const SeasonEpisodeScreen({super.key, this.season});
+  const SeasonEpisodeScreen({super.key, this.season, this.seriesId});
   final SeasonVO? season;
+  final String? seriesId;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => SeasonEpisodeBloc(season?.id),
+      create:
+          (context) => SeasonEpisodeBloc(season?.id, seriesId: seriesId ?? ''),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         body: Consumer<SeasonEpisodeBloc>(
@@ -120,7 +123,7 @@ class SeasonEpisodeScreen extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-              AppLocalizations.of(context)?.watchNow ?? '',
+              AppLocalizations.of(context)?.watchTrailer ?? '',
               style: TextStyle(
                 fontSize: kTextRegular2x - 3,
                 color: kBlackColor,
@@ -253,7 +256,12 @@ class SeasonEpisodeScreen extends StatelessWidget {
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
-                // PageNavigator(ctx: context).nextPage(page: SeasonEpisodeScreen());
+                PageNavigator(ctx: context).nextPage(
+                  page: EpisodeScreen(
+                    episodeResponse: bloc.seasonEpisodeResponse,
+                    episodeData: bloc.seasonEpisodeResponse?.episodes?[index],
+                  ),
+                );
               },
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 5),

@@ -7,8 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
-import 'package:movie_obs/extension/extension.dart';
-import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/screens/video_player.dart/popup_video_player.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -164,7 +162,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-       bloc.isMuted = false;
+      bloc.isMuted = false;
       bloc.currentUrl = widget.url ?? '';
       MiniVideoPlayer.removeMiniPlayer();
       isPlay.value = true;
@@ -197,7 +195,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         true,
         _savedVideo?.position,
       );
-      // bloc.resetControlVisibility(isSeek: true);
       bloc.updateListener();
     } else {
       bloc.initializeVideo(
@@ -235,7 +232,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     );
   }
 
-  // if (!bloc.isFullScreen) Flexible(child: _buildContentSection()),
 
   Widget _buildVideoPlayerSection() {
     return Container(
@@ -568,7 +564,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         });
       },
       child: Container(
-        // margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         height: bloc.isFullScreen ? 42 : 30,
         width: bloc.isFullScreen ? 50 : 46,
         decoration: BoxDecoration(
@@ -710,71 +705,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     );
   }
 
-  Widget buildContentSection() {
-    return ValueListenableBuilder(
-      valueListenable: onStartDrag,
-      builder: (context, value, child) {
-        return AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
-          child: value ? _buildContent() : const SizedBox(),
-        );
-      },
-    );
-  }
-
-  Widget _buildContent() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-          color: kBackgroundColor,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: SingleChildScrollView(
-          physics: ClampingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              10.vGap,
-              Text(
-                'Tuutu TV',
-                style: TextStyle(
-                  fontSize: getDeviceType() == 'phone' ? 18 : 20,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Video insertion of audio narrated descriptions of a television program key visual elements into natural pauses in the program dialogue, which makes video programming more accessible to individuals who are blind or visually impaired.',
-                style: TextStyle(
-                  fontSize: getDeviceType() == 'phone' ? 14 : 16,
-                ),
-              ),
-              const SizedBox(height: 20),
-              GridView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: getDeviceType() == 'phone' ? 2 : 3,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: 5,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return movieListItem(isHomeScreen: true);
-                },
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  
 
   Widget _buildAdditionalOptions() {
     return Consumer<VideoBloc>(
@@ -1088,7 +1019,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     );
   }
 }
-
 class Player extends StatelessWidget {
   const Player({super.key, required this.bloc});
 

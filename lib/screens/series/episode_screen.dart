@@ -1,10 +1,12 @@
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/data/dummy/dummy_data.dart';
+import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/series_list_item.dart';
+import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
+import 'package:movie_obs/utils/calculate_time.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
@@ -12,7 +14,9 @@ import 'package:movie_obs/widgets/cache_image.dart';
 import '../../widgets/expandable_text.dart';
 
 class EpisodeScreen extends StatelessWidget {
-  const EpisodeScreen({super.key});
+  const EpisodeScreen({super.key, this.episodeResponse, this.episodeData});
+  final SeasonEpisodeResponse? episodeResponse;
+  final SeasonVO? episodeData;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +44,7 @@ class EpisodeScreen extends StatelessWidget {
                       bottomLeft: Radius.circular(35),
                       bottomRight: Radius.circular(35),
                     ),
-                    child: cacheImage(imageArray.first),
+                    child: cacheImage(episodeResponse?.bannerImageUrl),
                   ),
                 ),
 
@@ -86,18 +90,18 @@ class EpisodeScreen extends StatelessWidget {
       spacing: kMargin12,
       children: [
         Container(
-          height: 23,
+          height: 30,
           padding: EdgeInsets.symmetric(horizontal: kMarginMedium + 4),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: kBlackColor,
+            color: kSecondaryColor.withValues(alpha: 0.2),
           ),
           child: Center(
             child: Row(
               spacing: kMargin5,
               children: [
                 //Icon(CupertinoIcons.lock, color: kWhiteColor, size: 18),
-                Text('Free', style: TextStyle(color: kWhiteColor)),
+                Text('Free', style: TextStyle(color: kPrimaryColor)),
               ],
             ),
           ),
@@ -107,7 +111,10 @@ class EpisodeScreen extends StatelessWidget {
           height: 5,
           child: CircleAvatar(backgroundColor: kWhiteColor),
         ),
-        Text('30 mins', style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          formatMinutesToHoursAndMinutes(episodeData?.duration ?? 0),
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         SizedBox(
           width: 5,
           height: 5,
@@ -117,7 +124,10 @@ class EpisodeScreen extends StatelessWidget {
           spacing: kMargin5,
           children: [
             Icon(CupertinoIcons.eye, size: 20),
-            Text('35', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              episodeData?.viewCount.toString() ?? '0',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ],
@@ -136,7 +146,7 @@ class EpisodeScreen extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              'Season 1',
+              episodeData?.name ?? '',
               style: TextStyle(fontSize: kTextRegular18 + 2),
             ),
           ),
@@ -152,20 +162,23 @@ class EpisodeScreen extends StatelessWidget {
               fontSize: kTextRegular18,
             ),
           ),
-          _seriesListView(),
+          _episodeListView(),
         ],
       ),
     );
   }
 
-  Widget _seriesListView() {
+  Widget _episodeListView() {
     return ListView.builder(
       padding: EdgeInsets.zero,
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: 5,
+      itemCount: episodeResponse?.episodes?.length,
       itemBuilder: (context, index) {
-        return seasonListItem(isSeries: false);
+        return seasonListItem(
+          isSeries: false,
+          data: episodeResponse?.episodes?[index],
+        );
       },
     );
   }
@@ -175,8 +188,7 @@ class EpisodeScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ExpandableText(
-          text:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eros magna, placerat et ullamcorper eu, tincidunt sit amet dolor. Mauris nibh nulla, scelerisque vel euismod non, lobortis vitae nulla. Cras felis libero, maximus at purus at, eleifend varius',
+          text: episodeData?.description ?? '',
           style: TextStyle(fontSize: 14),
         ),
       ],

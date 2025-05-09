@@ -55,7 +55,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount:
                                       getDeviceType() == 'phone' ? 2 : 3,
-                                  mainAxisExtent: 230,
+                                  mainAxisExtent: 200,
                                   mainAxisSpacing: 10,
                                   crossAxisSpacing: 10,
                                 ),
@@ -90,7 +90,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   movies:
                                       bloc.historyData?.data?[index].reference,
                                   type:
-                                      bloc.historyData?.data?[index].type ?? '',
+                                      bloc.historyData?.data?[index].type?.toLowerCase() ?? '',
                                 ),
                               );
                             },

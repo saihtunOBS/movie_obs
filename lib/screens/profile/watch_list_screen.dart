@@ -165,7 +165,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount:
                                           getDeviceType() == 'phone' ? 2 : 3,
-                                      mainAxisExtent: 230,
+                                      mainAxisExtent: 200,
                                       mainAxisSpacing: 10,
                                       crossAxisSpacing: 10,
                                     ),
@@ -211,7 +211,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
                                           bloc
                                               .watchListData
                                               ?.data?[index]
-                                              .type ??
+                                              .type?.toLowerCase() ??
                                           '',
                                     ),
                                   );
