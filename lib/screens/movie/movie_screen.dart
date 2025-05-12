@@ -142,123 +142,124 @@ class _MovieScreenState extends State<MovieScreen> {
             ),
           ),
         ),
-        body: Consumer<MovieBloc>(
-          builder:
-              (context, bloc, child) => RefreshIndicator(
-                onRefresh: () async {
-                  bloc.getAllMovie();
-                },
-                child:
-                    bloc.isLoading
-                        ? LoadingView()
-                        : bloc.movieLists.isNotEmpty
-                        ? Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Stack(
-                            children: [
-                              GridView.builder(
-                                itemCount: bloc.movieLists.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount:
-                                          getDeviceType() == 'phone' ? 2 : 3,
-                                      mainAxisExtent: 200,
-                                      mainAxisSpacing: 10,
-                                      crossAxisSpacing: 10,
-                                    ),
-                                padding: EdgeInsets.only(
-                                  left: kMarginMedium2,
-                                  right: kMarginMedium2,
-                                  bottom: 20,
-                                ),
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      PageNavigator(ctx: context).nextPage(
-                                        page: MovieDetailScreen(
-                                          movie: bloc.movieLists[index],
-                                        ),
-                                      );
-                                    },
-                                    child: movieListItem(
-                                      isHomeScreen: true,
-                                      movies: bloc.movieLists[index],
-                                      type: bloc.movieLists[index].plan,
-                                    ),
-                                  );
-                                },
-                              ),
+        body: SizedBox()
+        // Consumer<MovieBloc>(
+        //   builder:
+        //       (context, bloc, child) => RefreshIndicator(
+        //         onRefresh: () async {
+        //           bloc.getAllMovie();
+        //         },
+        //         child:
+        //             bloc.isLoading
+        //                 ? LoadingView()
+        //                 : bloc.movieLists.isNotEmpty
+        //                 ? Padding(
+        //                   padding: const EdgeInsets.only(top: 10),
+        //                   child: Stack(
+        //                     children: [
+        //                       GridView.builder(
+        //                         itemCount: bloc.movieLists.length,
+        //                         gridDelegate:
+        //                             SliverGridDelegateWithFixedCrossAxisCount(
+        //                               crossAxisCount:
+        //                                   getDeviceType() == 'phone' ? 2 : 3,
+        //                               mainAxisExtent: 200,
+        //                               mainAxisSpacing: 10,
+        //                               crossAxisSpacing: 10,
+        //                             ),
+        //                         padding: EdgeInsets.only(
+        //                           left: kMarginMedium2,
+        //                           right: kMarginMedium2,
+        //                           bottom: 20,
+        //                         ),
+        //                         itemBuilder: (context, index) {
+        //                           return GestureDetector(
+        //                             onTap: () {
+        //                               PageNavigator(ctx: context).nextPage(
+        //                                 page: MovieDetailScreen(
+        //                                   movie: bloc.movieLists[index],
+        //                                 ),
+        //                               );
+        //                             },
+        //                             child: movieListItem(
+        //                               isHomeScreen: true,
+        //                               movies: bloc.movieLists[index],
+        //                               type: bloc.movieLists[index].plan,
+        //                             ),
+        //                           );
+        //                         },
+        //                       ),
 
-                              bloc.filteredSuggestions.isEmpty
-                                  ? SizedBox.shrink()
-                                  : Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Colors.black38,
-                                    ),
-                                  ),
-                              bloc.filteredSuggestions.isEmpty
-                                  ? SizedBox()
-                                  : Container(
-                                    width: double.infinity,
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: kMarginMedium2,
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: kMarginMedium,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                        kMargin10,
-                                      ),
-                                      color: kWhiteColor,
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children:
-                                          bloc.filteredSuggestions.map((value) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                PageNavigator(
-                                                  ctx: context,
-                                                ).nextPage(
-                                                  page: MovieDetailScreen(
-                                                    movie: value,
-                                                  ),
-                                                );
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: kMarginMedium,
-                                                      vertical: kMarginMedium,
-                                                    ),
-                                                child: SubstringHighlight(
-                                                  text: value.name ?? '',
-                                                  term: _controller.text,
-                                                  textStyleHighlight: TextStyle(
-                                                    color: kSecondaryColor,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                    ),
-                                  ),
-                            ],
-                          ),
-                        )
-                        : EmptyView(
-                          title: 'There is no movie to show.',
-                          reload: () {
-                            bloc.getAllMovie();
-                          },
-                        ),
-              ),
-        ),
+        //                       bloc.filteredSuggestions.isEmpty
+        //                           ? SizedBox.shrink()
+        //                           : Container(
+        //                             decoration: BoxDecoration(
+        //                               borderRadius: BorderRadius.circular(15),
+        //                               color: Colors.black38,
+        //                             ),
+        //                           ),
+        //                       bloc.filteredSuggestions.isEmpty
+        //                           ? SizedBox()
+        //                           : Container(
+        //                             width: double.infinity,
+        //                             margin: EdgeInsets.symmetric(
+        //                               horizontal: kMarginMedium2,
+        //                             ),
+        //                             padding: EdgeInsets.symmetric(
+        //                               vertical: kMarginMedium,
+        //                             ),
+        //                             decoration: BoxDecoration(
+        //                               borderRadius: BorderRadius.circular(
+        //                                 kMargin10,
+        //                               ),
+        //                               color: kWhiteColor,
+        //                             ),
+        //                             child: Column(
+        //                               mainAxisSize: MainAxisSize.min,
+        //                               crossAxisAlignment:
+        //                                   CrossAxisAlignment.start,
+        //                               children:
+        //                                   bloc.filteredSuggestions.map((value) {
+        //                                     return GestureDetector(
+        //                                       onTap: () {
+        //                                         PageNavigator(
+        //                                           ctx: context,
+        //                                         ).nextPage(
+        //                                           page: MovieDetailScreen(
+        //                                             movie: value,
+        //                                           ),
+        //                                         );
+        //                                       },
+        //                                       child: Padding(
+        //                                         padding:
+        //                                             const EdgeInsets.symmetric(
+        //                                               horizontal: kMarginMedium,
+        //                                               vertical: kMarginMedium,
+        //                                             ),
+        //                                         child: SubstringHighlight(
+        //                                           text: value.name ?? '',
+        //                                           term: _controller.text,
+        //                                           textStyleHighlight: TextStyle(
+        //                                             color: kSecondaryColor,
+        //                                             fontWeight: FontWeight.w600,
+        //                                           ),
+        //                                         ),
+        //                                       ),
+        //                                     );
+        //                                   }).toList(),
+        //                             ),
+        //                           ),
+        //                     ],
+        //                   ),
+        //                 )
+        //                 : EmptyView(
+        //                   title: 'There is no movie to show.',
+        //                   reload: () {
+        //                     bloc.getAllMovie();
+        //                   },
+        //                 ),
+        //       ),
+        // ),
       ),
     );
   }

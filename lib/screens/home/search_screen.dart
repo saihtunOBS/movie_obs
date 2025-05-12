@@ -171,13 +171,13 @@ class _SearchScreenState extends State<SearchScreen> {
                     bloc.filteredSuggestions.map((value) {
                       return GestureDetector(
                         onTap: () {
-                          value.type == 'movie'
-                              ? PageNavigator(
-                                ctx: context,
-                              ).nextPage(page: MovieDetailScreen(movie: value))
-                              : PageNavigator(ctx: context).nextPage(
-                                page: SeriesDetailScreen(series: value),
-                              );
+                          // value.type == 'movie'
+                          //     ? PageNavigator(
+                          //       ctx: context,
+                          //     ).nextPage(page: MovieDetailScreen(movie: value))
+                          //     : PageNavigator(ctx: context).nextPage(
+                          //       page: SeriesDetailScreen(series: value),
+                          //     );
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(

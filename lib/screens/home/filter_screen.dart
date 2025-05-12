@@ -121,11 +121,11 @@ class _FilterScreenState extends State<FilterScreen> {
                                   itemBuilder: (context, index) {
                                     return GestureDetector(
                                       onTap: () {
-                                        PageNavigator(ctx: context).nextPage(
-                                          page: MovieDetailScreen(
-                                            movie: bloc.movieSeriesLists[index],
-                                          ),
-                                        );
+                                        // PageNavigator(ctx: context).nextPage(
+                                        //   page: MovieDetailScreen(
+                                        //     movie: bloc.movieSeriesLists[index],
+                                        //   ),
+                                        // );
                                       },
                                       child: movieListItem(
                                         isHomeScreen: true,

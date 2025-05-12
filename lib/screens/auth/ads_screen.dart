@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/bloc/movie_bloc.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
@@ -9,7 +8,6 @@ import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/ads_image_animation.dart';
-import 'package:provider/provider.dart';
 
 class AdsScreen extends StatefulWidget {
   const AdsScreen({super.key});
@@ -58,53 +56,50 @@ class _AdsScreenState extends State<AdsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => MovieBloc(),
-      child: Scaffold(
-        backgroundColor: kBackgroundColor,
-        body: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal:
-                getDeviceType() == 'phone'
-                    ? kMarginMedium2
-                    : MediaQuery.of(context).size.width * 0.15,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: _navigateNext,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    height: 30,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: kWhiteColor,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Ads | ${_secondsLeft}s',
-                        style: TextStyle(color: Colors.black),
-                      ),
+    return Scaffold(
+      backgroundColor: kBackgroundColor,
+      body: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal:
+              getDeviceType() == 'phone'
+                  ? kMarginMedium2
+                  : MediaQuery.of(context).size.width * 0.15,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: _navigateNext,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Container(
+                  height: 30,
+                  width: 80,
+                  decoration: BoxDecoration(
+                    color: kWhiteColor,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Ads | ${_secondsLeft}s',
+                      style: TextStyle(color: Colors.black),
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 15),
-              Container(
-                height: MediaQuery.sizeOf(context).height * 0.6,
-                width: double.infinity,
-
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: AdsImageAnimation(),
+            ),
+            SizedBox(height: 15),
+            Container(
+              height: MediaQuery.sizeOf(context).height * 0.6,
+              width: double.infinity,
+    
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
               ),
-            ],
-          ),
+              child: AdsImageAnimation(),
+            ),
+          ],
         ),
       ),
     );

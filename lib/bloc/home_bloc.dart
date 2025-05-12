@@ -4,8 +4,6 @@ import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/adsAndBanner_vo.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
-import 'package:movie_obs/widgets/common_dialog.dart';
-import 'package:movie_obs/widgets/error_dialog.dart';
 
 class HomeBloc extends ChangeNotifier {
   bool isLoading = false;
@@ -19,10 +17,10 @@ class HomeBloc extends ChangeNotifier {
   List<AdsAndBannerVO> bannerList = [];
   List<AdsAndBannerVO> adsLists = [];
   final MovieModel _movieModel = MovieModelImpl();
-  BuildContext? _context;
+  //BuildContext? _context;
 
   HomeBloc({BuildContext? context}) {
-    _context = context;
+    //_context = context;
     token = PersistenceData.shared.getToken();
     getBanner();
     getFreeMovieAndSeries();
@@ -50,15 +48,15 @@ class HomeBloc extends ChangeNotifier {
         .catchError((_) {
           PersistenceData.shared.clearToken();
           Future.delayed(Duration(milliseconds: 200), () {
-            showCommonDialog(
-              context: _context!,
-              isBarrierDismiss: false,
-              dialogWidget: ErrorDialogView(
-                errorMessage: 'Session Expired. Please Login Again',
-                isLogin: true,
-              ),
-            );
-          });
+          //   showCommonDialog(
+          //     context: _context!,
+          //     isBarrierDismiss: false,
+          //     dialogWidget: ErrorDialogView(
+          //       errorMessage: 'Session Expired. Please Login Again',
+          //       isLogin: true,
+          //     ),
+          //   );
+           });
         });
   }
 

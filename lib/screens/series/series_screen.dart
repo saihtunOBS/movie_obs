@@ -142,111 +142,112 @@ class _SeriesScreenState extends State<SeriesScreen> {
             ),
           ),
         ),
-        body: Consumer<SeriesBloc>(
-          builder:
-              (context, bloc, child) => RefreshIndicator(
-                onRefresh: () async {
-                  bloc.getAllSeries();
-                },
-                child:
-                    bloc.isLoading
-                        ? LoadingView()
-                        : bloc.seriesLists.isNotEmpty
-                        ? Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Stack(
-                            children: [
-                              GridView.builder(
-                                itemCount: bloc.seriesLists.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount:
-                                          getDeviceType() == 'phone' ? 2 : 3,
-                                      mainAxisExtent: 200,
-                                      mainAxisSpacing: 10,
-                                      crossAxisSpacing: 10,
-                                    ),
-                                padding: EdgeInsets.only(
-                                  left: kMarginMedium2,
-                                  right: kMarginMedium2,
-                                  bottom: 20,
-                                ),
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      PageNavigator(ctx: context).nextPage(
-                                        page: SeriesDetailScreen(
-                                          series: bloc.seriesLists[index],
-                                        ),
-                                      );
-                                    },
-                                    child: movieListItem(
-                                      isHomeScreen: true,
-                                      movies: bloc.seriesLists[index],
-                                      type: bloc.seriesLists[index].plan,
-                                    ),
-                                  );
-                                },
-                              ),
-                              bloc.filteredSuggestions.isEmpty
-                                  ? SizedBox.shrink()
-                                  : Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Colors.black38,
-                                    ),
-                                  ),
-                              bloc.filteredSuggestions.isEmpty
-                                  ? SizedBox()
-                                  : Container(
-                                    width: double.infinity,
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: kMarginMedium2,
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: kMarginMedium,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                        kMargin10,
-                                      ),
-                                      color: kWhiteColor,
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children:
-                                          bloc.filteredSuggestions.map((value) {
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: kMarginMedium,
-                                                    vertical: kMarginMedium,
-                                                  ),
-                                              child: SubstringHighlight(
-                                                text: value.name ?? '',
-                                                term: _controller.text,
-                                                textStyleHighlight: TextStyle(
-                                                  color: kSecondaryColor,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                    ),
-                                  ),
-                            ],
-                          ),
-                        )
-                        : EmptyView(
-                          reload: () {
-                            bloc.getAllSeries();
-                          },
-                          title: 'There is no series to show.',
-                        ),
-              ),
-        ),
+        body: SizedBox()
+        // Consumer<SeriesBloc>(
+        //   builder:
+        //       (context, bloc, child) => RefreshIndicator(
+        //         onRefresh: () async {
+        //           bloc.getAllSeries();
+        //         },
+        //         child:
+        //             bloc.isLoading
+        //                 ? LoadingView()
+        //                 : bloc.seriesLists.isNotEmpty
+        //                 ? Padding(
+        //                   padding: const EdgeInsets.only(top: 10),
+        //                   child: Stack(
+        //                     children: [
+        //                       GridView.builder(
+        //                         itemCount: bloc.seriesLists.length,
+        //                         gridDelegate:
+        //                             SliverGridDelegateWithFixedCrossAxisCount(
+        //                               crossAxisCount:
+        //                                   getDeviceType() == 'phone' ? 2 : 3,
+        //                               mainAxisExtent: 200,
+        //                               mainAxisSpacing: 10,
+        //                               crossAxisSpacing: 10,
+        //                             ),
+        //                         padding: EdgeInsets.only(
+        //                           left: kMarginMedium2,
+        //                           right: kMarginMedium2,
+        //                           bottom: 20,
+        //                         ),
+        //                         itemBuilder: (context, index) {
+        //                           return GestureDetector(
+        //                             onTap: () {
+        //                               PageNavigator(ctx: context).nextPage(
+        //                                 page: SeriesDetailScreen(
+        //                                   series: bloc.seriesLists[index],
+        //                                 ),
+        //                               );
+        //                             },
+        //                             child: movieListItem(
+        //                               isHomeScreen: true,
+        //                               movies: bloc.seriesLists[index],
+        //                               type: bloc.seriesLists[index].plan,
+        //                             ),
+        //                           );
+        //                         },
+        //                       ),
+        //                       bloc.filteredSuggestions.isEmpty
+        //                           ? SizedBox.shrink()
+        //                           : Container(
+        //                             decoration: BoxDecoration(
+        //                               borderRadius: BorderRadius.circular(15),
+        //                               color: Colors.black38,
+        //                             ),
+        //                           ),
+        //                       bloc.filteredSuggestions.isEmpty
+        //                           ? SizedBox()
+        //                           : Container(
+        //                             width: double.infinity,
+        //                             margin: EdgeInsets.symmetric(
+        //                               horizontal: kMarginMedium2,
+        //                             ),
+        //                             padding: EdgeInsets.symmetric(
+        //                               vertical: kMarginMedium,
+        //                             ),
+        //                             decoration: BoxDecoration(
+        //                               borderRadius: BorderRadius.circular(
+        //                                 kMargin10,
+        //                               ),
+        //                               color: kWhiteColor,
+        //                             ),
+        //                             child: Column(
+        //                               mainAxisSize: MainAxisSize.min,
+        //                               crossAxisAlignment:
+        //                                   CrossAxisAlignment.start,
+        //                               children:
+        //                                   bloc.filteredSuggestions.map((value) {
+        //                                     return Padding(
+        //                                       padding:
+        //                                           const EdgeInsets.symmetric(
+        //                                             horizontal: kMarginMedium,
+        //                                             vertical: kMarginMedium,
+        //                                           ),
+        //                                       child: SubstringHighlight(
+        //                                         text: value.name ?? '',
+        //                                         term: _controller.text,
+        //                                         textStyleHighlight: TextStyle(
+        //                                           color: kSecondaryColor,
+        //                                           fontWeight: FontWeight.w600,
+        //                                         ),
+        //                                       ),
+        //                                     );
+        //                                   }).toList(),
+        //                             ),
+        //                           ),
+        //                     ],
+        //                   ),
+        //                 )
+        //                 : EmptyView(
+        //                   reload: () {
+        //                     bloc.getAllSeries();
+        //                   },
+        //                   title: 'There is no series to show.',
+        //                 ),
+        //       ),
+        // ),
       ),
     );
   }

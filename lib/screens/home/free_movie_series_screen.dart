@@ -96,11 +96,11 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                                   itemBuilder: (context, index) {
                                     return GestureDetector(
                                       onTap: () {
-                                        PageNavigator(ctx: context).nextPage(
-                                          page: MovieDetailScreen(
-                                            movie: bloc.freeMovieLists[index],
-                                          ),
-                                        );
+                                        // PageNavigator(ctx: context).nextPage(
+                                        //   page: MovieDetailScreen(
+                                        //     movie: bloc.freeMovieLists[index],
+                                        //   ),
+                                        // );
                                       },
                                       child: movieListItem(
                                         isHomeScreen: true,

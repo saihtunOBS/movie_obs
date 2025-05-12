@@ -95,43 +95,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           titleArray[index] == 'Delete Account' ? true : false,
                           onPress: () {
                             switch (index) {
-                              case 0:
-                                PageNavigator(
-                                  ctx: context,
-                                ).nextPage(page: UserProfileScreen());
-                              case 1:
-                                PageNavigator(
-                                  ctx: context,
-                                ).nextPage(page: PromotionScreen());
-                              case 2:
-                                PageNavigator(
-                                  ctx: context,
-                                ).nextPage(page: WatchListScreen());
-                              case 3:
-                                PageNavigator(
-                                  ctx: context,
-                                ).nextPage(page: HistoryScreen());
-                              case 4:
-                                PageNavigator(
-                                  ctx: context,
-                                ).nextPage(page: ChangeLanguageScreen());
-                              case 5:
-                                PageNavigator(
-                                  ctx: context,
-                                ).nextPage(page: FaqScreen());
-                              case 8:
-                                showDialog(
-                                  useRootNavigator: true,
-                                  context: context,
+                              // case 0:
+                              //   PageNavigator(
+                              //     ctx: context,
+                              //   ).nextPage(page: UserProfileScreen());
+                              // case 1:
+                              //   PageNavigator(
+                              //     ctx: context,
+                              //   ).nextPage(page: PromotionScreen());
+                              // case 2:
+                              //   PageNavigator(
+                              //     ctx: context,
+                              //   ).nextPage(page: WatchListScreen());
+                              // case 3:
+                              //   PageNavigator(
+                              //     ctx: context,
+                              //   ).nextPage(page: HistoryScreen());
+                              // case 4:
+                              //   PageNavigator(
+                              //     ctx: context,
+                              //   ).nextPage(page: ChangeLanguageScreen());
+                              // case 5:
+                              //   PageNavigator(
+                              //     ctx: context,
+                              //   ).nextPage(page: FaqScreen());
+                              // case 8:
+                              //   showDialog(
+                              //     useRootNavigator: true,
+                              //     context: context,
 
-                                  builder:
-                                      (builder) => Dialog(
-                                        backgroundColor: kWhiteColor,
-                                        insetPadding: const EdgeInsets.all(10),
-                                        child: _buildAlert(),
-                                      ),
-                                );
-                                break;
+                              //     builder:
+                              //         (builder) => Dialog(
+                              //           backgroundColor: kWhiteColor,
+                              //           insetPadding: const EdgeInsets.all(10),
+                              //           child: _buildAlert(),
+                              //         ),
+                              //   );
+                               // break;
                               default:
                             }
                           },
@@ -180,10 +180,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Expanded(
                     flex: 2,
                     child: GestureDetector(
-                      onTap:
-                          () => PageNavigator(
-                            ctx: context,
-                          ).nextPage(page: UserProfileScreen()),
+                      // onTap:
+                      //     () => PageNavigator(
+                      //       ctx: context,
+                      //     ).nextPage(page: UserProfileScreen()),
                       child: Row(
                         spacing: 5,
                         children: [
@@ -266,10 +266,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap:
-                        () => PageNavigator(
-                          ctx: context,
-                        ).nextPage(page: PromotionScreen()),
+                    // onTap:
+                    //     () => PageNavigator(
+                    //       ctx: context,
+                    //     ).nextPage(page: PromotionScreen()),
                     child: Container(
                       height: 40,
                       padding: EdgeInsets.symmetric(horizontal: 10),

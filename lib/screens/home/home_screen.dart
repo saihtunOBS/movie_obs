@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             GestureDetector(
               onTap: () {
-                PageNavigator(ctx: context).nextPage(page: PromotionScreen());
+               // PageNavigator(ctx: context).nextPage(page: PromotionScreen());
               },
               child: CircleAvatar(
                 backgroundColor: Colors.black12,
@@ -295,15 +295,15 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              if (movies[index].type == 'movie') {
-                PageNavigator(
-                  ctx: context,
-                ).nextPage(page: MovieDetailScreen(movie: movies[index]));
-              } else {
-                PageNavigator(
-                  ctx: context,
-                ).nextPage(page: SeriesDetailScreen(series: movies[index]));
-              }
+              // if (movies[index].type == 'movie') {
+              //   PageNavigator(
+              //     ctx: context,
+              //   ).nextPage(page: MovieDetailScreen(movie: movies[index]));
+              // } else {
+              //   PageNavigator(
+              //     ctx: context,
+              //   ).nextPage(page: SeriesDetailScreen(series: movies[index]));
+              // }
             },
             child: SizedBox(
               width: 140,
@@ -328,15 +328,15 @@ class _HomeScreenState extends State<HomeScreen> {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            if (movies[index].type == 'movie') {
-              PageNavigator(
-                ctx: context,
-              ).nextPage(page: MovieDetailScreen(movie: movies[index]));
-            } else {
-              PageNavigator(
-                ctx: context,
-              ).nextPage(page: SeriesDetailScreen(series: movies[index]));
-            }
+            // if (movies[index].type == 'movie') {
+            //   PageNavigator(
+            //     ctx: context,
+            //   ).nextPage(page: MovieDetailScreen(movie: movies[index]));
+            // } else {
+            //   PageNavigator(
+            //     ctx: context,
+            //   ).nextPage(page: SeriesDetailScreen(series: movies[index]));
+            // }
           },
           child: movieListItem(
             movies: movies[index],

@@ -96,19 +96,19 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                         groupValue: _selectedValue,
                         title: entry.value,
                         onChanged: (value) {
-                          setState(() {
-                            switch (value) {
-                              case 1:
-                                PersistenceData.shared.saveLocale('en');
-                                languageStreamController.sink.add('en');
-                              case 0:
-                                PersistenceData.shared.saveLocale('my');
-                                languageStreamController.sink.add('my');
-                                break;
-                              default:
-                            }
-                            _selectedValue = value;
-                          });
+                          // setState(() {
+                          //   switch (value) {
+                          //     case 1:
+                          //       PersistenceData.shared.saveLocale('en');
+                          //       languageStreamController.sink.add('en');
+                          //     case 0:
+                          //       PersistenceData.shared.saveLocale('my');
+                          //       languageStreamController.sink.add('my');
+                          //       break;
+                          //     default:
+                          //   }
+                          //   _selectedValue = value;
+                          // });
                         },
                       );
                     }).toList(),
