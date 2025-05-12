@@ -44,8 +44,8 @@ abstract class MovieDataAgents {
   Future<MovieResponse> getTopTrending(String token, String plan);
   Future<MovieResponse> getNewRelease(String token, String plan);
 
-  Future<MovieResponse> getMovieSeriesByGenre(String id);
-  Future<MovieResponse> getMovieSeriesByCategory(String id);
+  Future<MovieResponse> getMovieSeriesByGenre(String token,String id);
+  Future<MovieResponse> getMovieSeriesByCategory(String token,String id);
 
   Future<CategoryResponse> getAllCategory(String token);
   Future<GenreResponse> getAllGenre(String token);
@@ -55,7 +55,7 @@ abstract class MovieDataAgents {
 
   Future<List<MovieVO>> getRecommendedMovie(String id);
   Future<List<MovieVO>> getRecommendedSeries(String id);
-  Future<SeasonEpisodeResponse> getSeasonEpisode(String id);
+  Future<SeasonEpisodeResponse> getSeasonEpisode(String token,String id);
 
   Future<ActorDataResponse> getActorDetail(String token, String id);
 

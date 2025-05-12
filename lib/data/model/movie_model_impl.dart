@@ -133,18 +133,18 @@ class MovieModelImpl extends MovieModel {
   }
 
   @override
-  Future<SeasonEpisodeResponse> getSeasonEpisode(String id) {
-    return movieDataAgent.getSeasonEpisode(id);
+  Future<SeasonEpisodeResponse> getSeasonEpisode(String token,String id) {
+    return movieDataAgent.getSeasonEpisode(token,id);
   }
 
   @override
-  Future<MovieResponse> getMovieSeriesByCategory(String id) {
-    return movieDataAgent.getMovieSeriesByCategory(id);
+  Future<MovieResponse> getMovieSeriesByCategory(String token,String id) {
+    return movieDataAgent.getMovieSeriesByCategory(token,id);
   }
 
   @override
-  Future<MovieResponse> getMovieSeriesByGenre(String id) {
-    return movieDataAgent.getMovieSeriesByGenre(id);
+  Future<MovieResponse> getMovieSeriesByGenre(String token,String id) {
+    return movieDataAgent.getMovieSeriesByGenre(token,id);
   }
 
   @override

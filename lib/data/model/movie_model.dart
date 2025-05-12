@@ -43,12 +43,12 @@ abstract class MovieModel {
   Future<AdsBannerResponse> getBanner(String token);
   Future<AdsBannerResponse> getAds(String token);
 
-  Future<MovieResponse> getMovieSeriesByGenre(String id);
-  Future<MovieResponse> getMovieSeriesByCategory(String id);
+  Future<MovieResponse> getMovieSeriesByGenre(String token,String id);
+  Future<MovieResponse> getMovieSeriesByCategory(String token,String id);
 
   Future<List<MovieVO>> getRecommendedMovie(String id);
   Future<List<MovieVO>> getRecommendedSeries(String id);
-  Future<SeasonEpisodeResponse> getSeasonEpisode(String id);
+  Future<SeasonEpisodeResponse> getSeasonEpisode(String token,String id);
 
   Future<ActorDataResponse> getActorDetail(String token, String id);
 

@@ -32,6 +32,14 @@ class HomeBloc extends ChangeNotifier {
     getAds();
   }
 
+  void onRefresh() {
+    getBanner();
+    getFreeMovieAndSeries();
+    getAllMovieAndSeries();
+    getTopTrending();
+    getNewRelease();
+  }
+
   getAllMovieAndSeries() {
     _movieModel
         .getAllMovieAndSeries(token, '', '', 'BOTH', false)

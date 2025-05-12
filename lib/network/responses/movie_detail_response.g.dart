@@ -50,6 +50,7 @@ MovieDetailResponse _$MovieDetailResponseFromJson(Map<String, dynamic> json) =>
           (json['seasons'] as List<dynamic>?)
               ?.map((e) => SeasonVO.fromJson(e as Map<String, dynamic>))
               .toList(),
+      isWatchlist: json['isWatchlisted'] as bool?,
     );
 
 Map<String, dynamic> _$MovieDetailResponseToJson(
@@ -79,6 +80,7 @@ Map<String, dynamic> _$MovieDetailResponseToJson(
   'createdAt': instance.createdAt,
   'updatedAt': instance.updatedAt,
   'seasons': instance.seasons,
+  'isWatchlisted': instance.isWatchlist,
 };
 
 CategoryVO _$CategoryVOFromJson(Map<String, dynamic> json) => CategoryVO(

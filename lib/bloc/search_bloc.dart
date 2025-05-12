@@ -25,7 +25,7 @@ class SearchBloc extends ChangeNotifier {
   getMovieByGenre() {
     _showLoading();
     _movieModel
-        .getMovieSeriesByGenre(id)
+        .getMovieSeriesByGenre(token, id)
         .then((response) {
           movieSeriesLists = response.data ?? [];
           notifyListeners();

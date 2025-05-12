@@ -37,6 +37,8 @@ class MovieDetailBloc extends ChangeNotifier {
 
   toggleWatchlist() {
     _showLoading();
+    final current = moviesResponse?.isWatchlist ?? false;
+    moviesResponse?.isWatchlist = !current;
     var request = WatchlistRequest(
       userDataListener.value.id ?? '',
       movieId,

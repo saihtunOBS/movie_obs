@@ -4,6 +4,7 @@ import 'package:movie_obs/bloc/season_episode_bloc.dart';
 import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/series_list_item.dart';
+import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/screens/series/episode_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -16,16 +17,31 @@ import '../../widgets/expandable_text.dart';
 import '../home/actor_view_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class SeasonEpisodeScreen extends StatelessWidget {
-  const SeasonEpisodeScreen({super.key, this.season, this.seriesId});
+class SeasonEpisodeScreen extends StatefulWidget {
+  const SeasonEpisodeScreen({
+    super.key,
+    this.season,
+    this.seriesId,
+    required this.seriesResponse,
+  });
   final SeasonVO? season;
   final String? seriesId;
+  final MovieDetailResponse seriesResponse;
 
+  @override
+  State<SeasonEpisodeScreen> createState() => _SeasonEpisodeScreenState();
+}
+
+class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create:
-          (context) => SeasonEpisodeBloc(season?.id, seriesId: seriesId ?? ''),
+          (context) => SeasonEpisodeBloc(
+            widget.season?.id,
+            widget.seriesResponse,
+            seriesId: widget.seriesId ?? '',
+          ),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         body: Consumer<SeasonEpisodeBloc>(
@@ -52,7 +68,9 @@ class SeasonEpisodeScreen extends StatelessWidget {
                               bottomLeft: Radius.circular(35),
                               bottomRight: Radius.circular(35),
                             ),
-                            child: cacheImage(season?.bannerImageUrl ?? ''),
+                            child: cacheImage(
+                              widget.season?.bannerImageUrl ?? '',
+                            ),
                           ),
                         ),
                         Positioned(
@@ -217,13 +235,13 @@ class SeasonEpisodeScreen extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              season?.name ?? '',
+              widget.season?.name ?? '',
               style: TextStyle(fontSize: kTextRegular18 + 2),
             ),
           ),
           _buildEpisodeAndViewCount(bloc),
           1.vGap,
-          _buildTypeAndWatchList(),
+          _buildTypeAndWatchList(bloc),
           bloc.seasonEpisodeResponse?.actors?.isEmpty ?? true
               ? SizedBox.shrink()
               : _buildCastView(bloc),
@@ -260,6 +278,7 @@ class SeasonEpisodeScreen extends StatelessWidget {
                   page: EpisodeScreen(
                     episodeResponse: bloc.seasonEpisodeResponse,
                     episodeData: bloc.seasonEpisodeResponse?.episodes?[index],
+                    seriesId: widget.seriesId ?? '',
                   ),
                 );
               },
@@ -291,7 +310,8 @@ class SeasonEpisodeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTypeAndWatchList() {
+  Widget _buildTypeAndWatchList(SeasonEpisodeBloc bloc) {
+    bool isWishlisted = bloc.seriesDetailResponse?.isWatchlist ?? false;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       spacing: kMarginMedium2 - 3,
@@ -308,26 +328,43 @@ class SeasonEpisodeScreen extends StatelessWidget {
               spacing: kMargin5,
               children: [
                 //Icon(CupertinoIcons.lock, color: kWhiteColor, size: 18),
-                Text('Free', style: TextStyle(color: kPrimaryColor)),
+                Text(
+                  widget.season?.plan ?? '',
+                  style: TextStyle(color: kPrimaryColor),
+                ),
               ],
             ),
           ),
         ),
-        Container(
-          height: 30,
-          padding: EdgeInsets.symmetric(horizontal: kMarginMedium),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.transparent,
-            border: Border.all(color: kWhiteColor),
-          ),
-          child: Center(
-            child: Row(
-              spacing: kMargin5,
-              children: [
-                Icon(CupertinoIcons.bookmark, size: 18),
-                Text('Watchlist', style: TextStyle()),
-              ],
+        GestureDetector(
+          onTap: () {
+            bloc.toggleWatchlist();
+            setState(() {
+              isWishlisted = !isWishlisted;
+            });
+          },
+          child: Container(
+            height: 30,
+            padding: EdgeInsets.symmetric(horizontal: kMarginMedium),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.transparent,
+              border: Border.all(
+                color: isWishlisted ? kSecondaryColor : kWhiteColor,
+              ),
+            ),
+            child: Center(
+              child: Row(
+                spacing: kMargin5,
+                children: [
+                  Icon(
+                    CupertinoIcons.bookmark_fill,
+                    size: 18,
+                    color: isWishlisted ? kSecondaryColor : kWhiteColor,
+                  ),
+                  Text('Watchlist', style: TextStyle()),
+                ],
+              ),
             ),
           ),
         ),

@@ -14,10 +14,10 @@ import 'package:movie_obs/widgets/cache_image.dart';
 import '../../widgets/expandable_text.dart';
 
 class EpisodeScreen extends StatelessWidget {
-  const EpisodeScreen({super.key, this.episodeResponse, this.episodeData});
+  const EpisodeScreen({super.key, this.episodeResponse, this.episodeData, required this.seriesId});
   final SeasonEpisodeResponse? episodeResponse;
   final SeasonVO? episodeData;
-
+  final String seriesId;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -204,6 +204,7 @@ class EpisodeScreen extends StatelessWidget {
                 'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
             isFirstTime: true,
             type: 'SERIES',
+            videoId: seriesId,
           ),
         );
       },

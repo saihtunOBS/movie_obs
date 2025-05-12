@@ -78,6 +78,9 @@ class MovieDetailResponse {
   @JsonKey(name: "seasons")
   final List<SeasonVO>? seasons;
 
+  @JsonKey(name: "isWatchlisted")
+  bool? isWatchlist;
+
   MovieDetailResponse({
     this.id,
     this.name,
@@ -103,6 +106,7 @@ class MovieDetailResponse {
     this.createdAt,
     this.updatedAt,
     this.seasons,
+    this.isWatchlist
   });
 
   factory MovieDetailResponse.fromJson(Map<String, dynamic> json) =>

@@ -76,14 +76,20 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getMovies(String plan, int limit, String genres) async {
+  Future<MovieResponse> getMovies(
+    String token,
+    String plan,
+    int limit,
+    String genres,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'plan': plan,
       r'limit': limit,
       r'genres': genres,
     };
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
@@ -107,10 +113,11 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieDetailResponse> getMovieDetail(String id) async {
+  Future<MovieDetailResponse> getMovieDetail(String token, String id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieDetailResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
@@ -135,6 +142,7 @@ class _MovieApi implements MovieApi {
 
   @override
   Future<MovieDetailResponse> getSeriesDetail(
+    String token,
     String id,
     bool isSeasonInclude,
   ) async {
@@ -142,7 +150,8 @@ class _MovieApi implements MovieApi {
     final queryParameters = <String, dynamic>{
       r'includeSeasons': isSeasonInclude,
     };
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieDetailResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
@@ -227,6 +236,7 @@ class _MovieApi implements MovieApi {
 
   @override
   Future<MovieResponse> getAllMoviesAndSeries(
+    String token,
     String plan,
     int limit,
     String genres,
@@ -241,7 +251,8 @@ class _MovieApi implements MovieApi {
       r'contentType': type,
       r'getAll': getAll,
     };
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
@@ -347,6 +358,7 @@ class _MovieApi implements MovieApi {
 
   @override
   Future<SeasonEpisodeResponse> getSeasonEpisode(
+    String token,
     String id,
     bool isSeasonInclude,
   ) async {
@@ -354,7 +366,8 @@ class _MovieApi implements MovieApi {
     final queryParameters = <String, dynamic>{
       r'include_episodes': isSeasonInclude,
     };
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<SeasonEpisodeResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
@@ -412,10 +425,11 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getMovieSeriesByGenre(String id) async {
+  Future<MovieResponse> getMovieSeriesByGenre(String token, String id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'genre': id};
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
@@ -439,10 +453,14 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getMovieSeriesByCategory(String id) async {
+  Future<MovieResponse> getMovieSeriesByCategory(
+    String token,
+    String id,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'category': id};
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
@@ -520,10 +538,11 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getTopTrending(bool isTrending) async {
+  Future<MovieResponse> getTopTrending(String token, bool isTrending) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'isTrending': isTrending};
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
@@ -548,6 +567,7 @@ class _MovieApi implements MovieApi {
 
   @override
   Future<MovieResponse> getNewRelease(
+    String token,
     String sortBy,
     String sortOrder,
     String plan,
@@ -560,7 +580,8 @@ class _MovieApi implements MovieApi {
       r'plan': plan,
       r'limit': limit,
     };
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
@@ -584,14 +605,20 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<MovieResponse> getSeries(String plan, int limit, String genres) async {
+  Future<MovieResponse> getSeries(
+    String token,
+    String plan,
+    int limit,
+    String genres,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'plan': plan,
       r'limit': limit,
       r'genres': genres,
     };
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MovieResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)

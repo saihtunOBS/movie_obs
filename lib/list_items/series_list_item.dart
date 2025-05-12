@@ -52,7 +52,7 @@ Widget seasonListItem({bool? isSeries, SeasonVO? data, bool? isLast}) {
                             ),
                             child: Center(
                               child: Text(
-                                'Free',
+                                data?.plan ?? '',
                                 style: TextStyle(
                                   color: kPrimaryColor,
                                   fontSize: 13,

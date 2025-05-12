@@ -162,6 +162,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      bloc.toggleHistory(widget.videoId ?? '', widget.type);
       bloc.isMuted = false;
       bloc.currentUrl = widget.url ?? '';
       MiniVideoPlayer.removeMiniPlayer();
@@ -231,7 +232,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       },
     );
   }
-
 
   Widget _buildVideoPlayerSection() {
     return Container(
@@ -705,8 +705,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     );
   }
 
-  
-
   Widget _buildAdditionalOptions() {
     return Consumer<VideoBloc>(
       builder:
@@ -1019,6 +1017,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     );
   }
 }
+
 class Player extends StatelessWidget {
   const Player({super.key, required this.bloc});
 

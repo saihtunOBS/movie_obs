@@ -47,6 +47,7 @@ MovieVO _$MovieVOFromJson(Map<String, dynamic> json) => MovieVO(
           .toList(),
   createdAt: json['createdAt'] as String?,
   updatedAt: json['updatedAt'] as String?,
+  isWatchlist: json['isWatchlisted'] as bool?,
 );
 
 Map<String, dynamic> _$MovieVOToJson(MovieVO instance) => <String, dynamic>{
@@ -73,6 +74,7 @@ Map<String, dynamic> _$MovieVOToJson(MovieVO instance) => <String, dynamic>{
   'actors': instance.actors,
   'actresses': instance.actresses,
   'supports': instance.supports,
+  'isWatchlisted': instance.isWatchlist,
   'createdAt': instance.createdAt,
   'updatedAt': instance.updatedAt,
 };

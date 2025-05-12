@@ -74,6 +74,9 @@ class MovieVO {
   @JsonKey(name: "supports")
   final List<CastVO>? supports;
 
+  @JsonKey(name: "isWatchlisted")
+  bool? isWatchlist;
+
   @JsonKey(name: "createdAt")
   final String? createdAt;
 
@@ -106,6 +109,7 @@ class MovieVO {
     this.supports,
     this.createdAt,
     this.updatedAt,
+    this.isWatchlist
   });
 
   factory MovieVO.fromJson(Map<String, dynamic> json) =>

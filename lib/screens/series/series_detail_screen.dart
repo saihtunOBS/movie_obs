@@ -5,6 +5,7 @@ import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/recommended_movie_list_item.dart';
 import 'package:movie_obs/list_items/series_list_item.dart';
+import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/screens/series/season_episode_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -222,6 +223,7 @@ class SeriesDetailScreen extends StatelessWidget {
                 PageNavigator(ctx: context).nextPage(
                   page: SeasonEpisodeScreen(
                     season: bloc.seriesResponse?.seasons?[index],
+                    seriesResponse: bloc.seriesResponse ?? MovieDetailResponse(),
                     seriesId: bloc.seriesResponse?.id,
                   ),
                 );

@@ -70,7 +70,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   @override
   Future<MovieResponse> getMovies(String token, String plan, String genre) {
     return movieApi
-        .getMovies(plan, 10, genre)
+        .getMovies(token, plan, 10, genre)
         .asStream()
         .map((response) => response)
         .first
@@ -88,7 +88,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     bool getAll,
   ) {
     return movieApi
-        .getAllMoviesAndSeries(plan, 10, genre, type, getAll)
+        .getAllMoviesAndSeries(token, plan, 10, genre, type, getAll)
         .asStream()
         .map((response) => response)
         .first
@@ -100,7 +100,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   @override
   Future<MovieResponse> getNewRelease(String token, String plan) {
     return movieApi
-        .getNewRelease('createdAt', 'desc', plan, 10)
+        .getNewRelease(token, 'createdAt', 'desc', plan, 10)
         .asStream()
         .map((response) => response)
         .first
@@ -112,7 +112,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   @override
   Future<MovieResponse> getTopTrending(String token, String plan) {
     return movieApi
-        .getTopTrending(true)
+        .getTopTrending(token, true)
         .asStream()
         .map((response) => response)
         .first
@@ -124,7 +124,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   @override
   Future<MovieResponse> getSeries(String token, String plan, String genre) {
     return movieApi
-        .getSeries(plan, 10, genre)
+        .getSeries(token, plan, 10, genre)
         .asStream()
         .map((response) => response)
         .first
@@ -136,7 +136,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   @override
   Future<MovieDetailResponse> getMovieDetail(String token, String id) {
     return movieApi
-        .getMovieDetail(id)
+        .getMovieDetail(token, id)
         .asStream()
         .map((response) => response)
         .first
@@ -152,7 +152,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     bool isSeasonInclude,
   ) {
     return movieApi
-        .getSeriesDetail(id, isSeasonInclude)
+        .getSeriesDetail(token, id, isSeasonInclude)
         .asStream()
         .map((response) => response)
         .first
@@ -246,9 +246,9 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<SeasonEpisodeResponse> getSeasonEpisode(String id) {
+  Future<SeasonEpisodeResponse> getSeasonEpisode(String token, String id) {
     return movieApi
-        .getSeasonEpisode(id, true)
+        .getSeasonEpisode(token, id, true)
         .asStream()
         .map((response) {
           return response;
@@ -260,9 +260,9 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<MovieResponse> getMovieSeriesByCategory(String id) {
+  Future<MovieResponse> getMovieSeriesByCategory(String token, String id) {
     return movieApi
-        .getMovieSeriesByCategory(id)
+        .getMovieSeriesByCategory('Bearer $token', id)
         .asStream()
         .map((response) => response)
         .first
@@ -272,9 +272,9 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<MovieResponse> getMovieSeriesByGenre(String id) {
+  Future<MovieResponse> getMovieSeriesByGenre(String token, String id) {
     return movieApi
-        .getMovieSeriesByGenre(id)
+        .getMovieSeriesByGenre('Bearer $token', id)
         .asStream()
         .map((response) => response)
         .first

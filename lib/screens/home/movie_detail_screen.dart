@@ -19,14 +19,19 @@ import '../../list_items/recommended_movie_list_item.dart';
 import '../../widgets/expandable_text.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class MovieDetailScreen extends StatelessWidget {
+class MovieDetailScreen extends StatefulWidget {
   const MovieDetailScreen({super.key, this.movie});
   final MovieVO? movie;
 
   @override
+  State<MovieDetailScreen> createState() => _MovieDetailScreenState();
+}
+
+class _MovieDetailScreenState extends State<MovieDetailScreen> {
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MovieDetailBloc(movie?.id),
+      create: (context) => MovieDetailBloc(widget.movie?.id),
       child: Consumer<MovieDetailBloc>(
         builder:
             (context, bloc, child) => Scaffold(
@@ -55,7 +60,9 @@ class MovieDetailScreen extends StatelessWidget {
                                   bottomLeft: Radius.circular(35),
                                   bottomRight: Radius.circular(35),
                                 ),
-                                child: cacheImage(movie?.posterImageUrl ?? ''),
+                                child: cacheImage(
+                                  widget.movie?.posterImageUrl ?? '',
+                                ),
                               ),
                             ),
                             Positioned(
@@ -155,7 +162,7 @@ class MovieDetailScreen extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              movie?.name ?? '',
+              widget.movie?.name ?? '',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: kTextRegular18 + 2),
             ),
@@ -179,7 +186,11 @@ class MovieDetailScreen extends StatelessWidget {
           ),
           _buildTypeAndWatchList(bloc),
           1.vGap,
-          _buildWatchNowButton(context, movie?.id ?? '', movie?.videoUrl ?? ''),
+          _buildWatchNowButton(
+            context,
+            widget.movie?.id ?? '',
+            widget.movie?.videoUrl ?? '',
+          ),
           _buildCastView(bloc),
           _buildDescription(bloc, context),
           5.vGap,
@@ -404,6 +415,7 @@ class MovieDetailScreen extends StatelessWidget {
   }
 
   Widget _buildTypeAndWatchList(MovieDetailBloc bloc) {
+    bool isWishlisted = bloc.moviesResponse?.isWatchlist ?? false;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       spacing: kMarginMedium2 - 3,
@@ -438,14 +450,20 @@ class MovieDetailScreen extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: Colors.transparent,
-              border: Border.all(color: kWhiteColor),
+              border: Border.all(
+                color: isWishlisted ? kSecondaryColor : kWhiteColor,
+              ),
             ),
             child: Center(
               child: Row(
                 spacing: kMargin5,
                 children: [
-                  Icon(CupertinoIcons.bookmark, size: 18),
-                  Text('Watchlist', style: TextStyle()),
+                  Icon(
+                    CupertinoIcons.bookmark_fill,
+                    size: 18,
+                    color: isWishlisted ? kSecondaryColor : kWhiteColor,
+                  ),
+                  Text('Watchlist', style: TextStyle(color: kWhiteColor)),
                 ],
               ),
             ),
