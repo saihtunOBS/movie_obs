@@ -11,6 +11,7 @@ Widget customButton({
   Color? borderColor,
   bool? isOnlyBorder,
   double? height,
+  double? borderRadius,
   required BuildContext? context,
 }) {
   return GestureDetector(
@@ -18,9 +19,12 @@ Widget customButton({
     child: Container(
       height: height ?? 50,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(borderRadius ?? 8),
         color: backgroundColor,
-        border: Border.all(color: borderColor ?? Colors.transparent,width: 0.7),
+        border: Border.all(
+          color: borderColor ?? Colors.transparent,
+          width: 0.7,
+        ),
       ),
       child: Center(
         child: Text(

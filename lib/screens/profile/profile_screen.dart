@@ -15,6 +15,7 @@ import 'package:movie_obs/screens/profile/watch_list_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
+import 'package:movie_obs/widgets/common_dialog.dart';
 import 'package:movie_obs/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
@@ -120,16 +121,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ctx: context,
                                 ).nextPage(page: FaqScreen());
                               case 8:
-                                showDialog(
-                                  useRootNavigator: true,
+                                showCommonDialog(
                                   context: context,
-
-                                  builder:
-                                      (builder) => Dialog(
-                                        backgroundColor: kWhiteColor,
-                                        insetPadding: const EdgeInsets.all(10),
-                                        child: _buildAlert(),
-                                      ),
+                                  dialogWidget: _buildAlert(),
                                 );
                                 break;
                               default:
@@ -156,7 +150,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                         context: context,
                         backgroundColor: kSecondaryColor,
-                        title: 'Logout',
+                        title:
+                            AppLocalizations.of(context)?.deleteAccount2 ?? '',
                         textColor: kWhiteColor,
                       ),
                     ),
@@ -217,7 +212,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         height: 50,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(
-                                            10,
+                                            kMarginMedium + 8,
                                           ),
                                           child: cacheImage(
                                             userData.profilePictureUrl,
@@ -353,17 +348,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildAlert() {
-    return Container(
-      height: null,
-      padding: EdgeInsets.all(20),
-      child: SingleChildScrollView(
+    return Dialog(
+      insetPadding: const EdgeInsets.all(10),
+      backgroundColor: kWhiteColor,
+      child: Container(
+        height: null,
+        padding: EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(CupertinoIcons.delete_simple, size: 38, color: Colors.red),
             15.vGap,
             Text(
-              'Delete Account?',
+              AppLocalizations.of(context)?.deleteAccount ?? '',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: kTextRegular2x,
@@ -373,7 +371,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             10.vGap,
             Text(
-              'Are you sure you want to delete your account permanently?',
+              AppLocalizations.of(context)?.deleteAccount2 ?? '',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: kTextRegular13, color: kBlackColor),
             ),
@@ -392,7 +390,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     context: context,
                     backgroundColor: Colors.grey.withValues(alpha: 0.2),
-                    title: 'No',
+                    title: AppLocalizations.of(context)?.no ?? '',
                     textColor: kBlackColor,
                   ),
                 ),
@@ -402,7 +400,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPress: () {},
                     context: context,
                     backgroundColor: kSecondaryColor,
-                    title: 'Yes',
+                    title: AppLocalizations.of(context)?.yes ?? '',
                     textColor: kWhiteColor,
                   ),
                 ),

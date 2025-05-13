@@ -13,7 +13,6 @@ import '../../utils/images.dart';
 import '../../widgets/custom_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 class PromotionScreen extends StatelessWidget {
   const PromotionScreen({super.key});
 
@@ -66,7 +65,7 @@ class PromotionScreen extends StatelessWidget {
     return Stack(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 55, left: 10, right: 10),
+          padding: EdgeInsets.only(top: 57, left: 8, right: 8),
           child: Row(
             spacing: 10,
             children: [

@@ -98,7 +98,6 @@ class _AdsScreenState extends State<AdsScreen> {
                 width: double.infinity,
 
                 decoration: BoxDecoration(
-                  color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: AdsImageAnimation(),

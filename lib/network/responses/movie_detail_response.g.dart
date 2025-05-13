@@ -26,6 +26,7 @@ MovieDetailResponse _$MovieDetailResponseFromJson(Map<String, dynamic> json) =>
               ? null
               : CategoryVO.fromJson(json['category'] as Map<String, dynamic>),
       duration: (json['duration'] as num?)?.toInt(),
+      payPerViewPrice: (json['payPerViewPrice'] as num?)?.toInt(),
       publishedYear: json['publishedYear'] as String?,
       genres:
           (json['genres'] as List<dynamic>?)
@@ -60,6 +61,7 @@ Map<String, dynamic> _$MovieDetailResponseToJson(
   'name': instance.name,
   'description': instance.description,
   'plan': instance.plan,
+  'payPerViewPrice': instance.payPerViewPrice,
   'status': instance.status,
   'isTrending': instance.isTrending,
   'posterImageUrl': instance.posterImageUrl,

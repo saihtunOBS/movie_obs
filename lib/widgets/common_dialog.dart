@@ -17,6 +17,13 @@ Future<bool?> showCommonDialog({
         child: SizedBox.expand(child: dialogWidget),
       );
     },
-    
+    transitionBuilder: (context, animation, secondaryAnimation, child) {
+      final offsetAnimation = Tween<Offset>(
+        begin: const Offset(1.0, 0.0), // From right
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut));
+
+      return SlideTransition(position: offsetAnimation, child: child);
+    },
   );
 }

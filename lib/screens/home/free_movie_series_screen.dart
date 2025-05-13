@@ -12,7 +12,9 @@ import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/page_navigator.dart';
+import '../series/series_detail_screen.dart';
 import 'movie_detail_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FreeMovieSeriesScreen extends StatefulWidget {
   const FreeMovieSeriesScreen({super.key});
@@ -36,7 +38,7 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
           backgroundColor: kBackgroundColor,
           surfaceTintColor: kBackgroundColor,
           foregroundColor: kWhiteColor,
-          title: Text('Free Movies & Series'),
+          title: Text(AppLocalizations.of(context)?.freeMovieSeries ?? ''),
           centerTitle: false,
           actions: [
             Consumer<HomeBloc>(
@@ -115,16 +117,26 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                                   itemBuilder: (context, index) {
                                     return GestureDetector(
                                       onTap: () {
-                                        PageNavigator(ctx: context).nextPage(
-                                          page: MovieDetailScreen(
-                                            movie: bloc.freeMovieLists[index],
-                                          ),
-                                        );
+                                        if (bloc.freeMovieLists[index].type ==
+                                            'movie') {
+                                          PageNavigator(ctx: context).nextPage(
+                                            page: MovieDetailScreen(
+                                              movie: bloc.freeMovieLists[index],
+                                            ),
+                                          );
+                                        } else {
+                                          PageNavigator(ctx: context).nextPage(
+                                            page: SeriesDetailScreen(
+                                              series:
+                                                  bloc.freeMovieLists[index],
+                                            ),
+                                          );
+                                        }
                                       },
                                       child: movieListItem(
                                         isHomeScreen: true,
                                         movies: bloc.freeMovieLists[index],
-                                        type: bloc.freeMovieLists[index].plan,
+                                        type: bloc.freeMovieLists[index].type,
                                       ),
                                     );
                                   },

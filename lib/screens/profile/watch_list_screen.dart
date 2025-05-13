@@ -16,6 +16,8 @@ import '../../widgets/show_loading.dart';
 import '../home/movie_detail_screen.dart';
 import '../series/series_detail_screen.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class WatchListScreen extends StatefulWidget {
   const WatchListScreen({super.key});
 
@@ -40,7 +42,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
         appBar: AppBar(
           backgroundColor: kBackgroundColor,
           surfaceTintColor: kBackgroundColor,
-          title: Text('Watchlist'),
+          title: Text(AppLocalizations.of(context)?.watchlist ?? ''),
           centerTitle: false,
           actions: [
             Consumer<WatchlistBloc>(
@@ -108,7 +110,9 @@ class _WatchListScreenState extends State<WatchListScreen> {
                       child: SearchBar(
                         controller: _controller,
                         leading: Icon(CupertinoIcons.search),
-                        hintText: 'Search by movie & series',
+                        hintText:
+                            AppLocalizations.of(context)?.searchByMovieSeries ??
+                            '',
                         backgroundColor: WidgetStateProperty.all(
                           Colors.grey.withValues(alpha: 0.2),
                         ),
@@ -208,10 +212,8 @@ class _WatchListScreenState extends State<WatchListScreen> {
                                               ?.data?[index]
                                               .reference,
                                       type:
-                                          bloc
-                                              .watchListData
-                                              ?.data?[index]
-                                              .type?.toLowerCase() ??
+                                          bloc.watchListData?.data?[index].type
+                                              ?.toLowerCase() ??
                                           '',
                                     ),
                                   );

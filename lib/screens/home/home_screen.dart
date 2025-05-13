@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
@@ -42,14 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               kMarginMedium.hGap,
               Image.asset(kAppIcon, width: 40, height: 40),
-              Text(
-                'Tuu Tu TV',
-                style: TextStyle(
-                  color: kPrimaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: kTextRegular3x + 3,
-                ),
-              ),
+              Image.asset(kAppTextLogo, height: 15),
             ],
           ),
           centerTitle: false,
@@ -78,7 +72,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: 35,
                 child: CircleAvatar(
                   backgroundColor: Colors.grey.withValues(alpha: 0.2),
-                  child: Icon(CupertinoIcons.bell, color: kWhiteColor,size: 22,),
+                  child: Icon(
+                    CupertinoIcons.bell,
+                    color: kWhiteColor,
+                    size: 22,
+                  ),
                 ),
               ),
             ),
@@ -92,7 +90,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: 35,
                 child: CircleAvatar(
                   backgroundColor: Colors.grey.withValues(alpha: 0.2),
-                  child: Icon(CupertinoIcons.search, color: kWhiteColor,size: 22,),
+                  child: Icon(
+                    CupertinoIcons.search,
+                    color: kWhiteColor,
+                    size: 22,
+                  ),
                 ),
               ),
             ),
@@ -213,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 80,
+            width: 70,
             child: Column(
               spacing: 10,
               children: [
@@ -234,13 +236,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   AppLocalizations.of(context)?.live ?? '',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: kWhiteColor),
+                  style: TextStyle(
+                    fontFamily: GoogleFonts.notoSerifMyanmar().fontFamily,
+                    fontSize:
+                        PersistenceData.shared.getLocale() != 'en' ? 12 : 14,
+                    color: kWhiteColor,
+                    fontWeight: FontWeight.w700,
+                    height: 1.7,
+                  ),
                 ),
               ],
             ),
           ),
           SizedBox(
-            width: 80,
+            width: 70,
             child: Column(
               spacing: 10,
               children: [
@@ -258,13 +267,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   AppLocalizations.of(context)?.program ?? '',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: kWhiteColor),
+                  style: TextStyle(
+                    fontFamily: GoogleFonts.notoSerifMyanmar().fontFamily,
+                    fontSize:
+                        PersistenceData.shared.getLocale() != 'en' ? 12 : 14,
+                    color: kWhiteColor,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
             ),
           ),
           SizedBox(
-            width: 80,
+            width: 70,
             child: Column(
               spacing: 10,
               children: [
@@ -282,7 +297,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   AppLocalizations.of(context)?.watchlist ?? '',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: kWhiteColor),
+                  style: TextStyle(
+                    fontFamily: GoogleFonts.notoSerifMyanmar().fontFamily,
+                    fontSize:
+                        PersistenceData.shared.getLocale() != 'en' ? 12 : 14,
+                    color: kWhiteColor,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
             ),
@@ -388,9 +409,9 @@ class _SliverHeader extends SliverPersistentHeaderDelegate {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: kTextRegular3x - 1,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
             ),
           ),
           IconButton(

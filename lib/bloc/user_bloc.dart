@@ -40,7 +40,7 @@ class UserBloc extends ChangeNotifier {
           notifyListeners();
         })
         .catchError((_) {
-          //PersistenceData.shared.clearToken();
+          PersistenceData.shared.clearToken();
           showCommonDialog(
             context: context!,
             isBarrierDismiss: false,

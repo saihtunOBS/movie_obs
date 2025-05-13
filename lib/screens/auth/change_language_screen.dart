@@ -1,5 +1,6 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
@@ -48,7 +49,6 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
-      resizeToAvoidBottomInset: true,
       body: Padding(
         padding: EdgeInsets.symmetric(
           horizontal:
@@ -67,6 +67,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                 fontSize: kTextRegular32,
                 fontWeight: FontWeight.bold,
                 color: kPrimaryColor,
+                fontFamily: GoogleFonts.poppins().fontFamily,
               ),
             ),
             Text(

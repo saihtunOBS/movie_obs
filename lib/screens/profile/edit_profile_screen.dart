@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
@@ -98,7 +97,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Stack(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 55, left: 10, right: 10),
+          padding: EdgeInsets.only(top: 57, left: 8, right: 8),
           child: Row(
             spacing: 10,
             children: [

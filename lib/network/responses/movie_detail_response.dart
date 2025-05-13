@@ -18,6 +18,9 @@ class MovieDetailResponse {
   @JsonKey(name: "plan")
   final String? plan;
 
+  @JsonKey(name: "payPerViewPrice")
+  final int? payPerViewPrice;
+
   @JsonKey(name: "status")
   final String? status;
 
@@ -97,6 +100,7 @@ class MovieDetailResponse {
     this.viewCount,
     this.category,
     this.duration,
+    this.payPerViewPrice,
     this.publishedYear,
     this.genres,
     this.director,
@@ -106,7 +110,7 @@ class MovieDetailResponse {
     this.createdAt,
     this.updatedAt,
     this.seasons,
-    this.isWatchlist
+    this.isWatchlist,
   });
 
   factory MovieDetailResponse.fromJson(Map<String, dynamic> json) =>

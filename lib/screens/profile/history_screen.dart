@@ -11,6 +11,7 @@ import '../../widgets/empty_view.dart';
 import '../../widgets/show_loading.dart';
 import '../home/movie_detail_screen.dart';
 import '../series/series_detail_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -34,7 +35,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         appBar: AppBar(
           backgroundColor: kBackgroundColor,
           surfaceTintColor: kBackgroundColor,
-          title: Text('Your History'),
+          title: Text(AppLocalizations.of(context)?.yourHistory ?? ''),
           centerTitle: false,
         ),
         body: Consumer<HistoryBloc>(
@@ -90,7 +91,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   movies:
                                       bloc.historyData?.data?[index].reference,
                                   type:
-                                      bloc.historyData?.data?[index].type?.toLowerCase() ?? '',
+                                      bloc.historyData?.data?[index].type
+                                          ?.toLowerCase() ??
+                                      '',
                                 ),
                               );
                             },

@@ -1,6 +1,7 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/auth_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
@@ -61,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             'LOGIN',
                             style: TextStyle(
+                              fontFamily: GoogleFonts.poppins().fontFamily,
                               letterSpacing: 10.0,
                               fontSize: kTextRegular32,
                               fontWeight: FontWeight.bold,
@@ -68,7 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           Text(
-                            AppLocalizations.of(context)?.enterPhoneNumber ?? '',
+                            AppLocalizations.of(context)?.enterPhoneNumber ??
+                                '',
                             style: TextStyle(fontSize: kTextRegular2x),
                           ),
                           20.vGap,
@@ -115,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             ),
                                           ),
                                         ),
-    
+
                                         textStyle: TextStyle(
                                           fontSize:
                                               getDeviceType() == 'phone'
@@ -215,7 +218,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     keyboardType: TextInputType.phone,
                                     decoration: InputDecoration(
-                                      hintText: AppLocalizations.of(context)?.phone,
+                                      hintText:
+                                          AppLocalizations.of(context)?.phone,
                                       contentPadding: EdgeInsets.only(top: 4),
                                       hintStyle: TextStyle(color: kWhiteColor),
                                       border: InputBorder.none,
@@ -262,7 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-    
+
                       //show lading
                       bloc.isLoading ? LoadingView() : SizedBox.shrink(),
                     ],

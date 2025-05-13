@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:movie_obs/bloc/auth_bloc.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/extension/extension.dart';
@@ -97,6 +98,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         Text(
                           'VERIFICATION',
                           style: TextStyle(
+                            fontFamily: GoogleFonts.poppins().fontFamily,
                             letterSpacing: 10.0,
                             fontSize: kTextRegular32,
                             fontWeight: FontWeight.bold,

@@ -54,5 +54,7 @@
   "sendOtpCode": "We'll send OTP Code to your phone number. Please enter below.",
   "resend": "Resend",
   "login": "Login",
-  "discoverLabel": "Discover, stream, and enjoy your favorite movies and shows anytime, anywhere."
+  "discoverLabel": "Discover, stream, and enjoy your favorite movies and shows anytime, anywhere.",
+  "searchByMovieSeries": "Search by movies & series",
+  "yourHistory" : "Your History"
 }

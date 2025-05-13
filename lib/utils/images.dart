@@ -29,3 +29,5 @@ const kPictureInPictureIcon = 'assets/images/picture.png';
 
 const kHomePromotionIcon = 'assets/images/home_promotion.png';
 const kAppIcon = 'assets/images/app_icon.png';
+const kAppTextLogo = 'assets/images/text_logo.png';
+const kLockOpenLogo = 'assets/images/lock_open.png';

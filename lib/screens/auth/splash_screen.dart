@@ -94,27 +94,29 @@ class _SplashScreenState extends State<SplashScreen>
                   scale: _scaleAnimation.value,
                   child: Transform.rotate(
                     angle: _rotationAnimation.value,
-                    child: Image.asset(kAppIcon, width: 90, height: 90),
+                    child: Image.asset(kAppIcon, width: 100, height: 100),
                   ),
                 );
               },
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 15),
             SlideTransition(
               position: _offsetAnimation,
               child: FadeTransition(
                 opacity: _opacityAnimation,
-                child: Text(
-                  "Tuu Tu TV",
-                  style: const TextStyle(
-                    fontSize: 23,
-                    fontWeight: FontWeight.bold,
-                    color: kPrimaryColor,
-                  ),
-                ),
+                child: Image.asset(kAppTextLogo, height: 20),
               ),
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: SizedBox(
+        height: 60,
+        child: Center(
+          child: Text(
+            'Version 1.0.0',
+            style: TextStyle(color: kWhiteColor, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
