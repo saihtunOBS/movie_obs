@@ -40,6 +40,9 @@ class SeasonVO {
   @JsonKey(name: "series")
   final dynamic series;
 
+  @JsonKey(name: "payPerViewPrice")
+  final int? payPerViewPrice;
+
   @JsonKey(name: "actors")
   final List<SeasonCastVO>? actors;
 
@@ -71,6 +74,7 @@ class SeasonVO {
     this.viewCount,
     this.publishedYear,
     this.series,
+    this.payPerViewPrice,
     this.actors,
     this.actresses,
     this.supports,
