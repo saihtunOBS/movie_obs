@@ -73,6 +73,19 @@ class HomeBloc extends ChangeNotifier {
         });
   }
 
+  filter(String plan, String genre, String contentType) async {
+    _showLoading();
+    _movieModel
+        .getAllMovieAndSeries(token, 'FREE', genre, contentType, false)
+        .then((response) {
+          freeMovieLists = response.data ?? [];
+          _hideLoading();
+        })
+        .whenComplete(() {
+          _hideLoading();
+        });
+  }
+
   getTopTrending() {
     _movieModel.getTopTrending(token).then((response) {
       topTrendingMoviesList = response.data ?? [];

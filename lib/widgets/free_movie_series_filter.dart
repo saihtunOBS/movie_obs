@@ -11,10 +11,9 @@ import '../data/vos/filter_vo.dart';
 
 final ValueNotifier<String> _selectedCategory = ValueNotifier('');
 
-Widget searchFilterSheet(
+Widget freeMovieSeriesFilterSheet(
   VoidCallback onFilter, {
   FilterVo Function(FilterVo data)? filter,
-  bool? isWatchList,
 }) {
   return ChangeNotifierProvider(
     create: (context) => MovieBloc(),
@@ -110,15 +109,7 @@ Widget searchFilterSheet(
                         buildMovieAndSeriesSession(),
                         Divider(thickness: 0.5),
 
-                        //type session
-                       buildTypeSession(),
-                        isWatchList == true
-                            ? Divider(thickness: 0.5)
-                            : SizedBox.shrink(),
-
-                        isWatchList == true
-                            ? buildGenreSession(genreData: bloc.genreLists)
-                            : SizedBox.shrink(),
+                       buildGenreSession(genreData: bloc.genreLists),
 
                         20.vGap,
                       ],

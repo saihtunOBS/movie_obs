@@ -201,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Container(
                                   height: 50,
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: kMarginMedium,
+                                    horizontal: kMarginMedium2,
                                   ),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),

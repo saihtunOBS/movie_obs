@@ -5,6 +5,8 @@ import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
+import 'package:movie_obs/widgets/empty_view.dart';
+import 'package:movie_obs/widgets/free_movie_series_filter.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
@@ -37,33 +39,50 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
           title: Text('Free Movies & Series'),
           centerTitle: false,
           actions: [
-            GestureDetector(
-              onTap: () {
-                if (getDeviceType() == 'phone') {
-                  showModalBottomSheet(
-                    useRootNavigator: true,
-                    context: context,
-                    builder: (context) {
-                      return movieFilterSheet(() {});
+            Consumer<HomeBloc>(
+              builder:
+                  (context, bloc, child) => GestureDetector(
+                    onTap: () {
+                      if (getDeviceType() == 'phone') {
+                        showModalBottomSheet(
+                          useRootNavigator: true,
+                          context: context,
+                          builder: (context) {
+                            return freeMovieSeriesFilterSheet(
+                              () {},
+                              filter: (data) {
+                                bloc.filter(
+                                  data.plan == 'Pay per view'
+                                      ? 'PAY_PER_VIEW'
+                                      : data.plan.toUpperCase(),
+                                  data.newGenre ?? '',
+                                  data.genreOrContentType == ''
+                                      ? 'BOTH'
+                                      : data.genreOrContentType.toUpperCase(),
+                                );
+                                return data;
+                              },
+                            );
+                          },
+                        );
+                      } else {
+                        showMovieRightSideSheet(context);
+                      }
                     },
-                  );
-                } else {
-                  showMovieRightSideSheet(context);
-                }
-              },
-              child: Container(
-                width: 42,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Icon(
-                  CupertinoIcons.slider_horizontal_3,
-                  color: kPrimaryColor,
-                  size: 19,
-                ),
-              ),
+                    child: Container(
+                      width: 42,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Icon(
+                        CupertinoIcons.slider_horizontal_3,
+                        color: kPrimaryColor,
+                        size: 19,
+                      ),
+                    ),
+                  ),
             ),
             kMarginMedium2.hGap,
           ],
@@ -110,10 +129,11 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                                     );
                                   },
                                 )
-                                : Center(
-                                  child: Text(
-                                    'There is no movies and series to show.',
-                                  ),
+                                : EmptyView(
+                                  reload: () {
+                                    bloc.getFreeMovieAndSeries();
+                                  },
+                                  title: 'There is no free movies & series',
                                 ),
                           ],
                         ),

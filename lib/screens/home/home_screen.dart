@@ -73,9 +73,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ctx: context,
                 ).nextPage(page: NotificationScreen());
               },
-              child: CircleAvatar(
-                backgroundColor: Colors.black12,
-                child: Icon(CupertinoIcons.bell, color: kWhiteColor),
+              child: SizedBox(
+                height: 35,
+                width: 35,
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                  child: Icon(CupertinoIcons.bell, color: kWhiteColor,size: 22,),
+                ),
               ),
             ),
             5.hGap,
@@ -83,9 +87,13 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 PageNavigator(ctx: context).nextPage(page: SearchScreen());
               },
-              child: CircleAvatar(
-                backgroundColor: Colors.black12,
-                child: Icon(CupertinoIcons.search, color: kWhiteColor),
+              child: SizedBox(
+                height: 35,
+                width: 35,
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                  child: Icon(CupertinoIcons.search, color: kWhiteColor,size: 22,),
+                ),
               ),
             ),
             10.hGap,
