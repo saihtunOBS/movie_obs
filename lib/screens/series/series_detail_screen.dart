@@ -223,14 +223,15 @@ class SeriesDetailScreen extends StatelessWidget {
                 PageNavigator(ctx: context).nextPage(
                   page: SeasonEpisodeScreen(
                     season: bloc.seriesResponse?.seasons?[index],
-                    seriesResponse: bloc.seriesResponse ?? MovieDetailResponse(),
+                    seriesResponse:
+                        bloc.seriesResponse ?? MovieDetailResponse(),
                     seriesId: bloc.seriesResponse?.id,
                   ),
                 );
               },
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 5),
-                child: seasonListItem(
+                child: seriesListItem(
                   data: bloc.seriesResponse?.seasons?[index],
                 ),
               ),

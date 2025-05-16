@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/actor_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/list_items/season_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
@@ -9,7 +10,6 @@ import 'package:provider/provider.dart';
 
 import '../../list_items/movie_list_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 
 class ActorViewScreen extends StatelessWidget {
   const ActorViewScreen({super.key, required this.id});
@@ -32,45 +32,111 @@ class ActorViewScreen extends StatelessWidget {
               (context, bloc, child) =>
                   bloc.isLoading
                       ? LoadingView()
-                      : Column(
-                        spacing: 15,
-                        children: [
-                          _buildActorView(context, bloc),
-                          bloc.actorData?.movieCounts == 0
-                              ? Center(
-                                child: Text('There is no movies to show.'),
-                              )
-                              : _buildListView(context, bloc),
-                          10.vGap,
-                        ],
+                      : SingleChildScrollView(
+                        child: Column(
+                          spacing: 15,
+                          children: [
+                            _buildActorView(context, bloc),
+                            1.vGap,
+                            bloc.actorData?.movieCounts == 0
+                                ? Center(
+                                  child: Text('There is no movies to show.'),
+                                )
+                                : _buildMovieView(context, bloc),
+                            15.vGap,
+                            bloc.actorData?.seasons?.isEmpty ?? true
+                                ? Center(child: Text(''))
+                                : _builSeasonView(context, bloc),
+                            20.vGap,
+                          ],
+                        ),
                       ),
         ),
       ),
     );
   }
 
-  Widget _buildListView(BuildContext context, ActorBloc bloc) {
-    return Expanded(
-      child: GridView.builder(
-        itemCount: bloc.actorData?.movies?.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: getDeviceType() == 'phone' ? 2 : 3,
-          mainAxisExtent: 230,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
+  Widget _buildMovieView(BuildContext context, ActorBloc bloc) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 5,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+          child: Text(
+            AppLocalizations.of(context)?.movies ?? '',
+            style: TextStyle(
+              fontSize: kTextRegular2x,
+              color: kWhiteColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-        padding: EdgeInsets.symmetric(
-          horizontal: kMarginMedium2,
-          vertical: kMarginMedium2 - 5,
+        GridView.builder(
+          itemCount: bloc.actorData?.movies?.length,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: getDeviceType() == 'phone' ? 2 : 3,
+            mainAxisExtent: 230,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: kMarginMedium2,
+            vertical: kMarginMedium2 - 5,
+          ),
+          itemBuilder: (context, index) {
+            return movieListItem(
+              isHomeScreen: true,
+              movies: bloc.actorData?.movies?[index],
+              type: 'movie',
+            );
+          },
         ),
-        itemBuilder: (context, index) {
-          return movieListItem(
-            isHomeScreen: true,
-            movies: bloc.actorData?.movies?[index],
-            type: bloc.actorData?.movies?[index].plan
-          );
-        },
-      ),
+      ],
+    );
+  }
+
+  Widget _builSeasonView(BuildContext context, ActorBloc bloc) {
+    return Column(
+      spacing: 5,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+          child: Text(
+            'Seasons',
+            style: TextStyle(
+              fontSize: kTextRegular2x,
+              color: kWhiteColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        GridView.builder(
+          itemCount: bloc.actorData?.seasons?.length,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: getDeviceType() == 'phone' ? 2 : 3,
+            mainAxisExtent: 230,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: kMarginMedium2,
+            vertical: kMarginMedium2 - 5,
+          ),
+          itemBuilder: (context, index) {
+            return seasonListItem(
+              isHomeScreen: true,
+              season: bloc.actorData?.seasons?[index],
+              type: bloc.actorData?.seasons?[index].plan,
+            );
+          },
+        ),
+      ],
     );
   }
 
@@ -104,6 +170,7 @@ class ActorViewScreen extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: kTextRegular2x,
+                  color: kWhiteColor,
                 ),
               ),
               Text(

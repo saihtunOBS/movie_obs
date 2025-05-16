@@ -8,7 +8,7 @@ import 'package:movie_obs/widgets/cache_image.dart';
 
 import '../utils/colors.dart';
 
-Widget seasonListItem({bool? isSeries, SeasonVO? data, bool? isLast}) {
+Widget seriesListItem({bool? isSeries, SeasonVO? data, bool? isLast}) {
   return Column(
     spacing: 7,
     children: [

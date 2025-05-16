@@ -287,7 +287,7 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
               },
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 5),
-                child: seasonListItem(
+                child: seriesListItem(
                   isLast:
                       (index ==
                           (bloc.seasonEpisodeResponse?.episodes?.length ?? 0) -

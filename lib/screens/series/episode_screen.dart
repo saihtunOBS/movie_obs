@@ -14,7 +14,12 @@ import 'package:movie_obs/widgets/cache_image.dart';
 import '../../widgets/expandable_text.dart';
 
 class EpisodeScreen extends StatelessWidget {
-  const EpisodeScreen({super.key, this.episodeResponse, this.episodeData, required this.seriesId});
+  const EpisodeScreen({
+    super.key,
+    this.episodeResponse,
+    this.episodeData,
+    required this.seriesId,
+  });
   final SeasonEpisodeResponse? episodeResponse;
   final SeasonVO? episodeData;
   final String seriesId;
@@ -175,7 +180,7 @@ class EpisodeScreen extends StatelessWidget {
       shrinkWrap: true,
       itemCount: episodeResponse?.episodes?.length,
       itemBuilder: (context, index) {
-        return seasonListItem(
+        return seriesListItem(
           isSeries: false,
           data: episodeResponse?.episodes?[index],
         );
