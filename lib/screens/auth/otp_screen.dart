@@ -20,7 +20,6 @@ import '../../utils/images.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 class OTPScreen extends StatefulWidget {
   const OTPScreen({super.key, this.phone, this.requestId});
   final String? phone;
@@ -75,7 +74,7 @@ class _OTPScreenState extends State<OTPScreen> {
     return ChangeNotifierProvider(
       create: (context) => AuthBloc(),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           surfaceTintColor: Colors.transparent,
@@ -105,10 +104,21 @@ class _OTPScreenState extends State<OTPScreen> {
                             color: kPrimaryColor,
                           ),
                         ),
-                        Text(
-                          AppLocalizations.of(context)?.sendOtpCode ?? '',
-                          style: TextStyle(fontSize: kTextRegular2x),
-                        ),
+                        PersistenceData.shared.getLocale() == 'en'
+                            ? Text(
+                              '${AppLocalizations.of(context)?.sendOtpCode ?? ''} ${widget.phone}. ${AppLocalizations.of(context)?.enterOTP ?? ''}',
+                              style: TextStyle(
+                                fontSize: kTextRegular2x,
+                                height: 1.7,
+                              ),
+                            )
+                            : Text(
+                              '${AppLocalizations.of(context)?.yourPhoneNumber ?? ''} ${widget.phone} ${AppLocalizations.of(context)?.willSend ?? ''}',
+                              style: TextStyle(
+                                fontSize: kTextRegular2x,
+                                height: 1.7,
+                              ),
+                            ),
                         10.vGap,
                         _buildPinView(),
                         Row(

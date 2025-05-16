@@ -151,7 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         context: context,
                         backgroundColor: kSecondaryColor,
                         title:
-                            AppLocalizations.of(context)?.deleteAccount2 ?? '',
+                            'Logout',
                         textColor: kWhiteColor,
                       ),
                     ),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 class PageNavigator {
@@ -11,22 +11,28 @@ class PageNavigator {
       ctx!,
       screen: page!,
       withNavBar: withNav,
-      pageTransitionAnimation: PageTransitionAnimation.fade,
+      pageTransitionAnimation: PageTransitionAnimation.cupertino,
     );
   }
 
   Future nextPageOnly({Widget? page}) {
     return Navigator.pushAndRemoveUntil(
       ctx!,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => page!,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-        transitionDuration: const Duration(milliseconds: 300),
-      ),
+      CupertinoPageRoute(builder: ((context) => page!)),
       (route) => false,
     );
+
+    // return Navigator.pushAndRemoveUntil(
+    //   ctx!,
+    //   PageRouteBuilder(
+    //     pageBuilder: (context, animation, secondaryAnimation) => page!,
+    //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+    //       return FadeTransition(opacity: animation, child: child);
+    //     },
+    //     transitionDuration: const Duration(milliseconds: 300),
+    //   ),
+    //   (route) => false,
+    // );
   }
 
   Route popUp(Widget? page) {

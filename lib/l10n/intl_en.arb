@@ -51,10 +51,13 @@
   "enterPhoneNumber": "Enter your phone number. \nWe'll send you a verification code",
   "sendOtp": "Send OTP",
   "verification": "verification",
-  "sendOtpCode": "We'll send OTP Code to your phone number. Please enter below.",
+  "sendOtpCode": "Send OTP Code to",
+  "enterOTP" : "Enter your OTP Code here.",
   "resend": "Resend",
   "login": "Login",
   "discoverLabel": "Discover, stream, and enjoy your favorite movies and shows anytime, anywhere.",
   "searchByMovieSeries": "Search by movies & series",
-  "yourHistory" : "Your History"
+  "yourHistory" : "Your History",
+  "yourPhoneNumber": "သင့်ဖုန်းနံပါတ်",
+  "willSend":"သို့ OTP Code ပို့ပေးပါမည်။ ကျေးဇူးပြု၍ အောက်တွင်ထည့်ပါ။"
 }

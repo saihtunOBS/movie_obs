@@ -33,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return ChangeNotifierProvider(
       create: (context) => AuthBloc(),
       child: Scaffold(
-        backgroundColor: kBackgroundColor,
+        backgroundColor: Colors.black,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
@@ -236,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               customButton(
                                 onPress: () {
-                                  FocusScope.of(context).unfocus();
+                                  //FocusScope.of(context).unfocus();
                                   bloc
                                       .userLogin(
                                         '${selectedCountryCode?.phoneCode ?? '+95'}${_phoneController.text.trim()}',
