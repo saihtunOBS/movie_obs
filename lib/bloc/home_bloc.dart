@@ -15,19 +15,20 @@ class HomeBloc extends ChangeNotifier {
   List<MovieVO> topTrendingMoviesList = [];
   List<MovieVO> newReleaseMoviesList = [];
   List<AdsAndBannerVO> bannerList = [];
-  List<AdsAndBannerVO> adsLists = [];
   final MovieModel _movieModel = MovieModelImpl();
   // BuildContext? _context;
 
   HomeBloc({BuildContext? context}) {
     // _context = context;
     token = PersistenceData.shared.getToken();
+
+    
+
     getBanner();
     getFreeMovieAndSeries();
     getAllMovieAndSeries();
     getTopTrending();
     getNewRelease();
-    getAds();
   }
 
   void onRefresh() {
@@ -103,13 +104,6 @@ class HomeBloc extends ChangeNotifier {
   getBanner() {
     _movieModel.getBanner(token).then((response) {
       bannerList = response.data ?? [];
-      notifyListeners();
-    });
-  }
-
-  getAds() {
-    _movieModel.getAds(token).then((response) {
-      adsLists = response.data ?? [];
       notifyListeners();
     });
   }

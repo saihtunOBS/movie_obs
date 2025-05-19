@@ -113,9 +113,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ctx: context,
                                 ).nextPage(page: HistoryScreen());
                               case 4:
-                                PageNavigator(
-                                  ctx: context,
-                                ).nextPage(page: ChangeLanguageScreen());
+                                PageNavigator(ctx: context).nextPage(
+                                  page: ChangeLanguageScreen(isProfile: true),
+                                );
                               case 5:
                                 PageNavigator(
                                   ctx: context,
@@ -150,8 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                         context: context,
                         backgroundColor: kSecondaryColor,
-                        title:
-                            'Logout',
+                        title: 'Logout',
                         textColor: kWhiteColor,
                       ),
                     ),

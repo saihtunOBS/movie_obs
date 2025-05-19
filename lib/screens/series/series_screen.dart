@@ -59,7 +59,9 @@ class _SeriesScreenState extends State<SeriesScreen> {
                               () {},
                               filter: (data) {
                                 bloc.filterSeries(
-                                  data.plan.toUpperCase(),
+                                  data.plan == 'Pay per view'
+                                      ? "PAY_PER_VIEW"
+                                      : data.plan.toUpperCase(),
                                   data.genreOrContentType.toUpperCase(),
                                 );
                                 return data;
@@ -196,46 +198,50 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                       color: Colors.black38,
                                     ),
                                   ),
-                              bloc.filteredSuggestions.isEmpty
-                                  ? SizedBox()
-                                  : Container(
-                                    width: double.infinity,
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: kMarginMedium2,
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: kMarginMedium,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                        kMargin10,
-                                      ),
-                                      color: kWhiteColor,
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children:
-                                          bloc.filteredSuggestions.map((value) {
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: kMarginMedium,
-                                                    vertical: kMarginMedium,
-                                                  ),
-                                              child: SubstringHighlight(
-                                                text: value.name ?? '',
-                                                term: _controller.text,
-                                                textStyleHighlight: TextStyle(
-                                                  color: kSecondaryColor,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                    ),
+                              AnimatedSize(
+                                duration: Duration(milliseconds: 200),
+                                child: Container(
+                                  height:
+                                      bloc.filteredSuggestions.isEmpty
+                                          ? 0
+                                          : null,
+                                  width: double.infinity,
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: kMarginMedium2,
                                   ),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: kMarginMedium,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      kMargin10,
+                                    ),
+                                    color: kWhiteColor,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children:
+                                        bloc.filteredSuggestions.map((value) {
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: kMarginMedium,
+                                              vertical: kMarginMedium,
+                                            ),
+                                            child: SubstringHighlight(
+                                              text: value.name ?? '',
+                                              term: _controller.text,
+                                              textStyleHighlight: TextStyle(
+                                                color: kSecondaryColor,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         )

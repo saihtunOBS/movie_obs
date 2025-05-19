@@ -15,7 +15,8 @@ import '../../utils/images.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChangeLanguageScreen extends StatefulWidget {
-  const ChangeLanguageScreen({super.key});
+  const ChangeLanguageScreen({super.key, this.isProfile});
+  final bool? isProfile;
 
   @override
   State<ChangeLanguageScreen> createState() => _ChangeLanguageScreenState();
@@ -48,6 +49,12 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
+        title: Text(
+          widget.isProfile == true
+              ? AppLocalizations.of(context)?.language ?? ''
+              : "",
+        ),
+        centerTitle: false,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
@@ -60,21 +67,29 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: kMarginMedium,
           children: [
-            Text(
-              'LANGUAGE',
-              style: TextStyle(
-                letterSpacing: 10.0,
-                fontSize: kTextRegular32,
-                fontWeight: FontWeight.bold,
-                color: kPrimaryColor,
-                fontFamily: GoogleFonts.poppins().fontFamily,
+            Visibility(
+              visible: widget.isProfile == true ? false : true,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'LANGUAGE',
+                    style: TextStyle(
+                      letterSpacing: 10.0,
+                      fontSize: kTextRegular32,
+                      fontWeight: FontWeight.bold,
+                      color: kPrimaryColor,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                    ),
+                  ),
+                  Text(
+                    AppLocalizations.of(context)?.preferLanguage ?? '',
+                    style: TextStyle(fontSize: kTextRegular2x),
+                  ),
+                  20.vGap,
+                ],
               ),
             ),
-            Text(
-              AppLocalizations.of(context)?.preferLanguage ?? '',
-              style: TextStyle(fontSize: kTextRegular2x),
-            ),
-            20.vGap,
 
             //
             Container(
@@ -85,56 +100,62 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
               child: Column(
                 children:
                     languages.asMap().entries.map((entry) {
-                      return RadioListTile(
-                        hoverColor: Colors.transparent,
-                        tileColor: Colors.transparent,
-                        selectedTileColor: Colors.transparent,
-                        value: entry.key,
-                        visualDensity: VisualDensity(
-                          horizontal: -4,
-                          vertical: -2,
+                      return Localizations.override(
+                        context: context,
+                        locale: Locale('en'),
+                        child: RadioListTile(
+                          hoverColor: Colors.transparent,
+                          tileColor: Colors.transparent,
+                          selectedTileColor: Colors.transparent,
+                          value: entry.key,
+                          visualDensity: VisualDensity(
+                            horizontal: -4,
+                            vertical: -2,
+                          ),
+                          groupValue: _selectedValue,
+                          title: entry.value,
+                          onChanged: (value) {
+                            setState(() {
+                              switch (value) {
+                                case 1:
+                                  PersistenceData.shared.saveLocale('en');
+                                  languageStreamController.sink.add('en');
+                                case 0:
+                                  PersistenceData.shared.saveLocale('my');
+                                  languageStreamController.sink.add('my');
+                                  break;
+                                default:
+                              }
+                              _selectedValue = value;
+                            });
+                          },
                         ),
-                        groupValue: _selectedValue,
-                        title: entry.value,
-                        onChanged: (value) {
-                          setState(() {
-                            switch (value) {
-                              case 1:
-                                PersistenceData.shared.saveLocale('en');
-                                languageStreamController.sink.add('en');
-                              case 0:
-                                PersistenceData.shared.saveLocale('my');
-                                languageStreamController.sink.add('my');
-                                break;
-                              default:
-                            }
-                            _selectedValue = value;
-                          });
-                        },
                       );
                     }).toList(),
               ),
             ),
             20.vGap,
             //button
-            Column(
-              spacing: 2,
-              children: [
-                customButton(
-                  onPress: () {
-                    tab.value = true;
-                    PageNavigator(
-                      ctx: context,
-                    ).nextPageOnly(page: BottomNavScreen());
-                  },
-                  context: context,
-                  backgroundColor: kSecondaryColor,
-                  title: AppLocalizations.of(context)?.confirm ?? '',
-                  textColor: kWhiteColor,
+            widget.isProfile == true
+                ? SizedBox.shrink()
+                : Column(
+                  spacing: 2,
+                  children: [
+                    customButton(
+                      onPress: () {
+                        tab.value = true;
+                        PageNavigator(
+                          ctx: context,
+                        ).nextPageOnly(page: BottomNavScreen());
+                      },
+                      context: context,
+                      backgroundColor: kSecondaryColor,
+                      title: AppLocalizations.of(context)?.confirm ?? '',
+                      textColor: kWhiteColor,
+                    ),
+                    Image.asset(kShadowImage),
+                  ],
                 ),
-                Image.asset(kShadowImage),
-              ],
-            ),
           ],
         ),
       ),

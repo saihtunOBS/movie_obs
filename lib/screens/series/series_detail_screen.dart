@@ -198,8 +198,17 @@ class SeriesDetailScreen extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 itemCount: bloc.recommendedList?.length,
                 itemBuilder: (context, index) {
-                  return recommendedMovieListItem(
-                    bloc.recommendedList?[index] ?? MovieVO(),
+                  return GestureDetector(
+                    onTap: () {
+                      PageNavigator(ctx: context).nextPage(
+                        page: SeriesDetailScreen(
+                          series: bloc.recommendedList?[index],
+                        ),
+                      );
+                    },
+                    child: recommendedMovieListItem(
+                      bloc.recommendedList?[index] ?? MovieVO(),
+                    ),
                   );
                 },
               ),

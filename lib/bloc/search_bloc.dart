@@ -22,13 +22,12 @@ class SearchBloc extends ChangeNotifier {
     getAllGenre();
   }
 
-  getMovieByGenre() {
+  getMovieByGenre() async {
     _showLoading();
-    _movieModel
-        .getMovieSeriesByGenre(token, id)
+    await _movieModel
+        .getAllMovieAndSeries(token, '', id, 'BOTH', false)
         .then((response) {
           movieSeriesLists = response.data ?? [];
-          notifyListeners();
         })
         .whenComplete(() {
           _hideLoading();

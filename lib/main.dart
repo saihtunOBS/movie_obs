@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:movie_obs/bloc/ads_bloc.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
@@ -32,6 +33,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => VideoBloc()),
         ChangeNotifierProvider(create: (_) => HomeBloc()),
         ChangeNotifierProvider(create: (_) => UserBloc()),
+        ChangeNotifierProvider(create: (_) => AdsBloc()),
       ],
       child: const MovieOBS(),
     ),
@@ -101,10 +103,7 @@ class _MovieOBSState extends State<MovieOBS> {
               primary: kSecondaryColor,
               brightness: Brightness.dark,
             ),
-            fontFamily:
-                PersistenceData.shared.getLocale() == 'my'
-                    ? GoogleFonts.notoSansMyanmar().fontFamily
-                    : GoogleFonts.poppins().fontFamily,
+            fontFamily: GoogleFonts.poppins().fontFamily,
           ),
           home: SplashScreen(),
         );

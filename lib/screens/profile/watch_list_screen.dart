@@ -227,67 +227,71 @@ class _WatchListScreenState extends State<WatchListScreen> {
                                       color: Colors.black12,
                                     ),
                                   ),
-                              bloc.filteredSuggestions.isEmpty
-                                  ? SizedBox()
-                                  : Container(
-                                    width: double.infinity,
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: kMarginMedium2,
+                              AnimatedSize(
+                                duration: Duration(milliseconds: 200),
+                                child: Container(
+                                  height:
+                                      bloc.filteredSuggestions.isEmpty
+                                          ? 0
+                                          : null,
+                                  width: double.infinity,
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: kMarginMedium2,
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: kMarginMedium,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      kMargin10,
                                     ),
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: kMarginMedium,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                        kMargin10,
-                                      ),
-                                      color: kWhiteColor,
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children:
-                                          bloc.filteredSuggestions.map((value) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                value.type == 'MOVIE'
-                                                    ? PageNavigator(
-                                                      ctx: context,
-                                                    ).nextPage(
-                                                      page: MovieDetailScreen(
-                                                        movie: value.reference,
-                                                      ),
-                                                    )
-                                                    : PageNavigator(
-                                                      ctx: context,
-                                                    ).nextPage(
-                                                      page: SeriesDetailScreen(
-                                                        series: value.reference,
-                                                      ),
-                                                    );
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: kMarginMedium,
-                                                      vertical: kMarginMedium,
+                                    color: kWhiteColor,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children:
+                                        bloc.filteredSuggestions.map((value) {
+                                          return GestureDetector(
+                                            onTap: () {
+                                              value.type == 'MOVIE'
+                                                  ? PageNavigator(
+                                                    ctx: context,
+                                                  ).nextPage(
+                                                    page: MovieDetailScreen(
+                                                      movie: value.reference,
                                                     ),
-                                                child: SubstringHighlight(
-                                                  text:
-                                                      value.reference?.name ??
-                                                      '',
-                                                  term: _controller.text,
-                                                  textStyleHighlight: TextStyle(
-                                                    color: kSecondaryColor,
-                                                    fontWeight: FontWeight.w600,
+                                                  )
+                                                  : PageNavigator(
+                                                    ctx: context,
+                                                  ).nextPage(
+                                                    page: SeriesDetailScreen(
+                                                      series: value.reference,
+                                                    ),
+                                                  );
+                                            },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: kMarginMedium,
+                                                    vertical: kMarginMedium,
                                                   ),
+                                              child: SubstringHighlight(
+                                                text:
+                                                    value.reference?.name ?? '',
+                                                term: _controller.text,
+                                                textStyleHighlight: TextStyle(
+                                                  color: kSecondaryColor,
+                                                  fontWeight: FontWeight.w600,
                                                 ),
                                               ),
-                                            );
-                                          }).toList(),
-                                    ),
+                                            ),
+                                          );
+                                        }).toList(),
                                   ),
+                                ),
+                              ),
                             ],
                           ),
                         )

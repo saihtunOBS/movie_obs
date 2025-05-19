@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie_obs/bloc/home_bloc.dart';
+import 'package:movie_obs/bloc/ads_bloc.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:provider/provider.dart';
 
@@ -32,7 +32,7 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
   @override
   void initState() {
     super.initState();
-    var bloc = context.read<HomeBloc>();
+    var bloc = context.read<AdsBloc>();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -46,7 +46,7 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
     _startAnimation(bloc);
   }
 
-  void _startAnimation(HomeBloc bloc) {
+  void _startAnimation(AdsBloc bloc) {
     _controller.forward();
 
     _controller.addStatusListener((status) {
@@ -74,10 +74,10 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => HomeBloc(context: context),
+      create: (context) => AdsBloc(context: context),
       child: Scaffold(
         backgroundColor: Colors.black,
-        body: Consumer<HomeBloc>(
+        body: Consumer<AdsBloc>(
           builder:
               (context, bloc, child) =>
                   bloc.adsLists.isEmpty

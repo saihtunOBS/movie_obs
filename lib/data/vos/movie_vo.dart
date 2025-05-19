@@ -26,6 +26,9 @@ class MovieVO {
   @JsonKey(name: "isTrending")
   final bool? isTrending;
 
+  @JsonKey(name: 'payPerViewPrice')
+  final int? payPerViewPrice;
+
   @JsonKey(name: "posterImageUrl")
   final String? posterImageUrl;
 
@@ -95,6 +98,7 @@ class MovieVO {
     this.bannerImageUrl,
     this.trailerUrl,
     this.videoUrl,
+    this.payPerViewPrice,
     this.tags,
     this.scriptWriter,
     this.viewCount,
@@ -109,7 +113,7 @@ class MovieVO {
     this.supports,
     this.createdAt,
     this.updatedAt,
-    this.isWatchlist
+    this.isWatchlist,
   });
 
   factory MovieVO.fromJson(Map<String, dynamic> json) =>

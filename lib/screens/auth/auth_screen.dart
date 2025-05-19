@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/bloc/home_bloc.dart';
+import 'package:movie_obs/bloc/banner_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
@@ -28,10 +28,10 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => HomeBloc(),
+      create: (context) => BannerBloc(),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
-        body: Consumer<HomeBloc>(
+        body: Consumer<BannerBloc>(
           builder:
               (context, bloc, child) => Column(
                 children: [
@@ -94,6 +94,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     style: TextStyle(
                       fontSize: kTextRegular3x,
                       fontWeight: FontWeight.bold,
+                      color: kWhiteColor,
                     ),
                   ),
                   10.vGap,
@@ -104,7 +105,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     child: Text(
                       AppLocalizations.of(context)?.discoverLabel ?? '',
                       textAlign: TextAlign.center,
-                      style: TextStyle(height: 1.8,color: kWhiteColor),
+                      style: TextStyle(height: 1.8, color: kWhiteColor),
                     ),
                   ),
 

@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            5.hGap,
+            7.hGap,
             GestureDetector(
               onTap: () {
                 PageNavigator(ctx: context).nextPage(page: SearchScreen());

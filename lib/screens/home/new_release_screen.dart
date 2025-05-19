@@ -11,6 +11,11 @@ import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../utils/images.dart';
+import '../../widgets/common_dialog.dart';
+import '../../widgets/custom_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class NewReleaseScreen extends StatefulWidget {
   const NewReleaseScreen({super.key});
 
@@ -31,7 +36,7 @@ class _NewReleaseScreenState extends State<NewReleaseScreen> {
         appBar: AppBar(
           backgroundColor: kBackgroundColor,
           surfaceTintColor: kBackgroundColor,
-          title: const Text('New Releases'),
+          title: Text(AppLocalizations.of(context)?.newRelease ?? ''),
         ),
         body: Consumer<NewReleaseBloc>(
           builder:
@@ -173,26 +178,32 @@ class _NewReleaseScreenState extends State<NewReleaseScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       spacing: kMarginMedium2 - 3,
       children: [
-        Container(
-          height: 30,
-          padding: const EdgeInsets.symmetric(horizontal: kMarginMedium + 4),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: kSecondaryColor.withValues(alpha: 0.2),
-          ),
-          child: const Center(
-            child: Row(
-              spacing: kMargin5,
-              children: [
-                Icon(CupertinoIcons.lock, color: kWhiteColor, size: 18),
-                Text(
-                  '2000 Ks to unlock',
-                  style: TextStyle(color: kPrimaryColor),
+        bloc.newReleaseMoviesList[sliderIndex.value].plan == 'PAY_PER_VIEW'
+            ? _payPerView(
+              bloc.newReleaseMoviesList[sliderIndex.value].payPerViewPrice ?? 0,
+              context,
+            )
+            : Container(
+              height: 30,
+              padding: const EdgeInsets.symmetric(
+                horizontal: kMarginMedium + 4,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: kSecondaryColor.withValues(alpha: 0.2),
+              ),
+              child: Center(
+                child: Row(
+                  spacing: kMargin5,
+                  children: [
+                    Text(
+                      bloc.newReleaseMoviesList[sliderIndex.value].plan ?? '',
+                      style: TextStyle(color: kPrimaryColor),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
 
         /// Wishlist toggle
         GestureDetector(
@@ -237,6 +248,113 @@ class _NewReleaseScreenState extends State<NewReleaseScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _payPerView(int price, BuildContext context) {
+    return GestureDetector(
+      onTap:
+          () => showCommonDialog(
+            context: context,
+            dialogWidget: _buildAlert(price),
+          ),
+      child: Container(
+        height: 30,
+        padding: EdgeInsets.symmetric(horizontal: kMarginMedium + 4),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: kSecondaryColor.withValues(alpha: 0.2),
+        ),
+        child: Center(
+          child: Row(
+            spacing: 5,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.lock, color: kPrimaryColor, size: 15),
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(
+                  '$price Ks to Unlock',
+                  style: TextStyle(color: kPrimaryColor),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAlert(int price) {
+    return Dialog(
+      insetPadding: const EdgeInsets.all(10),
+      backgroundColor: kWhiteColor,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 10),
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey.withValues(alpha: 0.4),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      CupertinoIcons.clear,
+                      color: kBlackColor,
+                      size: 10,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 56, width: 56, child: Image.asset(kLockOpenLogo)),
+            15.vGap,
+            Text(
+              'Unlock this movie for only $price Ks!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: kTextRegular2x,
+                color: kSecondaryColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            2.vGap,
+            Text(
+              'Pay now to start watching instantly.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: kTextRegular13, color: kBlackColor),
+            ),
+            20.vGap,
+            SizedBox(
+              width: 140,
+              child: customButton(
+                height: 35,
+                borderRadius: 20,
+                onPress: () {},
+                context: context,
+                backgroundColor: kSecondaryColor,
+                title: 'Purchase',
+                textColor: kWhiteColor,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

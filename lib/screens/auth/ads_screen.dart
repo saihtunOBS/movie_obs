@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/bloc/movie_bloc.dart';
+import 'package:movie_obs/bloc/ads_bloc.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
@@ -59,7 +59,7 @@ class _AdsScreenState extends State<AdsScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => MovieBloc(),
+      create: (_) => AdsBloc(),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         body: Padding(
