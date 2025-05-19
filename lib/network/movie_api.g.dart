@@ -81,12 +81,14 @@ class _MovieApi implements MovieApi {
     String plan,
     int limit,
     String genres,
+    int page,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'plan': plan,
       r'limit': limit,
       r'genres': genres,
+      r'page': page,
     };
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
@@ -242,6 +244,7 @@ class _MovieApi implements MovieApi {
     String genres,
     String type,
     bool getAll,
+    int page,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -250,6 +253,7 @@ class _MovieApi implements MovieApi {
       r'genres': genres,
       r'contentType': type,
       r'getAll': getAll,
+      r'page': page,
     };
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
@@ -610,12 +614,14 @@ class _MovieApi implements MovieApi {
     String plan,
     int limit,
     String genres,
+    int page,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'plan': plan,
       r'limit': limit,
       r'genres': genres,
+      r'page': page,
     };
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
@@ -733,6 +739,7 @@ class _MovieApi implements MovieApi {
     String type,
     bool getAll,
     String user,
+    int page,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -742,6 +749,7 @@ class _MovieApi implements MovieApi {
       r'contentType': type,
       r'getAll': getAll,
       r'user': user,
+      r'page': page,
     };
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
@@ -794,12 +802,14 @@ class _MovieApi implements MovieApi {
     int limit,
     bool getAll,
     String user,
+    int page,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'limit': limit,
       r'getAll': getAll,
       r'user': user,
+      r'page': page,
     };
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);

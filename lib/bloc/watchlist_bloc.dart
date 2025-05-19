@@ -31,7 +31,7 @@ class WatchlistBloc extends ChangeNotifier {
           '',
           'BOTH',
           false,
-          userDataListener.value.id ?? '',
+          userDataListener.value.id ?? '',1
         )
         .then((response) {
           watchListData = response;
@@ -75,7 +75,7 @@ class WatchlistBloc extends ChangeNotifier {
           genre,
           contentType,
           true,
-          userDataListener.value.id ?? '',
+          userDataListener.value.id ?? '',1
         )
         .then((response) {
           watchListData = response;

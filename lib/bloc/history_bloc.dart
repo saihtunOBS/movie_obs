@@ -25,7 +25,7 @@ class HistoryBloc extends ChangeNotifier {
   getHistory() {
     _showLoading();
     _movieModel
-        .getHistory(token, false, userDataListener.value.id ?? '')
+        .getHistory(token, false, userDataListener.value.id ?? '',1)
         .then((response) {
           historyData = response;
           notifyListeners();

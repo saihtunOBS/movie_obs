@@ -49,6 +49,7 @@ class MovieModelImpl extends MovieModel {
     String genre,
     String type,
     bool getAll,
+    int page,
   ) {
     return movieDataAgent.getAllMovieAndSeries(
       token,
@@ -56,12 +57,18 @@ class MovieModelImpl extends MovieModel {
       genre,
       type,
       getAll,
+      page,
     );
   }
 
   @override
-  Future<MovieResponse> getMovieLists(String token, String plan, String genre) {
-    return movieDataAgent.getMovies(token, plan, genre);
+  Future<MovieResponse> getMovieLists(
+    String token,
+    String plan,
+    String genre,
+    int page,
+  ) {
+    return movieDataAgent.getMovies(token, plan, genre, page);
   }
 
   @override
@@ -79,8 +86,9 @@ class MovieModelImpl extends MovieModel {
     String token,
     String plan,
     String genre,
+    int page,
   ) {
-    return movieDataAgent.getSeries(token, plan, genre);
+    return movieDataAgent.getSeries(token, plan, genre, page);
   }
 
   @override
@@ -133,18 +141,18 @@ class MovieModelImpl extends MovieModel {
   }
 
   @override
-  Future<SeasonEpisodeResponse> getSeasonEpisode(String token,String id) {
-    return movieDataAgent.getSeasonEpisode(token,id);
+  Future<SeasonEpisodeResponse> getSeasonEpisode(String token, String id) {
+    return movieDataAgent.getSeasonEpisode(token, id);
   }
 
   @override
-  Future<MovieResponse> getMovieSeriesByCategory(String token,String id) {
-    return movieDataAgent.getMovieSeriesByCategory(token,id);
+  Future<MovieResponse> getMovieSeriesByCategory(String token, String id) {
+    return movieDataAgent.getMovieSeriesByCategory(token, id);
   }
 
   @override
-  Future<MovieResponse> getMovieSeriesByGenre(String token,String id) {
-    return movieDataAgent.getMovieSeriesByGenre(token,id);
+  Future<MovieResponse> getMovieSeriesByGenre(String token, String id) {
+    return movieDataAgent.getMovieSeriesByGenre(token, id);
   }
 
   @override
@@ -172,8 +180,9 @@ class MovieModelImpl extends MovieModel {
     String token,
     bool getAll,
     String user,
+    int page,
   ) {
-    return movieDataAgent.getHistory(token, getAll, user);
+    return movieDataAgent.getHistory(token, getAll, user, page);
   }
 
   @override
@@ -184,8 +193,17 @@ class MovieModelImpl extends MovieModel {
     String type,
     bool getAll,
     String user,
+    int page,
   ) {
-    return movieDataAgent.getWatchlist(token, plan, genres, type, getAll, user);
+    return movieDataAgent.getWatchlist(
+      token,
+      plan,
+      genres,
+      type,
+      getAll,
+      user,
+      page,
+    );
   }
 
   @override

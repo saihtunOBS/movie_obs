@@ -21,7 +21,7 @@ class SeriesBloc extends ChangeNotifier {
 
   getAllSeries() {
     _showLoading();
-    _movieModel.getSeriesLists(token, '', '').then((response) {
+    _movieModel.getSeriesLists(token, '', '', 1).then((response) {
       seriesLists = response.data ?? [];
       _hideLoading();
     });
@@ -30,7 +30,7 @@ class SeriesBloc extends ChangeNotifier {
   filterSeries(String plan, String genre) async {
     _showLoading();
     await _movieModel
-        .getSeriesLists(token, plan, genre)
+        .getSeriesLists(token, plan, genre, 1)
         .then((response) {
           seriesLists = response.data ?? [];
         })

@@ -41,7 +41,7 @@ class HomeBloc extends ChangeNotifier {
 
   getAllMovieAndSeries() {
     _movieModel
-        .getAllMovieAndSeries(token, '', '', 'BOTH', false)
+        .getAllMovieAndSeries(token, '', '', 'BOTH', false,1)
         .then((response) {
           movieLists = response.data ?? [];
           notifyListeners();
@@ -64,7 +64,7 @@ class HomeBloc extends ChangeNotifier {
   getFreeMovieAndSeries() {
     _showLoading();
     _movieModel
-        .getAllMovieAndSeries(token, 'FREE', '', 'BOTH', false)
+        .getAllMovieAndSeries(token, 'FREE', '', 'BOTH', false,1)
         .then((response) {
           freeMovieLists = response.data ?? [];
           _hideLoading();
@@ -77,7 +77,7 @@ class HomeBloc extends ChangeNotifier {
   filter(String plan, String genre, String contentType) async {
     _showLoading();
     _movieModel
-        .getAllMovieAndSeries(token, 'FREE', genre, contentType, false)
+        .getAllMovieAndSeries(token, 'FREE', genre, contentType, false,1)
         .then((response) {
           freeMovieLists = response.data ?? [];
           _hideLoading();

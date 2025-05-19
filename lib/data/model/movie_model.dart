@@ -23,8 +23,8 @@ import '../../network/responses/watchlist_history_response.dart';
 abstract class MovieModel {
   Future<OTPResponse> sendOtp(SendOtpRequest request);
   Future<OTPResponse> verifyOtp(VerifyOtpRequest request);
-  Future<MovieResponse> getMovieLists(String token, String plan,String genre);
-  Future<MovieResponse> getSeriesLists(String token, String plan,String genre);
+  Future<MovieResponse> getMovieLists(String token, String plan,String genre,int page);
+  Future<MovieResponse> getSeriesLists(String token, String plan,String genre,int page);
   Future<MovieDetailResponse> getMovieDetail(String token, String id);
   Future<MovieDetailResponse> getSeriesDetail(
     String token,
@@ -33,7 +33,7 @@ abstract class MovieModel {
   );
   Future<SeasonResponse> getSeason(String token);
 
-  Future<MovieResponse> getAllMovieAndSeries(String token, String plan,String genre,String type,bool getAll);
+  Future<MovieResponse> getAllMovieAndSeries(String token, String plan,String genre,String type,bool getAll,int page);
   Future<MovieResponse> getTopTrending(String token);
   Future<MovieResponse> getNewRelease(String token, String plan);
 
@@ -63,11 +63,14 @@ abstract class MovieModel {
     String type,
     bool getAll,
     String user,
+    int page
   );
+
   Future<WatchlistHistoryResponse> getHistory(
     String token,
     bool getAll,
     String user,
+    int page
   );
 
   Future<void> toggleWatchlist(String token, WatchlistRequest request);

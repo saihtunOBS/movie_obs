@@ -24,8 +24,8 @@ abstract class MovieDataAgents {
   Future<OTPResponse> sendOtp(SendOtpRequest request);
   Future<OTPResponse> verifyOtp(VerifyOtpRequest request);
 
-  Future<MovieResponse> getMovies(String token, String plan, String genre);
-  Future<MovieResponse> getSeries(String token, String plan, String genre);
+  Future<MovieResponse> getMovies(String token, String plan, String genre,int page);
+  Future<MovieResponse> getSeries(String token, String plan, String genre,int page);
   Future<MovieDetailResponse> getMovieDetail(String token, String id);
   Future<MovieDetailResponse> getSeriesDetail(
     String token,
@@ -40,6 +40,7 @@ abstract class MovieDataAgents {
     String genre,
     String type,
     bool getAll,
+    int page
   );
   Future<MovieResponse> getTopTrending(String token, String plan);
   Future<MovieResponse> getNewRelease(String token, String plan);
@@ -71,11 +72,13 @@ abstract class MovieDataAgents {
     String type,
     bool getAll,
     String user,
+    int page
   );
   Future<WatchlistHistoryResponse> getHistory(
     String token,
     bool getAll,
     String user,
+    int page
   );
 
   Future<void> toggleWatchlist(String token, WatchlistRequest request);

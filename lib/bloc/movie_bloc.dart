@@ -18,6 +18,11 @@ class MovieBloc extends ChangeNotifier {
 
   List<MovieVO> movieSeriesList = [];
 
+  bool isLoadMore = false;
+  int page = 1;
+  String moviePlan = '';
+  String movieGenre = '';
+
   final MovieModel _movieModel = MovieModelImpl();
 
   MovieBloc() {
@@ -27,27 +32,25 @@ class MovieBloc extends ChangeNotifier {
     getAllGenre();
   }
 
-
   filterMovies(String plan, String genre) async {
+    moviePlan = plan;
+    movieGenre = genre;
     _showLoading();
     await _movieModel
-        .getMovieLists(token, plan, genre)
+        .getMovieLists(token, plan, genre, 1)
         .then((response) {
           movieLists = response.data ?? [];
         })
         .whenComplete(() {
           _hideLoading();
         });
-    // movieLists =
-    //     movieLists.where((movie) {
-    //       return movie.type == type && (movie.genres?.contains(genre) ?? true);
-    //     }).toList();
-    // notifyListeners();
   }
 
   getAllMovie() {
+    movieGenre = '';
+    moviePlan = '';
     _showLoading();
-    _movieModel.getMovieLists(token, '', '').then((response) {
+    _movieModel.getMovieLists(token, '', '', 1).then((response) {
       movieLists = response.data ?? [];
       _hideLoading();
     });
@@ -93,6 +96,30 @@ class MovieBloc extends ChangeNotifier {
                 )
                 .toList();
     notifyListeners();
+  }
+
+  loadMoreData() {
+    if (isLoadMore) return;
+    _showLoadMoreLoading();
+    page += 1;
+    _movieModel
+        .getMovieLists(token, moviePlan, movieGenre, page)
+        .then((response) => movieLists.addAll(response.data ?? []))
+        .whenComplete(() => _hideLoadMoreLoading());
+  }
+
+  onTapExpansion() {
+    notifyListeners();
+  }
+
+  _showLoadMoreLoading() {
+    isLoadMore = true;
+    _notifySafely();
+  }
+
+  _hideLoadMoreLoading() {
+    isLoadMore = false;
+    _notifySafely();
   }
 
   _showLoading() {

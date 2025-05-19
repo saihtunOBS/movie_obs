@@ -42,6 +42,7 @@ abstract class MovieApi {
     @Query('plan') String plan,
     @Query('limit') int limit,
     @Query('genres') String genres,
+    @Query('page') int page,
   );
 
   @GET('$kEndPointMovie/{id}')
@@ -58,9 +59,7 @@ abstract class MovieApi {
   );
 
   @GET('$kEndPointSeries/{id}/similar-contents')
-  Future<List<MovieVO>> getRecommendedSeries(
-    @Path() String id,
-  );
+  Future<List<MovieVO>> getRecommendedSeries(@Path() String id);
 
   @GET('$kEndPointMovie/{id}/similar-contents')
   Future<List<MovieVO>> getRecommendedMovies(@Path() String id);
@@ -73,6 +72,7 @@ abstract class MovieApi {
     @Query('genres') String genres,
     @Query('contentType') String type,
     @Query('getAll') bool getAll,
+    @Query('page') int page,
   );
 
   @GET(kEndPointAds)
@@ -101,12 +101,14 @@ abstract class MovieApi {
   @GET(kEndPointHomeMovieAndSeries)
   Future<MovieResponse> getMovieSeriesByGenre(
     @Header(kHeaderAuthorization) String token,
-    @Query('genre') String id);
+    @Query('genre') String id,
+  );
 
   @GET(kEndPointSeason)
   Future<MovieResponse> getMovieSeriesByCategory(
     @Header(kHeaderAuthorization) String token,
-    @Query('category') String id);
+    @Query('category') String id,
+  );
 
   @GET(kEndPointCategory)
   Future<CategoryResponse> getAllCategory();
@@ -117,7 +119,8 @@ abstract class MovieApi {
   @GET(kEndPointHomeMovieAndSeries)
   Future<MovieResponse> getTopTrending(
     @Header(kHeaderAuthorization) String token,
-    @Query('isTrending') bool isTrending);
+    @Query('isTrending') bool isTrending,
+  );
 
   @GET(kEndPointHomeMovieAndSeries)
   Future<MovieResponse> getNewRelease(
@@ -134,6 +137,7 @@ abstract class MovieApi {
     @Query('plan') String plan,
     @Query('limit') int limit,
     @Query('genres') String genres,
+    @Query('page') int page,
   );
 
   @GET(kEndPointPackage)
@@ -157,6 +161,7 @@ abstract class MovieApi {
     @Query('contentType') String type,
     @Query('getAll') bool getAll,
     @Query('user') String user,
+    @Query('page') int page,
   );
 
   @POST(kEndPointWatchlistToggle)
@@ -171,6 +176,7 @@ abstract class MovieApi {
     @Query('limit') int limit,
     @Query('getAll') bool getAll,
     @Query('user') String user,
+    @Query('page') int page,
   );
 
   @POST(kEndPointHistoryToggle)
