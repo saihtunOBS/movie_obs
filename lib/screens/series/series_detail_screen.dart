@@ -22,7 +22,7 @@ class SeriesDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => SeriesDetailBloc(series?.id),
+      create: (context) => SeriesDetailBloc(series?.id, context),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         body: Consumer<SeriesDetailBloc>(

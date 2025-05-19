@@ -51,6 +51,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         ? Padding(
                           padding: const EdgeInsets.only(),
                           child: GridView.builder(
+                            physics: AlwaysScrollableScrollPhysics(),
                             itemCount: bloc.historyData?.data?.length,
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(

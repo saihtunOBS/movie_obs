@@ -22,8 +22,6 @@ class HomeBloc extends ChangeNotifier {
     // _context = context;
     token = PersistenceData.shared.getToken();
 
-    
-
     getBanner();
     getFreeMovieAndSeries();
     getAllMovieAndSeries();
@@ -41,30 +39,18 @@ class HomeBloc extends ChangeNotifier {
 
   getAllMovieAndSeries() {
     _movieModel
-        .getAllMovieAndSeries(token, '', '', 'BOTH', false,1)
+        .getAllMovieAndSeries(token, '', '', 'BOTH', false, 1)
         .then((response) {
           movieLists = response.data ?? [];
           notifyListeners();
         })
-        .catchError((_) {
-          // PersistenceData.shared.clearToken();
-          // Future.delayed(Duration(milliseconds: 200), () {
-          //   showCommonDialog(
-          //     context: _context!,
-          //     isBarrierDismiss: false,
-          //     dialogWidget: ErrorDialogView(
-          //       errorMessage: 'Session Expired. Please Login Again',
-          //       isLogin: true,
-          //     ),
-          //   );
-          // });
-        });
+        .catchError((_) {});
   }
 
   getFreeMovieAndSeries() {
     _showLoading();
     _movieModel
-        .getAllMovieAndSeries(token, 'FREE', '', 'BOTH', false,1)
+        .getAllMovieAndSeries(token, 'FREE', '', 'BOTH', false, 1)
         .then((response) {
           freeMovieLists = response.data ?? [];
           _hideLoading();
@@ -77,7 +63,7 @@ class HomeBloc extends ChangeNotifier {
   filter(String plan, String genre, String contentType) async {
     _showLoading();
     _movieModel
-        .getAllMovieAndSeries(token, 'FREE', genre, contentType, false,1)
+        .getAllMovieAndSeries(token, 'FREE', genre, contentType, false, 1)
         .then((response) {
           freeMovieLists = response.data ?? [];
           _hideLoading();

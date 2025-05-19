@@ -159,6 +159,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                           child: Stack(
                             children: [
                               GridView.builder(
+                                physics: AlwaysScrollableScrollPhysics(),
                                 itemCount: bloc.seriesLists.length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(

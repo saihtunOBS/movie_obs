@@ -7,6 +7,8 @@ import 'package:movie_obs/data/vos/movie_vo.dart' show MovieVO;
 import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
+import 'package:movie_obs/widgets/common_dialog.dart';
+import 'package:movie_obs/widgets/error_dialog.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 
 class MovieDetailBloc extends ChangeNotifier {
@@ -15,12 +17,13 @@ class MovieDetailBloc extends ChangeNotifier {
   String token = '';
   MovieDetailResponse? moviesResponse;
   List<MovieVO>? recommendedList;
-
+  BuildContext? myContext;
   String movieId = '';
 
   final MovieModel _movieModel = MovieModelImpl();
 
-  MovieDetailBloc(id) {
+  MovieDetailBloc(id, context) {
+    myContext = context;
     movieId = id;
     token = PersistenceData.shared.getToken();
     getMovieDetail();
@@ -29,10 +32,22 @@ class MovieDetailBloc extends ChangeNotifier {
   }
 
   getMovieDetail() {
-    _movieModel.getMovieDetail(token, movieId).then((response) {
-      moviesResponse = response;
-      notifyListeners();
-    });
+    _movieModel
+        .getMovieDetail(token, movieId)
+        .then((response) {
+          moviesResponse = response;
+          notifyListeners();
+        })
+        .catchError((error) {
+          showCommonDialog(
+            context: myContext!,
+            isBarrierDismiss: false,
+            dialogWidget: ErrorDialogView(
+              errorMessage: 'Session Expired. Please Login Again',
+              isLogin: true,
+            ),
+          );
+        });
   }
 
   toggleWatchlist() {

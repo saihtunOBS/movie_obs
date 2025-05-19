@@ -33,7 +33,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MovieDetailBloc(widget.movie?.id),
+      create: (context) => MovieDetailBloc(widget.movie?.id, context),
       child: Consumer<MovieDetailBloc>(
         builder:
             (context, bloc, child) => Scaffold(
@@ -339,8 +339,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       onTap: () {
         PageNavigator(ctx: context).nextPage(
           page: VideoPlayerScreen(
-            url:
-                'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
+            url: widget.movie?.videoUrl ?? '',
             isFirstTime: true,
             videoId: videoId,
             type: 'MOVIE',

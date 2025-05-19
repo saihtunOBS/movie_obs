@@ -228,7 +228,6 @@ class VideoBloc extends ChangeNotifier {
       );
 
       fetchQualityOptions();
-      //toggleHistory(videoId ?? '', type?.toUpperCase() ?? '');
     });
 
     isLoading = false;

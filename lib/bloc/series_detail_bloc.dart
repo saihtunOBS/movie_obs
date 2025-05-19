@@ -5,10 +5,12 @@ import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
+import 'package:movie_obs/widgets/common_dialog.dart';
 
 import '../data/vos/movie_vo.dart';
 import '../network/requests/history_request.dart';
 import '../network/requests/watchlist_request.dart';
+import '../widgets/error_dialog.dart';
 import '../widgets/toast_service.dart';
 import 'user_bloc.dart';
 
@@ -20,12 +22,13 @@ class SeriesDetailBloc extends ChangeNotifier {
   List<SeasonVO> seasons = [];
   List<MovieVO>? recommendedList;
   SeasonEpisodeResponse? seasonEpisodeResponse;
-
+  BuildContext? myContext;
   String movieId = '';
 
   final MovieModel _movieModel = MovieModelImpl();
 
-  SeriesDetailBloc(id) {
+  SeriesDetailBloc(id, context) {
+    myContext = context;
     movieId = id;
     token = PersistenceData.shared.getToken();
     getSeriesDetail();
@@ -33,11 +36,23 @@ class SeriesDetailBloc extends ChangeNotifier {
   }
 
   getSeriesDetail() {
-    _movieModel.getSeriesDetail(token, movieId, true).then((response) {
-      seriesResponse = response;
+    _movieModel
+        .getSeriesDetail(token, movieId, true)
+        .then((response) {
+          seriesResponse = response;
 
-      notifyListeners();
-    });
+          notifyListeners();
+        })
+        .catchError((error) {
+          showCommonDialog(
+            context: myContext!,
+            isBarrierDismiss: false,
+            dialogWidget: ErrorDialogView(
+              errorMessage: 'Session Expired. Please Login Again',
+              isLogin: true,
+            ),
+          );
+        });
   }
 
   getSeason() {

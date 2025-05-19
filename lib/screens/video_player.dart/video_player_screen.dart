@@ -48,7 +48,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   double _newDragOffset = 0.0;
   Orientation? _lastOrientation;
   VideoProgress? _savedVideo;
-  bool isLock = false;
+  bool isClickPopUp = false;
 
   StreamSubscription<bool>? _subscription;
 
@@ -170,7 +170,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       if (widget.isFirstTime == true) {
         _loadCurrentPosition();
       } else {
-        //bloc.resetControlVisibility();
+        bloc.resetControlVisibility(isSeek: true);
       }
     });
     super.initState();
@@ -187,30 +187,35 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           ),
     );
 
-    if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
-      selectedQuality = 'Auto';
-      bloc.fetchQualityOptions();
-      bloc.changeQuality(
-        widget.url ?? '',
-        widget.videoId,
-        true,
-        _savedVideo?.position,
-      );
-      bloc.updateListener();
-    } else {
-      bloc.initializeVideo(
-        widget.url ?? '',
-        videoId: widget.videoId,
-        type: widget.type,
-      );
-      bloc.updateListener();
-    }
+    Future.delayed(Duration(milliseconds: 100), () {
+      if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
+        selectedQuality = 'Auto';
+        bloc.fetchQualityOptions();
+        bloc.changeQuality(
+          widget.url ?? '',
+          widget.videoId,
+          true,
+          _savedVideo?.position,
+        );
+        bloc.updateListener();
+      } else {
+        bloc.initializeVideo(
+          widget.url ?? '',
+          videoId: widget.videoId,
+          type: widget.type,
+        );
+        bloc.updateListener();
+      }
+    });
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _subscription?.cancel();
+    if (isClickPopUp != true) {
+      videoPlayerController.pause();
+    }
     super.dispose();
   }
 
@@ -468,6 +473,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           behavior: HitTestBehavior.opaque,
           onTap: () {
             if (videoPlayerController.value.isInitialized) {
+              isClickPopUp = true;
               Navigator.pop(context);
               isPlay.value = !videoPlayerController.value.isPlaying;
               showControl = false;
@@ -656,8 +662,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           }
 
           return Slider(
-            value: progress,
-            secondaryTrackValue: bufferedProgress,
+            value: !videoPlayerController.value.isInitialized ? 0.0 : progress,
+            secondaryTrackValue:
+                !videoPlayerController.value.isInitialized
+                    ? 0.0
+                    : bufferedProgress,
             onChanged: (newValue) {
               bloc.resetControlVisibility(isSeek: true);
               bloc.isSeeking = true;

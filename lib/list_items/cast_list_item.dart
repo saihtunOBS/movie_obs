@@ -13,9 +13,7 @@ Widget castListItem({ActorVO? actor}) {
           height: 70,
           width: 70,
           decoration: BoxDecoration(color: Colors.grey.withValues(alpha: 0.2)),
-          child: Center(
-            child: cacheImage(actor?.cast?.profilePictureUrl ?? ''),
-          ),
+          child: cacheImage(actor?.cast?.profilePictureUrl ?? ''),
         ),
       ),
       Column(

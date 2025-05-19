@@ -24,10 +24,16 @@ class MovieScreen extends StatefulWidget {
 
 class _MovieScreenState extends State<MovieScreen> {
   final TextEditingController _controller = TextEditingController();
-
+  final scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -159,6 +165,7 @@ class _MovieScreenState extends State<MovieScreen> {
                           child: Stack(
                             children: [
                               GridView.builder(
+                                physics: AlwaysScrollableScrollPhysics(),
                                 itemCount: bloc.movieLists.length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
@@ -171,8 +178,19 @@ class _MovieScreenState extends State<MovieScreen> {
                                 padding: EdgeInsets.only(
                                   left: kMarginMedium2,
                                   right: kMarginMedium2,
-                                  bottom: 20,
+                                  bottom: 40,
                                 ),
+                                controller:
+                                    scrollController..addListener(() {
+                                      if (scrollController.position.pixels ==
+                                          scrollController
+                                              .position
+                                              .maxScrollExtent) {
+                                        if (bloc.movieLists.length > 10) {
+                                          bloc.loadMoreData();
+                                        }
+                                      }
+                                    }),
                                 itemBuilder: (context, index) {
                                   return GestureDetector(
                                     onTap: () {
@@ -191,6 +209,24 @@ class _MovieScreenState extends State<MovieScreen> {
                                 },
                               ),
 
+                              //load more loading
+                              Positioned(
+                                bottom: 5,
+                                left: 0,
+                                right: 0,
+                                child:
+                                    bloc.isLoadMore
+                                        ? Center(
+                                          child: SizedBox(
+                                            width: 25,
+                                            height: 25,
+                                            child: LoadingView(),
+                                          ),
+                                        )
+                                        : SizedBox.shrink(),
+                              ),
+
+                              //search view
                               bloc.filteredSuggestions.isEmpty
                                   ? SizedBox.shrink()
                                   : Container(

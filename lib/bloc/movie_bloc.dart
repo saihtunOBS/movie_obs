@@ -49,6 +49,7 @@ class MovieBloc extends ChangeNotifier {
   getAllMovie() {
     movieGenre = '';
     moviePlan = '';
+    page = 1;
     _showLoading();
     _movieModel.getMovieLists(token, '', '', 1).then((response) {
       movieLists = response.data ?? [];
@@ -102,6 +103,7 @@ class MovieBloc extends ChangeNotifier {
     if (isLoadMore) return;
     _showLoadMoreLoading();
     page += 1;
+
     _movieModel
         .getMovieLists(token, moviePlan, movieGenre, page)
         .then((response) => movieLists.addAll(response.data ?? []))

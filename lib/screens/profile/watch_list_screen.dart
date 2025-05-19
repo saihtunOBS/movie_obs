@@ -163,6 +163,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
                           child: Stack(
                             children: [
                               GridView.builder(
+                                physics: AlwaysScrollableScrollPhysics(),
                                 itemCount:
                                     bloc.watchListData?.data?.length ?? 0,
                                 gridDelegate:
