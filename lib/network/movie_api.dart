@@ -128,7 +128,7 @@ abstract class MovieApi {
     @Query('sortBy') String sortBy,
     @Query('sortOrder') String sortOrder,
     @Query('plan') String plan,
-    @Query('limit') int limit,
+    @Query('getAll') bool getAll,
   );
 
   @GET(kEndPointSeries)

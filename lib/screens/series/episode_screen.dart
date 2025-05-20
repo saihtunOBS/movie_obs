@@ -1,9 +1,8 @@
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_obs/data/vos/season_vo.dart';
+import 'package:movie_obs/data/vos/episode_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
-import 'package:movie_obs/list_items/series_list_item.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:movie_obs/utils/calculate_time.dart';
@@ -11,9 +10,10 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 
+import '../../list_items/episode_list_item.dart';
 import '../../widgets/expandable_text.dart';
 
-class EpisodeScreen extends StatelessWidget {
+class EpisodeScreen extends StatefulWidget {
   const EpisodeScreen({
     super.key,
     this.episodeResponse,
@@ -21,8 +21,22 @@ class EpisodeScreen extends StatelessWidget {
     required this.seriesId,
   });
   final SeasonEpisodeResponse? episodeResponse;
-  final SeasonVO? episodeData;
+  final EpisodeVO? episodeData;
   final String seriesId;
+
+  @override
+  State<EpisodeScreen> createState() => _EpisodeScreenState();
+}
+
+class _EpisodeScreenState extends State<EpisodeScreen> {
+  EpisodeVO? episodeMovie;
+
+  @override
+  void initState() {
+    episodeMovie = widget.episodeData;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +63,7 @@ class EpisodeScreen extends StatelessWidget {
                       bottomLeft: Radius.circular(35),
                       bottomRight: Radius.circular(35),
                     ),
-                    child: cacheImage(episodeResponse?.bannerImageUrl),
+                    child: cacheImage(widget.episodeResponse?.bannerImageUrl),
                   ),
                 ),
 
@@ -117,7 +131,7 @@ class EpisodeScreen extends StatelessWidget {
           child: CircleAvatar(backgroundColor: kWhiteColor),
         ),
         Text(
-          formatMinutesToHoursAndMinutes(episodeData?.duration ?? 0),
+          formatMinutesToHoursAndMinutes(episodeMovie?.duration ?? 0),
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         SizedBox(
@@ -130,7 +144,7 @@ class EpisodeScreen extends StatelessWidget {
           children: [
             Icon(CupertinoIcons.eye, size: 20),
             Text(
-              episodeData?.viewCount.toString() ?? '0',
+              episodeMovie?.viewCount.toString() ?? '0',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -151,7 +165,7 @@ class EpisodeScreen extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              episodeData?.name ?? '',
+              episodeMovie?.name ?? '',
               style: TextStyle(fontSize: kTextRegular18 + 2),
             ),
           ),
@@ -178,11 +192,11 @@ class EpisodeScreen extends StatelessWidget {
       padding: EdgeInsets.zero,
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: episodeResponse?.episodes?.length,
+      itemCount: widget.episodeResponse?.episodes?.length,
       itemBuilder: (context, index) {
-        return seriesListItem(
+        return episodeListItem(
           isSeries: false,
-          data: episodeResponse?.episodes?[index],
+          data: widget.episodeResponse?.episodes?[index],
         );
       },
     );
@@ -193,7 +207,7 @@ class EpisodeScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ExpandableText(
-          text: episodeData?.description ?? '',
+          text: episodeMovie?.description ?? '',
           style: TextStyle(fontSize: 14),
         ),
       ],
@@ -209,7 +223,7 @@ class EpisodeScreen extends StatelessWidget {
                 'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
             isFirstTime: true,
             type: 'SERIES',
-            videoId: seriesId,
+            videoId: widget.seriesId,
           ),
         );
       },

@@ -49,6 +49,7 @@ dependencies:
   substring_highlight: ^1.0.33
   image_picker: ^1.1.2
   image_cropper: ^9.1.0
+  screen_brightness: ^2.1.3
   
 
 

@@ -5,6 +5,7 @@ import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
+import 'package:movie_obs/utils/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
@@ -273,7 +274,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                               data: SliderTheme.of(context).copyWith(
                                 trackHeight: 1.0,
                                 inactiveTrackColor: Colors.transparent,
-                                activeTrackColor: Colors.red,
+                                activeTrackColor: kSecondaryColor,
                                 trackShape: const RoundedRectSliderTrackShape(),
                                 thumbShape: const RoundSliderThumbShape(
                                   enabledThumbRadius: 0.0,

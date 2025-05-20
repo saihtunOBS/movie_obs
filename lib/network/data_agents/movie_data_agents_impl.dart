@@ -68,9 +68,14 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<MovieResponse> getMovies(String token, String plan, String genre,int page) {
+  Future<MovieResponse> getMovies(
+    String token,
+    String plan,
+    String genre,
+    int page,
+  ) {
     return movieApi
-        .getMovies(token, plan, 10, genre,page)
+        .getMovies(token, plan, 10, genre, page)
         .asStream()
         .map((response) => response)
         .first
@@ -86,10 +91,10 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     String genre,
     String type,
     bool getAll,
-    int page
+    int page,
   ) {
     return movieApi
-        .getAllMoviesAndSeries(token, plan, 10, genre, type, getAll,page)
+        .getAllMoviesAndSeries(token, plan, 10, genre, type, getAll, page)
         .asStream()
         .map((response) => response)
         .first
@@ -101,7 +106,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   @override
   Future<MovieResponse> getNewRelease(String token, String plan) {
     return movieApi
-        .getNewRelease(token, 'createdAt', 'desc', plan, 10)
+        .getNewRelease(token, 'createdAt', 'desc', plan, true)
         .asStream()
         .map((response) => response)
         .first
@@ -123,9 +128,14 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   }
 
   @override
-  Future<MovieResponse> getSeries(String token, String plan, String genr,int page) {
+  Future<MovieResponse> getSeries(
+    String token,
+    String plan,
+    String genre,
+    int page,
+  ) {
     return movieApi
-        .getSeries(token, plan, 10, genre,page)
+        .getSeries(token, plan, 10, genre, page)
         .asStream()
         .map((response) => response)
         .first
@@ -337,10 +347,10 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     String token,
     bool getAll,
     String user,
-    int page
+    int page,
   ) {
     return movieApi
-        .getHistory(token, 10, getAll, user,page)
+        .getHistory(token, 10, getAll, user, page)
         .asStream()
         .map((response) => response)
         .first
@@ -357,10 +367,10 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     String type,
     bool getAll,
     String user,
-    int page
+    int page,
   ) {
     return movieApi
-        .getWatchLists(token, plan, 10, genre, type, getAll, user,page)
+        .getWatchLists(token, plan, 10, genre, type, getAll, user, page)
         .asStream()
         .map((response) => response)
         .first

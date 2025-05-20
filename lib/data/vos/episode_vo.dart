@@ -15,6 +15,8 @@ class EpisodeVO {
   final String? videoUrl;
   final int? viewCount;
   final String? season;
+  @JsonKey(name: "posterImageUrl")
+  final String? posterImageUrl;
   final int? duration;
   final String? createdAt;
   final String? updatedAt;
@@ -30,6 +32,7 @@ class EpisodeVO {
     this.videoUrl,
     this.viewCount,
     this.season,
+    this.posterImageUrl,
     this.duration,
     this.createdAt,
     this.updatedAt,

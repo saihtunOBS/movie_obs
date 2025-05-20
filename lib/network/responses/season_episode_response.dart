@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:movie_obs/data/vos/season_vo.dart';
+import 'package:movie_obs/data/vos/episode_vo.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 
 part 'season_episode_response.g.dart';
@@ -19,7 +19,6 @@ class SeasonEpisodeResponse {
   final int? viewCount;
   final String? publishedYear;
 
-  
   final List<ActorVO>? actors;
   final List<ActorVO>? actresses;
   final List<ActorVO>? supports;
@@ -27,7 +26,7 @@ class SeasonEpisodeResponse {
   final String? updatedAt;
 
   @JsonKey(name: "episodes")
-  final List<SeasonVO>? episodes;
+  final List<EpisodeVO>? episodes;
 
   SeasonEpisodeResponse({
     this.id,

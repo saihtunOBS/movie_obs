@@ -19,7 +19,7 @@ class MovieDetailBloc extends ChangeNotifier {
   List<MovieVO>? recommendedList;
   BuildContext? myContext;
   String movieId = '';
-
+  List<ActorVO> castLists = [];
   final MovieModel _movieModel = MovieModelImpl();
 
   MovieDetailBloc(id, context) {
@@ -32,10 +32,19 @@ class MovieDetailBloc extends ChangeNotifier {
   }
 
   getMovieDetail() {
+    _showLoading();
     _movieModel
         .getMovieDetail(token, movieId)
         .then((response) {
           moviesResponse = response;
+          final combinedCasts = <ActorVO>[
+            ...(response.actors ?? []),
+            ...(response.actresses ?? []),
+            ...(response.supports ?? []),
+          ];
+
+          castLists.addAll(combinedCasts);
+
           notifyListeners();
         })
         .catchError((error) {
@@ -47,6 +56,9 @@ class MovieDetailBloc extends ChangeNotifier {
               isLogin: true,
             ),
           );
+        })
+        .whenComplete(() {
+          _hideLoading();
         });
   }
 

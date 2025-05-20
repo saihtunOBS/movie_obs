@@ -15,6 +15,7 @@ class SeasonEpisodeBloc extends ChangeNotifier {
   String token = '';
   SeasonEpisodeResponse? seasonEpisodeResponse;
 
+  List<ActorVO> castsLists = [];
   String seasonId = '';
   String seriesID = '';
   MovieDetailResponse? seriesDetailResponse;
@@ -32,6 +33,13 @@ class SeasonEpisodeBloc extends ChangeNotifier {
   getSeasonEpisode() {
     _movieModel.getSeasonEpisode(token, seasonId).then((response) {
       seasonEpisodeResponse = response;
+      final combinedCasts = <ActorVO>[
+        ...(response.actors ?? []),
+        ...(response.actresses ?? []),
+        ...(response.supports ?? []),
+      ];
+
+      castsLists.addAll(combinedCasts);
       notifyListeners();
     });
   }

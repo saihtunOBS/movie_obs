@@ -33,7 +33,7 @@ class VideoBloc extends ChangeNotifier {
   ValueNotifier<bool> isHoveringLeft = ValueNotifier(false);
   ValueNotifier<bool> isHoveringRight = ValueNotifier(false);
   bool isFullScreen = false;
-
+  
   bool wasScreenOff = false;
   bool isMuted = false;
   bool hasPrinted = false;

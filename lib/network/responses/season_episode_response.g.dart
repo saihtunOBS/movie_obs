@@ -36,7 +36,7 @@ SeasonEpisodeResponse _$SeasonEpisodeResponseFromJson(
   updatedAt: json['updatedAt'] as String?,
   episodes:
       (json['episodes'] as List<dynamic>?)
-          ?.map((e) => SeasonVO.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => EpisodeVO.fromJson(e as Map<String, dynamic>))
           .toList(),
 );
 

@@ -248,12 +248,12 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         spacing: 10,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          bloc.moviesResponse?.actors?.isEmpty ?? true
+          bloc.castLists.isEmpty
               ? SizedBox.shrink()
               : Expanded(
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: bloc.moviesResponse?.actors?.length,
+                  itemCount: bloc.castLists.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       behavior: HitTestBehavior.opaque,
@@ -261,7 +261,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         PageNavigator(ctx: context).nextPage(
                           page: ActorViewScreen(
                             id:
-                                bloc.moviesResponse?.actors?[index].cast?.id ??
+                                bloc.castLists[index].id ??
                                 '',
                           ),
                         );
@@ -269,7 +269,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 10),
                         child: castListItem(
-                          actor: bloc.moviesResponse?.actors?[index],
+                          actor: bloc.castLists[index],
                         ),
                       ),
                     );

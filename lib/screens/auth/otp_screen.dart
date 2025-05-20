@@ -47,6 +47,7 @@ class _OTPScreenState extends State<OTPScreen> {
   void initState() {
     pinController.clear();
     _start = 180;
+    startTimer();
     super.initState();
   }
 

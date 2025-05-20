@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/season_episode_bloc.dart';
 import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
-import 'package:movie_obs/list_items/series_list_item.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/screens/series/episode_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
@@ -13,6 +12,7 @@ import 'package:provider/provider.dart';
 
 import '../../extension/page_navigator.dart';
 import '../../list_items/cast_list_item.dart';
+import '../../list_items/episode_list_item.dart';
 import '../../utils/images.dart';
 import '../../widgets/common_dialog.dart';
 import '../../widgets/custom_button.dart';
@@ -194,28 +194,20 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
           Expanded(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: bloc.seasonEpisodeResponse?.actors?.length,
+              itemCount: bloc.castsLists.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
                     PageNavigator(ctx: context).nextPage(
                       page: ActorViewScreen(
-                        id:
-                            bloc
-                                .seasonEpisodeResponse
-                                ?.actors?[index]
-                                .cast
-                                ?.id ??
-                            '',
+                        id: bloc.castsLists[index].id ?? '',
                       ),
                     );
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(right: 10),
-                    child: castListItem(
-                      actor: bloc.seasonEpisodeResponse?.actors?[index],
-                    ),
+                    child: castListItem(actor: bloc.castsLists[index]),
                   ),
                 );
               },
@@ -245,9 +237,7 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
           _buildEpisodeAndViewCount(bloc),
           1.vGap,
           _buildTypeAndWatchList(bloc),
-          bloc.seasonEpisodeResponse?.actors?.isEmpty ?? true
-              ? SizedBox.shrink()
-              : _buildCastView(bloc),
+          bloc.castsLists.isEmpty ? SizedBox.shrink() : _buildCastView(bloc),
           _buildDescription(bloc),
           5.vGap,
           bloc.seasonEpisodeResponse?.episodes?.isEmpty ?? true
@@ -287,7 +277,7 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
               },
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 5),
-                child: seriesListItem(
+                child: episodeListItem(
                   isLast:
                       (index ==
                           (bloc.seasonEpisodeResponse?.episodes?.length ?? 0) -

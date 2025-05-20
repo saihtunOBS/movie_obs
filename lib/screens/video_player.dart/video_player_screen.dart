@@ -7,13 +7,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
+import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/screens/video_player.dart/popup_video_player.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/utils/rotation_detector.dart';
+import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../data/videoPlayer/video_player.dart';
@@ -23,6 +26,8 @@ double progress = 0.0;
 double bufferedProgress = 0.0;
 bool showControl = true;
 bool isAutoRotateEnabled = false;
+double _volume = 1.0; // Initial volume
+double brightness = 1.0;
 
 class VideoPlayerScreen extends StatefulWidget {
   const VideoPlayerScreen({
@@ -44,8 +49,6 @@ class VideoPlayerScreen extends StatefulWidget {
 class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     with WidgetsBindingObserver {
   late final VideoBloc bloc;
-  double _dragOffset = 1.0;
-  double _newDragOffset = 0.0;
   Orientation? _lastOrientation;
   VideoProgress? _savedVideo;
   bool isClickPopUp = false;
@@ -231,7 +234,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           ),
           extendBodyBehindAppBar: true,
           extendBody: true,
-          backgroundColor: kBlackColor.withValues(alpha: _dragOffset),
+          backgroundColor: kBlackColor,
           body: _buildVideoPlayerSection(),
         );
       },
@@ -280,25 +283,19 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildVideoPlayer() {
-    return Padding(
-      padding: EdgeInsets.only(
-        right: _newDragOffset == 0 ? 0 : _newDragOffset,
-        left: _newDragOffset == 0 ? 0 : 20,
-      ),
-      child: Stack(
-        children: [
-          Stack(
-            children: [
-              GestureDetector(
-                onDoubleTap: _handleDoubleTap,
-                onDoubleTapDown: _handleDoubleTapDown,
-                behavior: HitTestBehavior.opaque,
-                child: IgnorePointer(ignoring: true, child: Player(bloc: bloc)),
-              ),
-            ],
-          ),
-        ],
-      ),
+    return Stack(
+      children: [
+        Stack(
+          children: [
+            GestureDetector(
+              onDoubleTap: _handleDoubleTap,
+              onDoubleTapDown: _handleDoubleTapDown,
+              behavior: HitTestBehavior.opaque,
+              child: IgnorePointer(ignoring: true, child: Player(bloc: bloc)),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -437,11 +434,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildTopLeftControls() {
-    return Positioned(
-      top: bloc.isFullScreen ? 20 : 60,
-      left: bloc.isFullScreen ? 20 : 10,
-      child: _buildExitButton(),
-    );
+    return Positioned(top: 70, left: 30, child: _buildExitButton());
   }
 
   Widget _buildExitButton() {
@@ -456,8 +449,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             videoPlayerController.pause();
           },
           child: Container(
-            height: 30,
-            width: 35,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               color: Colors.transparent,
@@ -511,8 +502,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Widget _buildTopRightControls() {
     return Positioned(
-      top: bloc.isFullScreen ? 20 : 60,
-      right: bloc.isFullScreen ? 20 : 10,
+      top: bloc.isFullScreen ? 40 : 70,
+      right: bloc.isFullScreen ? 70 : 30,
       child: _buildSettingsButtons(),
     );
   }
@@ -520,11 +511,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   Widget _buildSettingsButtons() {
     return IgnorePointer(
       ignoring: !showControl,
-      child: Row(children: [_buildMuteButton(), _buildSettingsButton()]),
+      child: Row(children: [_buildSettingsButton()]),
     );
   }
 
-  Widget _buildMuteButton() {
+  Widget buildMuteButton() {
     return GestureDetector(
       onTap: () => bloc.toggleMute(),
       child: Container(
@@ -570,22 +561,20 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         });
       },
       child: Container(
-        height: bloc.isFullScreen ? 42 : 30,
-        width: bloc.isFullScreen ? 50 : 46,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: Colors.transparent,
         ),
-        child: const Icon(Icons.settings, color: Colors.white, size: 22),
+        child: const Icon(Icons.settings, color: Colors.white, size: 27),
       ),
     );
   }
 
   Widget _buildProgressBar() {
     return Positioned(
-      bottom: bloc.isFullScreen ? 20 : 30,
-      left: 0,
-      right: 0,
+      bottom: 40,
+      left: bloc.isFullScreen ? 30 : 10,
+      right: bloc.isFullScreen ? 30 : 10,
       child: _buildProgressBarContent(),
     );
   }
@@ -763,11 +752,112 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                       Icons.speed,
                     ),
                   ),
+                  20.vGap,
+                  StatefulBuilder(
+                    builder:
+                        (
+                          BuildContext context,
+                          void Function(void Function()) setState,
+                        ) => Row(
+                          spacing: 10,
+                          children: [
+                            Icon(
+                              CupertinoIcons.volume_mute,
+                              color: Colors.white,
+                            ),
+                            Expanded(
+                              child: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  trackHeight: 2.0,
+                                  thumbShape: RoundSliderThumbShape(
+                                    enabledThumbRadius: 7.0,
+                                  ),
+                                  overlayShape: RoundSliderOverlayShape(
+                                    overlayRadius: 5.0,
+                                  ),
+                                ),
+                                child: Slider(
+                                  value: _volume,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _volume = value;
+                                    });
+                                    videoPlayerController.setVolume(
+                                      value,
+                                    ); // Set the video volume
+                                  },
+                                  min: 0.0,
+                                  max: 1.0,
+                                  activeColor: kSecondaryColor,
+                                  inactiveColor: Colors.grey,
+                                ),
+                              ),
+                            ),
+                            Icon(CupertinoIcons.volume_up, color: Colors.white),
+                          ],
+                        ),
+                  ),
+                  20.vGap,
+                  StatefulBuilder(
+                    builder:
+                        (
+                          BuildContext context,
+                          void Function(void Function()) setState,
+                        ) => Row(
+                          spacing: 10,
+                          children: [
+                            Icon(
+                              CupertinoIcons.brightness,
+                              color: Colors.white,
+                            ),
+                            Expanded(
+                              child: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  trackHeight: 2.0,
+                                  thumbShape: RoundSliderThumbShape(
+                                    enabledThumbRadius: 7.0,
+                                  ),
+                                  overlayShape: RoundSliderOverlayShape(
+                                    overlayRadius: 5.0,
+                                  ),
+                                ),
+                                child: Slider(
+                                  value: brightness,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      brightness = value;
+                                      setSystemBrightness(brightness);
+                                    });
+                                  },
+                                  min: 0.0,
+                                  max: 1.0,
+                                  activeColor: kSecondaryColor,
+                                  inactiveColor: Colors.grey,
+                                ),
+                              ),
+                            ),
+                            Icon(
+                              CupertinoIcons.brightness_solid,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                  ),
                 ],
               ),
             ),
           ),
     );
+  }
+
+  Future<void> setSystemBrightness(double brightness) async {
+    try {
+      await ScreenBrightness.instance.setSystemScreenBrightness(brightness);
+    } catch (e) {
+      debugPrint(e.toString());
+      ToastService.warningToast('Failed to set system brightness');
+      //throw 'Failed to set system brightness';
+    }
   }
 
   Widget _buildAdditionalRow(String title, String value, IconData icon) {

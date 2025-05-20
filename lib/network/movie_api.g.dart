@@ -575,14 +575,14 @@ class _MovieApi implements MovieApi {
     String sortBy,
     String sortOrder,
     String plan,
-    int limit,
+    bool getAll,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'sortBy': sortBy,
       r'sortOrder': sortOrder,
       r'plan': plan,
-      r'limit': limit,
+      r'getAll': getAll,
     };
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
