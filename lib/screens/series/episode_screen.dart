@@ -219,8 +219,7 @@ class _EpisodeScreenState extends State<EpisodeScreen> {
       onTap: () {
         context.pushTransparentRoute(
           VideoPlayerScreen(
-            url:
-                'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
+            url: episodeMovie?.videoUrl ?? '',
             isFirstTime: true,
             type: 'SERIES',
             videoId: widget.seriesId,

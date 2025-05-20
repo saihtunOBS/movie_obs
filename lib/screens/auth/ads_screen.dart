@@ -96,7 +96,6 @@ class _AdsScreenState extends State<AdsScreen> {
               Container(
                 height: MediaQuery.sizeOf(context).height * 0.6,
                 width: double.infinity,
-
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                 ),

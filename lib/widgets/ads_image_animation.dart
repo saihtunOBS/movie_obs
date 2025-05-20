@@ -76,7 +76,7 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
     return ChangeNotifierProvider(
       create: (context) => AdsBloc(context: context),
       child: Scaffold(
-        backgroundColor: Colors.black,
+        //backgroundColor: Colors.black,
         body: Consumer<AdsBloc>(
           builder:
               (context, bloc, child) =>
