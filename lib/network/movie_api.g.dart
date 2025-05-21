@@ -147,10 +147,12 @@ class _MovieApi implements MovieApi {
     String token,
     String id,
     bool isSeasonInclude,
+    bool isEpisodeInclude,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'includeSeasons': isSeasonInclude,
+      r'include_episodes': isEpisodeInclude,
     };
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);

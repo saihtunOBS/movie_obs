@@ -163,7 +163,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     bool isSeasonInclude,
   ) {
     return movieApi
-        .getSeriesDetail(token, id, isSeasonInclude)
+        .getSeriesDetail(token, id, isSeasonInclude, true)
         .asStream()
         .map((response) => response)
         .first

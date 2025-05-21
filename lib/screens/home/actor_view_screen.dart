@@ -43,7 +43,6 @@ class ActorViewScreen extends StatelessWidget {
                                   child: Text('There is no movies to show.'),
                                 )
                                 : _buildMovieView(context, bloc),
-                            15.vGap,
                             bloc.actorData?.seasons?.isEmpty ?? true
                                 ? Center(child: Text(''))
                                 : _builSeasonView(context, bloc),

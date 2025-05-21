@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:movie_obs/data/vos/episode_vo.dart';
 import 'package:movie_obs/data/vos/role_vo.dart';
 
 import '../../data/vos/season_vo.dart';
@@ -82,6 +83,9 @@ class MovieDetailResponse {
   @JsonKey(name: "seasons")
   final List<SeasonVO>? seasons;
 
+  @JsonKey(name: "episodes")
+  final List<EpisodeVO>? episodes;
+
   @JsonKey(name: "isWatchlisted")
   bool? isWatchlist;
 
@@ -112,6 +116,7 @@ class MovieDetailResponse {
     this.updatedAt,
     this.seasons,
     this.isWatchlist,
+    this.episodes
   });
 
   factory MovieDetailResponse.fromJson(Map<String, dynamic> json) =>

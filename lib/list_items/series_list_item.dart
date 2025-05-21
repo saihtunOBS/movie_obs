@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/data/vos/episode_vo.dart';
 import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/calculate_time.dart';
@@ -8,7 +9,12 @@ import 'package:movie_obs/widgets/cache_image.dart';
 
 import '../utils/colors.dart';
 
-Widget seriesListItem({bool? isSeries, SeasonVO? data, bool? isLast}) {
+Widget seriesListItem({
+  bool? isSeries,
+  SeasonVO? data,
+  bool? isLast,
+  List<EpisodeVO>? episodes,
+}) {
   return Column(
     spacing: 7,
     children: [
@@ -73,7 +79,7 @@ Widget seriesListItem({bool? isSeries, SeasonVO? data, bool? isLast}) {
                     Text(
                       isSeries == false
                           ? formatMinutesToHoursAndMinutes(data?.duration ?? 0)
-                          : '25 Episodes',
+                          : '${episodes?.length ?? 0} Episodes',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 13,

@@ -242,6 +242,7 @@ class SeriesDetailScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 5),
                 child: seriesListItem(
                   data: bloc.seriesResponse?.seasons?[index],
+                  episodes: bloc.seriesResponse?.episodes ?? [],
                 ),
               ),
             );

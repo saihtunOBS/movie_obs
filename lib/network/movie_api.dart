@@ -56,6 +56,7 @@ abstract class MovieApi {
     @Header(kHeaderAuthorization) String token,
     @Path() String id,
     @Query('includeSeasons') bool isSeasonInclude,
+    @Query('include_episodes') bool isEpisodeInclude,
   );
 
   @GET('$kEndPointSeries/{id}/similar-contents')
