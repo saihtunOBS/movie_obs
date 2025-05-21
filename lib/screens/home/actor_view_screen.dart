@@ -58,7 +58,7 @@ class ActorViewScreen extends StatelessWidget {
   Widget _buildMovieView(BuildContext context, ActorBloc bloc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 5,
+      spacing: 2,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
@@ -99,7 +99,7 @@ class ActorViewScreen extends StatelessWidget {
 
   Widget _builSeasonView(BuildContext context, ActorBloc bloc) {
     return Column(
-      spacing: 5,
+      spacing: 2,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(

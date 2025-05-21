@@ -140,7 +140,7 @@ class _MovieScreenState extends State<MovieScreen> {
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              25,
+                              24,
                             ), // your border radius
                           ),
                         ),

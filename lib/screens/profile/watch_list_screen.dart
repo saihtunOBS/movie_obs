@@ -145,7 +145,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              25,
+                              24,
                             ), // your border radius
                           ),
                         ),

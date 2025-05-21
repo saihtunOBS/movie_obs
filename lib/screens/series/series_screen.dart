@@ -141,7 +141,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              25,
+                              24,
                             ), // your border radius
                           ),
                         ),

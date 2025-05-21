@@ -158,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                       height: 50,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
+                                        borderRadius: BorderRadius.circular(18),
                                         color: Colors.grey.withValues(
                                           alpha: 0.2,
                                         ),
@@ -298,7 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Container(
                   height: 50,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(24),
                     color: kWhiteColor,
                   ),
                   child: Row(
@@ -327,7 +327,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Container(
                   height: 50,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(24),
                     color: kWhiteColor,
                   ),
                   child: Row(

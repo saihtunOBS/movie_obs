@@ -660,7 +660,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Widget _buildProgressBar() {
     return Positioned(
-      bottom: bloc.isFullScreen ? 20 : 40,
+      bottom: 25,
       left: bloc.isFullScreen ? 40 : 10,
       right: bloc.isFullScreen ? 40 : 10,
       child: _buildProgressBarContent(),
@@ -840,7 +840,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                       Icons.speed,
                     ),
                   ),
-                 5.vGap
+                  5.vGap,
                 ],
               ),
             ),
@@ -854,7 +854,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     } catch (e) {
       debugPrint(e.toString());
       ToastService.warningToast('Failed to set system brightness');
-      //throw 'Failed to set system brightness';
     }
   }
 

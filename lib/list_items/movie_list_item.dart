@@ -14,7 +14,10 @@ Widget movieListItem({
   return Container(
     height: 180,
     margin: EdgeInsets.only(right: padding ?? 0.0),
-    decoration: BoxDecoration(borderRadius: BorderRadius.circular(kMargin10)),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(kMargin10),
+      color: Colors.grey.withValues(alpha: 0.2),
+    ),
     child: Stack(
       fit: StackFit.passthrough,
       children: [
