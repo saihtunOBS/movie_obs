@@ -9,21 +9,21 @@ part 'actor_data_response.g.dart';
 class ActorDataResponse {
   @JsonKey(name: "_id")
   final String? id;
-  
+
   final String? name;
-  
+
   @JsonKey(name: "profilePictureUrl")
   final String? profilePictureUrl;
 
   @JsonKey(name: "role")
   final RoleVO? role;
-  
+
   @JsonKey(name: "createdAt")
   final String? createdAt;
-  
+
   @JsonKey(name: "updatedAt")
   final String? updatedAt;
-  
+
   @JsonKey(name: "movieCounts")
   final int? movieCounts;
 
@@ -45,9 +45,8 @@ class ActorDataResponse {
     this.seasons,
   });
 
-  factory ActorDataResponse.fromJson(Map<String, dynamic> json) => 
+  factory ActorDataResponse.fromJson(Map<String, dynamic> json) =>
       _$ActorDataResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$ActorDataResponseToJson(this);
-
 }

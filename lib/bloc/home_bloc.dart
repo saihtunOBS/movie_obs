@@ -8,18 +8,21 @@ import 'package:movie_obs/data/vos/movie_vo.dart';
 class HomeBloc extends ChangeNotifier {
   bool isLoading = false;
   bool isDisposed = false;
+  bool isLoadMore = false;
   String token = '';
   List<MovieVO> movieLists = [];
   List<MovieVO> freeMovieLists = [];
+  int page = 1;
+  String? moviePlan;
+  String? movieGenre;
+  String? movieContentType;
 
   List<MovieVO> topTrendingMoviesList = [];
   List<MovieVO> newReleaseMoviesList = [];
   List<AdsAndBannerVO> bannerList = [];
   final MovieModel _movieModel = MovieModelImpl();
-  // BuildContext? _context;
 
   HomeBloc({BuildContext? context}) {
-    // _context = context;
     token = PersistenceData.shared.getToken();
 
     getBanner();
@@ -48,6 +51,10 @@ class HomeBloc extends ChangeNotifier {
   }
 
   getFreeMovieAndSeries() {
+    page = 1;
+    moviePlan = '';
+    movieGenre = '';
+    movieContentType = '';
     _showLoading();
     _movieModel
         .getAllMovieAndSeries(token, 'FREE', '', 'BOTH', false, 1)
@@ -61,6 +68,9 @@ class HomeBloc extends ChangeNotifier {
   }
 
   filter(String plan, String genre, String contentType) async {
+    moviePlan = plan;
+    movieGenre = genre;
+    movieContentType = contentType;
     _showLoading();
     _movieModel
         .getAllMovieAndSeries(token, 'FREE', genre, contentType, false, 1)
@@ -71,6 +81,38 @@ class HomeBloc extends ChangeNotifier {
         .whenComplete(() {
           _hideLoading();
         });
+  }
+
+  loadMoreFreeMovieAndSeries() {
+    if (isLoadMore) return;
+    _showLoadMoreLoading();
+    page += 1;
+
+    _movieModel
+        .getAllMovieAndSeries(
+          token,
+          'FREE',
+          movieGenre ?? '',
+          movieContentType ?? '',
+          false,
+          page,
+        )
+        .then((response) => freeMovieLists.addAll(response.data ?? []))
+        .whenComplete(() => _hideLoadMoreLoading());
+  }
+
+  onTapExpansion() {
+    notifyListeners();
+  }
+
+  _showLoadMoreLoading() {
+    isLoadMore = true;
+    _notifySafely();
+  }
+
+  _hideLoadMoreLoading() {
+    isLoadMore = false;
+    _notifySafely();
   }
 
   getTopTrending() {

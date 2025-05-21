@@ -222,6 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     controller: _phoneController,
                                     validator: phoneValidator,
                                     hint: '09xxxxxxxxxx',
+                                    keyboardType: TextInputType.phone,
                                   ),
                                 ),
                               ],

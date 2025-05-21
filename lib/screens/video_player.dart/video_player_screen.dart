@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/screens/video_player.dart/popup_video_player.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -26,7 +27,7 @@ double progress = 0.0;
 double bufferedProgress = 0.0;
 bool showControl = true;
 bool isAutoRotateEnabled = false;
-double _volume = 1.0; // Initial volume
+double deviceVolume = 1.0; // Initial volume
 double brightness = 1.0;
 
 class VideoPlayerScreen extends StatefulWidget {
@@ -213,7 +214,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     });
   }
 
-    @override
+  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _subscription?.cancel();
@@ -242,34 +243,120 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     );
   }
 
+  void _onVerticalDragEnd(DragEndDetails details) {
+    startDragOffset = null;
+  }
+
+  Offset? startDragOffset;
+
+  void _onVerticalDragStart(DragStartDetails details) {
+    startDragOffset = details.localPosition;
+  }
+
+  void _onVerticalDragUpdate(
+    DragUpdateDetails details,
+    String side,
+    double height,
+  ) {
+    if (startDragOffset == null) return;
+
+    final dy = details.localPosition.dy - startDragOffset!.dy;
+
+    // 👉 Reduce sensitivity (e.g. 2.5 means you need to swipe full screen height * 2.5 to go 0.0 -> 1.0)
+    double sensitivityFactor = side == 'left' ? 1.5 : 0;
+    double change = (-dy / height) / sensitivityFactor;
+
+    double newValue;
+
+    if (side == 'left') {
+      newValue = (deviceVolume + change).clamp(0.0, 1.0);
+      setState(() {
+        deviceVolume = newValue;
+        volumeController?.setVolume(deviceVolume);
+      });
+    } else {
+      newValue = (brightness + change).clamp(0.0, 1.0);
+      setState(() {
+        brightness = newValue;
+        setSystemBrightness(brightness);
+      });
+    }
+  }
+
   Widget _buildVideoPlayerSection() {
-    return Container(
-      color: Colors.transparent,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double screenHeight = constraints.maxHeight;
+        final screenWidth = constraints.maxWidth;
+        final leftZone = screenWidth * 0.3;
+        final rightZone = screenWidth * 0.7;
+        return Container(
+          color: Colors.transparent,
 
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          bloc.resetControlVisibility();
-        },
-        child: Stack(
-          children: [
-            chewieControllerNotifier == null ||
-                    !videoPlayerController.value.isInitialized ||
-                    bloc.isLoading
-                ? _buildLoadingIndicator()
-                : _buildVideoPlayer(),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              bloc.resetControlVisibility();
+            },
+            child: Stack(
+              children: [
+                chewieControllerNotifier == null ||
+                        !videoPlayerController.value.isInitialized ||
+                        bloc.isLoading
+                    ? _buildLoadingIndicator()
+                    : _buildVideoPlayer(),
 
-            !videoPlayerController.value.isInitialized
-                ? SizedBox()
-                : showControl == true
-                ? _buildPlayPauseControls()
-                : SizedBox.shrink(),
-            showControl == true ? _buildTopLeftControls() : SizedBox.shrink(),
-            showControl == true ? _buildTopRightControls() : SizedBox.shrink(),
-            showControl == true ? _buildProgressBar() : SizedBox.shrink(),
-          ],
-        ),
-      ),
+                !videoPlayerController.value.isInitialized
+                    ? SizedBox()
+                    : showControl == true
+                    ? _buildPlayPauseControls()
+                    : SizedBox.shrink(),
+                showControl == true
+                    ? _buildTopLeftControls()
+                    : SizedBox.shrink(),
+                showControl == true
+                    ? _buildTopRightControls()
+                    : SizedBox.shrink(),
+                showControl == true ? _buildProgressBar() : SizedBox.shrink(),
+                // Left Zone
+                Positioned(
+                  left: 0,
+                  width: leftZone,
+                  height: screenHeight,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onVerticalDragStart: _onVerticalDragStart,
+                    onVerticalDragUpdate:
+                        (details) => _onVerticalDragUpdate(
+                          details,
+                          'left',
+                          screenHeight,
+                        ),
+                    onVerticalDragEnd: _onVerticalDragEnd,
+                  ),
+                ),
+                // Right Zone
+                Positioned(
+                  left: rightZone,
+                  width: screenWidth - rightZone,
+                  height: screenHeight,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onVerticalDragStart: _onVerticalDragStart,
+                    onVerticalDragUpdate:
+                        (details) => _onVerticalDragUpdate(
+                          details,
+                          'right',
+                          screenHeight,
+                        ),
+                    onVerticalDragEnd: _onVerticalDragEnd,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -573,9 +660,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Widget _buildProgressBar() {
     return Positioned(
-      bottom: 40,
-      left: bloc.isFullScreen ? 30 : 10,
-      right: bloc.isFullScreen ? 30 : 10,
+      bottom: bloc.isFullScreen ? 20 : 40,
+      left: bloc.isFullScreen ? 40 : 10,
+      right: bloc.isFullScreen ? 40 : 10,
       child: _buildProgressBarContent(),
     );
   }
@@ -753,97 +840,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                       Icons.speed,
                     ),
                   ),
-                  20.vGap,
-                  StatefulBuilder(
-                    builder:
-                        (
-                          BuildContext context,
-                          void Function(void Function()) setState,
-                        ) => Row(
-                          spacing: 10,
-                          children: [
-                            Icon(
-                              CupertinoIcons.volume_mute,
-                              color: Colors.white,
-                            ),
-                            Expanded(
-                              child: SliderTheme(
-                                data: SliderTheme.of(context).copyWith(
-                                  trackHeight: 2.0,
-                                  thumbShape: RoundSliderThumbShape(
-                                    enabledThumbRadius: 7.0,
-                                  ),
-                                  overlayShape: RoundSliderOverlayShape(
-                                    overlayRadius: 5.0,
-                                  ),
-                                ),
-                                child: Slider(
-                                  value: _volume,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _volume = value;
-                                    });
-                                    videoPlayerController.setVolume(
-                                      value,
-                                    ); // Set the video volume
-                                  },
-                                  min: 0.0,
-                                  max: 1.0,
-                                  activeColor: kSecondaryColor,
-                                  inactiveColor: Colors.grey,
-                                ),
-                              ),
-                            ),
-                            Icon(CupertinoIcons.volume_up, color: Colors.white),
-                          ],
-                        ),
-                  ),
-                  20.vGap,
-                  StatefulBuilder(
-                    builder:
-                        (
-                          BuildContext context,
-                          void Function(void Function()) setState,
-                        ) => Row(
-                          spacing: 10,
-                          children: [
-                            Icon(
-                              CupertinoIcons.brightness,
-                              color: Colors.white,
-                            ),
-                            Expanded(
-                              child: SliderTheme(
-                                data: SliderTheme.of(context).copyWith(
-                                  trackHeight: 2.0,
-                                  thumbShape: RoundSliderThumbShape(
-                                    enabledThumbRadius: 7.0,
-                                  ),
-                                  overlayShape: RoundSliderOverlayShape(
-                                    overlayRadius: 5.0,
-                                  ),
-                                ),
-                                child: Slider(
-                                  value: brightness,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      brightness = value;
-                                      setSystemBrightness(brightness);
-                                    });
-                                  },
-                                  min: 0.0,
-                                  max: 1.0,
-                                  activeColor: kSecondaryColor,
-                                  inactiveColor: Colors.grey,
-                                ),
-                              ),
-                            ),
-                            Icon(
-                              CupertinoIcons.brightness_solid,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                  ),
+                 5.vGap
                 ],
               ),
             ),

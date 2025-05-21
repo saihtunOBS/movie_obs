@@ -11,9 +11,8 @@ import android.provider.Settings.System
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
-import com.folksable.volume_listener.VolumeListenerActivity
 
-class MainActivity : VolumeListenerActivity() {
+class MainActivity : FlutterActivity() {
     private val EVENT_CHANNEL = "rotation_channel"
     private var rotationObserver: ContentObserver? = null
 

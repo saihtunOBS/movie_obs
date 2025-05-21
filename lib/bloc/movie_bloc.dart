@@ -109,11 +109,7 @@ class MovieBloc extends ChangeNotifier {
         .then((response) => movieLists.addAll(response.data ?? []))
         .whenComplete(() => _hideLoadMoreLoading());
   }
-
-  onTapExpansion() {
-    notifyListeners();
-  }
-
+  
   _showLoadMoreLoading() {
     isLoadMore = true;
     _notifySafely();

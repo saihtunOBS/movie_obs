@@ -201,7 +201,7 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
                   onTap: () {
                     PageNavigator(ctx: context).nextPage(
                       page: ActorViewScreen(
-                        id: bloc.castsLists[index].id ?? '',
+                        id: bloc.castsLists[index].cast?.id ?? '',
                       ),
                     );
                   },

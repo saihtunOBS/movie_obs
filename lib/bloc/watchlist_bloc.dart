@@ -5,17 +5,22 @@ import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/genre_vo.dart';
 import 'package:movie_obs/data/vos/watchlist_history_vo.dart';
-import 'package:movie_obs/network/responses/watchlist_history_response.dart';
 
 class WatchlistBloc extends ChangeNotifier {
   bool isLoading = false;
   bool isDisposed = false;
   String token = '';
-  WatchlistHistoryResponse? watchListData;
+  List<WatchlistHistoryVo> watchLists = [];
   final MovieModel _movieModel = MovieModelImpl();
   String id = '';
   List<GenreVO> genreLists = [];
   List<WatchlistHistoryVo> filteredSuggestions = [];
+
+  bool isLoadMore = false;
+  int page = 1;
+  String moviePlan = '';
+  String movieGenre = '';
+  String movieContentType = '';
 
   WatchlistBloc({BuildContext? context}) {
     token = PersistenceData.shared.getToken();
@@ -23,6 +28,10 @@ class WatchlistBloc extends ChangeNotifier {
   }
 
   getWatchList() {
+    page = 1;
+    moviePlan = '';
+    movieGenre = '';
+    movieContentType = '';
     _showLoading();
     _movieModel
         .getWatchlist(
@@ -31,15 +40,45 @@ class WatchlistBloc extends ChangeNotifier {
           '',
           'BOTH',
           false,
-          userDataListener.value.id ?? '',1
+          userDataListener.value.id ?? '',
+          1,
         )
         .then((response) {
-          watchListData = response;
+          watchLists = response.data ?? [];
           notifyListeners();
         })
         .whenComplete(() {
           _hideLoading();
         });
+  }
+
+  loadMoreData() {
+    if (isLoadMore) return;
+    _showLoadMoreLoading();
+    page += 1;
+
+    _movieModel
+        .getWatchlist(
+          token,
+          moviePlan,
+          movieGenre,
+          movieContentType,
+          false,
+          userDataListener.value.id ?? '',
+          page,
+        )
+        .then((response) => watchLists.addAll(response.data ?? []))
+        .whenComplete(() => _hideLoadMoreLoading());
+  }
+
+  _showLoadMoreLoading() {
+    isLoadMore = true;
+    _notifySafely();
+  }
+
+  _hideLoadMoreLoading() {
+    isLoadMore = false;
+    _notifySafely();
   }
 
   void clearFilter() {
@@ -54,19 +93,21 @@ class WatchlistBloc extends ChangeNotifier {
       return;
     }
     filteredSuggestions =
-        watchListData?.data
-            ?.where(
+        watchLists
+            .where(
               (item) => item.reference!.name!.toLowerCase().contains(
                 value.toLowerCase(),
               ),
             )
-            .toList() ??
-        [];
+            .toList();
 
     notifyListeners();
   }
 
   filter(String plan, String genre, String contentType) async {
+    moviePlan = plan;
+    movieGenre = genre;
+    movieContentType = contentType;
     _showLoading();
     await _movieModel
         .getWatchlist(
@@ -75,10 +116,11 @@ class WatchlistBloc extends ChangeNotifier {
           genre,
           contentType,
           true,
-          userDataListener.value.id ?? '',1
+          userDataListener.value.id ?? '',
+          1,
         )
         .then((response) {
-          watchListData = response;
+          watchLists = response.data ?? [];
           _hideLoading();
         })
         .whenComplete(() {

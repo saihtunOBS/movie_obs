@@ -137,7 +137,10 @@ CastVO _$CastVOFromJson(Map<String, dynamic> json) => CastVO(
   id: json['_id'] as String?,
   name: json['name'] as String?,
   profilePictureUrl: json['profilePictureUrl'] as String?,
-  role: json['role'] as String?,
+  role:
+      json['role'] == null
+          ? null
+          : RoleVO.fromJson(json['role'] as Map<String, dynamic>),
   createdAt: json['createdAt'] as String?,
   updatedAt: json['updatedAt'] as String?,
 );

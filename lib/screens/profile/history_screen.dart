@@ -21,9 +21,16 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
+  final scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,64 +54,96 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 child:
                     bloc.isLoading
                         ? LoadingView()
-                        : bloc.historyData?.data?.isNotEmpty ?? true
-                        ? Padding(
-                          padding: const EdgeInsets.only(),
-                          child: GridView.builder(
-                            physics: AlwaysScrollableScrollPhysics(),
-                            itemCount: bloc.historyData?.data?.length,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount:
-                                      getDeviceType() == 'phone' ? 2 : 3,
-                                  mainAxisExtent: 200,
-                                  mainAxisSpacing: 10,
-                                  crossAxisSpacing: 10,
+                        : Stack(
+                          children: [
+                            bloc.historyList.isNotEmpty
+                                ? GridView.builder(
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  itemCount: bloc.historyList.length,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount:
+                                            getDeviceType() == 'phone' ? 2 : 3,
+                                        mainAxisExtent: 200,
+                                        mainAxisSpacing: 10,
+                                        crossAxisSpacing: 10,
+                                      ),
+                                  padding: EdgeInsets.only(
+                                    left: kMarginMedium2,
+                                    right: kMarginMedium2,
+                                    bottom: 60,
+                                  ),
+                                  controller:
+                                      scrollController..addListener(() {
+                                        if (scrollController.position.pixels ==
+                                            scrollController
+                                                .position
+                                                .maxScrollExtent) {
+                                          if (bloc.historyList.length >= 10) {
+                                            bloc.loadMoreData();
+                                          }
+                                        }
+                                      }),
+                                  itemBuilder: (context, index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        bloc.historyList[index].type == 'MOVIE'
+                                            ? PageNavigator(
+                                              ctx: context,
+                                            ).nextPage(
+                                              page: MovieDetailScreen(
+                                                movie:
+                                                    bloc
+                                                        .historyList[index]
+                                                        .reference,
+                                              ),
+                                            )
+                                            : PageNavigator(
+                                              ctx: context,
+                                            ).nextPage(
+                                              page: SeriesDetailScreen(
+                                                series:
+                                                    bloc
+                                                        .historyList[index]
+                                                        .reference,
+                                              ),
+                                            );
+                                      },
+                                      child: movieListItem(
+                                        movies:
+                                            bloc.historyList[index].reference,
+                                        type:
+                                            bloc.historyList[index].type
+                                                ?.toLowerCase() ??
+                                            '',
+                                      ),
+                                    );
+                                  },
+                                )
+                                : EmptyView(
+                                  title: 'There is no history to show.',
+                                  reload: () {
+                                    bloc.getHistory();
+                                  },
                                 ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: kMarginMedium2,
-                              vertical: kMarginMedium2 - 5,
-                            ),
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  bloc.historyData?.data?[index].type == 'MOVIE'
-                                      ? PageNavigator(ctx: context).nextPage(
-                                        page: MovieDetailScreen(
-                                          movie:
-                                              bloc
-                                                  .historyData
-                                                  ?.data?[index]
-                                                  .reference,
+
+                            //load more loading
+                            Positioned(
+                              bottom: 30,
+                              left: 0,
+                              right: 0,
+                              child:
+                                  bloc.isLoadMore
+                                      ? Center(
+                                        child: SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: LoadingView(),
                                         ),
                                       )
-                                      : PageNavigator(ctx: context).nextPage(
-                                        page: SeriesDetailScreen(
-                                          series:
-                                              bloc
-                                                  .historyData
-                                                  ?.data?[index]
-                                                  .reference,
-                                        ),
-                                      );
-                                },
-                                child: movieListItem(
-                                  movies:
-                                      bloc.historyData?.data?[index].reference,
-                                  type:
-                                      bloc.historyData?.data?[index].type
-                                          ?.toLowerCase() ??
-                                      '',
-                                ),
-                              );
-                            },
-                          ),
-                        )
-                        : EmptyView(
-                          title: 'There is no history to show.',
-                          reload: () {
-                            bloc.getHistory();
-                          },
+                                      : SizedBox.shrink(),
+                            ),
+                          ],
                         ),
               ),
         ),

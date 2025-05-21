@@ -11,6 +11,10 @@ class SeriesBloc extends ChangeNotifier {
   List<MovieVO> seriesLists = [];
 
   List<MovieVO> filteredSuggestions = [];
+  bool isLoadMore = false;
+  int page = 1;
+  String moviePlan = '';
+  String movieGenre = '';
 
   final MovieModel _movieModel = MovieModelImpl();
 
@@ -20,6 +24,9 @@ class SeriesBloc extends ChangeNotifier {
   }
 
   getAllSeries() {
+    moviePlan = '';
+    movieGenre = '';
+    page = 1;
     _showLoading();
     _movieModel.getSeriesLists(token, '', '', 1).then((response) {
       seriesLists = response.data ?? [];
@@ -28,6 +35,8 @@ class SeriesBloc extends ChangeNotifier {
   }
 
   filterSeries(String plan, String genre) async {
+    moviePlan = plan;
+    movieGenre = genre;
     _showLoading();
     await _movieModel
         .getSeriesLists(token, plan, genre, 1)
@@ -57,6 +66,26 @@ class SeriesBloc extends ChangeNotifier {
             )
             .toList();
     notifyListeners();
+  }
+
+  loadMoreData() {
+    if (isLoadMore) return;
+    _showLoadMoreLoading();
+    page += 1;
+    _movieModel
+        .getSeriesLists(token, moviePlan, movieGenre, page)
+        .then((response) => seriesLists.addAll(response.data ?? []))
+        .whenComplete(() => _hideLoadMoreLoading());
+  }
+
+  _showLoadMoreLoading() {
+    isLoadMore = true;
+    _notifySafely();
+  }
+
+  _hideLoadMoreLoading() {
+    isLoadMore = false;
+    _notifySafely();
   }
 
   _showLoading() {

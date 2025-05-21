@@ -32,7 +32,6 @@ class MovieDetailBloc extends ChangeNotifier {
   }
 
   getMovieDetail() {
-    _showLoading();
     _movieModel
         .getMovieDetail(token, movieId)
         .then((response) {

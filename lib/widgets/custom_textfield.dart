@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_obs/utils/colors.dart';
 
 class CustomTextfield extends StatelessWidget {
   const CustomTextfield({
@@ -19,6 +20,7 @@ class CustomTextfield extends StatelessWidget {
       controller: controller,
       validator: validator,
       keyboardType: keyboardType,
+      style: TextStyle(color: kWhiteColor),
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.grey.withValues(alpha: 0.15),

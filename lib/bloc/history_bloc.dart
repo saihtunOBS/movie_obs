@@ -5,17 +5,18 @@ import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/genre_vo.dart';
 import 'package:movie_obs/data/vos/watchlist_history_vo.dart';
-import 'package:movie_obs/network/responses/watchlist_history_response.dart';
 
 class HistoryBloc extends ChangeNotifier {
   bool isLoading = false;
   bool isDisposed = false;
   String token = '';
-  WatchlistHistoryResponse? historyData;
   final MovieModel _movieModel = MovieModelImpl();
   String id = '';
+  List<WatchlistHistoryVo> historyList = [];
   List<GenreVO> genreLists = [];
   List<WatchlistHistoryVo> filteredSuggestions = [];
+  bool isLoadMore = false;
+  int page = 1;
 
   HistoryBloc({BuildContext? context}) {
     token = PersistenceData.shared.getToken();
@@ -23,16 +24,38 @@ class HistoryBloc extends ChangeNotifier {
   }
 
   getHistory() {
+    page = 1;
     _showLoading();
     _movieModel
-        .getHistory(token, false, userDataListener.value.id ?? '',1)
+        .getHistory(token, false, userDataListener.value.id ?? '', 1)
         .then((response) {
-          historyData = response;
+          historyList = response.data ?? [];
           notifyListeners();
         })
         .whenComplete(() {
           _hideLoading();
         });
+  }
+
+  loadMoreData() {
+    if (isLoadMore) return;
+    _showLoadMoreLoading();
+    page += 1;
+
+    _movieModel
+        .getHistory(token, false, userDataListener.value.id ?? '', page)
+        .then((response) => historyList.addAll(response.data ?? []))
+        .whenComplete(() => _hideLoadMoreLoading());
+  }
+
+  _showLoadMoreLoading() {
+    isLoadMore = true;
+    _notifySafely();
+  }
+
+  _hideLoadMoreLoading() {
+    isLoadMore = false;
+    _notifySafely();
   }
 
   _showLoading() {

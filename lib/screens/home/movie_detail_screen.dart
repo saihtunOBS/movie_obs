@@ -258,19 +258,16 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     return GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
+                       
                         PageNavigator(ctx: context).nextPage(
                           page: ActorViewScreen(
-                            id:
-                                bloc.castLists[index].id ??
-                                '',
+                            id: bloc.castLists[index].cast?.id ?? '',
                           ),
                         );
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(right: 10),
-                        child: castListItem(
-                          actor: bloc.castLists[index],
-                        ),
+                        child: castListItem(actor: bloc.castLists[index]),
                       ),
                     );
                   },

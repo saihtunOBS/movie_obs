@@ -72,7 +72,7 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(25),
               color: Colors.grey.withValues(alpha: 0.2),
             ),
             child: Row(
@@ -154,49 +154,46 @@ class _SearchScreenState extends State<SearchScreen> {
                 color: Colors.black38,
               ),
             ),
-        AnimatedSize(
-          duration: Duration(milliseconds: 200),
-          child: Container(
-            height: bloc.filteredSuggestions.isEmpty ? 0 : null,
-            width: double.infinity,
-            margin: EdgeInsets.only(top: 10),
-            padding: EdgeInsets.symmetric(vertical: kMarginMedium),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(kMargin10),
-              color: kWhiteColor,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:
-                  bloc.filteredSuggestions.map((value) {
-                    return GestureDetector(
-                      onTap: () {
-                        value.type == 'movie'
-                            ? PageNavigator(
-                              ctx: context,
-                            ).nextPage(page: MovieDetailScreen(movie: value))
-                            : PageNavigator(
-                              ctx: context,
-                            ).nextPage(page: SeriesDetailScreen(series: value));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: kMarginMedium,
-                          vertical: kMarginMedium,
-                        ),
-                        child: SubstringHighlight(
-                          text: value.name ?? '',
-                          term: _controller.text,
-                          textStyleHighlight: TextStyle(
-                            color: kSecondaryColor,
-                            fontWeight: FontWeight.w600,
-                          ),
+        Container(
+          height: bloc.filteredSuggestions.isEmpty ? 0 : null,
+          width: double.infinity,
+          margin: EdgeInsets.only(top: 10),
+          padding: EdgeInsets.symmetric(vertical: kMarginMedium),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(kMargin10),
+            color: kWhiteColor,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children:
+                bloc.filteredSuggestions.map((value) {
+                  return GestureDetector(
+                    onTap: () {
+                      value.type == 'movie'
+                          ? PageNavigator(
+                            ctx: context,
+                          ).nextPage(page: MovieDetailScreen(movie: value))
+                          : PageNavigator(
+                            ctx: context,
+                          ).nextPage(page: SeriesDetailScreen(series: value));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: kMarginMedium,
+                        vertical: kMarginMedium,
+                      ),
+                      child: SubstringHighlight(
+                        text: value.name ?? '',
+                        term: _controller.text,
+                        textStyleHighlight: TextStyle(
+                          color: kSecondaryColor,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    );
-                  }).toList(),
-            ),
+                    ),
+                  );
+                }).toList(),
           ),
         ),
       ],

@@ -25,9 +25,16 @@ class SeriesScreen extends StatefulWidget {
 class _SeriesScreenState extends State<SeriesScreen> {
   final TextEditingController _controller = TextEditingController();
 
+  final scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -134,7 +141,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              8,
+                              25,
                             ), // your border radius
                           ),
                         ),
@@ -172,8 +179,19 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                 padding: EdgeInsets.only(
                                   left: kMarginMedium2,
                                   right: kMarginMedium2,
-                                  bottom: 20,
+                                  bottom: 40,
                                 ),
+                                controller:
+                                    scrollController..addListener(() {
+                                      if (scrollController.position.pixels ==
+                                          scrollController
+                                              .position
+                                              .maxScrollExtent) {
+                                        if (bloc.seriesLists.length >= 10) {
+                                          bloc.loadMoreData();
+                                        }
+                                      }
+                                    }),
                                 itemBuilder: (context, index) {
                                   return GestureDetector(
                                     onTap: () {
@@ -191,6 +209,22 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                   );
                                 },
                               ),
+                              //load more loading
+                              Positioned(
+                                bottom: 5,
+                                left: 0,
+                                right: 0,
+                                child:
+                                    bloc.isLoadMore
+                                        ? Center(
+                                          child: SizedBox(
+                                            width: 25,
+                                            height: 25,
+                                            child: LoadingView(),
+                                          ),
+                                        )
+                                        : SizedBox.shrink(),
+                              ),
                               bloc.filteredSuggestions.isEmpty
                                   ? SizedBox.shrink()
                                   : Container(
@@ -199,48 +233,42 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                       color: Colors.black38,
                                     ),
                                   ),
-                              AnimatedSize(
-                                duration: Duration(milliseconds: 200),
-                                child: Container(
-                                  height:
-                                      bloc.filteredSuggestions.isEmpty
-                                          ? 0
-                                          : null,
-                                  width: double.infinity,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: kMarginMedium2,
+                              Container(
+                                height:
+                                    bloc.filteredSuggestions.isEmpty ? 0 : null,
+                                width: double.infinity,
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: kMarginMedium2,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: kMarginMedium,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                    kMargin10,
                                   ),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: kMarginMedium,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                      kMargin10,
-                                    ),
-                                    color: kWhiteColor,
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children:
-                                        bloc.filteredSuggestions.map((value) {
-                                          return Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: kMarginMedium,
-                                              vertical: kMarginMedium,
+                                  color: kWhiteColor,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children:
+                                      bloc.filteredSuggestions.map((value) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: kMarginMedium,
+                                            vertical: kMarginMedium,
+                                          ),
+                                          child: SubstringHighlight(
+                                            text: value.name ?? '',
+                                            term: _controller.text,
+                                            textStyleHighlight: TextStyle(
+                                              color: kSecondaryColor,
+                                              fontWeight: FontWeight.w600,
                                             ),
-                                            child: SubstringHighlight(
-                                              text: value.name ?? '',
-                                              term: _controller.text,
-                                              textStyleHighlight: TextStyle(
-                                                color: kSecondaryColor,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                  ),
+                                          ),
+                                        );
+                                      }).toList(),
                                 ),
                               ),
                             ],

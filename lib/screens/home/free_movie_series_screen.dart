@@ -23,9 +23,16 @@ class FreeMovieSeriesScreen extends StatefulWidget {
 }
 
 class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
+  final scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -91,64 +98,107 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
         ),
         body: Consumer<HomeBloc>(
           builder:
-              (context, bloc, child) => Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child:
-                    bloc.isLoading
-                        ? LoadingView()
-                        : Stack(
-                          children: [
-                            bloc.freeMovieLists.isNotEmpty
-                                ? GridView.builder(
-                                  itemCount: bloc.freeMovieLists.length,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount:
-                                            getDeviceType() == 'phone' ? 2 : 3,
-                                        mainAxisExtent: 200,
-                                        mainAxisSpacing: 10,
-                                        crossAxisSpacing: 10,
-                                      ),
-                                  padding: EdgeInsets.only(
-                                    left: kMarginMedium2,
-                                    right: kMarginMedium2,
-                                    bottom: 20,
+              (context, bloc, child) => RefreshIndicator(
+                onRefresh: () async {
+                  bloc.getFreeMovieAndSeries();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child:
+                      bloc.isLoading
+                          ? LoadingView()
+                          : Stack(
+                            children: [
+                              bloc.freeMovieLists.isNotEmpty
+                                  ? GridView.builder(
+                                    physics: AlwaysScrollableScrollPhysics(),
+                                    itemCount: bloc.freeMovieLists.length,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount:
+                                              getDeviceType() == 'phone'
+                                                  ? 2
+                                                  : 3,
+                                          mainAxisExtent: 200,
+                                          mainAxisSpacing: 10,
+                                          crossAxisSpacing: 10,
+                                        ),
+                                    padding: EdgeInsets.only(
+                                      left: kMarginMedium2,
+                                      right: kMarginMedium2,
+                                      bottom: 60,
+                                    ),
+                                    controller:
+                                        scrollController..addListener(() {
+                                          if (scrollController
+                                                  .position
+                                                  .pixels ==
+                                              scrollController
+                                                  .position
+                                                  .maxScrollExtent) {
+                                            if (bloc.freeMovieLists.length >=
+                                                10) {
+                                              bloc.loadMoreFreeMovieAndSeries();
+                                            }
+                                          }
+                                        }),
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          if (bloc.freeMovieLists[index].type ==
+                                              'movie') {
+                                            PageNavigator(
+                                              ctx: context,
+                                            ).nextPage(
+                                              page: MovieDetailScreen(
+                                                movie:
+                                                    bloc.freeMovieLists[index],
+                                              ),
+                                            );
+                                          } else {
+                                            PageNavigator(
+                                              ctx: context,
+                                            ).nextPage(
+                                              page: SeriesDetailScreen(
+                                                series:
+                                                    bloc.freeMovieLists[index],
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: movieListItem(
+                                          isHomeScreen: true,
+                                          movies: bloc.freeMovieLists[index],
+                                          type: bloc.freeMovieLists[index].type,
+                                        ),
+                                      );
+                                    },
+                                  )
+                                  : EmptyView(
+                                    reload: () {
+                                      bloc.getFreeMovieAndSeries();
+                                    },
+                                    title: 'There is no free movies & series',
                                   ),
-                                  itemBuilder: (context, index) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        if (bloc.freeMovieLists[index].type ==
-                                            'movie') {
-                                          PageNavigator(ctx: context).nextPage(
-                                            page: MovieDetailScreen(
-                                              movie: bloc.freeMovieLists[index],
-                                            ),
-                                          );
-                                        } else {
-                                          PageNavigator(ctx: context).nextPage(
-                                            page: SeriesDetailScreen(
-                                              series:
-                                                  bloc.freeMovieLists[index],
-                                            ),
-                                          );
-                                        }
-                                      },
-                                      child: movieListItem(
-                                        isHomeScreen: true,
-                                        movies: bloc.freeMovieLists[index],
-                                        type: bloc.freeMovieLists[index].type,
-                                      ),
-                                    );
-                                  },
-                                )
-                                : EmptyView(
-                                  reload: () {
-                                    bloc.getFreeMovieAndSeries();
-                                  },
-                                  title: 'There is no free movies & series',
-                                ),
-                          ],
-                        ),
+                              //load more loading
+                              Positioned(
+                                bottom: 30,
+                                left: 0,
+                                right: 0,
+                                child:
+                                    bloc.isLoadMore
+                                        ? Center(
+                                          child: SizedBox(
+                                            width: 25,
+                                            height: 25,
+                                            child: LoadingView(),
+                                          ),
+                                        )
+                                        : SizedBox.shrink(),
+                              ),
+                            ],
+                          ),
+                ),
               ),
         ),
       ),

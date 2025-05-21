@@ -217,14 +217,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
-  country_code_picker:
-    dependency: "direct main"
-    description:
-      name: country_code_picker
-      sha256: ee216486da1db8e3c5688f9650c99472ab6a4025ed1ea0c5a54ae6063143d90d
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.3.0"
   country_picker:
     dependency: "direct main"
     description:
@@ -281,14 +273,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.11"
-  diacritic:
-    dependency: transitive
-    description:
-      name: diacritic
-      sha256: "12981945ec38931748836cd76f2b38773118d0baef3c68404bdfde9566147876"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.6"
   dio:
     dependency: "direct main"
     description:
@@ -669,14 +653,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.1"
-  loading_indicator:
-    dependency: "direct main"
-    description:
-      name: loading_indicator
-      sha256: a101ffb2aa3e646137d7810bfa90b50525dd3f72c01235b6df7491cf6af6f284
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.1"
   logging:
     dependency: transitive
     description:
@@ -1298,16 +1274,16 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "14.3.1"
-  volume_listener:
+  volume_controller:
     dependency: "direct main"
     description:
-      name: volume_listener
-      sha256: bfaba6353e61ccc7799432eefae2b5c9f0fdf426e2b2a0b49bbe65f84b7bd959
+      name: volume_controller
+      sha256: e82fd689bb8e1fe8e64be3fa5946ff8699058f8cf9f4c1679acdba20cda7f5bd
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.0"
+    version: "3.3.3"
   wakelock_plus:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: wakelock_plus
       sha256: b90fbcc8d7bdf3b883ea9706d9d76b9978cb1dfa4351fcc8014d6ec31a493354

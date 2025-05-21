@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:movie_obs/data/vos/role_vo.dart';
 
 import '../../data/vos/season_vo.dart';
 
@@ -206,7 +207,7 @@ class CastVO {
   final String? profilePictureUrl;
 
   @JsonKey(name: "role")
-  final String? role;
+  final RoleVO? role;
 
   @JsonKey(name: "createdAt")
   final String? createdAt;
@@ -227,3 +228,4 @@ class CastVO {
 
   Map<String, dynamic> toJson() => _$CastVOToJson(this);
 }
+

@@ -140,7 +140,7 @@ class _MovieScreenState extends State<MovieScreen> {
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              8,
+                              25,
                             ), // your border radius
                           ),
                         ),
@@ -186,7 +186,7 @@ class _MovieScreenState extends State<MovieScreen> {
                                           scrollController
                                               .position
                                               .maxScrollExtent) {
-                                        if (bloc.movieLists.length > 10) {
+                                        if (bloc.movieLists.length >= 10) {
                                           bloc.loadMoreData();
                                         }
                                       }
@@ -235,60 +235,53 @@ class _MovieScreenState extends State<MovieScreen> {
                                       color: Colors.black38,
                                     ),
                                   ),
-                              AnimatedSize(
-                                duration: Duration(milliseconds: 200),
-                                child: Container(
-                                  height:
-                                      bloc.filteredSuggestions.isEmpty
-                                          ? 0
-                                          : null,
-                                  width: double.infinity,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: kMarginMedium2,
+                              Container(
+                                height:
+                                    bloc.filteredSuggestions.isEmpty ? 0 : null,
+                                width: double.infinity,
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: kMarginMedium2,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: kMarginMedium,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                    kMargin10,
                                   ),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: kMarginMedium,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                      kMargin10,
-                                    ),
-                                    color: kWhiteColor,
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children:
-                                        bloc.filteredSuggestions.map((value) {
-                                          return GestureDetector(
-                                            onTap: () {
-                                              PageNavigator(
-                                                ctx: context,
-                                              ).nextPage(
-                                                page: MovieDetailScreen(
-                                                  movie: value,
-                                                ),
-                                              );
-                                            },
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: kMarginMedium,
-                                                    vertical: kMarginMedium,
-                                                  ),
-                                              child: SubstringHighlight(
-                                                text: value.name ?? '',
-                                                term: _controller.text,
-                                                textStyleHighlight: TextStyle(
-                                                  color: kSecondaryColor,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
+                                  color: kWhiteColor,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children:
+                                      bloc.filteredSuggestions.map((value) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            PageNavigator(
+                                              ctx: context,
+                                            ).nextPage(
+                                              page: MovieDetailScreen(
+                                                movie: value,
+                                              ),
+                                            );
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: kMarginMedium,
+                                              vertical: kMarginMedium,
+                                            ),
+                                            child: SubstringHighlight(
+                                              text: value.name ?? '',
+                                              term: _controller.text,
+                                              textStyleHighlight: TextStyle(
+                                                color: kSecondaryColor,
+                                                fontWeight: FontWeight.w600,
                                               ),
                                             ),
-                                          );
-                                        }).toList(),
-                                  ),
+                                          ),
+                                        );
+                                      }).toList(),
                                 ),
                               ),
                             ],

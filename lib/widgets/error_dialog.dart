@@ -73,7 +73,7 @@ class ErrorDialogView extends StatelessWidget {
                   width: MediaQuery.of(context).size.width / 1.3,
                   decoration: BoxDecoration(
                     color: kSecondaryColor,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(
                     child: Text(

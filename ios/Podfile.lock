@@ -24,7 +24,7 @@ PODS:
   - video_player_avfoundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - volume_listener (0.0.1):
+  - volume_controller (0.0.1):
     - Flutter
   - wakelock_plus (0.0.1):
     - Flutter
@@ -40,7 +40,7 @@ DEPENDENCIES:
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
-  - volume_listener (from `.symlinks/plugins/volume_listener/ios`)
+  - volume_controller (from `.symlinks/plugins/volume_controller/ios`)
   - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
 
 SPEC REPOS:
@@ -68,8 +68,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite_darwin/darwin"
   video_player_avfoundation:
     :path: ".symlinks/plugins/video_player_avfoundation/darwin"
-  volume_listener:
-    :path: ".symlinks/plugins/volume_listener/ios"
+  volume_controller:
+    :path: ".symlinks/plugins/volume_controller/ios"
   wakelock_plus:
     :path: ".symlinks/plugins/wakelock_plus/ios"
 
@@ -85,7 +85,7 @@ SPEC CHECKSUMS:
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   video_player_avfoundation: 7c6c11d8470e1675df7397027218274b6d2360b3
-  volume_listener: 83bccc5e637e342503bb4f87508e1acb671b6fb0
+  volume_controller: 2e3de73d6e7e81a0067310d17fb70f2f86d71ac7
   wakelock_plus: 373cfe59b235a6dd5837d0fb88791d2f13a90d56
 
 PODFILE CHECKSUM: fa1c758b2b6838d3b196938c25c2f243c02da750
