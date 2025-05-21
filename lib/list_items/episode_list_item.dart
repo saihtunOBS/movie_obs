@@ -13,6 +13,7 @@ Widget episodeListItem({
   EpisodeVO? data,
   bool? isLast,
   Color? color,
+  String? imageUrl
 }) {
   return Column(
     spacing: 2,
@@ -32,7 +33,7 @@ Widget episodeListItem({
               child: SizedBox(
                 height: 80,
                 width: 120,
-                child: cacheImage(data?.posterImageUrl ?? ''),
+                child: cacheImage(imageUrl),
               ),
             ),
             Expanded(

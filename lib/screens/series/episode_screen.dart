@@ -178,7 +178,7 @@ class EpisodeScreen extends StatelessWidget {
             ),
           ),
           _episodeListView(bloc),
-          20.vGap
+          20.vGap,
         ],
       ),
     );
@@ -207,6 +207,7 @@ class EpisodeScreen extends StatelessWidget {
             ),
 
             child: episodeListItem(
+              imageUrl: episodeResponse?.bannerImageUrl,
               isSeries: false,
               isLast: index == (episodeResponse?.episodes?.length ?? 0) - 1,
               data: episodeResponse?.episodes?[index],

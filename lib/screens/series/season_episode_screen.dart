@@ -278,6 +278,7 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 5),
                 child: episodeListItem(
+                  imageUrl: bloc.seasonEpisodeResponse?.bannerImageUrl,
                   isLast:
                       (index ==
                           (bloc.seasonEpisodeResponse?.episodes?.length ?? 0) -
