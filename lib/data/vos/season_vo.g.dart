@@ -35,6 +35,7 @@ SeasonVO _$SeasonVOFromJson(Map<String, dynamic> json) => SeasonVO(
   createdAt: json['createdAt'] as String?,
   updatedAt: json['updatedAt'] as String?,
   duration: (json['duration'] as num?)?.toInt(),
+  episodeCount: (json['episodeCount'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$SeasonVOToJson(SeasonVO instance) => <String, dynamic>{
@@ -57,6 +58,7 @@ Map<String, dynamic> _$SeasonVOToJson(SeasonVO instance) => <String, dynamic>{
   'createdAt': instance.createdAt,
   'updatedAt': instance.updatedAt,
   'duration': instance.duration,
+  'episodeCount': instance.episodeCount,
 };
 
 SeasonCastVO _$SeasonCastVOFromJson(Map<String, dynamic> json) => SeasonCastVO(

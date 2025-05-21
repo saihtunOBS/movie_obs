@@ -124,11 +124,14 @@ class SeriesDetailScreen extends StatelessWidget {
           ),
           10.vGap,
           _buildDescription(bloc, context),
-          Text(
-            'Seasons',
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: kTextRegular18,
+          Visibility(
+            visible: bloc.seriesResponse?.seasons?.isNotEmpty ?? true,
+            child: Text(
+              'Seasons',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: kTextRegular18,
+              ),
             ),
           ),
           _buildSeasonListView(bloc),
@@ -242,7 +245,8 @@ class SeriesDetailScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 5),
                 child: seriesListItem(
                   data: bloc.seriesResponse?.seasons?[index],
-                  episodes: bloc.seriesResponse?.episodes ?? [],
+                  episodes:
+                      bloc.seriesResponse?.seasons?[index].episodeCount ?? 0,
                 ),
               ),
             );

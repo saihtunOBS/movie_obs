@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-
 part 'season_vo.g.dart';
 
 @JsonSerializable()
@@ -61,6 +60,9 @@ class SeasonVO {
   @JsonKey(name: "duration")
   final int? duration;
 
+  @JsonKey(name: "episodeCount")
+  final int? episodeCount;
+
   SeasonVO({
     this.id,
     this.name,
@@ -80,7 +82,8 @@ class SeasonVO {
     this.supports,
     this.createdAt,
     this.updatedAt,
-    this.duration
+    this.duration,
+    this.episodeCount
   });
 
   factory SeasonVO.fromJson(Map<String, dynamic> json) => _$SeasonVOFromJson(json);
