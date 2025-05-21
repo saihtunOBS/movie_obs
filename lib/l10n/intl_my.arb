@@ -17,7 +17,7 @@
   "deleteAccount2": "အကောင့် ဖျက်သိမ်းမည်?",
   "yes": "လုပ်မည်",
   "no": "မလုပ်ပါ",
-  "deleteAccountQuestion": "Are you sure you want to delete your account permanently?",
+  "deleteAccountQuestion": "သင့်အကောင့်ကို ဖျက်မှာသေချာပီလား?",
   "username": "အသုံးပြုသူအမည်",
   "phone": "ဖုန်းနံပါတ်",
   "email": "အီးမေလ်း",

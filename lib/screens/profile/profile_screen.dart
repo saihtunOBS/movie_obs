@@ -360,7 +360,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Icon(CupertinoIcons.delete_simple, size: 38, color: Colors.red),
             15.vGap,
             Text(
-              AppLocalizations.of(context)?.deleteAccount ?? '',
+              AppLocalizations.of(context)?.deleteAccount2 ?? '',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: kTextRegular2x,
@@ -370,7 +370,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             10.vGap,
             Text(
-              AppLocalizations.of(context)?.deleteAccount2 ?? '',
+              AppLocalizations.of(context)?.deleteAccountQuestion ?? '',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: kTextRegular13, color: kBlackColor),
             ),
