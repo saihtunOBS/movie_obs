@@ -15,6 +15,7 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:screen_brightness/screen_brightness.dart';
+import 'package:volume_listener/volume_listener.dart';
 
 final ValueNotifier<bool> tab = ValueNotifier(true);
 
@@ -33,6 +34,8 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     SeriesScreen(),
     ProfileScreen(),
   ];
+  VolumeKey? lastKey;
+  int currentVol = 0;
 
   @override
   void initState() {
@@ -40,8 +43,20 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
       context.read<UserBloc>().updateToken();
       context.read<UserBloc>().getUser(context);
     });
-
+    initPlatformState();
     super.initState();
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlatformState() async {
+    VolumeListener.addListener((VolumeKey event) {
+      setState(() {
+        lastKey = event;
+        currentVol += (event == VolumeKey.up ? 1 : -1);
+
+        print('your volume is....$currentVol');
+      });
+    });
   }
 
   @override

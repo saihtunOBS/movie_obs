@@ -52,7 +52,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   Orientation? _lastOrientation;
   VideoProgress? _savedVideo;
   bool isClickPopUp = false;
-
   StreamSubscription<bool>? _subscription;
 
   @override
@@ -126,6 +125,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         showControl = true;
       });
     });
+
+    //set up volume listener
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
@@ -212,7 +213,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     });
   }
 
-  @override
+    @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _subscription?.cancel();

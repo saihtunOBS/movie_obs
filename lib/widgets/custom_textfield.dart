@@ -23,20 +23,21 @@ class CustomTextfield extends StatelessWidget {
         filled: true,
         fillColor: Colors.grey.withValues(alpha: 0.15),
         hintText: hint,
+        hintStyle: TextStyle(color: Colors.grey),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(18),
           borderSide: BorderSide(color: Colors.transparent, width: 0),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(18),
           borderSide: BorderSide(color: Colors.red, width: 0),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(18),
           borderSide: BorderSide(color: Colors.transparent),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(18),
           borderSide: BorderSide(color: Colors.red, width: 0),
         ),
       ),

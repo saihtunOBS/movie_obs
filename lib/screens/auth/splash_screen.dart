@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/ads_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
+import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -111,11 +112,15 @@ class _SplashScreenState extends State<SplashScreen>
         ),
       ),
       bottomNavigationBar: SizedBox(
-        height: 60,
+        height: 80,
         child: Center(
           child: Text(
             'Version 1.0.0',
-            style: TextStyle(color: kWhiteColor, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: kWhiteColor,
+              fontWeight: FontWeight.bold,
+              fontSize: kTextRegular,
+            ),
           ),
         ),
       ),

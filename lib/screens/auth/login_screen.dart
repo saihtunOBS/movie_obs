@@ -9,8 +9,10 @@ import 'package:movie_obs/screens/auth/otp_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
+import 'package:movie_obs/utils/validator.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:movie_obs/widgets/custom_button.dart';
+import 'package:movie_obs/widgets/custom_textfield.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +29,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   Country? selectedCountryCode;
   final _phoneController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -55,216 +58,216 @@ class _LoginScreenState extends State<LoginScreen> {
               builder:
                   (context, bloc, child) => Stack(
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: kMarginMedium,
-                        children: [
-                          Text(
-                            'LOGIN',
-                            style: TextStyle(
-                              fontFamily: GoogleFonts.poppins().fontFamily,
-                              letterSpacing: 10.0,
-                              fontSize: kTextRegular32,
-                              fontWeight: FontWeight.bold,
-                              color: kPrimaryColor,
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: kMarginMedium,
+                          children: [
+                            Text(
+                              'LOGIN',
+                              style: TextStyle(
+                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                letterSpacing: 10.0,
+                                fontSize: kTextRegular32,
+                                fontWeight: FontWeight.bold,
+                                color: kPrimaryColor,
+                              ),
                             ),
-                          ),
-                          Text(
-                            AppLocalizations.of(context)?.enterPhoneNumber ??
-                                '',
-                            style: TextStyle(fontSize: kTextRegular2x),
-                          ),
-                          20.vGap,
-                          Row(
-                            spacing: kMarginMedium,
-                            children: [
-                              Localizations.override(
-                                context: context,
-                                locale: Locale('en'),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    showCountryPicker(
-                                      context: context,
-                                      useSafeArea: true,
-                                      searchAutofocus: true,
-                                      useRootNavigator: true,
-                                      moveAlongWithKeyboard: false,
-                                      countryListTheme: CountryListThemeData(
-                                        bottomSheetHeight:
-                                            MediaQuery.of(context).size.height /
-                                            1.5,
-                                        inputDecoration: InputDecoration(
-                                          enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: kWhiteColor,
+                            Text(
+                              AppLocalizations.of(context)?.enterPhoneNumber ??
+                                  '',
+                              style: TextStyle(fontSize: kTextRegular2x),
+                            ),
+                            20.vGap,
+                            Row(
+                              spacing: kMarginMedium,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Localizations.override(
+                                  context: context,
+                                  locale: Locale('en'),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showCountryPicker(
+                                        context: context,
+                                        useSafeArea: true,
+                                        searchAutofocus: true,
+                                        useRootNavigator: true,
+                                        moveAlongWithKeyboard: false,
+                                        countryListTheme: CountryListThemeData(
+                                          bottomSheetHeight:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.height /
+                                              1.5,
+                                          inputDecoration: InputDecoration(
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: kWhiteColor,
+                                              ),
+                                            ),
+                                            labelText: 'Search Country',
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: Colors.white,
+                                                width: 1,
+                                              ),
                                             ),
                                           ),
-                                          labelText: 'Search Country',
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                            borderSide: const BorderSide(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                            borderSide: const BorderSide(
-                                              color: Colors.white,
-                                              width: 1,
-                                            ),
-                                          ),
-                                        ),
 
-                                        textStyle: TextStyle(
-                                          fontSize:
-                                              getDeviceType() == 'phone'
-                                                  ? 16
-                                                  : 20,
-                                          color: Colors.white,
+                                          textStyle: TextStyle(
+                                            fontSize:
+                                                getDeviceType() == 'phone'
+                                                    ? 16
+                                                    : 20,
+                                            color: Colors.white,
+                                          ),
+                                          backgroundColor: Colors.black,
+                                          searchTextStyle: TextStyle(
+                                            color: kWhiteColor,
+                                            fontSize:
+                                                getDeviceType() == 'phone'
+                                                    ? 16
+                                                    : 20,
+                                          ),
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(24),
+                                            topRight: Radius.circular(24),
+                                          ),
                                         ),
-                                        backgroundColor: Colors.black,
-                                        searchTextStyle: TextStyle(
-                                          color: kWhiteColor,
-                                          fontSize:
-                                              getDeviceType() == 'phone'
-                                                  ? 16
-                                                  : 20,
+                                        onSelect: (value) {
+                                          setState(() {
+                                            selectedCountryCode = value;
+                                          });
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                      ),
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color: Colors.grey.withValues(
+                                          alpha: 0.2,
                                         ),
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(24),
-                                          topRight: Radius.circular(24),
+                                        border: Border.all(
+                                          color: const Color.fromARGB(
+                                            255,
+                                            126,
+                                            125,
+                                            125,
+                                          ),
+                                          width: 1,
                                         ),
                                       ),
-                                      onSelect: (value) {
-                                        setState(() {
-                                          selectedCountryCode = value;
-                                        });
-                                      },
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                    ),
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.grey.withValues(alpha: 0.2),
-                                    ),
-                                    child: Row(
-                                      spacing: 5,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          width: 20,
-                                          height:
-                                              selectedCountryCode == null
-                                                  ? 15
-                                                  : 45,
-                                          child:
-                                              selectedCountryCode != null
-                                                  ? Center(
-                                                    child: Text(
-                                                      selectedCountryCode!
-                                                          .flagEmoji,
-                                                      style: TextStyle(
-                                                        fontSize: 25,
+                                      child: Row(
+                                        spacing: 5,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                            height:
+                                                selectedCountryCode == null
+                                                    ? 15
+                                                    : 45,
+                                            child:
+                                                selectedCountryCode != null
+                                                    ? Center(
+                                                      child: Text(
+                                                        selectedCountryCode!
+                                                            .flagEmoji,
+                                                        style: TextStyle(
+                                                          fontSize: 25,
+                                                        ),
                                                       ),
+                                                    )
+                                                    : cacheImage(
+                                                      'https://static.vecteezy.com/system/resources/previews/027/222/649/non_2x/myanmar-flag-flag-of-myanmar-myanmar-flag-wave-png.png',
+                                                      boxFit: BoxFit.fill,
                                                     ),
-                                                  )
-                                                  : cacheImage(
-                                                    'https://static.vecteezy.com/system/resources/previews/027/222/649/non_2x/myanmar-flag-flag-of-myanmar-myanmar-flag-wave-png.png',
-                                                    boxFit: BoxFit.fill,
-                                                  ),
-                                        ),
-                                        Text(
-                                          '+${selectedCountryCode?.phoneCode ?? '95'}',
-                                          style: TextStyle(
-                                            color: kWhiteColor,
-                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ),
-                                        Icon(
-                                          CupertinoIcons.chevron_down,
-                                          size: 16,
-                                        ),
-                                      ],
+                                          Text(
+                                            '+${selectedCountryCode?.phoneCode ?? '95'}',
+                                            style: TextStyle(
+                                              color: kWhiteColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Icon(
+                                            CupertinoIcons.chevron_down,
+                                            size: 16,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  height: 50,
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: kMarginMedium2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.grey.withValues(alpha: 0.2),
-                                  ),
-                                  child: TextField(
+                                Expanded(
+                                  child: CustomTextfield(
                                     controller: _phoneController,
-                                    style: TextStyle(
-                                      color: kWhiteColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    keyboardType: TextInputType.phone,
-                                    decoration: InputDecoration(
-                                      hintText:
-                                          AppLocalizations.of(context)?.phone,
-                                      contentPadding: EdgeInsets.only(top: 4),
-                                      hintStyle: TextStyle(color: kWhiteColor),
-                                      border: InputBorder.none,
-                                    ),
+                                    validator: phoneValidator,
+                                    hint: '09xxxxxxxxxx',
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          20.vGap,
-                          //button
-                          Column(
-                            spacing: 2,
-                            children: [
-                              customButton(
-                                onPress: () {
-                                  //FocusScope.of(context).unfocus();
-                                  bloc
-                                      .userLogin(
-                                        '${selectedCountryCode?.phoneCode ?? '+95'}${_phoneController.text.trim()}',
-                                      )
-                                      .then((response) {
-                                        PageNavigator(ctx: context).nextPage(
-                                          page: OTPScreen(
-                                            phone:
-                                                '${selectedCountryCode?.phoneCode ?? '+95'}${_phoneController.text.trim()}',
-                                            requestId: '${response.requestId}',
-                                          ),
-                                        );
-                                      })
-                                      .catchError((error) {
-                                        ToastService.warningToast(
-                                          error.toString(),
-                                        );
-                                      });
-                                },
-                                context: context,
-                                backgroundColor: kSecondaryColor,
-                                title: AppLocalizations.of(context)?.sendOtp,
-                                textColor: kWhiteColor,
-                              ),
-                              Image.asset(kShadowImage),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                            5.vGap,
+                            //button
+                            Column(
+                              spacing: 2,
+                              children: [
+                                customButton(
+                                  onPress: () {
+                                    if (_formKey.currentState?.validate() ??
+                                        false) {
+                                      bloc
+                                          .userLogin(
+                                            '${selectedCountryCode?.phoneCode ?? '+95'}${_phoneController.text.trim()}',
+                                          )
+                                          .then((response) {
+                                            PageNavigator(
+                                              ctx: context,
+                                            ).nextPage(
+                                              page: OTPScreen(
+                                                phone:
+                                                    '${selectedCountryCode?.phoneCode ?? '+95'}${_phoneController.text.trim()}',
+                                                requestId:
+                                                    '${response.requestId}',
+                                              ),
+                                            );
+                                          })
+                                          .catchError((error) {
+                                            ToastService.warningToast(
+                                              error.toString(),
+                                            );
+                                          });
+                                    }
+                                  },
+                                  context: context,
+                                  backgroundColor: kSecondaryColor,
+                                  title: AppLocalizations.of(context)?.sendOtp,
+                                  textColor: kWhiteColor,
+                                ),
+                                Image.asset(kShadowImage),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
 
                       //show lading
@@ -278,7 +281,7 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            spacing: 10,
+            spacing: 5,
             children: [
               //spacer
               Row(
@@ -289,11 +292,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   Expanded(child: Divider(color: kWhiteColor, thickness: 0.5)),
                 ],
               ),
+              5.vGap,
               GestureDetector(
                 child: Container(
                   height: 50,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(25),
                     color: kWhiteColor,
                   ),
                   child: Row(
@@ -317,11 +321,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
+              3.vGap,
               GestureDetector(
                 child: Container(
                   height: 50,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(25),
                     color: kWhiteColor,
                   ),
                   child: Row(
@@ -345,11 +350,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              20.vGap,
+              5.vGap,
+              privacyPolicyText(),
+              30.vGap,
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget privacyPolicyText() {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      children: [
+        Text('By logging in, you agree to our '),
+        InkWell(
+          onTap: () async {},
+          child: Text('Terms of Use', style: TextStyle(color: Colors.blue)),
+        ),
+        Text(' and '),
+        InkWell(
+          onTap: () async {},
+          child: Text('Privacy Policy.', style: TextStyle(color: Colors.blue)),
+        ),
+      ],
     );
   }
 }

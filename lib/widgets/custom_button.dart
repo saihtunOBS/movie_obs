@@ -19,7 +19,7 @@ Widget customButton({
     child: Container(
       height: height ?? 50,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius ?? 8),
+        borderRadius: BorderRadius.circular(borderRadius ?? 25),
         color: backgroundColor,
         border: Border.all(
           color: borderColor ?? Colors.transparent,
