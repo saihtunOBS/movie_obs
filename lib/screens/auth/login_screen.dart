@@ -238,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         false) {
                                       bloc
                                           .userLogin(
-                                            '${selectedCountryCode?.phoneCode ?? '+95'}${_phoneController.text.trim()}',
+                                            '+${selectedCountryCode?.phoneCode ?? '+95'}${_phoneController.text.trim()}',
                                           )
                                           .then((response) {
                                             PageNavigator(
