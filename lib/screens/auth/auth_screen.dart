@@ -90,7 +90,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   20.vGap,
                   // label
                   Text(
-                    'Welcome to Tuu Tu\'Tv',
+                    'Welcome to Too To\'Tv',
                     style: TextStyle(
                       fontSize: kTextRegular3x,
                       fontWeight: FontWeight.bold,
