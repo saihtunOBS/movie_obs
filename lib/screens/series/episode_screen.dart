@@ -114,8 +114,10 @@ class EpisodeScreen extends StatelessWidget {
             child: Row(
               spacing: kMargin5,
               children: [
-                //Icon(CupertinoIcons.lock, color: kWhiteColor, size: 18),
-                Text('Free', style: TextStyle(color: kPrimaryColor)),
+                Text(
+                  bloc.currentEpisode?.plan ?? '',
+                  style: TextStyle(color: kPrimaryColor),
+                ),
               ],
             ),
           ),

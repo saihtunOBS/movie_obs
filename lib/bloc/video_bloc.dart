@@ -33,7 +33,7 @@ class VideoBloc extends ChangeNotifier {
   ValueNotifier<bool> isHoveringLeft = ValueNotifier(false);
   ValueNotifier<bool> isHoveringRight = ValueNotifier(false);
   bool isFullScreen = false;
-  
+
   bool wasScreenOff = false;
   bool isMuted = false;
   bool hasPrinted = false;
@@ -83,16 +83,23 @@ class VideoBloc extends ChangeNotifier {
   }
 
   toggleHistory(String id, String type) {
-    var request = HistoryRequest(userDataListener.value.id ?? '', id, 0, type);
-    _movieModel
-        .toggleHistory(token, request)
-        .then((_) {
-          // ToastService.successToast('Success');
-        })
-        .whenComplete(() {})
-        .catchError((error) {
-          //ToastService.warningToast(error.toString());
-        });
+    if (type != 'trailer') {
+      var request = HistoryRequest(
+        userDataListener.value.id ?? '',
+        id,
+        0,
+        type,
+      );
+      _movieModel
+          .toggleHistory(token, request)
+          .then((_) {
+            // ToastService.successToast('Success');
+          })
+          .whenComplete(() {})
+          .catchError((error) {
+            //ToastService.warningToast(error.toString());
+          });
+    }
   }
 
   void onVerticalDragStart(ForcePressDetails details) {
@@ -234,12 +241,14 @@ class VideoBloc extends ChangeNotifier {
 
     videoPlayerController.addListener(() {
       if (videoPlayerController.value.isPlaying) {
-        saveVideoProgress([
-          VideoProgress(
-            videoId: videoId ?? '',
-            position: videoPlayerController.value.position,
-          ),
-        ]);
+        if (videoId != null) {
+          saveVideoProgress([
+            VideoProgress(
+              videoId: videoId,
+              position: videoPlayerController.value.position,
+            ),
+          ]);
+        }
       } else if (videoPlayerController.value.isCompleted) {
         isPlay.value = false;
         showControl = true;

@@ -37,11 +37,13 @@ class VideoPlayerScreen extends StatefulWidget {
     this.videoId,
     required this.isFirstTime,
     required this.type,
+    this.isTrailer,
   });
   final String? url;
   final String? videoId;
   final bool isFirstTime;
   final String type;
+  final bool? isTrailer;
 
   @override
   State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
@@ -173,7 +175,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       MiniVideoPlayer.removeMiniPlayer();
       isPlay.value = true;
       if (widget.isFirstTime == true) {
-        _loadCurrentPosition();
+        widget.isTrailer == true
+            ? bloc.initializeVideo(widget.url ?? '')
+            : _loadCurrentPosition();
       } else {
         bloc.resetControlVisibility(isSeek: true);
       }

@@ -78,7 +78,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                   color: kWhiteColor,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: _buildWatchTrailerView(context),
+                                child: _buildWatchTrailerView(
+                                  context,
+                                  widget.movie?.trailerUrl ?? '',
+                                ),
                               ),
                             ),
                             Positioned(
@@ -123,31 +126,42 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     );
   }
 
-  Widget _buildWatchTrailerView(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      decoration: BoxDecoration(
-        color: kWhiteColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Center(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              CupertinoIcons.play_circle_fill,
-              size: 26,
-              color: kBlackColor,
-            ),
-            const SizedBox(width: 5),
-            Text(
-              AppLocalizations.of(context)?.watchTrailer ?? '',
-              style: TextStyle(
-                fontSize: kTextRegular2x - 3,
+  Widget _buildWatchTrailerView(BuildContext context, String trailerUrl) {
+    return GestureDetector(
+      onTap: () {
+        PageNavigator(ctx: context).nextPage(
+          page: VideoPlayerScreen(
+            isFirstTime: true,
+            type: 'trailer',
+            url: trailerUrl,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        decoration: BoxDecoration(
+          color: kWhiteColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                CupertinoIcons.play_circle_fill,
+                size: 26,
                 color: kBlackColor,
               ),
-            ),
-          ],
+              const SizedBox(width: 5),
+              Text(
+                AppLocalizations.of(context)?.watchTrailer ?? '',
+                style: TextStyle(
+                  fontSize: kTextRegular2x - 3,
+                  color: kBlackColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -258,7 +272,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     return GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
-                       
                         PageNavigator(ctx: context).nextPage(
                           page: ActorViewScreen(
                             id: bloc.castLists[index].cast?.id ?? '',

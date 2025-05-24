@@ -20,6 +20,8 @@ import '../../widgets/expandable_text.dart';
 import '../home/actor_view_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../video_player.dart/video_player_screen.dart';
+
 class SeasonEpisodeScreen extends StatefulWidget {
   const SeasonEpisodeScreen({
     super.key,
@@ -85,7 +87,10 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
                               color: kWhiteColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: _buildWatchTrailerView(context),
+                            child: _buildWatchTrailerView(
+                              context,
+                              widget.season?.trailerUrl ?? '',
+                            ),
                           ),
                         ),
                         Positioned(
@@ -126,31 +131,42 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
     );
   }
 
-  Widget _buildWatchTrailerView(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      decoration: BoxDecoration(
-        color: kWhiteColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Center(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              CupertinoIcons.play_circle_fill,
-              size: 26,
-              color: kBlackColor,
-            ),
-            const SizedBox(width: 5),
-            Text(
-              AppLocalizations.of(context)?.watchTrailer ?? '',
-              style: TextStyle(
-                fontSize: kTextRegular2x - 3,
+  Widget _buildWatchTrailerView(BuildContext context, String trailerUrl) {
+    return GestureDetector(
+      onTap: () {
+        PageNavigator(ctx: context).nextPage(
+          page: VideoPlayerScreen(
+            isFirstTime: true,
+            type: 'trailer',
+            url: trailerUrl,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        decoration: BoxDecoration(
+          color: kWhiteColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                CupertinoIcons.play_circle_fill,
+                size: 26,
                 color: kBlackColor,
               ),
-            ),
-          ],
+              const SizedBox(width: 5),
+              Text(
+                AppLocalizations.of(context)?.watchTrailer ?? '',
+                style: TextStyle(
+                  fontSize: kTextRegular2x - 3,
+                  color: kBlackColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
