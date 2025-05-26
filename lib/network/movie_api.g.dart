@@ -648,9 +648,14 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<PackageResponse> getPackages(String token) async {
+  Future<PackageResponse> getPackages(
+    String token,
+    bool isSeasonInclude,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'include_promotion': isSeasonInclude,
+    };
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;

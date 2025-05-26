@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/faq_bloc.dart';
 import 'package:movie_obs/data/vos/faq_vo.dart';
+import 'package:movie_obs/l10n/app_localizations.dart';
 import 'package:movie_obs/utils/colors.dart';
+import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +20,7 @@ class FaqScreen extends StatelessWidget {
           backgroundColor: kBackgroundColor,
           surfaceTintColor: kBackgroundColor,
           centerTitle: false,
-          title: Text('FAQ'),
+          title: Text(AppLocalizations.of(context)?.faq ?? ''),
         ),
         body: Consumer<FaqBloc>(
           builder:
@@ -32,6 +34,7 @@ class FaqScreen extends StatelessWidget {
   Widget _buildBody(List<FaqVO> data) {
     return ListView.builder(
       itemCount: data.length,
+      padding: EdgeInsets.symmetric(horizontal: kMarginMedium2),
       itemBuilder: (context, index) {
         return Column(
           children: [

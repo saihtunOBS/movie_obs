@@ -20,14 +20,21 @@ class UserBloc extends ChangeNotifier {
   UserVO? userData;
   File? imgFile;
   final MovieModel _movieModel = MovieModelImpl();
+  BuildContext? myContext;
 
   UserBloc({BuildContext? context}) {
+    myContext = context;
     updateToken();
   }
 
   updateToken() {
     token = PersistenceData.shared.getToken();
     notifyListeners();
+  }
+
+  Future deleteUser() {
+    _showLoading();
+    return _movieModel.deleteUser(token);
   }
 
   getUser(BuildContext? context) {

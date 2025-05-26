@@ -144,6 +144,7 @@ abstract class MovieApi {
   @GET(kEndPointPackage)
   Future<PackageResponse> getPackages(
     @Header(kHeaderAuthorization) String token,
+    @Query('include_promotion') bool isSeasonInclude,
   );
 
   @GET(kEndPointUser)

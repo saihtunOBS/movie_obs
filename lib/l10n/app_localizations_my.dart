@@ -182,4 +182,10 @@ class AppLocalizationsMy extends AppLocalizations {
   @override
   String get willSend =>
       'သို့ OTP Code ပို့ပေးပါမည်။ ကျေးဇူးပြု၍ အောက်တွင်ထည့်ပါ။';
+
+  @override
+  String get logout => 'ထွက်မည်';
+
+  @override
+  String get logoutQuestion => 'ထွက်မှာသေချာပီလား?';
 }

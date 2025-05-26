@@ -310,7 +310,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   @override
   Future<PackageResponse> getAllPackage(String token) {
     return movieApi
-        .getPackages('Bearer $token')
+        .getPackages('Bearer $token',true)
         .asStream()
         .map((response) => response)
         .first

@@ -184,4 +184,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get willSend =>
       'သို့ OTP Code ပို့ပေးပါမည်။ ကျေးဇူးပြု၍ အောက်တွင်ထည့်ပါ။';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get logoutQuestion => 'Are you sure to logout?';
 }

@@ -19,10 +19,13 @@ import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:movie_obs/widgets/common_dialog.dart';
 import 'package:movie_obs/widgets/custom_button.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/dimens.dart';
 import 'package:movie_obs/l10n/app_localizations.dart';
+
+import '../../widgets/error_dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -152,15 +155,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: customButton(
                         onPress: () async {
-                          tab.value = false;
-                          PersistenceData.shared.clearToken();
-                          await PageNavigator(
-                            ctx: context,
-                          ).nextPageOnly(page: LoginScreen());
+                          showCommonDialog(
+                            context: context,
+                            dialogWidget: _buildAlert(isLogout: true),
+                          );
                         },
                         context: context,
                         backgroundColor: kSecondaryColor,
-                        title: 'Logout',
+                        title: AppLocalizations.of(context)?.logout ??
+                            '',
                         textColor: kWhiteColor,
                       ),
                     ),
@@ -356,68 +359,127 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildAlert() {
-    return Dialog(
-      insetPadding: const EdgeInsets.all(10),
-      backgroundColor: kWhiteColor,
-      child: Container(
-        height: null,
-        padding: EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(CupertinoIcons.delete_simple, size: 38, color: Colors.red),
-            15.vGap,
-            Text(
-              AppLocalizations.of(context)?.deleteAccount2 ?? '',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: kTextRegular2x,
-                color: kBlackColor,
-                fontWeight: FontWeight.bold,
+  Widget _buildAlert({bool? isLogout}) {
+    return Consumer<UserBloc>(
+      builder:
+          (context, userBloc, child) => Dialog(
+            insetPadding: const EdgeInsets.all(10),
+            backgroundColor: kWhiteColor,
+            child: Container(
+              height: null,
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    CupertinoIcons.delete_simple,
+                    size: 38,
+                    color: Colors.red,
+                  ),
+                  15.vGap,
+                  Text(
+                    isLogout == true
+                        ? '${AppLocalizations.of(context)?.logout ?? ''}?'
+                        : AppLocalizations.of(context)?.deleteAccount2 ?? '',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: kTextRegular2x,
+                      color: kBlackColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  10.vGap,
+                  Text(
+                    isLogout == true
+                        ? AppLocalizations.of(context)?.logoutQuestion ?? ''
+                        : AppLocalizations.of(context)?.deleteAccountQuestion ??
+                            '',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: kTextRegular13,
+                      color: kBlackColor,
+                    ),
+                  ),
+                  20.vGap,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 10,
+                    children: [
+                      Expanded(
+                        child: customButton(
+                          height: 35,
+                          onPress: () {
+                            if (mounted) {
+                              Navigator.of(context, rootNavigator: true).pop();
+                            }
+                          },
+                          context: context,
+                          backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                          title: AppLocalizations.of(context)?.no ?? '',
+                          textColor: kBlackColor,
+                        ),
+                      ),
+                      userBloc.isLoading
+                          ? Expanded(
+                            child: LoadingView(bgColor: Colors.transparent),
+                          )
+                          : Expanded(
+                            child: customButton(
+                              height: 35,
+                              onPress: () {
+                                if (isLogout == true) {
+                                  tab.value = false;
+                                  PersistenceData.shared.clearToken();
+                                  PageNavigator(
+                                    ctx: context,
+                                  ).nextPageOnly(page: LoginScreen());
+                                } else {
+                                  userBloc
+                                      .deleteUser()
+                                      .catchError((_) {
+                                        if (mounted) {
+                                          Navigator.of(
+                                            context,
+                                            rootNavigator: true,
+                                          ).pop();
+                                          Future.delayed(
+                                            Duration(milliseconds: 1500),
+                                            () {
+                                              PersistenceData.shared
+                                                  .clearToken();
+                                              showCommonDialog(
+                                                context: context,
+                                                isBarrierDismiss: false,
+                                                dialogWidget: ErrorDialogView(
+                                                  errorMessage:
+                                                      'Session Expired. Please Login Again',
+                                                  isLogin: true,
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        }
+                                      })
+                                      .then((_) {
+                                        PageNavigator(
+                                          ctx: context,
+                                        ).nextPageOnly(page: LoginScreen());
+                                      });
+                                }
+                              },
+                              context: context,
+                              backgroundColor: kSecondaryColor,
+                              title: AppLocalizations.of(context)?.yes ?? '',
+                              textColor: kWhiteColor,
+                            ),
+                          ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            10.vGap,
-            Text(
-              AppLocalizations.of(context)?.deleteAccountQuestion ?? '',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: kTextRegular13, color: kBlackColor),
-            ),
-            20.vGap,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 10,
-              children: [
-                Expanded(
-                  child: customButton(
-                    height: 35,
-                    onPress: () {
-                      if (mounted) {
-                        Navigator.of(context, rootNavigator: true).pop();
-                      }
-                    },
-                    context: context,
-                    backgroundColor: Colors.grey.withValues(alpha: 0.2),
-                    title: AppLocalizations.of(context)?.no ?? '',
-                    textColor: kBlackColor,
-                  ),
-                ),
-                Expanded(
-                  child: customButton(
-                    height: 35,
-                    onPress: () {},
-                    context: context,
-                    backgroundColor: kSecondaryColor,
-                    title: AppLocalizations.of(context)?.yes ?? '',
-                    textColor: kWhiteColor,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 }

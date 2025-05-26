@@ -16,18 +16,21 @@ Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
     child: Stack(
       clipBehavior: Clip.none,
       children: [
-        Positioned(
+         Positioned(
           left: 0,
           top: -15,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: kSecondaryColor,
-            ),
-            child: Text(
-              data.promotion?.name ?? '',
-              style: TextStyle(color: kWhiteColor, fontSize: 13),
+          child: Visibility(
+            visible: data.promotion != null,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: kSecondaryColor,
+              ),
+              child: Text(
+                data.promotion?.name ?? '',
+                style: TextStyle(color: kWhiteColor, fontSize: 13),
+              ),
             ),
           ),
         ),

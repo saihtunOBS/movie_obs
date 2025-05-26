@@ -59,5 +59,7 @@
   "searchByMovieSeries": "Search by movies & series",
   "yourHistory" : "Your History",
   "yourPhoneNumber": "သင့်ဖုန်းနံပါတ်",
-  "willSend":"သို့ OTP Code ပို့ပေးပါမည်။ ကျေးဇူးပြု၍ အောက်တွင်ထည့်ပါ။"
+  "willSend":"သို့ OTP Code ပို့ပေးပါမည်။ ကျေးဇူးပြု၍ အောက်တွင်ထည့်ပါ။",
+  "logout": "Logout",
+  "logoutQuestion": "Are you sure to logout?"
 }

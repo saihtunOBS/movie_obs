@@ -19,7 +19,7 @@ class PromotionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => PackageBloc(),
+      create: (context) => PackageBloc(context: context),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         body: Consumer<PackageBloc>(

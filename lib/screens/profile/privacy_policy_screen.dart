@@ -27,7 +27,9 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   bloc.isLoading
                       ? LoadingView()
                       : Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2,vertical: kMarginMedium2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: kMarginMedium2,
+                        ),
                         child: HtmlWidget(bloc.privacyResponse?.content ?? ''),
                       ),
         ),

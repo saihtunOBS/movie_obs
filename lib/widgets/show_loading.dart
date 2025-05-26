@@ -8,7 +8,7 @@ class LoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: bgColor ?? Colors.black12,
+      decoration: BoxDecoration(color: bgColor ?? Colors.black12,borderRadius: BorderRadius.circular(24)),
       child: Center(
         child: CircularProgressIndicator(
           strokeWidth: 2,
