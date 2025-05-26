@@ -11,7 +11,7 @@ import '../../extension/extension.dart';
 import '../../utils/dimens.dart';
 import '../../utils/images.dart';
 import '../../widgets/custom_button.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:movie_obs/l10n/app_localizations.dart';
 
 class PromotionScreen extends StatelessWidget {
   const PromotionScreen({super.key});

@@ -13,7 +13,7 @@ import 'package:substring_highlight/substring_highlight.dart';
 import '../../extension/page_navigator.dart';
 import '../../widgets/empty_view.dart';
 import '../home/movie_detail_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:movie_obs/l10n/app_localizations.dart';
 
 class MovieScreen extends StatefulWidget {
   const MovieScreen({super.key});

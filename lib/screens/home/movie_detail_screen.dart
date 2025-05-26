@@ -19,7 +19,7 @@ import 'package:provider/provider.dart';
 import '../../list_items/recommended_movie_list_item.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/expandable_text.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:movie_obs/l10n/app_localizations.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   const MovieDetailScreen({super.key, this.movie});

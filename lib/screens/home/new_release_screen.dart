@@ -14,7 +14,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../utils/images.dart';
 import '../../widgets/common_dialog.dart';
 import '../../widgets/custom_button.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:movie_obs/l10n/app_localizations.dart';
 
 class NewReleaseScreen extends StatefulWidget {
   const NewReleaseScreen({super.key});

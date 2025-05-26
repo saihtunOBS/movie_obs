@@ -12,7 +12,7 @@ import 'package:movie_obs/widgets/custom_button.dart';
 import '../../main.dart';
 import '../../utils/images.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:movie_obs/l10n/app_localizations.dart';
 
 class ChangeLanguageScreen extends StatefulWidget {
   const ChangeLanguageScreen({super.key, this.isProfile});

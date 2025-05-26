@@ -11,7 +11,7 @@ import '../../widgets/empty_view.dart';
 import '../../widgets/show_loading.dart';
 import '../home/movie_detail_screen.dart';
 import '../series/series_detail_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:movie_obs/l10n/app_localizations.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});

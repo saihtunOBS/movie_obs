@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 import '../../extension/page_navigator.dart';
 import '../series/series_detail_screen.dart';
 import 'movie_detail_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:movie_obs/l10n/app_localizations.dart';
 
 class FreeMovieSeriesScreen extends StatefulWidget {
   const FreeMovieSeriesScreen({super.key});

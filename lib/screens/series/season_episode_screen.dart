@@ -18,7 +18,7 @@ import '../../widgets/common_dialog.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/expandable_text.dart';
 import '../home/actor_view_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:movie_obs/l10n/app_localizations.dart';
 
 import '../video_player.dart/video_player_screen.dart';
 

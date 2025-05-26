@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/banner_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
+import 'package:movie_obs/l10n/app_localizations.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -12,7 +13,6 @@ import 'package:movie_obs/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
