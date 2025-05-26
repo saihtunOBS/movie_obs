@@ -80,7 +80,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                 .position
                                                 .maxScrollExtent) {
                                           if (bloc.historyList.length >= 10) {
-                                            bloc.loadMoreData();
+                                           // bloc.loadMoreData();
                                           }
                                         }
                                       }),

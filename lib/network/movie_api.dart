@@ -20,6 +20,7 @@ import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
+import 'package:movie_obs/network/responses/term_privacy_response.dart';
 import 'package:movie_obs/network/responses/watchlist_history_response.dart';
 import 'package:retrofit/error_logger.dart';
 import 'package:retrofit/http.dart';
@@ -194,5 +195,17 @@ abstract class MovieApi {
     @Part() String name,
     @Part() String email,
     @Part() String languagePreference,
+  );
+  @GET(kEndPointTermAndCondition)
+  Future<TermPrivacyResponse> getTremAndConditions(
+    @Header(kHeaderAuthorization) String token,
+  );
+  @GET(kEndPointPrivacyPolicy)
+  Future<TermPrivacyResponse> getPrivacyPolicy(
+    @Header(kHeaderAuthorization) String token,
+  );
+  @DELETE(kEndPointDeleteUser)
+  Future<void> deleteUser(
+    @Header(kHeaderAuthorization) String token,
   );
 }

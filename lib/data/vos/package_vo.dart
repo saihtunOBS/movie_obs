@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:movie_obs/data/vos/promotion_vo.dart';
 
 part 'package_vo.g.dart';
 
@@ -14,6 +15,7 @@ class PackageVO {
   final int? duration;
   final bool? status;
   final bool? isPopular;
+  final PromotionVo? promotion;
 
   @JsonKey(name: "createdAt")
   final String? createdAt;
@@ -30,6 +32,7 @@ class PackageVO {
     this.duration,
     this.status,
     this.isPopular,
+    this.promotion,
     this.createdAt,
     this.updatedAt,
   });

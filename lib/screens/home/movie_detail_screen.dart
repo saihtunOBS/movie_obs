@@ -44,7 +44,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     slivers: [
                       SliverAppBar(
                         expandedHeight: getDeviceType() == 'phone' ? 250 : 380,
-                        automaticallyImplyLeading: false,
+                        automaticallyImplyLeading: true,
                         foregroundColor: Colors.white,
                         backgroundColor: kBackgroundColor,
                         pinned: true,

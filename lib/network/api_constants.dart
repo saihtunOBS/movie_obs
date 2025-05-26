@@ -17,6 +17,7 @@ const String kEndPointAds = '/cms/ads';
 const String kEndPointBanner = '/cms/banners';
 
 const String kEndPointUser = '/auth/me';
+const String kEndPointDeleteUser = '/auth/me';
 const String kEndPointFaq = '/contents/faqs';
 
 const String kEndPointCast = '/videos/casts';
@@ -27,7 +28,11 @@ const String kEndPointHistory = '/history';
 const String kEndPointUpdateUser = '/auth/me';
 const String kEndPointWatchlistToggle = '/watchlists/toggle';
 const String kEndPointHistoryToggle = '/history/toggle';
+const String kEndPointTermAndCondition = '/contents/legal-agreements/terms-and-conditions';
+const String kEndPointPrivacyPolicy = '/contents/legal-agreements/privacy-and-policy';
 
 const String kHeaderAuthorization = "Authorization";
 const String kHeaderAcceptLanguage = "Accept-Language";
 const String kHeaderContentType = "Content-Type";
+
+

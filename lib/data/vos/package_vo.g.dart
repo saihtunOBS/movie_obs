@@ -15,6 +15,10 @@ PackageVO _$PackageVOFromJson(Map<String, dynamic> json) => PackageVO(
   duration: (json['duration'] as num?)?.toInt(),
   status: json['status'] as bool?,
   isPopular: json['isPopular'] as bool?,
+  promotion:
+      json['promotion'] == null
+          ? null
+          : PromotionVo.fromJson(json['promotion'] as Map<String, dynamic>),
   createdAt: json['createdAt'] as String?,
   updatedAt: json['updatedAt'] as String?,
 );
@@ -28,6 +32,7 @@ Map<String, dynamic> _$PackageVOToJson(PackageVO instance) => <String, dynamic>{
   'duration': instance.duration,
   'status': instance.status,
   'isPopular': instance.isPopular,
+  'promotion': instance.promotion,
   'createdAt': instance.createdAt,
   'updatedAt': instance.updatedAt,
 };
