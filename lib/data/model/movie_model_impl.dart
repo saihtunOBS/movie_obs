@@ -20,6 +20,7 @@ import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
+import 'package:movie_obs/network/responses/term_privacy_response.dart';
 import 'package:movie_obs/network/responses/watchlist_history_response.dart';
 
 class MovieModelImpl extends MovieModel {
@@ -225,5 +226,20 @@ class MovieModelImpl extends MovieModel {
     String language,
   ) {
     return movieDataAgent.updateUser(token, photo, name, email, language);
+  }
+
+  @override
+  Future<void> deleteUser(String token) {
+    return movieDataAgent.deleteUser(token);
+  }
+
+  @override
+  Future<TermPrivacyResponse> getPrivacyPolicy(String token) {
+    return movieDataAgent.getPrivacyPolicy(token);
+  }
+
+  @override
+  Future<TermPrivacyResponse> getTremAndConditions(String token) {
+    return movieDataAgent.getTremAndConditions(token);
   }
 }

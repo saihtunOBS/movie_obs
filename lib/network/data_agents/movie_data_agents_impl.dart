@@ -22,6 +22,7 @@ import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
+import 'package:movie_obs/network/responses/term_privacy_response.dart';
 import 'package:movie_obs/network/responses/watchlist_history_response.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
 
@@ -420,6 +421,42 @@ class MovieDataAgentsImpl extends MovieDataAgents {
           email,
           language,
         )
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<void> deleteUser(String token) {
+    return movieApi
+        .deleteUser('Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<TermPrivacyResponse> getPrivacyPolicy(String token) {
+    return movieApi
+        .getPrivacyPolicy('Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<TermPrivacyResponse> getTremAndConditions(String token) {
+    return movieApi
+        .getTermAndConditions('Bearer $token')
         .asStream()
         .map((response) => response)
         .first

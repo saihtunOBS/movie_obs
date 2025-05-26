@@ -16,6 +16,7 @@ import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
+import 'package:movie_obs/network/responses/term_privacy_response.dart';
 
 import '../../data/vos/user_vo.dart';
 import '../responses/watchlist_history_response.dart';
@@ -91,4 +92,7 @@ abstract class MovieDataAgents {
     String email,
     String language,
   );
+  Future<TermPrivacyResponse> getTremAndConditions(String token);
+  Future<TermPrivacyResponse> getPrivacyPolicy(String token);
+  Future<void> deleteUser(String token);
 }

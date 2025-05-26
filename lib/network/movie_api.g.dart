@@ -916,7 +916,7 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<TermPrivacyResponse> getTremAndConditions(String token) async {
+  Future<TermPrivacyResponse> getTermAndConditions(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};

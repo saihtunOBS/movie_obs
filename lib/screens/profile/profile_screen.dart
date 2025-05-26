@@ -9,7 +9,9 @@ import 'package:movie_obs/screens/auth/login_screen.dart';
 import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/screens/profile/faq_screen.dart';
 import 'package:movie_obs/screens/profile/history_screen.dart';
+import 'package:movie_obs/screens/profile/privacy_policy_screen.dart';
 import 'package:movie_obs/screens/profile/promotion_screen.dart';
+import 'package:movie_obs/screens/profile/term_condition_screen.dart';
 import 'package:movie_obs/screens/profile/user_profile_screen.dart';
 import 'package:movie_obs/screens/profile/watch_list_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
@@ -120,6 +122,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 PageNavigator(
                                   ctx: context,
                                 ).nextPage(page: FaqScreen());
+                              case 6:
+                                PageNavigator(
+                                  ctx: context,
+                                ).nextPage(page: TermAndConditionScreen());
+                              case 7:
+                                PageNavigator(
+                                  ctx: context,
+                                ).nextPage(page: PrivacyPolicyScreen());
                               case 8:
                                 showCommonDialog(
                                   context: context,

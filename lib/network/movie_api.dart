@@ -197,7 +197,7 @@ abstract class MovieApi {
     @Part() String languagePreference,
   );
   @GET(kEndPointTermAndCondition)
-  Future<TermPrivacyResponse> getTremAndConditions(
+  Future<TermPrivacyResponse> getTermAndConditions(
     @Header(kHeaderAuthorization) String token,
   );
   @GET(kEndPointPrivacyPolicy)
@@ -205,7 +205,5 @@ abstract class MovieApi {
     @Header(kHeaderAuthorization) String token,
   );
   @DELETE(kEndPointDeleteUser)
-  Future<void> deleteUser(
-    @Header(kHeaderAuthorization) String token,
-  );
+  Future<void> deleteUser(@Header(kHeaderAuthorization) String token);
 }

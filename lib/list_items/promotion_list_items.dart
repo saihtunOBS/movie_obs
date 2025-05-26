@@ -26,7 +26,7 @@ Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
               color: kSecondaryColor,
             ),
             child: Text(
-              'Thingyan Festival',
+              data.promotion?.name ?? '',
               style: TextStyle(color: kWhiteColor, fontSize: 13),
             ),
           ),

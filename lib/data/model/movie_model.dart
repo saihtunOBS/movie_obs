@@ -18,6 +18,7 @@ import '../../network/responses/movie_detail_response.dart';
 import '../../network/responses/package_response.dart';
 import '../../network/responses/season_episode_response.dart';
 import '../../network/responses/season_response.dart';
+import '../../network/responses/term_privacy_response.dart';
 import '../../network/responses/watchlist_history_response.dart';
 
 abstract class MovieModel {
@@ -83,4 +84,7 @@ abstract class MovieModel {
     String email,
     String language,
   );
+  Future<TermPrivacyResponse> getTremAndConditions(String token);
+  Future<TermPrivacyResponse> getPrivacyPolicy(String token);
+  Future<void> deleteUser(String token);
 }
