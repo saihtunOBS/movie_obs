@@ -48,7 +48,7 @@ class _MovieScreenState extends State<MovieScreen> {
           foregroundColor: kWhiteColor,
           title: Padding(
             padding: const EdgeInsets.only(left: kMarginMedium2),
-            child: Text('Tuu Tu\'s Movies'),
+            child: Text('Too To\'s Movies'),
           ),
           centerTitle: false,
           actions: [

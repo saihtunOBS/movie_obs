@@ -11,6 +11,14 @@ PromotionVo _$PromotionVoFromJson(Map<String, dynamic> json) => PromotionVo(
   name: json['name'] as String?,
   discount: (json['discount'] as num?)?.toInt(),
   status: json['status'] as bool?,
+  startDate:
+      json['startDate'] == null
+          ? null
+          : DateTime.parse(json['startDate'] as String),
+  endDate:
+      json['endDate'] == null
+          ? null
+          : DateTime.parse(json['endDate'] as String),
 );
 
 Map<String, dynamic> _$PromotionVoToJson(PromotionVo instance) =>
@@ -19,4 +27,6 @@ Map<String, dynamic> _$PromotionVoToJson(PromotionVo instance) =>
       'name': instance.name,
       'status': instance.status,
       'discount': instance.discount,
+      'startDate': instance.startDate?.toIso8601String(),
+      'endDate': instance.endDate?.toIso8601String(),
     };

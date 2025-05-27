@@ -11,6 +11,7 @@ import 'package:movie_obs/screens/home/free_movie_series_screen.dart';
 import 'package:movie_obs/screens/home/notification_screen.dart';
 import 'package:movie_obs/screens/home/search_screen.dart';
 import 'package:movie_obs/screens/profile/promotion_screen.dart';
+import 'package:movie_obs/screens/profile/watch_list_screen.dart';
 import 'package:movie_obs/screens/series/series_detail_screen.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/banner_image_animation.dart';
@@ -278,34 +279,39 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          SizedBox(
-            width: 70,
-            child: Column(
-              spacing: 10,
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: kSecondaryColor.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(16),
+          GestureDetector(
+            onTap: () {
+              PageNavigator(ctx: context).nextPage(page: WatchListScreen());
+            },
+            child: SizedBox(
+              width: 70,
+              child: Column(
+                spacing: 10,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: kSecondaryColor.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Center(
+                      child: Icon(CupertinoIcons.bookmark, color: kPrimaryColor),
+                    ),
                   ),
-                  child: Center(
-                    child: Icon(CupertinoIcons.bookmark, color: kPrimaryColor),
+                  Text(
+                    AppLocalizations.of(context)?.watchlist ?? '',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: GoogleFonts.notoSerifMyanmar().fontFamily,
+                      fontSize:
+                          PersistenceData.shared.getLocale() != 'en' ? 12 : 14,
+                      color: kWhiteColor,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-                Text(
-                  AppLocalizations.of(context)?.watchlist ?? '',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: GoogleFonts.notoSerifMyanmar().fontFamily,
-                    fontSize:
-                        PersistenceData.shared.getLocale() != 'en' ? 12 : 14,
-                    color: kWhiteColor,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

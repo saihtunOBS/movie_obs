@@ -25,13 +25,13 @@ class FaqScreen extends StatelessWidget {
         body: Consumer<FaqBloc>(
           builder:
               (context, bloc, child) =>
-                  bloc.isLoading ? LoadingView() : _buildBody(bloc.faqs),
+                  bloc.isLoading ? LoadingView() : _buildBody(bloc.faqs, bloc),
         ),
       ),
     );
   }
 
-  Widget _buildBody(List<FaqVO> data) {
+  Widget _buildBody(List<FaqVO> data, FaqBloc bloc) {
     return ListView.builder(
       itemCount: data.length,
       padding: EdgeInsets.symmetric(horizontal: kMarginMedium2),
@@ -43,7 +43,17 @@ class FaqScreen extends StatelessWidget {
                 context,
               ).copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(
+                key: Key(bloc.selectedExpensionIndex.toString()),
                 tilePadding: EdgeInsets.symmetric(horizontal: 16),
+                initiallyExpanded: bloc.selectedExpensionIndex == index,
+                onExpansionChanged: (isExpanded) {
+                  if (isExpanded) {
+                    bloc.selectedExpensionIndex = index;
+                  } else {
+                    bloc.selectedExpensionIndex = -1;
+                  }
+                  bloc.onTapExpansion();
+                },
                 title: SizedBox(
                   height: 40,
                   child: Align(

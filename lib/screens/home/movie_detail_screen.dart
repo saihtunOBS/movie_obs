@@ -128,6 +128,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   Widget _buildWatchTrailerView(BuildContext context, String trailerUrl) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () {
         PageNavigator(ctx: context).nextPage(
           page: VideoPlayerScreen(

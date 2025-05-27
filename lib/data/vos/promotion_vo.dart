@@ -9,14 +9,16 @@ class PromotionVo {
   final String? name;
   final bool? status;
   final int? discount;
+  final DateTime? startDate;
+  final DateTime? endDate;
   
-
-
   PromotionVo({
     this.id,
     this.name,
     this.discount,
     this.status,
+    this.startDate,
+    this.endDate
   });
 
   factory PromotionVo.fromJson(Map<String, dynamic> json) =>

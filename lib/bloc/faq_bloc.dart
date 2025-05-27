@@ -5,6 +5,7 @@ import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/faq_vo.dart';
 
 class FaqBloc extends ChangeNotifier {
+  int selectedExpensionIndex = -1;
   bool isLoading = false;
   bool isDisposed = false;
   String token = '';
@@ -32,6 +33,9 @@ class FaqBloc extends ChangeNotifier {
   _showLoading() {
     isLoading = true;
     _notifySafely();
+  }
+  onTapExpansion() {
+    notifyListeners();
   }
 
   _hideLoading() {

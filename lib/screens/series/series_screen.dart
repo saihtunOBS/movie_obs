@@ -49,7 +49,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
           foregroundColor: kWhiteColor,
           title: Padding(
             padding: const EdgeInsets.only(left: kMarginMedium2),
-            child: Text('Tuu Tu\'s Series'),
+            child: Text('Too To\'s Series'),
           ),
           centerTitle: false,
           actions: [

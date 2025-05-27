@@ -97,7 +97,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Stack(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 57, left: 8, right: 8),
+          padding: EdgeInsets.only(top: 30, left: 8, right: 8),
           child: Row(
             spacing: 10,
             children: [
@@ -175,7 +175,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
         ),
         Positioned(
-          top: 65,
+          top: 40,
           right: kMarginMedium2,
           child: Row(
             spacing: 10,

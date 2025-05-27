@@ -25,7 +25,6 @@ import 'package:provider/provider.dart';
 import '../../utils/dimens.dart';
 import 'package:movie_obs/l10n/app_localizations.dart';
 
-import '../../widgets/error_dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -162,8 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                         context: context,
                         backgroundColor: kSecondaryColor,
-                        title: AppLocalizations.of(context)?.logout ??
-                            '',
+                        title: AppLocalizations.of(context)?.logout ?? '',
                         textColor: kWhiteColor,
                       ),
                     ),
@@ -198,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             margin: EdgeInsets.only(
                               left:
                                   userData.profilePictureUrl == ''
-                                      ? 0
+                                      ? kMarginMedium2
                                       : kMarginMedium2,
                             ),
                             padding:
@@ -435,37 +433,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ctx: context,
                                   ).nextPageOnly(page: LoginScreen());
                                 } else {
-                                  userBloc
-                                      .deleteUser()
-                                      .catchError((_) {
-                                        if (mounted) {
-                                          Navigator.of(
-                                            context,
-                                            rootNavigator: true,
-                                          ).pop();
-                                          Future.delayed(
-                                            Duration(milliseconds: 1500),
-                                            () {
-                                              PersistenceData.shared
-                                                  .clearToken();
-                                              showCommonDialog(
-                                                context: context,
-                                                isBarrierDismiss: false,
-                                                dialogWidget: ErrorDialogView(
-                                                  errorMessage:
-                                                      'Session Expired. Please Login Again',
-                                                  isLogin: true,
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        }
-                                      })
-                                      .then((_) {
-                                        PageNavigator(
-                                          ctx: context,
-                                        ).nextPageOnly(page: LoginScreen());
-                                      });
+                                  userBloc.deleteUser(context);
                                 }
                               },
                               context: context,

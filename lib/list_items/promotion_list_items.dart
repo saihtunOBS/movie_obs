@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/data/vos/package_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/colors.dart';
+import 'package:movie_obs/utils/date_formatter.dart';
 import 'package:movie_obs/utils/dimens.dart';
 
 Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
@@ -16,7 +17,7 @@ Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
     child: Stack(
       clipBehavior: Clip.none,
       children: [
-         Positioned(
+        Positioned(
           left: 0,
           top: -15,
           child: Visibility(
@@ -104,19 +105,21 @@ Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
                 ),
               ],
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-              margin: EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.grey.withValues(alpha: 0.2),
-              ),
-              child: Text(
-                'Within April 1, 2025 - April 5, 2025',
-                style: TextStyle(color: kPrimaryColor),
-                textAlign: TextAlign.justify,
-              ),
-            ),
+            data.promotion == null
+                ? SizedBox.shrink()
+                : Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  margin: EdgeInsets.only(top: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.grey.withValues(alpha: 0.2),
+                  ),
+                  child: Text(
+                    'Within ${DateFormatter.formatDate(data.promotion?.startDate ?? DateTime.now())} - ${DateFormatter.formatDate(data.promotion?.endDate ?? DateTime.now())}',
+                    style: TextStyle(color: kPrimaryColor),
+                    textAlign: TextAlign.justify,
+                  ),
+                ),
             5.vGap,
           ],
         ),

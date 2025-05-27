@@ -67,7 +67,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           (context, data, child) => Stack(
             children: [
               Padding(
-                padding: EdgeInsets.only(top: 57, left: 8, right: 8),
+                padding: EdgeInsets.only(top: 30, left: 8, right: 8),
                 child: Row(
                   spacing: 10,
                   children: [

@@ -7,6 +7,9 @@ import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/user_vo.dart';
+import 'package:movie_obs/extension/page_navigator.dart';
+import 'package:movie_obs/screens/auth/login_screen.dart';
+import 'package:movie_obs/widgets/toast_service.dart';
 
 import '../widgets/common_dialog.dart';
 import '../widgets/error_dialog.dart';
@@ -32,9 +35,21 @@ class UserBloc extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future deleteUser() {
+  Future deleteUser(BuildContext context) {
     _showLoading();
-    return _movieModel.deleteUser(token);
+    return _movieModel
+        .deleteUser(token)
+        .then((_) {
+          _hideLoading();
+          PersistenceData.shared.clearToken();
+          PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
+        })
+        .catchError((_) {
+          _hideLoading();
+          PersistenceData.shared.clearToken();
+          PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
+          ToastService.warningToast('Session Expired. Please Login Again');
+        });
   }
 
   getUser(BuildContext? context) {
