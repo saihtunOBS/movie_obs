@@ -210,5 +210,8 @@ abstract class MovieApi {
   Future<void> deleteUser(@Header(kHeaderAuthorization) String token);
 
   @GET(kEndPointAnnouncement)
-  Future<NotificationResponse> getNotifications(@Header(kHeaderAuthorization) String token);
+  Future<NotificationResponse> getNotifications(
+    @Header(kHeaderAuthorization) String token,
+    @Query('getAll') bool getAll,
+  );
 }

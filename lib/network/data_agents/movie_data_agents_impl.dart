@@ -469,7 +469,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   @override
   Future<NotificationResponse> getNotifications(String token) {
     return movieApi
-        .getNotifications('Bearer $token')
+        .getNotifications('Bearer $token',true)
         .asStream()
         .map((response) => response)
         .first

@@ -997,9 +997,12 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<NotificationResponse> getNotifications(String token) async {
+  Future<NotificationResponse> getNotifications(
+    String token,
+    bool getAll,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'getAll': getAll};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
