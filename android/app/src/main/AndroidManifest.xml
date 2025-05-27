@@ -8,7 +8,7 @@
  <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions"/>
 
     <application
-        android:label="TuuTu TV"
+        android:label="TooTo TV"
         android:name="${applicationName}"
         android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true"
