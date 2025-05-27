@@ -11,6 +11,7 @@ import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 
+import '../screens/bottom_nav/bottom_nav_screen.dart';
 import '../widgets/common_dialog.dart';
 import '../widgets/error_dialog.dart';
 
@@ -40,11 +41,13 @@ class UserBloc extends ChangeNotifier {
     return _movieModel
         .deleteUser(token)
         .then((_) {
+          tab.value = false;
           _hideLoading();
           PersistenceData.shared.clearToken();
           PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
         })
         .catchError((_) {
+          tab.value = false;
           _hideLoading();
           PersistenceData.shared.clearToken();
           PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
