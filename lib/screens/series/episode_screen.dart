@@ -62,7 +62,7 @@ class EpisodeScreen extends StatelessWidget {
 
                         Positioned(
                           left: 20,
-                          top: 40,
+                          top: 45,
                           child: GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: () {

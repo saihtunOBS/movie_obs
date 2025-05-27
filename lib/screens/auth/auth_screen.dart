@@ -13,7 +13,6 @@ import 'package:movie_obs/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
