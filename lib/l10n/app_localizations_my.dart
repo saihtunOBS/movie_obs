@@ -188,4 +188,10 @@ class AppLocalizationsMy extends AppLocalizations {
 
   @override
   String get logoutQuestion => 'ထွက်မှာသေချာပီလား?';
+
+  @override
+  String get notification => 'အသိပေးချက်များ';
+
+  @override
+  String get noNotification => 'ယခု အသိပေးချက်မရှိပါ..';
 }

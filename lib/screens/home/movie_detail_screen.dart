@@ -44,7 +44,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     slivers: [
                       SliverAppBar(
                         expandedHeight: getDeviceType() == 'phone' ? 250 : 380,
-                        automaticallyImplyLeading: true,
+                        automaticallyImplyLeading: false,
                         foregroundColor: Colors.white,
                         backgroundColor: kBackgroundColor,
                         pinned: true,
@@ -69,24 +69,36 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             ),
                             Positioned(
                               bottom: -17,
-                              child: Container(
-                                height: 35,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: kWhiteColor,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: _buildWatchTrailerView(
-                                  context,
-                                  widget.movie?.trailerUrl ?? '',
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () {
+                                  PageNavigator(ctx: context).nextPage(
+                                    page: VideoPlayerScreen(
+                                      isFirstTime: true,
+                                      type: 'trailer',
+                                      url: widget.movie?.trailerUrl,
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  height: 35,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: kWhiteColor,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: _buildWatchTrailerView(
+                                    context,
+                                    widget.movie?.trailerUrl ?? '',
+                                  ),
                                 ),
                               ),
                             ),
                             Positioned(
                               left: 20,
-                              top: 55,
+                              top: 40,
                               child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
@@ -127,42 +139,30 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   }
 
   Widget _buildWatchTrailerView(BuildContext context, String trailerUrl) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        PageNavigator(ctx: context).nextPage(
-          page: VideoPlayerScreen(
-            isFirstTime: true,
-            type: 'trailer',
-            url: trailerUrl,
-          ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        decoration: BoxDecoration(
-          color: kWhiteColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                CupertinoIcons.play_circle_fill,
-                size: 26,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+        color: kWhiteColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              CupertinoIcons.play_circle_fill,
+              size: 26,
+              color: kBlackColor,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              AppLocalizations.of(context)?.watchTrailer ?? '',
+              style: TextStyle(
+                fontSize: kTextRegular2x - 3,
                 color: kBlackColor,
               ),
-              const SizedBox(width: 5),
-              Text(
-                AppLocalizations.of(context)?.watchTrailer ?? '',
-                style: TextStyle(
-                  fontSize: kTextRegular2x - 3,
-                  color: kBlackColor,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:movie_obs/data/dummy/dummy_data.dart';
+import 'package:movie_obs/data/vos/notification_vo.dart';
+import 'package:movie_obs/l10n/app_localizations.dart';
 import 'package:movie_obs/utils/colors.dart';
+import 'package:movie_obs/utils/date_formatter.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 
 import '../../utils/dimens.dart';
 
 class NotificationDetailScreen extends StatelessWidget {
-  const NotificationDetailScreen({super.key});
+  const NotificationDetailScreen({super.key, required this.notiData});
+  final NotificationVo notiData;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
-        title: Text('Back'),
+        title: Text(AppLocalizations.of(context)?.back ?? ''),
         centerTitle: false,
         backgroundColor: kBackgroundColor,
         surfaceTintColor: kBackgroundColor,
@@ -34,21 +37,18 @@ class NotificationDetailScreen extends StatelessWidget {
             child: SizedBox(
               height: 200,
               width: double.infinity,
-              child: cacheImage(imageArray.last),
+              child: cacheImage(notiData.imageUrl),
             ),
           ),
-          Text('12 Jan, 2025'),
+          Text(DateFormatter.formatDate(notiData.createdAt ?? DateTime.now())),
           Text(
-            'Your account have been created successfully',
+            notiData.title ?? '',
             style: TextStyle(
               fontSize: kTextRegular2x,
               fontWeight: FontWeight.w600,
             ),
           ),
-          Text(
-            'We send notifications for new movie releases, personalized recommendations, special promotions, and account-related updates.',
-            style: TextStyle(),
-          ),
+          Text(notiData.body ?? '', style: TextStyle()),
         ],
       ),
     );

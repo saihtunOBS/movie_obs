@@ -80,22 +80,36 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
                         ),
                         Positioned(
                           bottom: -17,
-                          child: Container(
-                            height: 35,
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            decoration: BoxDecoration(
-                              color: kWhiteColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: _buildWatchTrailerView(
-                              context,
-                              widget.season?.trailerUrl ?? '',
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () {
+                              PageNavigator(ctx: context).nextPage(
+                                page: VideoPlayerScreen(
+                                  isFirstTime: true,
+                                  type: 'trailer',
+                                  url: widget.season?.trailerUrl ?? '',
+                                ),
+                              );
+                            },
+                            child: Container(
+                              height: 35,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: kWhiteColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: _buildWatchTrailerView(
+                                context,
+                                widget.season?.trailerUrl ?? '',
+                              ),
                             ),
                           ),
                         ),
                         Positioned(
                           left: 20,
-                          top: 55,
+                          top: 40,
                           child: GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: () {
@@ -132,42 +146,30 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
   }
 
   Widget _buildWatchTrailerView(BuildContext context, String trailerUrl) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        PageNavigator(ctx: context).nextPage(
-          page: VideoPlayerScreen(
-            isFirstTime: true,
-            type: 'trailer',
-            url: trailerUrl,
-          ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        decoration: BoxDecoration(
-          color: kWhiteColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                CupertinoIcons.play_circle_fill,
-                size: 26,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+        color: kWhiteColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              CupertinoIcons.play_circle_fill,
+              size: 26,
+              color: kBlackColor,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              AppLocalizations.of(context)?.watchTrailer ?? '',
+              style: TextStyle(
+                fontSize: kTextRegular2x - 3,
                 color: kBlackColor,
               ),
-              const SizedBox(width: 5),
-              Text(
-                AppLocalizations.of(context)?.watchTrailer ?? '',
-                style: TextStyle(
-                  fontSize: kTextRegular2x - 3,
-                  color: kBlackColor,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

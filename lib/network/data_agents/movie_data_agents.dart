@@ -19,6 +19,7 @@ import 'package:movie_obs/network/responses/season_response.dart';
 import 'package:movie_obs/network/responses/term_privacy_response.dart';
 
 import '../../data/vos/user_vo.dart';
+import '../responses/notification_response.dart';
 import '../responses/watchlist_history_response.dart';
 
 abstract class MovieDataAgents {
@@ -95,4 +96,6 @@ abstract class MovieDataAgents {
   Future<TermPrivacyResponse> getTremAndConditions(String token);
   Future<TermPrivacyResponse> getPrivacyPolicy(String token);
   Future<void> deleteUser(String token);
+
+  Future<NotificationResponse> getNotifications(String token);
 }

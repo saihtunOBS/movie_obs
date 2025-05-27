@@ -190,4 +190,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logoutQuestion => 'Are you sure to logout?';
+
+  @override
+  String get notification => 'Notifications';
+
+  @override
+  String get noNotification => 'There is no notification right now..';
 }

@@ -16,6 +16,7 @@ import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
+import 'package:movie_obs/network/responses/notification_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
@@ -241,5 +242,10 @@ class MovieModelImpl extends MovieModel {
   @override
   Future<TermPrivacyResponse> getTremAndConditions(String token) {
     return movieDataAgent.getTremAndConditions(token);
+  }
+
+  @override
+  Future<NotificationResponse> getNotifications(String token) {
+    return movieDataAgent.getNotifications(token);
   }
 }

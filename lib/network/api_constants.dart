@@ -22,6 +22,8 @@ const String kEndPointFaq = '/contents/faqs';
 
 const String kEndPointCast = '/videos/casts';
 const String kEndPointPackage = '/packages/plans';
+ 
+const String kEndPointAnnouncement = '/announcements';
 
 const String kEndPointWatchLists = '/watchlists';
 const String kEndPointHistory = '/history';

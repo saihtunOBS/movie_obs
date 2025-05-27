@@ -18,6 +18,7 @@ import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
+import 'package:movie_obs/network/responses/notification_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
@@ -310,7 +311,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   @override
   Future<PackageResponse> getAllPackage(String token) {
     return movieApi
-        .getPackages('Bearer $token',true)
+        .getPackages('Bearer $token', true)
         .asStream()
         .map((response) => response)
         .first
@@ -457,6 +458,18 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   Future<TermPrivacyResponse> getTremAndConditions(String token) {
     return movieApi
         .getTermAndConditions('Bearer $token')
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<NotificationResponse> getNotifications(String token) {
+    return movieApi
+        .getNotifications('Bearer $token')
         .asStream()
         .map((response) => response)
         .first

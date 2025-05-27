@@ -61,5 +61,7 @@
   "yourPhoneNumber": "သင့်ဖုန်းနံပါတ်",
   "willSend":"သို့ OTP Code ပို့ပေးပါမည်။ ကျေးဇူးပြု၍ အောက်တွင်ထည့်ပါ။",
   "logout": "Logout",
-  "logoutQuestion": "Are you sure to logout?"
+  "logoutQuestion": "Are you sure to logout?",
+  "notification": "Notifications",
+  "noNotification": "There is no notification right now.."
 }
