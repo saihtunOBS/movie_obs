@@ -10,7 +10,7 @@ Widget notiListItem(bool isLast,NotificationVo data) {
     children: [
       5.vGap,
       Text(
-        data.body ?? '',
+        data.title ?? '',
         style: TextStyle(fontSize: kTextRegular2x ,fontWeight: FontWeight.w600),
       ),
       10.vGap,
