@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get language => 'Language';
+  String get language => 'LANGUAGE';
 
   @override
   String get preferLanguage =>
@@ -26,6 +26,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get series => 'Series';
+
+  @override
+  String get series_nav => 'Series';
 
   @override
   String get profile => 'Profile';
@@ -108,13 +111,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchMovieTitle => 'Search by movie title';
 
   @override
+  String get newRelease => 'New Releases';
+
+  @override
   String get live => 'Live';
 
   @override
   String get program => 'Program';
-
-  @override
-  String get newRelease => 'New Releases';
 
   @override
   String get freeMovieSeries => 'Free Movie & Series';

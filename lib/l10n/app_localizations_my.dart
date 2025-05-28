@@ -27,6 +27,9 @@ class AppLocalizationsMy extends AppLocalizations {
   String get series => 'ဇာတ်လမ်းတွဲများ';
 
   @override
+  String get series_nav => 'ဇာတ်လမ်းတွဲ';
+
+  @override
   String get profile => 'ပရိုဖိုင်';
 
   @override
@@ -106,13 +109,13 @@ class AppLocalizationsMy extends AppLocalizations {
   String get searchMovieTitle => 'ရုပ်ရှင်များကို ရှာဖွေပါ';
 
   @override
+  String get newRelease => 'အသစ်ထွက်ရှိထားသော';
+
+  @override
   String get live => 'တိုက်ရိုက်ထုတ်လွင့်ခြင်း';
 
   @override
   String get program => 'ပရိုဂရမ်';
-
-  @override
-  String get newRelease => 'အသစ်ထွက်ရှိထားသော';
 
   @override
   String get freeMovieSeries => 'ဖရီးရုပ်ရှင်နှင့်ဇာတ်လမ်းတွဲများ';

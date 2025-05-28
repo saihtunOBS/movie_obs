@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @language.
   ///
   /// In en, this message translates to:
-  /// **'Language'**
+  /// **'LANGUAGE'**
   String get language;
 
   /// No description provided for @preferLanguage.
@@ -133,6 +133,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Series'**
   String get series;
+
+  /// No description provided for @series_nav.
+  ///
+  /// In en, this message translates to:
+  /// **'Series'**
+  String get series_nav;
 
   /// No description provided for @profile.
   ///
@@ -290,6 +296,12 @@ abstract class AppLocalizations {
   /// **'Search by movie title'**
   String get searchMovieTitle;
 
+  /// No description provided for @newRelease.
+  ///
+  /// In en, this message translates to:
+  /// **'New Releases'**
+  String get newRelease;
+
   /// No description provided for @live.
   ///
   /// In en, this message translates to:
@@ -301,12 +313,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Program'**
   String get program;
-
-  /// No description provided for @newRelease.
-  ///
-  /// In en, this message translates to:
-  /// **'New Releases'**
-  String get newRelease;
 
   /// No description provided for @freeMovieSeries.
   ///
