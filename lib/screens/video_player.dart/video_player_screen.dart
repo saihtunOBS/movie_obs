@@ -7,7 +7,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
+import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/network/analytics_service/analytics_service.dart';
 import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/screens/video_player.dart/popup_video_player.dart';
 import 'package:movie_obs/utils/colors.dart';
@@ -19,8 +21,6 @@ import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:video_player/video_player.dart';
-
-import '../../data/videoPlayer/video_player.dart';
 
 final ValueNotifier<bool> isPlay = ValueNotifier(false);
 double progress = 0.0;
@@ -60,7 +60,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      //bloc.resetControlVisibility(isSeek: true);
       if (Platform.isIOS) {
         SystemChrome.setPreferredOrientations([]);
       }
@@ -91,11 +90,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             ? Orientation.landscape
             : Orientation.portrait;
 
-    if (newOrientation == Orientation.landscape) {
-      // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-    } else {
-      // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    }
     if (_lastOrientation == newOrientation) return;
     _lastOrientation = newOrientation;
 
@@ -224,6 +218,27 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     _subscription?.cancel();
     if (isClickPopUp != true) {
       videoPlayerController.pause();
+    }
+    final position = videoPlayerController.value.position;
+    final duration = videoPlayerController.value.duration;
+
+    if (duration.inSeconds > 0) {
+      final progress = position.inSeconds / duration.inSeconds;
+      if (progress > 0.25) {
+        AnalyticsService().logVideoView(
+          videoId: widget.videoId ?? "",
+          videoTitle: '',
+          duration: duration,
+        );
+      }
+    }
+    if (widget.videoId != null) {
+      saveVideoProgress([
+        VideoProgress(
+          videoId: widget.videoId ?? '',
+          position: videoPlayerController.value.position,
+        ),
+      ]);
     }
     super.dispose();
   }
@@ -1169,7 +1184,7 @@ class Player extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
+              // borderRadius: BorderRadius.circular(10),
               child: AspectRatio(
                 aspectRatio: videoPlayerController.value.aspectRatio,
                 child: IgnorePointer(

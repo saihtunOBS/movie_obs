@@ -7,8 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
-import 'package:movie_obs/data/videoPlayer/video_player.dart';
-import 'package:movie_obs/network/analytics_service/analytics_service.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:video_player/video_player.dart';
 
@@ -63,7 +61,6 @@ class VideoBloc extends ChangeNotifier {
   List<Map<String, String>> qualityOptions = [];
 
   String currentUrl = '';
-
   double scale = 1.0;
   double initialScale = 1.0;
   double initialPosition = 0.0;
@@ -236,30 +233,7 @@ class VideoBloc extends ChangeNotifier {
     isLoading = false;
 
     videoPlayerController.addListener(() {
-      if (videoPlayerController.value.isPlaying) {
-        final position = videoPlayerController.value.position;
-        final duration = videoPlayerController.value.duration;
-
-        if (duration.inSeconds > 0) {
-          final progress = position.inSeconds / duration.inSeconds;
-
-          if (progress > 0.25) {
-            AnalyticsService().logVideoView(
-              videoId: videoId ?? "",
-              videoTitle: type ?? '',
-              duration: duration,
-            );
-          }
-        }
-        if (videoId != null) {
-          saveVideoProgress([
-            VideoProgress(
-              videoId: videoId,
-              position: videoPlayerController.value.position,
-            ),
-          ]);
-        }
-      } else if (videoPlayerController.value.isCompleted) {
+      if (videoPlayerController.value.isCompleted) {
         isPlay.value = false;
         showControl = true;
         notifyListeners();
@@ -328,21 +302,10 @@ class VideoBloc extends ChangeNotifier {
       showControls: false,
     );
     videoPlayerController.setVolume(isMuted ? 0.0 : 1.0);
-    // showMiniControl = false;
-
     videoPlayerController.addListener(() {
-      if (videoPlayerController.value.isPlaying) {
-        saveVideoProgress([
-          VideoProgress(
-            videoId: videoId ?? '',
-            position: videoPlayerController.value.position,
-          ),
-        ]);
-        notifyListeners();
-      } else if (videoPlayerController.value.isCompleted) {
+      if (videoPlayerController.value.isCompleted) {
         isPlay.value = false;
         showControl = true;
-
         notifyListeners();
       }
     });
