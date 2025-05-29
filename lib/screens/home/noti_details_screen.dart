@@ -27,29 +27,31 @@ class NotificationDetailScreen extends StatelessWidget {
 
   Widget _buildBody() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 10,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: SizedBox(
-              height: 200,
-              width: double.infinity,
-              child: cacheImage(notiData.imageUrl),
+      padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2,vertical: kMarginMedium2),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 10,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: SizedBox(
+                height: 200,
+                width: double.infinity,
+                child: cacheImage(notiData.imageUrl),
+              ),
             ),
-          ),
-          Text(DateFormatter.formatDate(notiData.createdAt ?? DateTime.now())),
-          Text(
-            notiData.title ?? '',
-            style: TextStyle(
-              fontSize: kTextRegular2x,
-              fontWeight: FontWeight.w600,
+            Text(DateFormatter.formatDate(notiData.createdAt ?? DateTime.now())),
+            Text(
+              notiData.title ?? '',
+              style: TextStyle(
+                fontSize: kTextRegular2x,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          Text(notiData.body ?? '', style: TextStyle()),
-        ],
+            Text(notiData.body ?? '', style: TextStyle()),
+          ],
+        ),
       ),
     );
   }

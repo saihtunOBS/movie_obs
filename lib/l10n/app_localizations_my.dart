@@ -21,6 +21,9 @@ class AppLocalizationsMy extends AppLocalizations {
   String get home => 'ပင်မ';
 
   @override
+  String get profileLanguage => 'ဘာသာစကား';
+
+  @override
   String get movies => 'ရုပ်ရှင်များ';
 
   @override

@@ -22,6 +22,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home => 'Home';
 
   @override
+  String get profileLanguage => 'Language';
+
+  @override
   String get movies => 'Movies';
 
   @override

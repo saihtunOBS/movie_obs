@@ -63,7 +63,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     return StreamBuilder<double>(
       stream: ScreenBrightness.instance.onSystemScreenBrightnessChanged,
       builder: (context, snapshot) {
-        brightness = snapshot.data ?? 1.0;
+        //brightness = snapshot.data ?? 1.0;
         return ValueListenableBuilder(
           valueListenable: tab,
           builder:

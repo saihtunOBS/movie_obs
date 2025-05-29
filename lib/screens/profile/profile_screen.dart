@@ -62,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       AppLocalizations.of(context)?.promotion ?? '',
       AppLocalizations.of(context)?.watchlist ?? '',
       AppLocalizations.of(context)?.history ?? '',
-      AppLocalizations.of(context)?.language ?? '',
+      AppLocalizations.of(context)?.profileLanguage ?? '',
       AppLocalizations.of(context)?.faq ?? '',
       AppLocalizations.of(context)?.term ?? '',
       AppLocalizations.of(context)?.privacy ?? '',

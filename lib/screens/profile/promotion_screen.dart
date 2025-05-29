@@ -37,10 +37,10 @@ class PromotionScreen extends StatelessWidget {
                 ],
               ),
         ),
-        bottomNavigationBar: Padding(
+        bottomNavigationBar: Container(
+          height: 90,
           padding: const EdgeInsets.symmetric(
             horizontal: kMarginMedium2,
-            vertical: kMarginMedium2 + 5,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,

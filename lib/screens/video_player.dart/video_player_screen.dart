@@ -92,9 +92,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             : Orientation.portrait;
 
     if (newOrientation == Orientation.landscape) {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     } else {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
     if (_lastOrientation == newOrientation) return;
     _lastOrientation = newOrientation;
@@ -234,14 +234,26 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       builder: (context, value, child) {
         return Scaffold(
           appBar: AppBar(
-            toolbarHeight: 0.0,
+            toolbarHeight: 80,
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
+            title: showControl == true ?  Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [_buildTopLeftControls(), _buildTopRightControls()],
+              ),
+            ) : SizedBox.shrink(),
           ),
           extendBodyBehindAppBar: true,
           extendBody: true,
           backgroundColor: kBlackColor,
           body: _buildVideoPlayerSection(),
+          bottomNavigationBar: SizedBox(
+            height: 90,
+            child:
+                showControl == true ? _buildProgressBar() : SizedBox.shrink(),
+          ),
         );
       },
     );
@@ -264,25 +276,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   ) {
     if (startDragOffset == null) return;
 
-    final dy = details.localPosition.dy - startDragOffset!.dy;
+    final dy = details.globalPosition.dy;
 
-    // 👉 Reduce sensitivity (e.g. 2.5 means you need to swipe full screen height * 2.5 to go 0.0 -> 1.0)
-    double sensitivityFactor = side == 'left' ? 1.5 : 0;
-    double change = (-dy / height) / sensitivityFactor;
-
-    double newValue;
+    final deltaY = dy - details.globalPosition.dy;
+    final newValue = (deviceVolume + deltaY / 300).clamp(0.0, 1.0);
 
     if (side == 'left') {
-      newValue = (deviceVolume + change).clamp(0.0, 1.0);
       setState(() {
         deviceVolume = newValue;
         volumeController?.setVolume(deviceVolume);
-      });
-    } else {
-      newValue = (brightness + change).clamp(0.0, 1.0);
-      setState(() {
-        brightness = newValue;
-        setSystemBrightness(brightness);
       });
     }
   }
@@ -315,13 +317,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                     : showControl == true
                     ? _buildPlayPauseControls()
                     : SizedBox.shrink(),
-                showControl == true
-                    ? _buildTopLeftControls()
-                    : SizedBox.shrink(),
-                showControl == true
-                    ? _buildTopRightControls()
-                    : SizedBox.shrink(),
-                showControl == true ? _buildProgressBar() : SizedBox.shrink(),
                 // Left Zone
                 Positioned(
                   left: 0,
@@ -526,7 +521,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildTopLeftControls() {
-    return Positioned(top: 70, left: 30, child: _buildExitButton());
+    return _buildExitButton();
   }
 
   Widget _buildExitButton() {
@@ -593,11 +588,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildTopRightControls() {
-    return Positioned(
-      top: bloc.isFullScreen ? 40 : 70,
-      right: bloc.isFullScreen ? 70 : 30,
-      child: _buildSettingsButtons(),
-    );
+    return _buildSettingsButtons();
   }
 
   Widget _buildSettingsButtons() {
@@ -663,12 +654,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildProgressBar() {
-    return Positioned(
-      bottom: 25,
-      left: bloc.isFullScreen ? 40 : 10,
-      right: bloc.isFullScreen ? 40 : 10,
-      child: _buildProgressBarContent(),
-    );
+    return _buildProgressBarContent();
   }
 
   Widget _buildProgressBarContent() {
@@ -788,8 +774,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return GestureDetector(
       onTap: () => bloc.toggleFullScreen(),
       child: SizedBox(
-        // height: bloc.isFullScreen ? 42 : 30,
-        // width: bloc.isFullScreen ? 40 : 30,
         child: Icon(Icons.fullscreen, color: Colors.white, size: 30),
       ),
     );
@@ -844,7 +828,53 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                       Icons.speed,
                     ),
                   ),
-                  5.vGap,
+
+                  20.vGap,
+                  StatefulBuilder(
+                    builder:
+                        (
+                        BuildContext context,
+                        void Function(void Function()) setState,
+                        ) => Row(
+                      spacing: 10,
+                      children: [
+                        Icon(
+                          CupertinoIcons.brightness,
+                          color: Colors.white,
+                        ),
+                        Expanded(
+                          child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              trackHeight: 2.0,
+                              thumbShape: RoundSliderThumbShape(
+                                enabledThumbRadius: 7.0,
+                              ),
+                              overlayShape: RoundSliderOverlayShape(
+                                overlayRadius: 5.0,
+                              ),
+                            ),
+                            child: Slider(
+                              value: brightness,
+                              onChanged: (value) {
+                                setState(() {
+                                  brightness = value;
+                                  setSystemBrightness(brightness);
+                                });
+                              },
+                              min: 0.0,
+                              max: 1.0,
+                              activeColor: kSecondaryColor,
+                              inactiveColor: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          CupertinoIcons.brightness_solid,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -854,7 +884,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Future<void> setSystemBrightness(double brightness) async {
     try {
-      await ScreenBrightness.instance.setSystemScreenBrightness(brightness);
+      await ScreenBrightness.instance.setApplicationScreenBrightness(brightness);
     } catch (e) {
       debugPrint(e.toString());
       ToastService.warningToast('Failed to set system brightness');

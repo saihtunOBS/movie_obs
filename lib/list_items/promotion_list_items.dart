@@ -7,7 +7,7 @@ import 'package:movie_obs/utils/dimens.dart';
 
 Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
   return Container(
-    margin: EdgeInsets.only(bottom: 40),
+    margin: EdgeInsets.only(bottom: 30),
     padding: EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
       color: Colors.grey.withValues(alpha: 0.2),

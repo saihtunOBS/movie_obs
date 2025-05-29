@@ -358,7 +358,7 @@ class VideoBloc extends ChangeNotifier {
     });
 
     if (isFullScreen) {
-      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      //await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
       if (Platform.isAndroid) {
         await SystemChrome.setPreferredOrientations([
           DeviceOrientation.landscapeRight,
@@ -368,7 +368,7 @@ class VideoBloc extends ChangeNotifier {
         AutoOrientation.landscapeRightMode();
       }
     } else {
-      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      //await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       if (Platform.isAndroid) {
         await SystemChrome.setPreferredOrientations([
           DeviceOrientation.portraitUp,
