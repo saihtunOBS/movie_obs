@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bot_toast/bot_toast.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,7 @@ import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/network/notification/notification_service.dart';
 import 'package:movie_obs/screens/auth/splash_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -25,6 +27,9 @@ StreamController<String> languageStreamController = BehaviorSubject<String>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await GetStorage.init();
   runApp(
@@ -48,6 +53,12 @@ class MovieOBS extends StatefulWidget {
 }
 
 class _MovieOBSState extends State<MovieOBS> {
+  @override
+  void initState() {
+    NotificationService(context).requestPermission();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
