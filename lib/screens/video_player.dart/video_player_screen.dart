@@ -28,7 +28,6 @@ double bufferedProgress = 0.0;
 bool showControl = true;
 bool isAutoRotateEnabled = false;
 double deviceVolume = 1.0; // Initial volume
-double brightness = 1.0;
 
 class VideoPlayerScreen extends StatefulWidget {
   const VideoPlayerScreen({
@@ -56,6 +55,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   VideoProgress? _savedVideo;
   bool isClickPopUp = false;
   StreamSubscription<bool>? _subscription;
+  double brightness = 1.0;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -92,9 +92,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             : Orientation.portrait;
 
     if (newOrientation == Orientation.landscape) {
-     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+      // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     } else {
-     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
     if (_lastOrientation == newOrientation) return;
     _lastOrientation = newOrientation;
@@ -237,13 +237,19 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             toolbarHeight: 80,
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
-            title: showControl == true ?  Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [_buildTopLeftControls(), _buildTopRightControls()],
-              ),
-            ) : SizedBox.shrink(),
+            title:
+                showControl == true
+                    ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildTopLeftControls(),
+                          _buildTopRightControls(),
+                        ],
+                      ),
+                    )
+                    : SizedBox.shrink(),
           ),
           extendBodyBehindAppBar: true,
           extendBody: true,
@@ -833,47 +839,47 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                   StatefulBuilder(
                     builder:
                         (
-                        BuildContext context,
-                        void Function(void Function()) setState,
+                          BuildContext context,
+                          void Function(void Function()) setState,
                         ) => Row(
-                      spacing: 10,
-                      children: [
-                        Icon(
-                          CupertinoIcons.brightness,
-                          color: Colors.white,
-                        ),
-                        Expanded(
-                          child: SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              trackHeight: 2.0,
-                              thumbShape: RoundSliderThumbShape(
-                                enabledThumbRadius: 7.0,
-                              ),
-                              overlayShape: RoundSliderOverlayShape(
-                                overlayRadius: 5.0,
+                          spacing: 10,
+                          children: [
+                            Icon(
+                              CupertinoIcons.brightness,
+                              color: Colors.white,
+                            ),
+                            Expanded(
+                              child: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  trackHeight: 2.0,
+                                  thumbShape: RoundSliderThumbShape(
+                                    enabledThumbRadius: 7.0,
+                                  ),
+                                  overlayShape: RoundSliderOverlayShape(
+                                    overlayRadius: 5.0,
+                                  ),
+                                ),
+                                child: Slider(
+                                  value: brightness,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      brightness = value;
+                                      setSystemBrightness(brightness);
+                                    });
+                                  },
+                                  min: 0.0,
+                                  max: 1.0,
+                                  activeColor: kSecondaryColor,
+                                  inactiveColor: Colors.grey,
+                                ),
                               ),
                             ),
-                            child: Slider(
-                              value: brightness,
-                              onChanged: (value) {
-                                setState(() {
-                                  brightness = value;
-                                  setSystemBrightness(brightness);
-                                });
-                              },
-                              min: 0.0,
-                              max: 1.0,
-                              activeColor: kSecondaryColor,
-                              inactiveColor: Colors.grey,
+                            Icon(
+                              CupertinoIcons.brightness_solid,
+                              color: Colors.white,
                             ),
-                          ),
+                          ],
                         ),
-                        Icon(
-                          CupertinoIcons.brightness_solid,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),
@@ -884,7 +890,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Future<void> setSystemBrightness(double brightness) async {
     try {
-      await ScreenBrightness.instance.setApplicationScreenBrightness(brightness);
+      await ScreenBrightness.instance.setApplicationScreenBrightness(
+        brightness,
+      );
     } catch (e) {
       debugPrint(e.toString());
       ToastService.warningToast('Failed to set system brightness');

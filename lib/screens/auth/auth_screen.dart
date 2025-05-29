@@ -25,6 +25,11 @@ class _AuthScreenState extends State<AuthScreen> {
   final ValueNotifier<int> sliderIndex = ValueNotifier(0);
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => BannerBloc(),

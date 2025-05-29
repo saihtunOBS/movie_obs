@@ -14,50 +14,47 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => NotificationBloc(context),
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: kBackgroundColor,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)?.notification ?? ''),
+        centerTitle: false,
         backgroundColor: kBackgroundColor,
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context)?.notification ?? ''),
-          centerTitle: false,
-          backgroundColor: kBackgroundColor,
-          surfaceTintColor: kBackgroundColor,
-        ),
-        body: Consumer<NotificationBloc>(
-          builder:
-              (context, bloc, child) =>
-                  bloc.isLoading
-                      ? LoadingView()
-                      : bloc.notiLists.isNotEmpty
-                      ? ListView.builder(
-                        itemCount: bloc.notiLists.length,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: kMarginMedium2,
-                          vertical: kMarginMedium,
-                        ),
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () {
-                              PageNavigator(ctx: context).nextPage(
-                                page: NotificationDetailScreen(
-                                  notiData: bloc.notiLists[index],
-                                ),
-                              );
-                            },
-                            child: notiListItem(
-                              index == bloc.notiLists.length - 1,
-                              bloc.notiLists[index],
-                            ),
-                          );
-                        },
-                      )
-                      : Text(
-                        AppLocalizations.of(context)?.noNotification ?? '',
-                        style: TextStyle(color: kWhiteColor),
+        surfaceTintColor: kBackgroundColor,
+      ),
+      body: Consumer<NotificationBloc>(
+        builder:
+            (context, bloc, child) =>
+                bloc.isLoading
+                    ? LoadingView()
+                    : bloc.notiLists.isNotEmpty
+                    ? ListView.builder(
+                      itemCount: bloc.notiLists.length,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: kMarginMedium2,
+                        vertical: kMarginMedium,
                       ),
-        ),
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            PageNavigator(ctx: context).nextPage(
+                              page: NotificationDetailScreen(
+                                notiData: bloc.notiLists[index],
+                              ),
+                            );
+                          },
+                          child: notiListItem(
+                            index == bloc.notiLists.length - 1,
+                            bloc.notiLists[index],
+                          ),
+                        );
+                      },
+                    )
+                    : Text(
+                      AppLocalizations.of(context)?.noNotification ?? '',
+                      style: TextStyle(color: kWhiteColor),
+                    ),
       ),
     );
   }

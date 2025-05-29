@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,13 +11,15 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/ads_bloc.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
+import 'package:movie_obs/bloc/notification_bloc.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
-import 'package:movie_obs/network/notification/notification_service.dart';
+import 'package:movie_obs/firebase_options.dart';
 import 'package:movie_obs/screens/auth/splash_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
+import 'package:movie_obs/utils/route_observer.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -24,11 +27,19 @@ import 'data/persistence/persistence_data.dart';
 import 'package:movie_obs/l10n/app_localizations.dart';
 
 StreamController<String> languageStreamController = BehaviorSubject<String>();
-
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final RouteObserver<PageRoute> routeObserver = CurrentRouteObserver();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp();
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
+  {
+    await Firebase.initializeApp();
+  }
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await GetStorage.init();
@@ -39,6 +50,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => HomeBloc()),
         ChangeNotifierProvider(create: (_) => UserBloc()),
         ChangeNotifierProvider(create: (_) => AdsBloc()),
+        ChangeNotifierProvider(create: (_) => NotificationBloc()),
       ],
       child: const MovieOBS(),
     ),
@@ -55,7 +67,6 @@ class MovieOBS extends StatefulWidget {
 class _MovieOBSState extends State<MovieOBS> {
   @override
   void initState() {
-    NotificationService(context).requestPermission();
     super.initState();
   }
 
@@ -72,6 +83,8 @@ class _MovieOBSState extends State<MovieOBS> {
             : localString = snapshot.data ?? 'en';
 
         return MaterialApp(
+          navigatorKey: navigatorKey,
+          navigatorObservers: [routeObserver],
           title: 'TuuTu Player',
           debugShowCheckedModeBanner: false,
           localizationsDelegates: [

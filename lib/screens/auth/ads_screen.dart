@@ -11,6 +11,8 @@ import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/ads_image_animation.dart';
 import 'package:provider/provider.dart';
 
+import '../../network/notification_service/notification_service.dart';
+
 class AdsScreen extends StatefulWidget {
   const AdsScreen({super.key});
 
@@ -24,6 +26,7 @@ class _AdsScreenState extends State<AdsScreen> {
 
   @override
   void initState() {
+    NotificationService(context).requestPermission();
     super.initState();
     _startCountdown();
   }

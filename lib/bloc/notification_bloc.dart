@@ -12,13 +12,14 @@ class NotificationBloc extends ChangeNotifier {
   String token = '';
   List<NotificationVo> notiLists = [];
   final MovieModel _movieModel = MovieModelImpl();
-
-  NotificationBloc(BuildContext context) {
+  BuildContext? mycontext;
+  NotificationBloc({BuildContext? context}) {
+    mycontext = context;
     token = PersistenceData.shared.getToken();
-    getNotifications(context);
+    getNotifications();
   }
 
-  getNotifications(BuildContext myContext) {
+  getNotifications() {
     _showLoading();
     _movieModel
         .getNotifications(token)
@@ -31,7 +32,7 @@ class NotificationBloc extends ChangeNotifier {
         })
         .catchError((_) {
           PersistenceData.shared.clearToken();
-          PageNavigator(ctx: myContext).nextPage(page: LoginScreen());
+          PageNavigator(ctx: mycontext).nextPage(page: LoginScreen());
         });
   }
 

@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/videoPlayer/video_player.dart';
+import 'package:movie_obs/network/analytics_service/analytics_service.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:video_player/video_player.dart';
 
@@ -92,13 +93,9 @@ class VideoBloc extends ChangeNotifier {
       );
       _movieModel
           .toggleHistory(token, request)
-          .then((_) {
-            // ToastService.successToast('Success');
-          })
+          .then((_) {})
           .whenComplete(() {})
-          .catchError((error) {
-            //ToastService.warningToast(error.toString());
-          });
+          .catchError((error) {});
     }
   }
 
@@ -139,7 +136,6 @@ class VideoBloc extends ChangeNotifier {
 
   void playPlayer() {
     videoPlayerController.play();
-    // isSeeking = false;
     notifyListeners();
   }
 
@@ -241,6 +237,20 @@ class VideoBloc extends ChangeNotifier {
 
     videoPlayerController.addListener(() {
       if (videoPlayerController.value.isPlaying) {
+        final position = videoPlayerController.value.position;
+        final duration = videoPlayerController.value.duration;
+
+        if (duration.inSeconds > 0) {
+          final progress = position.inSeconds / duration.inSeconds;
+
+          if (progress > 0.25) {
+            AnalyticsService().logVideoView(
+              videoId: videoId ?? "",
+              videoTitle: type ?? '',
+              duration: duration,
+            );
+          }
+        }
         if (videoId != null) {
           saveVideoProgress([
             VideoProgress(
