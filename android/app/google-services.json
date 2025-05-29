@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "611549631126",
+    "project_id": "toototv-dev",
+    "storage_bucket": "toototv-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611549631126:android:055dec84cadded0e4768b7",
+        "android_client_info": {
+          "package_name": "com.obs.movie"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUbC5_qmZOSqhB0Uq-N6eyYjdFCuPR10U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
