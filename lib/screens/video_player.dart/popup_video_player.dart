@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
+import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
@@ -70,6 +71,12 @@ class MiniVideoPlayer {
       _overlayEntry?.remove();
       _overlayEntry = null;
       _animationController.dispose();
+      saveVideoProgress([
+        VideoProgress(
+          videoId: videoId,
+          position: videoPlayerController.value.position,
+        ),
+      ]);
     });
   }
 }

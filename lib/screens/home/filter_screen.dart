@@ -8,7 +8,7 @@ import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/empty_view.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
 import 'package:movie_obs/widgets/search_filter_sheet.dart';
-import 'package:movie_obs/widgets/show_loading.dart';
+import 'package:movie_obs/widgets/shimmer_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/page_navigator.dart';
@@ -98,7 +98,7 @@ class _FilterScreenState extends State<FilterScreen> {
                 padding: const EdgeInsets.only(top: 10),
                 child:
                     bloc.isLoading
-                        ? LoadingView()
+                        ? shimmerLoading(isVertical: true)
                         : bloc.movieSeriesLists.isNotEmpty
                         ? Stack(
                           children: [

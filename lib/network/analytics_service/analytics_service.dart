@@ -21,7 +21,7 @@ class AnalyticsService {
       await _analytics.logEvent(
         name: 'video_view',
         parameters: {
-          'video_id': videoId,
+          'id': videoId,
           'video_title': videoTitle,
           'duration': duration.inSeconds,
           'timestamp': DateTime.now().millisecondsSinceEpoch,

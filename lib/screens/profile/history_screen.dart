@@ -4,6 +4,7 @@ import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
+import 'package:movie_obs/widgets/shimmer_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/page_navigator.dart';
@@ -53,7 +54,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 },
                 child:
                     bloc.isLoading
-                        ? LoadingView()
+                        ? shimmerLoading(isVertical: true)
                         : Stack(
                           children: [
                             bloc.historyList.isNotEmpty
@@ -80,7 +81,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                 .position
                                                 .maxScrollExtent) {
                                           if (bloc.historyList.length >= 10) {
-                                           // bloc.loadMoreData();
+                                            // bloc.loadMoreData();
                                           }
                                         }
                                       }),

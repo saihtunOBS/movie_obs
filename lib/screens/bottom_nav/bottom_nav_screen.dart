@@ -77,6 +77,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                 isVisible: value,
                 screens: screens,
                 handleAndroidBackButtonPress: false,
+                navBarStyle: NavBarStyle.style9,
                 padding: EdgeInsets.all(10),
                 items: _navBarsItems(context),
                 onItemSelected: (value) {

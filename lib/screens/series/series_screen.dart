@@ -9,6 +9,7 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/empty_view.dart';
 import 'package:movie_obs/widgets/series_filter_sheet.dart';
+import 'package:movie_obs/widgets/shimmer_loading.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 import 'package:substring_highlight/substring_highlight.dart';
@@ -159,7 +160,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                 },
                 child:
                     bloc.isLoading
-                        ? LoadingView()
+                        ? shimmerLoading()
                         : bloc.seriesLists.isNotEmpty
                         ? Padding(
                           padding: const EdgeInsets.only(top: 10),

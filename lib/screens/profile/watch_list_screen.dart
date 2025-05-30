@@ -6,6 +6,7 @@ import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
+import 'package:movie_obs/widgets/shimmer_loading.dart';
 import 'package:provider/provider.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
@@ -163,7 +164,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
                 },
                 child:
                     bloc.isLoading
-                        ? LoadingView()
+                        ? shimmerLoading()
                         : bloc.watchLists.isNotEmpty
                         ? Stack(
                           children: [

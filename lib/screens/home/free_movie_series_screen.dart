@@ -8,6 +8,7 @@ import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/empty_view.dart';
 import 'package:movie_obs/widgets/free_movie_series_filter.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
+import 'package:movie_obs/widgets/shimmer_loading.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
@@ -106,7 +107,7 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                   padding: const EdgeInsets.only(top: 10),
                   child:
                       bloc.isLoading
-                          ? LoadingView()
+                          ? shimmerLoading(isVertical: true)
                           : Stack(
                             children: [
                               bloc.freeMovieLists.isNotEmpty

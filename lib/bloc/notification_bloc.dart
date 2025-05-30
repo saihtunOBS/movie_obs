@@ -3,8 +3,6 @@ import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/notification_vo.dart';
-import 'package:movie_obs/extension/page_navigator.dart';
-import 'package:movie_obs/screens/auth/login_screen.dart';
 
 class NotificationBloc extends ChangeNotifier {
   bool isLoading = false;
@@ -19,9 +17,9 @@ class NotificationBloc extends ChangeNotifier {
     getNotifications();
   }
 
-  getNotifications() {
+  Future<void> getNotifications() {
     _showLoading();
-    _movieModel
+    return _movieModel
         .getNotifications(token)
         .then((response) {
           notiLists = response.data ?? [];
@@ -29,10 +27,6 @@ class NotificationBloc extends ChangeNotifier {
         })
         .whenComplete(() {
           _hideLoading();
-        })
-        .catchError((_) {
-          PersistenceData.shared.clearToken();
-          PageNavigator(ctx: mycontext).nextPage(page: LoginScreen());
         });
   }
 

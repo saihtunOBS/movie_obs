@@ -27,7 +27,10 @@ class NotificationDetailScreen extends StatelessWidget {
 
   Widget _buildBody() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2,vertical: kMarginMedium2),
+      padding: const EdgeInsets.symmetric(
+        horizontal: kMarginMedium2,
+        vertical: kMarginMedium2,
+      ),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +44,9 @@ class NotificationDetailScreen extends StatelessWidget {
                 child: cacheImage(notiData.imageUrl),
               ),
             ),
-            Text(DateFormatter.formatDate(notiData.createdAt ?? DateTime.now())),
+            Text(
+              DateFormatter.formatDate(notiData.createdAt ?? DateTime.now()),
+            ),
             Text(
               notiData.title ?? '',
               style: TextStyle(

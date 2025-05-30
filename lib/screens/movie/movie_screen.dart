@@ -6,6 +6,7 @@ import 'package:movie_obs/list_items/movie_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
+import 'package:movie_obs/widgets/shimmer_loading.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 import 'package:substring_highlight/substring_highlight.dart';
@@ -158,7 +159,7 @@ class _MovieScreenState extends State<MovieScreen> {
                 },
                 child:
                     bloc.isLoading
-                        ? LoadingView()
+                        ? shimmerLoading()
                         : bloc.movieLists.isNotEmpty
                         ? Padding(
                           padding: const EdgeInsets.only(top: 10),
