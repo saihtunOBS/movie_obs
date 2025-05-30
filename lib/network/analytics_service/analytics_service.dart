@@ -6,7 +6,8 @@ class AnalyticsService {
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
   Future<String?> _getUserId() async {
-    return userDataListener.value.id;
+    return userDataListener.value.id ??
+        '${DateTime.now().millisecondsSinceEpoch}';
   }
 
   Future setUserId() async {
