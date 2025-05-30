@@ -9,6 +9,11 @@ class AnalyticsService {
     return userDataListener.value.id;
   }
 
+  Future setUserId() async {
+    final userId = await _getUserId();
+    await _analytics.setUserId(id: userId);
+  }
+
   Future<void> logVideoView({
     required String videoId,
     required String videoTitle,
