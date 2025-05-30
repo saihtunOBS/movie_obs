@@ -412,6 +412,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     String name,
     String email,
     String language,
+    String fcmToken,
   ) {
     return movieApi
         .updateProfile(
@@ -421,6 +422,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
           name,
           email,
           language,
+          fcmToken,
         )
         .asStream()
         .map((response) => response)
@@ -469,7 +471,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   @override
   Future<NotificationResponse> getNotifications(String token) {
     return movieApi
-        .getNotifications('Bearer $token',true)
+        .getNotifications('Bearer $token', true)
         .asStream()
         .map((response) => response)
         .first

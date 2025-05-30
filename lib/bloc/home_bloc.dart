@@ -40,6 +40,11 @@ class HomeBloc extends ChangeNotifier {
     getNewRelease();
   }
 
+  void updateToken() {
+    token = PersistenceData.shared.getToken();
+    notifyListeners();
+  }
+
   getAllMovieAndSeries() {
     _movieModel
         .getAllMovieAndSeries(token, '', '', 'BOTH', false, 1)

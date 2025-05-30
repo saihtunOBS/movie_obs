@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
-import 'package:movie_obs/data/videoPlayer/video_player.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
@@ -118,14 +117,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
     );
 
     videoPlayerController.addListener(() {
-      if (videoPlayerController.value.isPlaying) {
-        saveVideoProgress([
-          VideoProgress(
-            videoId: MiniVideoPlayer.videoId,
-            position: videoPlayerController.value.position,
-          ),
-        ]);
-      } else if (!videoPlayerController.value.isPlaying) {
+      if (!videoPlayerController.value.isPlaying) {
         MiniVideoPlayer.isPlay = false;
       }
     });

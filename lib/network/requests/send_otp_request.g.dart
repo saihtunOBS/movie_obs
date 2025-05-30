@@ -7,7 +7,7 @@ part of 'send_otp_request.dart';
 // **************************************************************************
 
 SendOtpRequest _$SendOtpRequestFromJson(Map<String, dynamic> json) =>
-    SendOtpRequest(json['phone'] as String?, json['fcmToken'] as String?);
+    SendOtpRequest(json['phone'] as String?);
 
 Map<String, dynamic> _$SendOtpRequestToJson(SendOtpRequest instance) =>
-    <String, dynamic>{'phone': instance.phone, 'fcmToken': instance.fcmToken};
+    <String, dynamic>{'phone': instance.phone};

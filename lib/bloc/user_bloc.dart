@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,6 +30,15 @@ class UserBloc extends ChangeNotifier {
   UserBloc({BuildContext? context}) {
     myContext = context;
     updateToken();
+    getUser(context);
+  }
+
+  onTapupdate() {
+    _showLoading();
+
+    Future.delayed(Duration(milliseconds: 1000), () {
+      hideLoading();
+    });
   }
 
   updateToken() {
@@ -42,13 +52,13 @@ class UserBloc extends ChangeNotifier {
         .deleteUser(token)
         .then((_) {
           tab.value = false;
-          _hideLoading();
+          hideLoading();
           PersistenceData.shared.clearToken();
           PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
         })
         .catchError((_) {
           tab.value = false;
-          _hideLoading();
+          hideLoading();
           PersistenceData.shared.clearToken();
           PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
           ToastService.warningToast('Session Expired. Please Login Again');
@@ -56,7 +66,6 @@ class UserBloc extends ChangeNotifier {
   }
 
   getUser(BuildContext? context) {
-    _showLoading();
     _movieModel
         .getUser(token)
         .then((response) {
@@ -76,16 +85,18 @@ class UserBloc extends ChangeNotifier {
           );
         })
         .whenComplete(() {
-          _hideLoading();
+          hideLoading();
         });
   }
 
   Future<UserVO> updateUser(String name, String email) async {
     _showLoading();
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+
     return _movieModel
-        .updateUser(token, imgFile, name, email, 'ENG')
+        .updateUser(token, imgFile, name, email, 'ENG', fcmToken ?? '')
         .whenComplete(() {
-          _hideLoading();
+          hideLoading();
         });
   }
 
@@ -133,7 +144,7 @@ class UserBloc extends ChangeNotifier {
     _notifySafely();
   }
 
-  _hideLoading() {
+  hideLoading() {
     isLoading = false;
     _notifySafely();
   }

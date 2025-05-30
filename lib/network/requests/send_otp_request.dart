@@ -6,10 +6,8 @@ part 'send_otp_request.g.dart';
 class SendOtpRequest {
   @JsonKey(name: "phone")
   String? phone;
-  @JsonKey(name: "fcmToken")
-  String? fcmToken;
 
-  SendOtpRequest(this.phone, this.fcmToken);
+  SendOtpRequest(this.phone);
 
   factory SendOtpRequest.fromJson(Map<String, dynamic> json) =>
       _$SendOtpRequestFromJson(json);

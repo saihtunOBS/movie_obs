@@ -869,6 +869,7 @@ class _MovieApi implements MovieApi {
     String name,
     String email,
     String languagePreference,
+    String fcmToken,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -894,6 +895,7 @@ class _MovieApi implements MovieApi {
     _data.fields.add(MapEntry('name', name));
     _data.fields.add(MapEntry('email', email));
     _data.fields.add(MapEntry('languagePreference', languagePreference));
+    _data.fields.add(MapEntry('fcmToken', fcmToken));
     final _options = _setStreamType<UserVO>(
       Options(
             method: 'PUT',

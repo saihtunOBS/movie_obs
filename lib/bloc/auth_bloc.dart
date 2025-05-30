@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/model/movie_model_impl.dart';
@@ -38,8 +37,7 @@ class AuthBloc extends ChangeNotifier {
 
   Future<OTPResponse> userLogin(String phoneNubmer) async {
     _showLoading();
-    String? token = await FirebaseMessaging.instance.getToken();
-    var request = SendOtpRequest(phoneNubmer, token ?? '');
+    var request = SendOtpRequest(phoneNubmer);
     return _movieModel.sendOtp(request).whenComplete(() {
       _hideLoading();
     });

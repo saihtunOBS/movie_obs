@@ -19,6 +19,7 @@ import '../../utils/dimens.dart';
 import '../../utils/images.dart';
 
 import 'package:movie_obs/l10n/app_localizations.dart';
+
 class OTPScreen extends StatefulWidget {
   const OTPScreen({super.key, this.phone, this.requestId});
   final String? phone;
@@ -34,6 +35,7 @@ class _OTPScreenState extends State<OTPScreen> {
   final focusNode = FocusNode();
   Timer? _timer;
   int _start = 180;
+  int? otpRequestId;
 
   @override
   void dispose() {
@@ -45,6 +47,8 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   void initState() {
     pinController.clear();
+    otpRequestId = int.parse(widget.requestId ?? '');
+
     _start = 180;
     startTimer();
     super.initState();
@@ -135,12 +139,16 @@ class _OTPScreenState extends State<OTPScreen> {
                                   startTimer();
                                   bloc
                                       .userLogin(widget.phone ?? '')
-                                      .then((_) {
+                                      .then((response) {
                                         ToastService.successToast(
                                           'Code sent success',
                                         );
+                                        setState(() {
+                                          otpRequestId = response.requestId;
+                                        });
                                       })
                                       .catchError((error) {
+                                        print('error$error');
                                         ToastService.warningToast(
                                           error.toString(),
                                         );
@@ -190,10 +198,12 @@ class _OTPScreenState extends State<OTPScreen> {
                           bloc
                               .verifyOtp(
                                 widget.phone ?? '',
-                                widget.requestId ?? '',
+                                '$otpRequestId',
                                 pinController.text,
                               )
                               .then((response) {
+                                _timer?.cancel();
+                                _start = 180;
                                 PersistenceData.shared.saveToken(
                                   response.accessToken ?? '',
                                 );

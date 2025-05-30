@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:movie_obs/data/vos/movie_vo.dart' show MovieVO;
 import 'package:movie_obs/data/vos/user_vo.dart';
-import 'package:movie_obs/network/requests/history_request.dart' show HistoryRequest;
+import 'package:movie_obs/network/requests/history_request.dart'
+    show HistoryRequest;
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 
@@ -25,8 +26,18 @@ import '../../network/responses/watchlist_history_response.dart';
 abstract class MovieModel {
   Future<OTPResponse> sendOtp(SendOtpRequest request);
   Future<OTPResponse> verifyOtp(VerifyOtpRequest request);
-  Future<MovieResponse> getMovieLists(String token, String plan,String genre,int page);
-  Future<MovieResponse> getSeriesLists(String token, String plan,String genre,int page);
+  Future<MovieResponse> getMovieLists(
+    String token,
+    String plan,
+    String genre,
+    int page,
+  );
+  Future<MovieResponse> getSeriesLists(
+    String token,
+    String plan,
+    String genre,
+    int page,
+  );
   Future<MovieDetailResponse> getMovieDetail(String token, String id);
   Future<MovieDetailResponse> getSeriesDetail(
     String token,
@@ -35,7 +46,14 @@ abstract class MovieModel {
   );
   Future<SeasonResponse> getSeason(String token);
 
-  Future<MovieResponse> getAllMovieAndSeries(String token, String plan,String genre,String type,bool getAll,int page);
+  Future<MovieResponse> getAllMovieAndSeries(
+    String token,
+    String plan,
+    String genre,
+    String type,
+    bool getAll,
+    int page,
+  );
   Future<MovieResponse> getTopTrending(String token);
   Future<MovieResponse> getNewRelease(String token, String plan);
 
@@ -45,12 +63,12 @@ abstract class MovieModel {
   Future<AdsBannerResponse> getBanner(String token);
   Future<AdsBannerResponse> getAds(String token);
 
-  Future<MovieResponse> getMovieSeriesByGenre(String token,String id);
-  Future<MovieResponse> getMovieSeriesByCategory(String token,String id);
+  Future<MovieResponse> getMovieSeriesByGenre(String token, String id);
+  Future<MovieResponse> getMovieSeriesByCategory(String token, String id);
 
   Future<List<MovieVO>> getRecommendedMovie(String id);
   Future<List<MovieVO>> getRecommendedSeries(String id);
-  Future<SeasonEpisodeResponse> getSeasonEpisode(String token,String id);
+  Future<SeasonEpisodeResponse> getSeasonEpisode(String token, String id);
 
   Future<ActorDataResponse> getActorDetail(String token, String id);
 
@@ -65,14 +83,14 @@ abstract class MovieModel {
     String type,
     bool getAll,
     String user,
-    int page
+    int page,
   );
 
   Future<WatchlistHistoryResponse> getHistory(
     String token,
     bool getAll,
     String user,
-    int page
+    int page,
   );
 
   Future<void> toggleWatchlist(String token, WatchlistRequest request);
@@ -84,6 +102,7 @@ abstract class MovieModel {
     String name,
     String email,
     String language,
+    String fcmToken,
   );
   Future<TermPrivacyResponse> getTremAndConditions(String token);
   Future<TermPrivacyResponse> getPrivacyPolicy(String token);

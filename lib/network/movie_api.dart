@@ -197,6 +197,7 @@ abstract class MovieApi {
     @Part() String name,
     @Part() String email,
     @Part() String languagePreference,
+    @Part() String fcmToken,
   );
   @GET(kEndPointTermAndCondition)
   Future<TermPrivacyResponse> getTermAndConditions(

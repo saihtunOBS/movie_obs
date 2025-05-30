@@ -225,8 +225,16 @@ class MovieModelImpl extends MovieModel {
     String name,
     String email,
     String language,
+    String fcmToken,
   ) {
-    return movieDataAgent.updateUser(token, photo, name, email, language);
+    return movieDataAgent.updateUser(
+      token,
+      photo,
+      name,
+      email,
+      language,
+      fcmToken,
+    );
   }
 
   @override

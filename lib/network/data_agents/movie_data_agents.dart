@@ -26,8 +26,18 @@ abstract class MovieDataAgents {
   Future<OTPResponse> sendOtp(SendOtpRequest request);
   Future<OTPResponse> verifyOtp(VerifyOtpRequest request);
 
-  Future<MovieResponse> getMovies(String token, String plan, String genre,int page);
-  Future<MovieResponse> getSeries(String token, String plan, String genre,int page);
+  Future<MovieResponse> getMovies(
+    String token,
+    String plan,
+    String genre,
+    int page,
+  );
+  Future<MovieResponse> getSeries(
+    String token,
+    String plan,
+    String genre,
+    int page,
+  );
   Future<MovieDetailResponse> getMovieDetail(String token, String id);
   Future<MovieDetailResponse> getSeriesDetail(
     String token,
@@ -42,13 +52,13 @@ abstract class MovieDataAgents {
     String genre,
     String type,
     bool getAll,
-    int page
+    int page,
   );
   Future<MovieResponse> getTopTrending(String token, String plan);
   Future<MovieResponse> getNewRelease(String token, String plan);
 
-  Future<MovieResponse> getMovieSeriesByGenre(String token,String id);
-  Future<MovieResponse> getMovieSeriesByCategory(String token,String id);
+  Future<MovieResponse> getMovieSeriesByGenre(String token, String id);
+  Future<MovieResponse> getMovieSeriesByCategory(String token, String id);
 
   Future<CategoryResponse> getAllCategory(String token);
   Future<GenreResponse> getAllGenre(String token);
@@ -58,7 +68,7 @@ abstract class MovieDataAgents {
 
   Future<List<MovieVO>> getRecommendedMovie(String id);
   Future<List<MovieVO>> getRecommendedSeries(String id);
-  Future<SeasonEpisodeResponse> getSeasonEpisode(String token,String id);
+  Future<SeasonEpisodeResponse> getSeasonEpisode(String token, String id);
 
   Future<ActorDataResponse> getActorDetail(String token, String id);
 
@@ -74,13 +84,13 @@ abstract class MovieDataAgents {
     String type,
     bool getAll,
     String user,
-    int page
+    int page,
   );
   Future<WatchlistHistoryResponse> getHistory(
     String token,
     bool getAll,
     String user,
-    int page
+    int page,
   );
 
   Future<void> toggleWatchlist(String token, WatchlistRequest request);
@@ -92,6 +102,7 @@ abstract class MovieDataAgents {
     String name,
     String email,
     String language,
+    String fcmToken,
   );
   Future<TermPrivacyResponse> getTremAndConditions(String token);
   Future<TermPrivacyResponse> getPrivacyPolicy(String token);

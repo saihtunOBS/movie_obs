@@ -49,38 +49,40 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 children: [
                   Form(
                     key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildAppBar(context, bloc),
-                        30.vGap,
-                        _buildUserInfo(
-                          AppLocalizations.of(context)?.username ?? '',
-                          nameValidator,
-                          TextInputType.text,
-                          controller: _nameController,
-                          context,
-                        ),
-                        10.vGap,
-                        IgnorePointer(
-                          ignoring: true,
-                          child: _buildUserInfo(
-                            AppLocalizations.of(context)?.phone ?? '',
-                            phoneValidator,
-                            controller: _phoneController,
-                            TextInputType.phone,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildAppBar(context, bloc),
+                          30.vGap,
+                          _buildUserInfo(
+                            AppLocalizations.of(context)?.username ?? '',
+                            nameValidator,
+                            TextInputType.text,
+                            controller: _nameController,
                             context,
                           ),
-                        ),
-                        10.vGap,
-                        _buildUserInfo(
-                          AppLocalizations.of(context)?.email ?? '',
-                          emailValidator,
-                          controller: _emailController,
-                          TextInputType.emailAddress,
-                          context,
-                        ),
-                      ],
+                          10.vGap,
+                          IgnorePointer(
+                            ignoring: true,
+                            child: _buildUserInfo(
+                              AppLocalizations.of(context)?.phone ?? '',
+                              phoneValidator,
+                              controller: _phoneController,
+                              TextInputType.phone,
+                              context,
+                            ),
+                          ),
+                          10.vGap,
+                          _buildUserInfo(
+                            AppLocalizations.of(context)?.email ?? '',
+                            emailValidator,
+                            controller: _emailController,
+                            TextInputType.emailAddress,
+                            context,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
 

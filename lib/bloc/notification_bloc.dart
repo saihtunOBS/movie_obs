@@ -15,7 +15,7 @@ class NotificationBloc extends ChangeNotifier {
   BuildContext? mycontext;
   NotificationBloc({BuildContext? context}) {
     mycontext = context;
-    token = PersistenceData.shared.getToken();
+    updateToken();
     getNotifications();
   }
 
@@ -34,6 +34,11 @@ class NotificationBloc extends ChangeNotifier {
           PersistenceData.shared.clearToken();
           PageNavigator(ctx: mycontext).nextPage(page: LoginScreen());
         });
+  }
+
+  void updateToken() {
+    token = PersistenceData.shared.getToken();
+    notifyListeners();
   }
 
   _showLoading() {
