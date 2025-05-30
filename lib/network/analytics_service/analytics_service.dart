@@ -12,6 +12,7 @@ class AnalyticsService {
   Future setUserId() async {
     final userId = await _getUserId();
     await _analytics.setUserId(id: userId);
+    await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
   }
 
   Future<void> logVideoView({
@@ -22,11 +23,11 @@ class AnalyticsService {
     try {
       final userId = await _getUserId();
       await _analytics.setUserId(id: userId);
-
+      await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
       await _analytics.logEvent(
         name: 'video_view',
         parameters: {
-          'id': videoId,
+          'video_id': videoId,
           'video_title': videoTitle,
           'duration': duration.inSeconds,
           'timestamp': DateTime.now().millisecondsSinceEpoch,

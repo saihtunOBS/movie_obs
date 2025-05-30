@@ -25,3 +25,10 @@ Note:
 - patch request has "application/merge-patch+json" as the Content-Type, this is different than the rest request method(get,post,put,delete) which use "application/ld+json"
 - App architecture (file and folder structure) are design on feature based with (a) data layer (b) model (c) presentation. The presentation layer contain UI and statecontroller which manage the loading, error, and data state
 - The code contains customised widgets that are reusesable.
+- release key
+keytool -genkeypair -v \
+  -keystore my-release-key.jks \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000 \
+  -alias movie_obs
