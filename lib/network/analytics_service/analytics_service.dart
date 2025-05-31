@@ -22,8 +22,6 @@ class AnalyticsService {
     required Duration duration,
   }) async {
     try {
-      final userId = await _getUserId();
-      await _analytics.setUserId(id: userId);
       await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
       await _analytics.logEvent(
         name: 'video_view',

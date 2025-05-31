@@ -422,16 +422,17 @@ class VideoBloc extends ChangeNotifier {
   Future<void> smoothSeek(Duration targetPosition) async {
     seekCount++;
     notifyListeners();
-    chewieControllerNotifier?.seekTo(targetPosition).whenComplete(() {
-      videoPlayerController.addListener(() {
-        if (videoPlayerController.value.isPlaying) {
-          seekCount = 0;
-          notifyListeners();
-          chewieControllerNotifier?.play();
-          videoPlayerController.play();
-        }
-      });
-    });
+
+    await videoPlayerController.seekTo(targetPosition);
+
+    if (!videoPlayerController.value.isPlaying &&
+        targetPosition != videoPlayerController.value.duration) {
+      videoPlayerController.play();
+      chewieControllerNotifier?.play();
+    }
+
+    seekCount = 0;
+    notifyListeners();
   }
 
   void startSeekUpdateLoop() {
