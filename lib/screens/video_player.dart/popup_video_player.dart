@@ -98,6 +98,8 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
   bool _isDraggingDown = false;
   bool _pendingDismiss = false;
   late final VideoBloc bloc;
+  double progress = 0.0;
+  double bufferedProgress = 0.0;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -303,10 +305,10 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                                   return Slider(
                                     value: progress,
                                     onChanged: (newValue) {
-                                      bloc.resetControlVisibility(isSeek: true);
-                                      bloc.isSeeking = true;
-                                      bloc.manualSeekProgress = newValue;
-                                      bloc.throttleSliderUpdate();
+                                      // bloc.resetControlVisibility(isSeek: true);
+                                      // bloc.isSeeking = true;
+                                      // bloc.manualSeekProgress = newValue;
+                                      // bloc.throttleSliderUpdate();
                                     },
                                   );
                                 },
@@ -326,7 +328,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                           IconButton(
                             iconSize: 18,
                             onPressed: () {
-                              bloc.seekBackward();
+                              // bloc.seekBackward();
                               MiniVideoPlayer.isPlay = true;
                             },
                             icon: Icon(
@@ -374,7 +376,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                           IconButton(
                             iconSize: 18,
                             onPressed: () {
-                              bloc.seekForward();
+                              //bloc.seekForward();
                               MiniVideoPlayer.isPlay = true;
                             },
                             icon: Icon(

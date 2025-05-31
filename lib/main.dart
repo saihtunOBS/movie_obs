@@ -5,6 +5,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -72,6 +73,10 @@ class _MovieOBSState extends State<MovieOBS> {
     super.initState();
   }
 
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
+  FirebaseAnalyticsObserver getAnalyticsObserver() =>
+      FirebaseAnalyticsObserver(analytics: _analytics);
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -86,7 +91,10 @@ class _MovieOBSState extends State<MovieOBS> {
 
         return MaterialApp(
           navigatorKey: navigatorKey,
-          navigatorObservers: [routeObserver],
+          navigatorObservers: [
+            routeObserver,
+            if (kReleaseMode) getAnalyticsObserver(),
+          ],
           title: 'TuuTu Player',
           debugShowCheckedModeBanner: false,
           localizationsDelegates: [

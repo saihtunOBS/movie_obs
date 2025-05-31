@@ -14,10 +14,10 @@ extension DateFormatting on DateTime {
 }
 
 String getDeviceType() {
-    // ignore: deprecated_member_use
-    final data = MediaQueryData.fromView(WidgetsBinding.instance.window);
-    return data.size.shortestSide < 600 ? 'phone' :'tablet';
-  }
+  // ignore: deprecated_member_use
+  final data = MediaQueryData.fromView(WidgetsBinding.instance.window);
+  return data.size.shortestSide < 600 ? 'phone' : 'tablet';
+}
 
 extension StringValidators on String {
   bool get containsUppercase => contains(RegExp(r'[A-Z]'));
@@ -28,3 +28,10 @@ extension StringValidators on String {
       contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 }
 
+extension DurationClamp on Duration {
+  Duration clamp(Duration min, Duration max) {
+    if (this < min) return min;
+    if (this > max) return max;
+    return this;
+  }
+}

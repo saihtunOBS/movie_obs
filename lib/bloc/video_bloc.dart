@@ -210,7 +210,11 @@ class VideoBloc extends ChangeNotifier {
   }
 
   /// Initialize video player
-  void initializeVideo(String url, {String? videoId, String? type}) {
+  Future<void> initializeVideo(
+    String url, {
+    String? videoId,
+    String? type,
+  }) async {
     isLoading = true;
     notifyListeners();
     videoPlayerController = VideoPlayerController.networkUrl(
@@ -263,7 +267,7 @@ class VideoBloc extends ChangeNotifier {
   }
 
   //quality change
-  void changeQuality(
+  Future<void> changeQuality(
     String url,
     String? videoId,
     bool isFirstTime,

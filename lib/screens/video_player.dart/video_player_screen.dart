@@ -23,8 +23,7 @@ import 'package:screen_brightness/screen_brightness.dart';
 import 'package:video_player/video_player.dart';
 
 final ValueNotifier<bool> isPlay = ValueNotifier(false);
-double progress = 0.0;
-double bufferedProgress = 0.0;
+
 bool showControl = true;
 bool isAutoRotateEnabled = false;
 double deviceVolume = 1.0; // Initial volume
@@ -56,6 +55,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   bool isClickPopUp = false;
   StreamSubscription<bool>? _subscription;
   double brightness = 1.0;
+  double progress = 0.0;
+  double bufferedProgress = 0.0;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -108,7 +109,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     super.didChangeDependencies();
     if (chewieControllerNotifier == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        //  if(widget.isFirstTime == false) return;
         bloc.initializeVideo(widget.url ?? '');
       });
     }
@@ -116,20 +116,17 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   @override
   void initState() {
-    setState(() {
-      if (!mounted) return;
-      setState(() {
-        showControl = true;
-      });
-    });
+    super.initState();
 
-    //set up volume listener
+    showControl = true;
+
+    bufferedProgress = 0.0;
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    onStartDrag.value = true;
+
     WidgetsBinding.instance.addObserver(this);
     bloc = Provider.of<VideoBloc>(context, listen: false);
 
@@ -137,64 +134,67 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       _subscription = RotationDetector.onRotationLockChanged.listen((
         isEnabled,
       ) {
-        if (mounted) {
-          setState(() {
-            isAutoRotateEnabled = isEnabled;
+        if (!mounted) return;
 
-            if (Platform.isAndroid) {
-              if (isAutoRotateEnabled == true) {
-                SystemChrome.setPreferredOrientations([]);
-              } else {
-                if (bloc.isFullScreen == true) {
-                  SystemChrome.setPreferredOrientations([
+        setState(() {
+          isAutoRotateEnabled = isEnabled;
+
+          if (isAutoRotateEnabled) {
+            SystemChrome.setPreferredOrientations([]);
+          } else {
+            SystemChrome.setPreferredOrientations(
+              bloc.isFullScreen
+                  ? [
                     DeviceOrientation.landscapeLeft,
                     DeviceOrientation.landscapeRight,
-                  ]);
-                } else {
-                  SystemChrome.setPreferredOrientations([
-                    DeviceOrientation.portraitUp,
-                  ]);
-                }
-              }
-            }
-          });
-        }
+                  ]
+                  : [DeviceOrientation.portraitUp],
+            );
+          }
+        });
       });
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+
       bloc.toggleHistory(widget.videoId ?? '', widget.type);
       bloc.isMuted = false;
       bloc.currentUrl = widget.url ?? '';
       MiniVideoPlayer.removeMiniPlayer();
       isPlay.value = true;
+
       if (widget.isFirstTime == true) {
-        widget.isTrailer == true
-            ? bloc.initializeVideo(widget.url ?? '')
-            : _loadCurrentPosition();
+        if (widget.isTrailer == true) {
+          bloc.initializeVideo(widget.url ?? '');
+        } else {
+          await _loadCurrentPosition(); // Added await
+        }
       } else {
         bloc.resetControlVisibility(isSeek: true);
       }
     });
-    super.initState();
   }
 
   Future<void> _loadCurrentPosition() async {
-    final savedProgressList = await loadVideoProgress();
-    _savedVideo = savedProgressList.firstWhere(
-      (progress) => progress.videoId == widget.videoId,
-      orElse:
-          () => VideoProgress(
-            videoId: widget.videoId ?? '',
-            position: Duration.zero,
-          ),
-    );
+    try {
+      final savedProgressList = await loadVideoProgress();
+      _savedVideo = savedProgressList.firstWhere(
+        (progress) => progress.videoId == widget.videoId,
+        orElse:
+            () => VideoProgress(
+              videoId: widget.videoId ?? '',
+              position: Duration.zero,
+            ),
+      );
 
-    Future.delayed(Duration(milliseconds: 100), () {
+      if (!mounted) return;
+
       if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
+        debugPrint('Loading saved position: ${_savedVideo?.position}');
         selectedQuality = 'Auto';
-        bloc.fetchQualityOptions();
-        bloc.changeQuality(
+        await bloc.fetchQualityOptions(); // Added await
+        await bloc.changeQuality(
           widget.url ?? '',
           widget.videoId,
           true,
@@ -202,44 +202,54 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         );
         bloc.updateListener();
       } else {
-        bloc.initializeVideo(
+        await bloc.initializeVideo(
           widget.url ?? '',
           videoId: widget.videoId,
           type: widget.type,
         );
         bloc.updateListener();
       }
-    });
+    } catch (e) {
+      debugPrint('Error loading current position: $e');
+      if (mounted) {
+        await bloc.initializeVideo(
+          widget.url ?? '',
+          videoId: widget.videoId,
+          type: widget.type,
+        );
+      }
+    }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _subscription?.cancel();
+
+    // Save video progress before disposing
+    if (widget.videoId != null && videoPlayerController.value.isInitialized) {
+      final position = videoPlayerController.value.position;
+      final duration = videoPlayerController.value.duration;
+
+      if (duration.inSeconds > 0) {
+        final progress = position.inSeconds / duration.inSeconds;
+        if (progress > 0.25) {
+          AnalyticsService().logVideoView(
+            videoId: widget.videoId ?? "",
+            videoTitle: '',
+            duration: duration,
+          );
+        }
+      }
+      saveVideoProgress([
+        VideoProgress(videoId: widget.videoId ?? '', position: position),
+      ]);
+    }
+
     if (isClickPopUp != true) {
       videoPlayerController.pause();
     }
-    final position = videoPlayerController.value.position;
-    final duration = videoPlayerController.value.duration;
 
-    if (duration.inSeconds > 0) {
-      final progress = position.inSeconds / duration.inSeconds;
-      if (progress > 0.25) {
-        AnalyticsService().logVideoView(
-          videoId: widget.videoId ?? "",
-          videoTitle: '',
-          duration: duration,
-        );
-      }
-    }
-    if (widget.videoId != null) {
-      saveVideoProgress([
-        VideoProgress(
-          videoId: widget.videoId ?? '',
-          position: videoPlayerController.value.position,
-        ),
-      ]);
-    }
     super.dispose();
   }
 
@@ -333,8 +343,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                     ? _buildLoadingIndicator()
                     : _buildVideoPlayer(),
 
-                !videoPlayerController.value.isInitialized
-                    ? SizedBox()
+                chewieControllerNotifier == null ||
+                        !videoPlayerController.value.isInitialized ||
+                        bloc.isLoading
+                    ? _buildLoadingIndicator()
                     : showControl == true
                     ? _buildPlayPauseControls()
                     : SizedBox.shrink(),
@@ -396,8 +408,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         Stack(
           children: [
             GestureDetector(
-              onDoubleTap: _handleDoubleTap,
-              onDoubleTapDown: _handleDoubleTapDown,
               behavior: HitTestBehavior.opaque,
               child: IgnorePointer(ignoring: true, child: Player(bloc: bloc)),
             ),
@@ -405,39 +415,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         ),
       ],
     );
-  }
-
-  void _handleDoubleTapDown(TapDownDetails details) {
-    if (!videoPlayerController.value.isInitialized) return;
-
-    final screenWidth = MediaQuery.of(context).size.width;
-    final tapPosition = details.localPosition.dx;
-    final tapThreshold = screenWidth * 0.1;
-
-    if (tapPosition < screenWidth / 2 - tapThreshold) {
-      bloc.seekBackward(isDoubleTag: true);
-      bloc.isHoveringLeft.value = true;
-      bloc.isHoveringRight.value = false;
-      isPlay.value = false;
-    } else if (tapPosition > screenWidth / 2 + tapThreshold) {
-      bloc.seekForward(isDoubleTag: true);
-      bloc.isHoveringRight.value = true;
-      bloc.isHoveringLeft.value = false;
-      isPlay.value = false;
-    }
-
-    Future.delayed(const Duration(milliseconds: 100), () {
-      bloc.isHoveringLeft.value = false;
-      bloc.isHoveringRight.value = false;
-    });
-  }
-
-  void _handleDoubleTap() {
-    if (!videoPlayerController.value.isInitialized) return;
-    Future.delayed(const Duration(milliseconds: 100), () {
-      bloc.isHoveringRight.value = false;
-      bloc.isHoveringLeft.value = false;
-    });
   }
 
   Widget _buildPlayPauseControls() {
@@ -489,37 +466,36 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildPlayPauseButton() {
-    return IconButton.filled(
-      onPressed: _togglePlayPause,
-      icon: ValueListenableBuilder(
-        valueListenable: isPlay,
-        builder: (context, value, child) {
-          return Padding(
-            padding: const EdgeInsets.all(5.0),
-            child:
-                videoPlayerController.value.isCompleted
-                    ? const Icon(
-                      CupertinoIcons.arrow_counterclockwise,
-                      size: 35,
-                      color: kWhiteColor,
-                    )
-                    : bloc.seekCount != 0
-                    ? const Icon(
-                      CupertinoIcons.pause,
-                      size: 35,
-                      color: kWhiteColor,
-                    )
-                    : Icon(
-                      videoPlayerController.value.isPlaying
-                          ? CupertinoIcons.pause
-                          : CupertinoIcons.play,
-                      color: kWhiteColor,
-                      size: 35,
-                    ),
-          );
-        },
-      ),
-      style: IconButton.styleFrom(backgroundColor: Colors.black45),
+    return ValueListenableBuilder(
+      valueListenable: videoPlayerController,
+      builder:
+          (context, value, child) => IconButton.filled(
+            onPressed: _togglePlayPause,
+            icon: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child:
+                  value.isCompleted
+                      ? const Icon(
+                        CupertinoIcons.arrow_counterclockwise,
+                        size: 35,
+                        color: kWhiteColor,
+                      )
+                      : bloc.isSeeking == true
+                      ? const Icon(
+                        CupertinoIcons.pause,
+                        size: 35,
+                        color: kWhiteColor,
+                      )
+                      : Icon(
+                        value.isPlaying
+                            ? CupertinoIcons.pause
+                            : CupertinoIcons.play,
+                        color: kWhiteColor,
+                        size: 35,
+                      ),
+            ),
+            style: IconButton.styleFrom(backgroundColor: Colors.black45),
+          ),
     );
   }
 
@@ -721,9 +697,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         trackHeight: bloc.isFullScreen ? 2.0 : 3.0,
         inactiveTrackColor: Colors.white.withValues(alpha: 0.5),
         activeTrackColor: kPrimaryColor,
-        overlayColor: Colors.grey.withValues(alpha: 0.5),
         secondaryActiveTrackColor:
-            bloc.isSeeking ? Colors.transparent : Colors.white,
+            bloc.isSeeking
+                ? Colors.transparent
+                : !videoPlayerController.value.isInitialized
+                ? Colors.transparent
+                : Colors.white,
         thumbColor: kPrimaryColor,
         trackShape: const RoundedRectSliderTrackShape(),
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7.0),
