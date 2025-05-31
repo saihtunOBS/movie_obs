@@ -403,49 +403,35 @@ class VideoBloc extends ChangeNotifier {
     return "$minutes:$seconds";
   }
 
-  void seekForward({bool? isDoubleTag}) {
-    if (!videoPlayerController.value.isInitialized || isLockScreen) {
-      return;
-    }
+  void seekForward() {
     final newPosition =
         videoPlayerController.value.position + Duration(seconds: 10);
 
     if (newPosition > videoPlayerController.value.duration) {
       return;
     }
-    smoothSeek(newPosition, isDoubleTag ?? false);
+    smoothSeek(newPosition);
   }
 
-  void seekBackward({bool? isDoubleTag}) {
-    if (!videoPlayerController.value.isInitialized || isLockScreen) return;
-
+  void seekBackward() {
     final newPosition =
         videoPlayerController.value.position - Duration(seconds: 10);
-    smoothSeek(newPosition, isDoubleTag ?? false);
+    smoothSeek(newPosition);
   }
 
-  Future<void> smoothSeek(Duration targetPosition, bool isDoubleTag) async {
+  Future<void> smoothSeek(Duration targetPosition) async {
     seekCount++;
-    seekTimer?.cancel();
-    seekTimer = Timer(Duration(milliseconds: 300), () {
-      seekCount = 0;
-      videoPlayerController.play();
-      if (isDoubleTag == true || showMiniControl == true) return;
-
-      resetControlVisibility(isSeek: true);
-      notifyListeners();
-    });
-
-    // Ensure the target position is within valid bounds
-    if (targetPosition < Duration.zero) {
-      targetPosition = Duration.zero;
-    } else if (targetPosition > videoPlayerController.value.duration) {
-      targetPosition = videoPlayerController.value.duration;
-    }
-
-    // Seek to the new position in one go
-    await videoPlayerController.seekTo(targetPosition);
     notifyListeners();
+    chewieControllerNotifier?.seekTo(targetPosition).whenComplete(() {
+      videoPlayerController.addListener(() {
+        if (videoPlayerController.value.isPlaying) {
+          seekCount = 0;
+          notifyListeners();
+          chewieControllerNotifier?.play();
+          videoPlayerController.play();
+        }
+      });
+    });
   }
 
   void startSeekUpdateLoop() {

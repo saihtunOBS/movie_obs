@@ -304,12 +304,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
 
                                   return Slider(
                                     value: progress,
-                                    onChanged: (newValue) {
-                                      // bloc.resetControlVisibility(isSeek: true);
-                                      // bloc.isSeeking = true;
-                                      // bloc.manualSeekProgress = newValue;
-                                      // bloc.throttleSliderUpdate();
-                                    },
+                                    onChanged: (newValue) {},
                                   );
                                 },
                               ),
@@ -328,8 +323,8 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                           IconButton(
                             iconSize: 18,
                             onPressed: () {
-                              // bloc.seekBackward();
-                              MiniVideoPlayer.isPlay = true;
+                              bloc.seekBackward();
+                              // MiniVideoPlayer.isPlay = true;
                             },
                             icon: Icon(
                               CupertinoIcons.gobackward_10,
@@ -362,22 +357,29 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                                     }
                                     setState(() {});
                                   },
-                                  icon: Icon(
-                                    value.isCompleted
-                                        ? CupertinoIcons.arrow_clockwise
-                                        : value.isPlaying
-                                        ? CupertinoIcons.pause
-                                        : CupertinoIcons.play,
-                                    size: 25,
-                                    color: Colors.white,
-                                  ),
+                                  icon:
+                                      bloc.seekCount != 0
+                                          ? Icon(
+                                            CupertinoIcons.pause,
+                                            size: 25,
+                                            color: kWhiteColor,
+                                          )
+                                          : Icon(
+                                            value.isCompleted
+                                                ? CupertinoIcons.arrow_clockwise
+                                                : value.isPlaying
+                                                ? CupertinoIcons.pause
+                                                : CupertinoIcons.play,
+                                            size: 25,
+                                            color: Colors.white,
+                                          ),
                                 ),
                           ),
                           IconButton(
                             iconSize: 18,
                             onPressed: () {
-                              //bloc.seekForward();
-                              MiniVideoPlayer.isPlay = true;
+                              bloc.seekForward();
+                              // MiniVideoPlayer.isPlay = true;
                             },
                             icon: Icon(
                               CupertinoIcons.goforward_10,

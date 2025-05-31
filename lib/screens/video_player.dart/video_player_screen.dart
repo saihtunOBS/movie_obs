@@ -104,15 +104,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     super.didChangeMetrics();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (chewieControllerNotifier == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        bloc.initializeVideo(widget.url ?? '');
-      });
-    }
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   if (chewieControllerNotifier == null) {
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       bloc.initializeVideo(widget.url ?? '');
+  //     });
+  //   }
+  // }
 
   @override
   void initState() {
@@ -157,7 +157,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-
+      bloc.seekCount = 0;
       bloc.toggleHistory(widget.videoId ?? '', widget.type);
       bloc.isMuted = false;
       bloc.currentUrl = widget.url ?? '';
@@ -480,12 +480,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                         size: 35,
                         color: kWhiteColor,
                       )
-                      : bloc.isSeeking == true
-                      ? const Icon(
-                        CupertinoIcons.pause,
-                        size: 35,
-                        color: kWhiteColor,
-                      )
+                      : bloc.seekCount != 0
+                      ? Icon(CupertinoIcons.pause, size: 35, color: kWhiteColor)
                       : Icon(
                         value.isPlaying
                             ? CupertinoIcons.pause

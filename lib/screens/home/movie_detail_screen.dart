@@ -340,7 +340,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     );
   }
 
-  //https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8
   Widget _buildWatchNowButton(
     BuildContext context,
     String videoId,
