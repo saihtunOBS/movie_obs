@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/bloc/notification_bloc.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
-import 'package:movie_obs/network/analytics_service/analytics_service.dart';
 import 'package:movie_obs/screens/home/home_screen.dart';
 import 'package:movie_obs/screens/movie/movie_screen.dart';
 import 'package:movie_obs/screens/profile/profile_screen.dart';
@@ -46,7 +45,6 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
       context.read<UserBloc>().getUser(context);
       context.read<NotificationBloc>().updateToken();
       context.read<HomeBloc>().updateToken();
-      AnalyticsService().setUserId();
     });
     volumeController = VolumeController.instance;
 

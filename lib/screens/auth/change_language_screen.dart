@@ -14,6 +14,7 @@ import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
+import '../../network/analytics_service/analytics_service.dart';
 import '../../utils/images.dart';
 
 import 'package:movie_obs/l10n/app_localizations.dart';
@@ -167,8 +168,11 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                                                           .email ??
                                                       '',
                                                 )
-                                                .then((_) {
+                                                .then((value) {
                                                   tab.value = true;
+                                                  AnalyticsService().setUserId(
+                                                    value.id ?? '',
+                                                  );
                                                   PageNavigator(
                                                     ctx: context,
                                                   ).nextPageOnly(

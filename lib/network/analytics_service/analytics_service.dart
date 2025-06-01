@@ -1,17 +1,10 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:movie_obs/bloc/user_bloc.dart';
 
 class AnalyticsService {
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
-  Future<String?> _getUserId() async {
-    return userDataListener.value.id ??
-        '${DateTime.now().millisecondsSinceEpoch}';
-  }
-
-  Future setUserId() async {
-    final userId = await _getUserId();
+  Future setUserId(String userId) async {
     await _analytics.setUserId(id: userId);
     await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
   }
