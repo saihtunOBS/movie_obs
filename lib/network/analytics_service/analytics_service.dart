@@ -25,12 +25,7 @@ class AnalyticsService {
       await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
       await _analytics.logEvent(
         name: 'video_view',
-        parameters: {
-          'video_id': videoId,
-          'video_title': videoTitle,
-          'duration': duration.inSeconds,
-          'timestamp': DateTime.now().millisecondsSinceEpoch,
-        },
+        parameters: {'video_id': videoId, 'duration': duration.inSeconds},
       );
       debugPrint('✅ Successfully logged video_view event for $videoId');
     } catch (e) {
