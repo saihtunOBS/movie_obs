@@ -14,11 +14,10 @@ import '../data/model/movie_model_impl.dart';
 import '../data/persistence/persistence_data.dart' show PersistenceData;
 import '../network/requests/history_request.dart';
 
-bool showMiniControl = false;
 final ValueNotifier<bool> showVisibleMiniControl = ValueNotifier(true);
 final ValueNotifier<bool> onStartDrag = ValueNotifier(true);
 
-late VideoPlayerController videoPlayerController;
+late final VideoPlayerController videoPlayerController;
 ChewieController? chewieControllerNotifier;
 
 final ValueNotifier<bool> showMiniControlVisible = ValueNotifier(false);
@@ -26,11 +25,6 @@ final ValueNotifier<bool> showMiniControlVisible = ValueNotifier(false);
 String selectedQuality = 'Auto';
 
 class VideoBloc extends ChangeNotifier {
-  final ValueNotifier<bool> showVolume = ValueNotifier(false);
-  final ValueNotifier<bool> showLock = ValueNotifier(false);
-
-  ValueNotifier<bool> isHoveringLeft = ValueNotifier(false);
-  ValueNotifier<bool> isHoveringRight = ValueNotifier(false);
   bool isFullScreen = false;
 
   bool wasScreenOff = false;
@@ -51,7 +45,6 @@ class VideoBloc extends ChangeNotifier {
   double progress = 0.0;
   double volume = 0.5;
   double videoCurrentSpeed = 1.0;
-  bool isLockScreen = false;
   int isQualityClick = 0;
 
   Timer? _timer;
@@ -62,12 +55,6 @@ class VideoBloc extends ChangeNotifier {
 
   String currentUrl = '';
   double scale = 1.0;
-  double initialScale = 1.0;
-  double initialPosition = 0.0;
-
-  final double minScale = 1.0;
-  final double maxScale = 2.0;
-  bool igNorePointer = true;
 
   int seekCount = 0;
   Timer? seekTimer;
@@ -94,36 +81,6 @@ class VideoBloc extends ChangeNotifier {
           .whenComplete(() {})
           .catchError((error) {});
     }
-  }
-
-  void onVerticalDragStart(ForcePressDetails details) {
-    initialPosition = details.localPosition.dy;
-    initialScale = scale;
-  }
-
-  void onVerticalDragUpdateFullScreen(DragUpdateDetails details) {
-    if (isLockScreen == true) return;
-
-    notifyListeners();
-  }
-
-  void onVerticalDragUpdate(DragUpdateDetails details) {
-    if (isLockScreen == true) return;
-    double dragDifference = details.localPosition.dy - initialPosition;
-    double scaleChange =
-        dragDifference / 200; // Adjust this value for sensitivity
-
-    scale = (initialScale - scaleChange).clamp(minScale, maxScale);
-
-    notifyListeners();
-  }
-
-  void onVerticalDragEnd(DragEndDetails details) {
-    if (isLockScreen == true) return;
-    initialScale = scale;
-    if (initialScale == 1.0) return;
-    toggleFullScreen();
-    notifyListeners();
   }
 
   void pausedPlayer() {
@@ -218,7 +175,9 @@ class VideoBloc extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     videoPlayerController = VideoPlayerController.networkUrl(
-      Uri.parse(url),
+      Uri.parse(
+        'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
+      ),
       videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: true),
     );
     videoPlayerController.initialize().then((_) {
@@ -239,6 +198,7 @@ class VideoBloc extends ChangeNotifier {
     videoPlayerController.addListener(() {
       if (videoPlayerController.value.isCompleted) {
         isPlay.value = false;
+        playerStatus.value = 3;
         showControl = true;
         notifyListeners();
       }
@@ -310,6 +270,7 @@ class VideoBloc extends ChangeNotifier {
       if (videoPlayerController.value.isCompleted) {
         isPlay.value = false;
         showControl = true;
+        playerStatus.value = 3;
         notifyListeners();
       }
     });
@@ -321,10 +282,7 @@ class VideoBloc extends ChangeNotifier {
     //isLockScreen = isLock ?? false;
     _stopTimer();
     isFullScreen = !isFullScreen;
-    initialPosition = 0.0;
     scale = 1.0;
-    initialScale = 1.0;
-    dragOffset = 0.0;
     toggleCount++;
     notifyListeners();
 
@@ -335,7 +293,6 @@ class VideoBloc extends ChangeNotifier {
     });
 
     if (isFullScreen) {
-      //await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
       if (Platform.isAndroid) {
         await SystemChrome.setPreferredOrientations([
           DeviceOrientation.landscapeRight,
@@ -345,7 +302,6 @@ class VideoBloc extends ChangeNotifier {
         AutoOrientation.landscapeRightMode();
       }
     } else {
-      //await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       if (Platform.isAndroid) {
         await SystemChrome.setPreferredOrientations([
           DeviceOrientation.portraitUp,
@@ -403,35 +359,18 @@ class VideoBloc extends ChangeNotifier {
     return "$minutes:$seconds";
   }
 
-  void seekForward() {
-    final newPosition =
-        videoPlayerController.value.position + Duration(seconds: 10);
+  void seekBy(Duration offset) async {
+    final currentPosition = videoPlayerController.value.position;
+    final duration = videoPlayerController.value.duration;
+    final newPosition = currentPosition + offset;
 
-    if (newPosition > videoPlayerController.value.duration) {
-      return;
+    if (newPosition < Duration.zero) {
+      await videoPlayerController.seekTo(Duration.zero);
+    } else if (newPosition > duration) {
+      await videoPlayerController.seekTo(duration);
+    } else {
+      await videoPlayerController.seekTo(newPosition);
     }
-    smoothSeek(newPosition);
-  }
-
-  void seekBackward() {
-    final newPosition =
-        videoPlayerController.value.position - Duration(seconds: 10);
-    smoothSeek(newPosition);
-  }
-
-  Future<void> smoothSeek(Duration targetPosition) async {
-    seekCount++;
-    notifyListeners();
-
-    await videoPlayerController.seekTo(targetPosition);
-
-    if (!videoPlayerController.value.isPlaying &&
-        targetPosition != videoPlayerController.value.duration) {
-      videoPlayerController.play();
-      chewieControllerNotifier?.play();
-    }
-
-    seekCount = 0;
     notifyListeners();
   }
 

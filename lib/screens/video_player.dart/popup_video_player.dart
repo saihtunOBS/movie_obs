@@ -170,7 +170,6 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
         MiniVideoPlayer.removeMiniPlayer();
         videoPlayerController.pause();
         _pendingDismiss = false;
-        showMiniControl = false;
       }
     } else {
       _snapToNearestCorner(screenSize);
@@ -221,172 +220,140 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
               borderRadius: BorderRadius.circular(10),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Column(
+                child: Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        IgnorePointer(
-                          ignoring: true,
-                          child: Container(
-                            color: Colors.grey.withValues(alpha: 0.4),
-                            width: _width,
-                            height: _height,
-                            child: Chewie(
-                              controller: chewieControllerNotifier!,
+                    IgnorePointer(
+                      ignoring: true,
+                      child: Container(
+                        color: Colors.grey.withValues(alpha: 0.4),
+                        width: _width,
+                        height: _height,
+                        child: Chewie(controller: chewieControllerNotifier!),
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      left: 0,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          PageNavigator(ctx: context).nextPage(
+                            page: VideoPlayerScreen(
+                              url: '',
+                              isFirstTime: false,
+                              type: '',
                             ),
+                          );
+                        },
+                        child: SizedBox(height: 230),
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: IconButton(
+                        icon: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black45,
+                          ),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: 20,
                           ),
                         ),
-                        Positioned(
-                          right: 0,
-                          left: 0,
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () {
-                              PageNavigator(ctx: context).nextPage(
-                                page: VideoPlayerScreen(
-                                  url: '',
-                                  isFirstTime: false,
-                                  type: '',
-                                ),
-                              );
-                            },
-                            child: SizedBox(height: 230),
-                          ),
-                        ),
-                        Positioned(
-                          right: 0,
-                          top: 0,
-                          child: IconButton(
-                            icon: Icon(Icons.close, color: Colors.white),
-                            onPressed:
-                                () => MiniVideoPlayer.removeMiniPlayer(
-                                  isClose: true,
-                                ),
-                          ),
-                        ),
-                        Positioned(
-                          right: -23,
-                          left: -23,
-                          bottom: -20,
-                          child: IgnorePointer(
-                            ignoring: true,
-                            child: SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                trackHeight: 1.0,
-                                inactiveTrackColor: Colors.transparent,
-                                activeTrackColor: kSecondaryColor,
-                                trackShape: const RoundedRectSliderTrackShape(),
-                                thumbShape: const RoundSliderThumbShape(
-                                  enabledThumbRadius: 0.0,
-                                ),
-                              ),
-                              child: ValueListenableBuilder(
-                                valueListenable: videoPlayerController,
-                                builder: (
-                                  context,
-                                  VideoPlayerValue value,
-                                  child,
-                                ) {
-                                  if (value.isInitialized) {
-                                    final duration = value.duration;
-                                    final position = value.position;
 
-                                    if (duration.inMilliseconds > 0 &&
-                                        !bloc.isSeeking) {
-                                      progress = (position.inMilliseconds /
-                                              duration.inMilliseconds)
-                                          .clamp(0.0, 1.0);
+                        onPressed:
+                            () =>
+                                MiniVideoPlayer.removeMiniPlayer(isClose: true),
+                      ),
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: playerStatus,
+                      builder:
+                          (BuildContext context, int value, Widget? child) =>
+                              IconButton.filled(
+                                style: IconButton.styleFrom(
+                                  backgroundColor: Colors.black45,
+                                ),
+                                onPressed: () {
+                                  if (value == 3) {
+                                    videoPlayerController
+                                        .seekTo(Duration.zero)
+                                        .then((_) {
+                                          videoPlayerController.play();
+                                        });
+                                  } else {
+                                    if (value == 2) {
+                                      videoPlayerController.pause();
+                                      MiniVideoPlayer.isPlay = false;
                                     } else {
-                                      progress = bloc.manualSeekProgress;
+                                      videoPlayerController.play();
+                                      MiniVideoPlayer.isPlay = true;
                                     }
                                   }
-
-                                  return Slider(
-                                    value: progress,
-                                    onChanged: (newValue) {},
-                                  );
+                                  setState(() {});
                                 },
+                                icon:
+                                    bloc.seekCount != 0
+                                        ? Icon(
+                                          CupertinoIcons.pause,
+                                          size: 25,
+                                          color: kWhiteColor,
+                                        )
+                                        : Icon(
+                                          value == 3
+                                              ? CupertinoIcons.arrow_clockwise
+                                              : value == 2
+                                              ? CupertinoIcons.pause
+                                              : CupertinoIcons.play,
+                                          size: 25,
+                                          color: Colors.white,
+                                        ),
                               ),
+                    ),
+                    Positioned(
+                      right: -23,
+                      left: -23,
+                      bottom: -22,
+                      child: IgnorePointer(
+                        ignoring: true,
+                        child: SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                            trackHeight: 1.0,
+                            inactiveTrackColor: Colors.transparent,
+                            activeTrackColor: kSecondaryColor,
+                            trackShape: const RoundedRectSliderTrackShape(),
+                            thumbShape: const RoundSliderThumbShape(
+                              enabledThumbRadius: 0.0,
                             ),
+                          ),
+                          child: ValueListenableBuilder(
+                            valueListenable: videoPlayerController,
+                            builder: (context, VideoPlayerValue value, child) {
+                              if (value.isInitialized) {
+                                final duration = value.duration;
+                                final position = value.position;
+
+                                if (duration.inMilliseconds > 0 &&
+                                    !bloc.isSeeking) {
+                                  progress = (position.inMilliseconds /
+                                          duration.inMilliseconds)
+                                      .clamp(0.0, 1.0);
+                                } else {
+                                  progress = bloc.manualSeekProgress;
+                                }
+                              }
+
+                              return Slider(
+                                value: progress,
+                                onChanged: (newValue) {},
+                              );
+                            },
                           ),
                         ),
-                      ],
-                    ),
-                    Container(
-                      color: Colors.grey.withValues(alpha: 0.4),
-                      height: 43,
-                      width: getDeviceType() == 'phone' ? 180 : 250,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            iconSize: 18,
-                            onPressed: () {
-                              bloc.seekBackward();
-                              // MiniVideoPlayer.isPlay = true;
-                            },
-                            icon: Icon(
-                              CupertinoIcons.gobackward_10,
-                              color: Colors.white,
-                            ),
-                          ),
-                          ValueListenableBuilder(
-                            valueListenable: videoPlayerController,
-                            builder:
-                                (
-                                  BuildContext context,
-                                  VideoPlayerValue value,
-                                  Widget? child,
-                                ) => IconButton(
-                                  onPressed: () {
-                                    if (value.isCompleted) {
-                                      videoPlayerController
-                                          .seekTo(Duration.zero)
-                                          .then((_) {
-                                            videoPlayerController.play();
-                                          });
-                                    } else {
-                                      if (value.isPlaying) {
-                                        videoPlayerController.pause();
-                                        MiniVideoPlayer.isPlay = false;
-                                      } else {
-                                        videoPlayerController.play();
-                                        MiniVideoPlayer.isPlay = true;
-                                      }
-                                    }
-                                    setState(() {});
-                                  },
-                                  icon:
-                                      bloc.seekCount != 0
-                                          ? Icon(
-                                            CupertinoIcons.pause,
-                                            size: 25,
-                                            color: kWhiteColor,
-                                          )
-                                          : Icon(
-                                            value.isCompleted
-                                                ? CupertinoIcons.arrow_clockwise
-                                                : value.isPlaying
-                                                ? CupertinoIcons.pause
-                                                : CupertinoIcons.play,
-                                            size: 25,
-                                            color: Colors.white,
-                                          ),
-                                ),
-                          ),
-                          IconButton(
-                            iconSize: 18,
-                            onPressed: () {
-                              bloc.seekForward();
-                              // MiniVideoPlayer.isPlay = true;
-                            },
-                            icon: Icon(
-                              CupertinoIcons.goforward_10,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
                       ),
                     ),
                   ],

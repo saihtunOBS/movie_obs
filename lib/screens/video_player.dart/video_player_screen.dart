@@ -23,6 +23,7 @@ import 'package:screen_brightness/screen_brightness.dart';
 import 'package:video_player/video_player.dart';
 
 final ValueNotifier<bool> isPlay = ValueNotifier(false);
+final ValueNotifier<int> playerStatus = ValueNotifier(1);
 
 bool showControl = true;
 bool isAutoRotateEnabled = false;
@@ -103,16 +104,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     _checkOrientation();
     super.didChangeMetrics();
   }
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   if (chewieControllerNotifier == null) {
-  //     WidgetsBinding.instance.addPostFrameCallback((_) {
-  //       bloc.initializeVideo(widget.url ?? '');
-  //     });
-  //   }
-  // }
 
   @override
   void initState() {
@@ -337,15 +328,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             },
             child: Stack(
               children: [
-                chewieControllerNotifier == null ||
-                        !videoPlayerController.value.isInitialized ||
-                        bloc.isLoading
+                !videoPlayerController.value.isInitialized
                     ? _buildLoadingIndicator()
                     : _buildVideoPlayer(),
 
-                chewieControllerNotifier == null ||
-                        !videoPlayerController.value.isInitialized ||
-                        bloc.isLoading
+                !videoPlayerController.value.isInitialized
                     ? _buildLoadingIndicator()
                     : showControl == true
                     ? _buildPlayPauseControls()
@@ -433,7 +420,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             onPressed: () {
               bloc.resetControlVisibility(isSeek: true);
               if (videoPlayerController.value.isInitialized) {
-                bloc.seekBackward();
+                bloc.seekBy(Duration(seconds: -5));
               }
               isPlay.value = false;
             },
@@ -444,7 +431,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             onPressed: () {
               bloc.resetControlVisibility(isSeek: true);
               if (videoPlayerController.value.isInitialized) {
-                bloc.seekForward();
+                bloc.seekBy(Duration(seconds: 5));
               }
               isPlay.value = false;
             },
@@ -467,25 +454,21 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Widget _buildPlayPauseButton() {
     return ValueListenableBuilder(
-      valueListenable: videoPlayerController,
+      valueListenable: playerStatus,
       builder:
           (context, value, child) => IconButton.filled(
             onPressed: _togglePlayPause,
             icon: Padding(
               padding: const EdgeInsets.all(5.0),
               child:
-                  value.isCompleted
+                  value == 3
                       ? const Icon(
                         CupertinoIcons.arrow_counterclockwise,
                         size: 35,
                         color: kWhiteColor,
                       )
-                      : bloc.seekCount != 0
-                      ? Icon(CupertinoIcons.pause, size: 35, color: kWhiteColor)
                       : Icon(
-                        value.isPlaying
-                            ? CupertinoIcons.pause
-                            : CupertinoIcons.play,
+                        value == 2 ? CupertinoIcons.pause : CupertinoIcons.play,
                         color: kWhiteColor,
                         size: 35,
                       ),
@@ -500,13 +483,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       videoPlayerController.seekTo(Duration.zero).then((_) {
         videoPlayerController.play();
         isPlay.value = true;
+        playerStatus.value = 2;
       });
     } else {
       if (videoPlayerController.value.isPlaying) {
         videoPlayerController.pause();
         isPlay.value = false;
+        playerStatus.value = 1;
       } else {
         videoPlayerController.play();
+        playerStatus.value = 2;
         isPlay.value = true;
       }
     }
@@ -1159,7 +1145,6 @@ class Player extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: ClipRRect(
-              // borderRadius: BorderRadius.circular(10),
               child: AspectRatio(
                 aspectRatio: videoPlayerController.value.aspectRatio,
                 child: IgnorePointer(
@@ -1168,66 +1153,11 @@ class Player extends StatelessWidget {
               ),
             ),
           ),
-          _buildHoverEffect(Alignment.centerLeft, bloc.isHoveringLeft),
-          _buildHoverEffect(Alignment.centerRight, bloc.isHoveringRight),
 
           if (showControl) _buildOverlay(),
         ],
       ),
     );
-  }
-
-  Widget _buildHoverEffect(
-    Alignment alignment,
-    ValueNotifier<bool> hoveringNotifier,
-  ) {
-    return Align(
-      alignment: alignment,
-      child: ValueListenableBuilder<bool>(
-        valueListenable: hoveringNotifier,
-        builder: (context, hovering, child) {
-          return AnimatedOpacity(
-            opacity: hovering ? 0.3 : 0,
-            duration: const Duration(milliseconds: 300),
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.3,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                color:
-                    bloc.isLockScreen
-                        ? Colors.transparent
-                        : hovering
-                        ? Colors.black54
-                        : Colors.transparent,
-                borderRadius: _getBorderRadius(alignment, context),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  BorderRadius _getBorderRadius(Alignment alignment, BuildContext context) {
-    if (alignment == Alignment.centerLeft) {
-      return BorderRadius.only(
-        topRight: Radius.circular(
-          bloc.isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
-        ),
-        bottomRight: Radius.circular(
-          bloc.isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
-        ),
-      );
-    } else {
-      return BorderRadius.only(
-        bottomLeft: Radius.circular(
-          bloc.isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
-        ),
-        topLeft: Radius.circular(
-          bloc.isFullScreen ? MediaQuery.of(context).size.width / 3 : 125,
-        ),
-      );
-    }
   }
 
   Widget _buildOverlay() {
