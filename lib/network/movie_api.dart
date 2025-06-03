@@ -8,6 +8,7 @@ import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart'
     show SendOtpRequest;
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/requests/view_count_request.dart';
 import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
@@ -214,5 +215,12 @@ abstract class MovieApi {
   Future<NotificationResponse> getNotifications(
     @Header(kHeaderAuthorization) String token,
     @Query('getAll') bool getAll,
+  );
+
+  @POST('$kEndPointViewCount/{id}')
+  Future<void> updateViewCount(
+    @Header(kHeaderAuthorization) String token,
+    @Path() String id,
+    @Body() ViewCountRequest request,
   );
 }

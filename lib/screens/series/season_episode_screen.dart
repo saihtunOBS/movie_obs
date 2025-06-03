@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/bloc/season_episode_bloc.dart';
 import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
@@ -8,6 +9,7 @@ import 'package:movie_obs/screens/series/episode_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/page_navigator.dart';
@@ -38,6 +40,17 @@ class SeasonEpisodeScreen extends StatefulWidget {
 }
 
 class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HomeBloc>().updateViewCount(
+        'Season',
+        widget.season?.id ?? '',
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -268,7 +281,7 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
                   fontSize: kTextRegular18,
                 ),
               ),
-          _episodeListView(bloc),
+          bloc.isLoading ? LoadingView() : _episodeListView(bloc),
         ],
       ),
     );
@@ -286,25 +299,27 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
-                PageNavigator(ctx: context).nextPage(
-                  page: EpisodeScreen(
-                    episodeResponse: bloc.seasonEpisodeResponse,
-                    episodeData: bloc.seasonEpisodeResponse?.episodes?[index],
-                    seriesId: widget.seriesId ?? '',
-                  ),
-                );
+                PageNavigator(ctx: context)
+                    .nextPage(
+                      page: EpisodeScreen(
+                        episodeResponse: bloc.seasonEpisodeResponse,
+                        episodeData:
+                            bloc.seasonEpisodeResponse?.episodes?[index],
+                        seriesId: widget.seriesId ?? '',
+                      ),
+                    )
+                    .whenComplete(() {
+                      bloc.getSeasonEpisode();
+                    });
               },
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 5),
-                child: episodeListItem(
-                  imageUrl: bloc.seasonEpisodeResponse?.bannerImageUrl,
-                  isLast:
-                      (index ==
-                          (bloc.seasonEpisodeResponse?.episodes?.length ?? 0) -
-                              1),
-                  isSeries: false,
-                  data: bloc.seasonEpisodeResponse?.episodes?[index],
-                ),
+              child: episodeListItem(
+                imageUrl: bloc.seasonEpisodeResponse?.bannerImageUrl,
+                isLast:
+                    (index ==
+                        (bloc.seasonEpisodeResponse?.episodes?.length ?? 0) -
+                            1),
+                isSeries: false,
+                data: bloc.seasonEpisodeResponse?.episodes?[index],
               ),
             );
           },

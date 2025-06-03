@@ -4,6 +4,7 @@ import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/adsAndBanner_vo.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
+import 'package:movie_obs/network/requests/view_count_request.dart';
 
 class HomeBloc extends ChangeNotifier {
   bool isLoading = false;
@@ -43,6 +44,12 @@ class HomeBloc extends ChangeNotifier {
   void updateToken() {
     token = PersistenceData.shared.getToken();
     notifyListeners();
+  }
+
+  void updateViewCount(String type, String id) {
+    updateToken();
+    var request = ViewCountRequest(type);
+    _movieModel.updateViewCount(token, id, request);
   }
 
   getAllMovieAndSeries() {

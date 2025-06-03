@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/bloc/series_detail_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
@@ -15,14 +16,30 @@ import 'package:provider/provider.dart';
 import '../../data/vos/movie_vo.dart';
 import 'package:movie_obs/l10n/app_localizations.dart';
 
-class SeriesDetailScreen extends StatelessWidget {
+class SeriesDetailScreen extends StatefulWidget {
   const SeriesDetailScreen({super.key, this.series});
   final MovieVO? series;
 
   @override
+  State<SeriesDetailScreen> createState() => _SeriesDetailScreenState();
+}
+
+class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HomeBloc>().updateViewCount(
+        'Season',
+        widget.series?.id ?? '',
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => SeriesDetailBloc(series?.id, context),
+      create: (context) => SeriesDetailBloc(widget.series?.id, context),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         body: Consumer<SeriesDetailBloc>(
@@ -49,7 +66,9 @@ class SeriesDetailScreen extends StatelessWidget {
                               bottomLeft: Radius.circular(35),
                               bottomRight: Radius.circular(35),
                             ),
-                            child: cacheImage(series?.posterImageUrl ?? ''),
+                            child: cacheImage(
+                              widget.series?.posterImageUrl ?? '',
+                            ),
                           ),
                         ),
                         Positioned(
@@ -102,7 +121,7 @@ class SeriesDetailScreen extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              series?.name ?? '',
+              widget.series?.name ?? '',
               style: TextStyle(fontSize: kTextRegular18 + 2),
             ),
           ),

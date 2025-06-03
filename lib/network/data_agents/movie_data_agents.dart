@@ -4,6 +4,7 @@ import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/requests/view_count_request.dart';
 import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
@@ -109,4 +110,10 @@ abstract class MovieDataAgents {
   Future<void> deleteUser(String token);
 
   Future<NotificationResponse> getNotifications(String token);
+
+  Future<void> updateViewCount(
+    String token,
+    String id,
+    ViewCountRequest request,
+  );
 }

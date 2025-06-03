@@ -2,6 +2,7 @@ import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/episode_bloc.dart';
+import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/data/vos/episode_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
@@ -15,7 +16,7 @@ import 'package:provider/provider.dart';
 import '../../list_items/episode_list_item.dart';
 import '../../widgets/expandable_text.dart';
 
-class EpisodeScreen extends StatelessWidget {
+class EpisodeScreen extends StatefulWidget {
   const EpisodeScreen({
     super.key,
     this.episodeResponse,
@@ -27,9 +28,25 @@ class EpisodeScreen extends StatelessWidget {
   final String seriesId;
 
   @override
+  State<EpisodeScreen> createState() => _EpisodeScreenState();
+}
+
+class _EpisodeScreenState extends State<EpisodeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HomeBloc>().updateViewCount(
+        'Season',
+        widget.episodeData?.id ?? '',
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => EpisodeBloc(episodeData ?? EpisodeVO()),
+      create: (_) => EpisodeBloc(widget.episodeData ?? EpisodeVO()),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         body: Consumer<EpisodeBloc>(
@@ -56,7 +73,9 @@ class EpisodeScreen extends StatelessWidget {
                               bottomLeft: Radius.circular(35),
                               bottomRight: Radius.circular(35),
                             ),
-                            child: cacheImage(episodeResponse?.bannerImageUrl),
+                            child: cacheImage(
+                              widget.episodeResponse?.bannerImageUrl,
+                            ),
                           ),
                         ),
 
@@ -191,31 +210,32 @@ class EpisodeScreen extends StatelessWidget {
       padding: EdgeInsets.zero,
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: episodeResponse?.episodes?.length,
+      itemCount: widget.episodeResponse?.episodes?.length,
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
             bloc.changeEpisode(
-              episodeResponse?.episodes?[index] ?? EpisodeVO(),
+              widget.episodeResponse?.episodes?[index] ?? EpisodeVO(),
             );
           },
           child: Container(
             padding: EdgeInsets.symmetric(
               horizontal:
                   bloc.currentEpisode?.id ==
-                          episodeResponse?.episodes?[index].id
+                          widget.episodeResponse?.episodes?[index].id
                       ? 20
                       : 0,
             ),
 
             child: episodeListItem(
-              imageUrl: episodeResponse?.bannerImageUrl,
+              imageUrl: widget.episodeResponse?.bannerImageUrl,
               isSeries: false,
-              isLast: index == (episodeResponse?.episodes?.length ?? 0) - 1,
-              data: episodeResponse?.episodes?[index],
+              isLast:
+                  index == (widget.episodeResponse?.episodes?.length ?? 0) - 1,
+              data: widget.episodeResponse?.episodes?[index],
               color:
                   bloc.currentEpisode?.id ==
-                          episodeResponse?.episodes?[index].id
+                          widget.episodeResponse?.episodes?[index].id
                       ? kSecondaryColor.withValues(alpha: 0.2)
                       : Colors.transparent,
             ),
@@ -245,7 +265,7 @@ class EpisodeScreen extends StatelessWidget {
             url: bloc.currentEpisode?.videoUrl ?? '',
             isFirstTime: true,
             type: 'SERIES',
-            videoId: seriesId,
+            videoId: widget.seriesId,
           ),
         );
       },

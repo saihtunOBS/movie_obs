@@ -10,6 +10,7 @@ import 'package:movie_obs/network/movie_api.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/requests/view_count_request.dart';
 import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
@@ -476,6 +477,23 @@ class MovieDataAgentsImpl extends MovieDataAgents {
         .map((response) => response)
         .first
         .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<void> updateViewCount(
+    String token,
+    String id,
+    ViewCountRequest request,
+  ) {
+    return movieApi
+        .updateViewCount('Bearer $token', id, request)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          print('error is....$error');
           throw _createException(error);
         });
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/bloc/movie_detail_bloc.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
@@ -30,6 +31,15 @@ class MovieDetailScreen extends StatefulWidget {
 }
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HomeBloc>().updateViewCount('Movie', widget.movie?.id ?? '');
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(

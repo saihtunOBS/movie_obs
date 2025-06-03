@@ -4,6 +4,7 @@ import 'package:movie_obs/data/vos/movie_vo.dart' show MovieVO;
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/requests/history_request.dart'
     show HistoryRequest;
+import 'package:movie_obs/network/requests/view_count_request.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 
@@ -108,4 +109,9 @@ abstract class MovieModel {
   Future<TermPrivacyResponse> getPrivacyPolicy(String token);
   Future<void> deleteUser(String token);
   Future<NotificationResponse> getNotifications(String token);
+  Future<void> updateViewCount(
+    String token,
+    String id,
+    ViewCountRequest request,
+  );
 }

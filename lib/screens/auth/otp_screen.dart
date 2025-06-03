@@ -172,57 +172,60 @@ class _OTPScreenState extends State<OTPScreen> {
         ),
         bottomNavigationBar: Consumer<AuthBloc>(
           builder:
-              (context, bloc, child) => Container(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                ),
-                margin: EdgeInsets.only(
-                  left:
-                      getDeviceType() == 'phone'
-                          ? kMarginMedium2
-                          : MediaQuery.of(context).size.width * 0.15,
-                  right:
-                      getDeviceType() == 'phone'
-                          ? kMarginMedium2
-                          : MediaQuery.of(context).size.width * 0.15,
-                  bottom: 27,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  spacing: 2,
-                  children: [
-                    customButton(
-                      onPress: () {
-                        FocusScope.of(context).unfocus();
-                        Future.delayed(Duration(milliseconds: 300), () {
-                          bloc
-                              .verifyOtp(
-                                widget.phone ?? '',
-                                '$otpRequestId',
-                                pinController.text,
-                              )
-                              .then((response) {
-                                _timer?.cancel();
-                                _start = 180;
-                                PersistenceData.shared.saveToken(
-                                  response.accessToken ?? '',
-                                );
-                                PageNavigator(
-                                  ctx: context,
-                                ).nextPage(page: ChangeLanguageScreen());
-                              })
-                              .catchError((error) {
-                                ToastService.warningToast(error.toString());
-                              });
-                        });
-                      },
-                      context: context,
-                      backgroundColor: kSecondaryColor,
-                      title: AppLocalizations.of(context)?.confirm ?? '',
-                      textColor: kWhiteColor,
-                    ),
-                    Image.asset(kShadowImage),
-                  ],
+              (context, bloc, child) => IgnorePointer(
+                ignoring: bloc.isLoading == true,
+                child: Container(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  margin: EdgeInsets.only(
+                    left:
+                        getDeviceType() == 'phone'
+                            ? kMarginMedium2
+                            : MediaQuery.of(context).size.width * 0.15,
+                    right:
+                        getDeviceType() == 'phone'
+                            ? kMarginMedium2
+                            : MediaQuery.of(context).size.width * 0.15,
+                    bottom: 27,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: 2,
+                    children: [
+                      customButton(
+                        onPress: () {
+                          FocusScope.of(context).unfocus();
+                          Future.delayed(Duration(milliseconds: 300), () {
+                            bloc
+                                .verifyOtp(
+                                  widget.phone ?? '',
+                                  '$otpRequestId',
+                                  pinController.text,
+                                )
+                                .then((response) {
+                                  _timer?.cancel();
+                                  _start = 180;
+                                  PersistenceData.shared.saveToken(
+                                    response.accessToken ?? '',
+                                  );
+                                  PageNavigator(
+                                    ctx: context,
+                                  ).nextPage(page: ChangeLanguageScreen());
+                                })
+                                .catchError((error) {
+                                  ToastService.warningToast(error.toString());
+                                });
+                          });
+                        },
+                        context: context,
+                        backgroundColor: kSecondaryColor,
+                        title: AppLocalizations.of(context)?.confirm ?? '',
+                        textColor: kWhiteColor,
+                      ),
+                      Image.asset(kShadowImage),
+                    ],
+                  ),
                 ),
               ),
         ),

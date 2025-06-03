@@ -8,6 +8,7 @@ import 'package:movie_obs/network/data_agents/movie_data_agents_impl.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
+import 'package:movie_obs/network/requests/view_count_request.dart';
 import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
@@ -255,5 +256,14 @@ class MovieModelImpl extends MovieModel {
   @override
   Future<NotificationResponse> getNotifications(String token) {
     return movieDataAgent.getNotifications(token);
+  }
+
+  @override
+  Future<void> updateViewCount(
+    String token,
+    String id,
+    ViewCountRequest request,
+  ) {
+    return movieDataAgent.updateViewCount(token, id, request);
   }
 }

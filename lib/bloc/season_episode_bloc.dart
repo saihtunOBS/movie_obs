@@ -31,17 +31,45 @@ class SeasonEpisodeBloc extends ChangeNotifier {
   }
 
   getSeasonEpisode() {
-    _movieModel.getSeasonEpisode(token, seasonId).then((response) {
-      seasonEpisodeResponse = response;
-      final combinedCasts = <ActorVO>[
-        ...(response.actors ?? []),
-        ...(response.actresses ?? []),
-        ...(response.supports ?? []),
-      ];
+    _showLoading();
+    _movieModel
+        .getSeasonEpisode(token, seasonId)
+        .then((response) {
+          seasonEpisodeResponse = response;
+          final combinedCasts = <ActorVO>[
+            ...(response.actors ?? []),
+            ...(response.actresses ?? []),
+            ...(response.supports ?? []),
+          ];
 
-      castsLists.addAll(combinedCasts);
+          castsLists.addAll(combinedCasts);
+          _hideLoading();
+        })
+        .catchError((_) {
+          _hideLoading();
+        });
+  }
+
+  _showLoading() {
+    isLoading = true;
+    _notifySafely();
+  }
+
+  _hideLoading() {
+    isLoading = false;
+    _notifySafely();
+  }
+
+  void _notifySafely() {
+    if (!isDisposed) {
       notifyListeners();
-    });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    isDisposed = true;
   }
 
   toggleWatchlist() {
@@ -61,11 +89,5 @@ class SeasonEpisodeBloc extends ChangeNotifier {
         .catchError((error) {
           ToastService.warningToast(error.toString());
         });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    isDisposed = true;
   }
 }
