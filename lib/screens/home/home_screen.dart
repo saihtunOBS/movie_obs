@@ -257,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(
                     fontFamily:
                         PersistenceData.shared.getLocale() == 'en'
-                            ? GoogleFonts.cinzel().fontFamily
+                            ? GoogleFonts.prata().fontFamily
                             : GoogleFonts.notoSerifMyanmar().fontFamily,
                     fontSize:
                         PersistenceData.shared.getLocale() != 'en' ? 12 : 14,
@@ -291,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(
                     fontFamily:
                         PersistenceData.shared.getLocale() == 'en'
-                            ? GoogleFonts.cinzel().fontFamily
+                            ? GoogleFonts.prata().fontFamily
                             : GoogleFonts.notoSerifMyanmar().fontFamily,
                     fontSize:
                         PersistenceData.shared.getLocale() != 'en' ? 12 : 14,
@@ -331,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(
                       fontFamily:
                           PersistenceData.shared.getLocale() == 'en'
-                              ? GoogleFonts.cinzel().fontFamily
+                              ? GoogleFonts.prata().fontFamily
                               : GoogleFonts.notoSerifMyanmar().fontFamily,
                       fontSize:
                           PersistenceData.shared.getLocale() != 'en' ? 12 : 14,

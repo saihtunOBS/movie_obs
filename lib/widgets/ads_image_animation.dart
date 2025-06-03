@@ -84,6 +84,7 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
                       ? SizedBox.shrink()
                       : SizedBox(
                         height: MediaQuery.sizeOf(context).height * 0.6,
+                        width: double.infinity,
                         child: FadeTransition(
                           opacity: _animation,
                           child: ClipRRect(

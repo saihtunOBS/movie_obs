@@ -66,7 +66,7 @@ class MiniVideoPlayer {
     if (_overlayEntry == null) return;
     _animationController.reverse().then((_) {
       if (isClose == true) {
-        videoPlayerController.pause();
+        videoPlayerController?.pause();
       }
       _overlayEntry?.remove();
       _overlayEntry = null;
@@ -74,7 +74,7 @@ class MiniVideoPlayer {
       saveVideoProgress([
         VideoProgress(
           videoId: videoId,
-          position: videoPlayerController.value.position,
+          position: videoPlayerController?.value.position ?? Duration.zero,
         ),
       ]);
     });
@@ -104,7 +104,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.hidden) {
-      videoPlayerController.pause();
+      videoPlayerController?.pause();
       MiniVideoPlayer.isPlay = false;
       setState(() {});
     }
@@ -125,8 +125,8 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
       duration: Duration(milliseconds: 300),
     );
 
-    videoPlayerController.addListener(() {
-      if (!videoPlayerController.value.isPlaying) {
+    videoPlayerController?.addListener(() {
+      if (!(videoPlayerController?.value.isPlaying ?? true)) {
         MiniVideoPlayer.isPlay = false;
       }
     });
@@ -168,7 +168,7 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
       if (!_pendingDismiss) {
         _pendingDismiss = true;
         MiniVideoPlayer.removeMiniPlayer();
-        videoPlayerController.pause();
+        videoPlayerController?.pause();
         _pendingDismiss = false;
       }
     } else {
@@ -273,46 +273,45 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                     ValueListenableBuilder(
                       valueListenable: playerStatus,
                       builder:
-                          (BuildContext context, int value, Widget? child) =>
-                              IconButton.filled(
-                                style: IconButton.styleFrom(
-                                  backgroundColor: Colors.black45,
-                                ),
-                                onPressed: () {
-                                  if (value == 3) {
-                                    videoPlayerController
-                                        .seekTo(Duration.zero)
-                                        .then((_) {
-                                          videoPlayerController.play();
-                                        });
-                                  } else {
-                                    if (value == 2) {
-                                      videoPlayerController.pause();
-                                      MiniVideoPlayer.isPlay = false;
-                                    } else {
-                                      videoPlayerController.play();
-                                      MiniVideoPlayer.isPlay = true;
-                                    }
-                                  }
-                                  setState(() {});
-                                },
-                                icon:
-                                    bloc.seekCount != 0
-                                        ? Icon(
-                                          CupertinoIcons.pause,
-                                          size: 25,
-                                          color: kWhiteColor,
-                                        )
-                                        : Icon(
-                                          value == 3
-                                              ? CupertinoIcons.arrow_clockwise
-                                              : value == 2
-                                              ? CupertinoIcons.pause
-                                              : CupertinoIcons.play,
-                                          size: 25,
-                                          color: Colors.white,
-                                        ),
-                              ),
+                          (
+                            BuildContext context,
+                            int value,
+                            Widget? child,
+                          ) => IconButton.filled(
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.black45,
+                            ),
+                            onPressed: () {
+                              if (videoPlayerController?.value.isCompleted ??
+                                  true) {
+                                videoPlayerController
+                                    ?.seekTo(Duration.zero)
+                                    .then((_) {
+                                      videoPlayerController?.play();
+                                      isPlay.value = true;
+                                      playerStatus.value = 2;
+                                    });
+                              } else {
+                                if (videoPlayerController?.value.isPlaying ??
+                                    true) {
+                                  videoPlayerController?.pause();
+                                  playerStatus.value = 1;
+                                } else {
+                                  videoPlayerController?.play();
+                                  playerStatus.value = 2;
+                                }
+                              }
+                            },
+                            icon: Icon(
+                              value == 3
+                                  ? CupertinoIcons.arrow_clockwise
+                                  : value == 2
+                                  ? CupertinoIcons.pause
+                                  : CupertinoIcons.play,
+                              size: 25,
+                              color: Colors.white,
+                            ),
+                          ),
                     ),
                     Positioned(
                       right: -23,
@@ -331,7 +330,8 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
                             ),
                           ),
                           child: ValueListenableBuilder(
-                            valueListenable: videoPlayerController,
+                            valueListenable:
+                                videoPlayerController as VideoPlayerController,
                             builder: (context, VideoPlayerValue value, child) {
                               if (value.isInitialized) {
                                 final duration = value.duration;

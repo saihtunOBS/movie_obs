@@ -17,7 +17,7 @@ import '../network/requests/history_request.dart';
 final ValueNotifier<bool> showVisibleMiniControl = ValueNotifier(true);
 final ValueNotifier<bool> onStartDrag = ValueNotifier(true);
 
-late final VideoPlayerController videoPlayerController;
+VideoPlayerController? videoPlayerController;
 ChewieController? chewieControllerNotifier;
 
 final ValueNotifier<bool> showMiniControlVisible = ValueNotifier(false);
@@ -84,26 +84,26 @@ class VideoBloc extends ChangeNotifier {
   }
 
   void pausedPlayer() {
-    videoPlayerController.pause();
+    videoPlayerController?.pause();
     notifyListeners();
   }
 
   void playPlayer() {
-    videoPlayerController.play();
+    videoPlayerController?.play();
     notifyListeners();
   }
 
   void updateSpeed(double value) {
     videoCurrentSpeed = value;
-    videoPlayerController.setPlaybackSpeed(value);
+    videoPlayerController?.setPlaybackSpeed(value);
     notifyListeners();
   }
 
   void playPauseVideoPlayer() {
-    if (videoPlayerController.value.isPlaying) {
-      videoPlayerController.pause();
+    if (videoPlayerController?.value.isPlaying ?? true) {
+      videoPlayerController?.pause();
     } else {
-      videoPlayerController.play();
+      videoPlayerController?.play();
     }
     resetControlVisibility();
     notifyListeners();
@@ -180,9 +180,9 @@ class VideoBloc extends ChangeNotifier {
       ),
       videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: true),
     );
-    videoPlayerController.initialize().then((_) {
+    videoPlayerController?.initialize().then((_) {
       chewieControllerNotifier = ChewieController(
-        videoPlayerController: videoPlayerController,
+        videoPlayerController: videoPlayerController as VideoPlayerController,
         showControls: false,
         aspectRatio: 16 / 9,
         useRootNavigator: false,
@@ -195,8 +195,8 @@ class VideoBloc extends ChangeNotifier {
 
     isLoading = false;
 
-    videoPlayerController.addListener(() {
-      if (videoPlayerController.value.isCompleted) {
+    videoPlayerController?.addListener(() {
+      if (videoPlayerController?.value.isCompleted ?? true) {
         isPlay.value = false;
         playerStatus.value = 3;
         showControl = true;
@@ -215,7 +215,7 @@ class VideoBloc extends ChangeNotifier {
     // Cancel the previous timer before creating a new one
     hideControlTimer?.cancel();
     hideControlTimer = Timer(const Duration(seconds: 6), () {
-      if (videoPlayerController.value.isCompleted) {
+      if (videoPlayerController?.value.isCompleted ?? true) {
         showControl = true;
         notifyListeners();
       } else {
@@ -239,35 +239,37 @@ class VideoBloc extends ChangeNotifier {
     updateListener();
     selectedQuality = quality ?? selectedQuality;
     currentUrl = url;
-    final currentPosition = videoPlayerController.value.position;
-    final wasPlaying = videoPlayerController.value.isPlaying;
+    final currentPosition = videoPlayerController?.value.position;
+    final wasPlaying = videoPlayerController?.value.isPlaying ?? true;
 
-    await videoPlayerController.pause();
-    await videoPlayerController.dispose();
+    await videoPlayerController?.pause();
+    await videoPlayerController?.dispose();
 
     videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
 
-    await videoPlayerController.initialize().then((_) async {
-      await videoPlayerController.seekTo(currentDuration ?? currentPosition);
+    await videoPlayerController?.initialize().then((_) async {
+      await videoPlayerController?.seekTo(
+        currentDuration ?? currentPosition ?? Duration.zero,
+      );
 
       if (wasPlaying) {
-        videoPlayerController.play();
+        videoPlayerController?.play();
         isLoading = false;
         notifyListeners();
       } else {
-        videoPlayerController.pause();
+        videoPlayerController?.pause();
         isLoading = false;
         notifyListeners();
       }
     });
 
     chewieControllerNotifier = ChewieController(
-      videoPlayerController: videoPlayerController,
+      videoPlayerController: videoPlayerController as VideoPlayerController,
       showControls: false,
     );
-    videoPlayerController.setVolume(isMuted ? 0.0 : 1.0);
-    videoPlayerController.addListener(() {
-      if (videoPlayerController.value.isCompleted) {
+    videoPlayerController?.setVolume(isMuted ? 0.0 : 1.0);
+    videoPlayerController?.addListener(() {
+      if (videoPlayerController?.value.isCompleted ?? true) {
         isPlay.value = false;
         showControl = true;
         playerStatus.value = 3;
@@ -342,7 +344,7 @@ class VideoBloc extends ChangeNotifier {
   // Function to toggle mute/unmute
   void toggleMute() {
     isMuted = !isMuted;
-    videoPlayerController.setVolume(isMuted ? 0.0 : 1.0);
+    videoPlayerController?.setVolume(isMuted ? 0.0 : 1.0);
     resetControlVisibility(isSeek: true);
     notifyListeners();
   }
@@ -360,16 +362,17 @@ class VideoBloc extends ChangeNotifier {
   }
 
   void seekBy(Duration offset) async {
-    final currentPosition = videoPlayerController.value.position;
-    final duration = videoPlayerController.value.duration;
+    final currentPosition =
+        videoPlayerController?.value.position ?? Duration.zero;
+    final duration = videoPlayerController?.value.duration ?? Duration.zero;
     final newPosition = currentPosition + offset;
 
     if (newPosition < Duration.zero) {
-      await videoPlayerController.seekTo(Duration.zero);
+      await videoPlayerController?.seekTo(Duration.zero);
     } else if (newPosition > duration) {
-      await videoPlayerController.seekTo(duration);
+      await videoPlayerController?.seekTo(duration);
     } else {
-      await videoPlayerController.seekTo(newPosition);
+      await videoPlayerController?.seekTo(newPosition);
     }
     notifyListeners();
   }
@@ -386,7 +389,7 @@ class VideoBloc extends ChangeNotifier {
 
   @override
   void dispose() {
-    videoPlayerController.dispose();
+    videoPlayerController?.dispose();
     chewieControllerNotifier?.dispose();
     hideControlTimer?.cancel();
     toggleTimer?.cancel();

@@ -78,7 +78,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         }
       }
     } else if (state == AppLifecycleState.hidden) {
-      videoPlayerController.pause();
+      videoPlayerController?.pause();
     }
 
     super.didChangeAppLifecycleState(state);
@@ -109,8 +109,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   void initState() {
     super.initState();
 
-    showControl = true;
-
     bufferedProgress = 0.0;
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -120,7 +118,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
     WidgetsBinding.instance.addObserver(this);
     bloc = Provider.of<VideoBloc>(context, listen: false);
-
+    bloc.isLoading = widget.isFirstTime == true ? true : false;
     if (Platform.isAndroid) {
       _subscription = RotationDetector.onRotationLockChanged.listen((
         isEnabled,
@@ -148,7 +146,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      bloc.seekCount = 0;
+      if (widget.isFirstTime == true) playerStatus.value = 1;
+      showControl = true;
       bloc.toggleHistory(widget.videoId ?? '', widget.type);
       bloc.isMuted = false;
       bloc.currentUrl = widget.url ?? '';
@@ -218,9 +217,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     _subscription?.cancel();
 
     // Save video progress before disposing
-    if (widget.videoId != null && videoPlayerController.value.isInitialized) {
-      final position = videoPlayerController.value.position;
-      final duration = videoPlayerController.value.duration;
+    if (widget.videoId != null &&
+        (videoPlayerController?.value.isInitialized ?? true)) {
+      final position = videoPlayerController?.value.position ?? Duration.zero;
+      final duration = videoPlayerController?.value.duration ?? Duration.zero;
 
       if (duration.inSeconds > 0) {
         final progress = position.inSeconds / duration.inSeconds;
@@ -238,9 +238,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     }
 
     if (isClickPopUp != true) {
-      videoPlayerController.pause();
+      videoPlayerController?.pause();
+      chewieControllerNotifier?.pause();
     }
-
     super.dispose();
   }
 
@@ -273,8 +273,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           body: _buildVideoPlayerSection(),
           bottomNavigationBar: SizedBox(
             height: 90,
-            child:
-                showControl == true ? _buildProgressBar() : SizedBox.shrink(),
+            child: Visibility(
+              visible: showControl == true,
+              child: _buildProgressBar(),
+            ),
           ),
         );
       },
@@ -328,11 +330,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             },
             child: Stack(
               children: [
-                !videoPlayerController.value.isInitialized
-                    ? _buildLoadingIndicator()
-                    : _buildVideoPlayer(),
+                bloc.isLoading ? _buildLoadingIndicator() : _buildVideoPlayer(),
 
-                !videoPlayerController.value.isInitialized
+                bloc.isLoading
                     ? _buildLoadingIndicator()
                     : showControl == true
                     ? _buildPlayPauseControls()
@@ -419,7 +419,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             icon: CupertinoIcons.gobackward_10,
             onPressed: () {
               bloc.resetControlVisibility(isSeek: true);
-              if (videoPlayerController.value.isInitialized) {
+              if (videoPlayerController?.value.isInitialized ?? true) {
                 bloc.seekBy(Duration(seconds: -5));
               }
               isPlay.value = false;
@@ -430,7 +430,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             icon: CupertinoIcons.goforward_10,
             onPressed: () {
               bloc.resetControlVisibility(isSeek: true);
-              if (videoPlayerController.value.isInitialized) {
+              if (videoPlayerController?.value.isInitialized ?? true) {
                 bloc.seekBy(Duration(seconds: 5));
               }
               isPlay.value = false;
@@ -479,19 +479,19 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   void _togglePlayPause() {
-    if (videoPlayerController.value.isCompleted) {
-      videoPlayerController.seekTo(Duration.zero).then((_) {
-        videoPlayerController.play();
+    if (videoPlayerController?.value.isCompleted ?? true) {
+      videoPlayerController?.seekTo(Duration.zero).then((_) {
+        videoPlayerController?.play();
         isPlay.value = true;
         playerStatus.value = 2;
       });
     } else {
-      if (videoPlayerController.value.isPlaying) {
-        videoPlayerController.pause();
+      if (videoPlayerController?.value.isPlaying ?? true) {
+        videoPlayerController?.pause();
         isPlay.value = false;
         playerStatus.value = 1;
       } else {
-        videoPlayerController.play();
+        videoPlayerController?.play();
         playerStatus.value = 2;
         isPlay.value = true;
       }
@@ -512,7 +512,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           behavior: HitTestBehavior.opaque,
           onTap: () {
             Navigator.pop(context);
-            videoPlayerController.pause();
+            videoPlayerController?.pause();
           },
           child: Container(
             decoration: BoxDecoration(
@@ -529,16 +529,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            if (videoPlayerController.value.isInitialized) {
+            if (videoPlayerController?.value.isInitialized ?? true) {
               isClickPopUp = true;
               Navigator.pop(context);
-              isPlay.value = !videoPlayerController.value.isPlaying;
+              isPlay.value = !(videoPlayerController?.value.isPlaying ?? true);
               showControl = false;
               bloc.updateListener();
               MiniVideoPlayer.showMiniPlayer(
                 context,
                 bloc.currentUrl,
-                videoPlayerController.value.isPlaying
+                videoPlayerController?.value.isPlaying ?? true
                     ? isPlay.value = true
                     : isPlay.value = false,
                 widget.videoId ?? '',
@@ -655,7 +655,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Widget _buildTimeDisplay() {
     return ValueListenableBuilder(
-      valueListenable: videoPlayerController,
+      valueListenable: videoPlayerController as VideoPlayerController,
       builder: (context, VideoPlayerValue value, child) {
         return Padding(
           padding: const EdgeInsets.only(left: 10),
@@ -682,7 +682,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         secondaryActiveTrackColor:
             bloc.isSeeking
                 ? Colors.transparent
-                : !videoPlayerController.value.isInitialized
+                : !(videoPlayerController?.value.isInitialized ?? true)
                 ? Colors.transparent
                 : Colors.white,
         thumbColor: kPrimaryColor,
@@ -690,7 +690,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7.0),
       ),
       child: ValueListenableBuilder(
-        valueListenable: videoPlayerController,
+        valueListenable: videoPlayerController as VideoPlayerController,
         builder: (context, VideoPlayerValue value, child) {
           if (value.isInitialized) {
             final duration = value.duration;
@@ -711,9 +711,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           }
 
           return Slider(
-            value: !videoPlayerController.value.isInitialized ? 0.0 : progress,
+            value:
+                !(videoPlayerController?.value.isInitialized ?? true)
+                    ? 0.0
+                    : progress,
             secondaryTrackValue:
-                !videoPlayerController.value.isInitialized
+                !(videoPlayerController?.value.isInitialized ?? true)
                     ? 0.0
                     : bufferedProgress,
             onChanged: (newValue) {
@@ -733,16 +736,17 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
               final newPosition = Duration(
                 milliseconds:
-                    (videoPlayerController.value.duration.inMilliseconds *
+                    ((videoPlayerController?.value.duration.inMilliseconds ??
+                                0) *
                             value)
                         .toInt(),
               );
 
-              await videoPlayerController.seekTo(newPosition);
+              await videoPlayerController?.seekTo(newPosition);
               bloc.isSeeking = false;
               bloc.resetControlVisibility(isSeek: true);
 
-              if (newPosition != videoPlayerController.value.duration) {
+              if (newPosition != videoPlayerController?.value.duration) {
                 bloc.playPlayer();
               }
             },
@@ -1146,9 +1150,20 @@ class Player extends StatelessWidget {
             alignment: Alignment.center,
             child: ClipRRect(
               child: AspectRatio(
-                aspectRatio: videoPlayerController.value.aspectRatio,
+                aspectRatio: videoPlayerController?.value.aspectRatio ?? 0.0,
                 child: IgnorePointer(
-                  child: Chewie(controller: chewieControllerNotifier!),
+                  child:
+                      bloc.isLoading
+                          ? SizedBox()
+                          : Chewie(
+                            controller:
+                                chewieControllerNotifier ??
+                                ChewieController(
+                                  videoPlayerController:
+                                      videoPlayerController
+                                          as VideoPlayerController,
+                                ),
+                          ),
                 ),
               ),
             ),
