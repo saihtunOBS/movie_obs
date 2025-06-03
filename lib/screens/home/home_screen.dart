@@ -255,7 +255,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   AppLocalizations.of(context)?.live ?? '',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: GoogleFonts.notoSerifMyanmar().fontFamily,
+                    fontFamily:
+                        PersistenceData.shared.getLocale() == 'en'
+                            ? GoogleFonts.cinzel().fontFamily
+                            : GoogleFonts.notoSerifMyanmar().fontFamily,
                     fontSize:
                         PersistenceData.shared.getLocale() != 'en' ? 12 : 14,
                     color: kWhiteColor,
@@ -286,7 +289,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   AppLocalizations.of(context)?.program ?? '',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: GoogleFonts.notoSerifMyanmar().fontFamily,
+                    fontFamily:
+                        PersistenceData.shared.getLocale() == 'en'
+                            ? GoogleFonts.cinzel().fontFamily
+                            : GoogleFonts.notoSerifMyanmar().fontFamily,
                     fontSize:
                         PersistenceData.shared.getLocale() != 'en' ? 12 : 14,
                     color: kWhiteColor,
@@ -323,7 +329,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     AppLocalizations.of(context)?.watchlist ?? '',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: GoogleFonts.notoSerifMyanmar().fontFamily,
+                      fontFamily:
+                          PersistenceData.shared.getLocale() == 'en'
+                              ? GoogleFonts.cinzel().fontFamily
+                              : GoogleFonts.notoSerifMyanmar().fontFamily,
                       fontSize:
                           PersistenceData.shared.getLocale() != 'en' ? 12 : 14,
                       color: kWhiteColor,
@@ -438,6 +447,7 @@ class _SliverHeader extends SliverPersistentHeaderDelegate {
             style: TextStyle(
               fontSize: kTextRegular3x - 1,
               fontWeight: FontWeight.w700,
+              fontFamily: GoogleFonts.cinzel().fontFamily,
             ),
           ),
           IconButton(

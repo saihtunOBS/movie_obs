@@ -42,7 +42,8 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserBloc>().updateToken();
-      context.read<UserBloc>().getUser(context);
+
+      ///context.read<UserBloc>().getUser(context);
       context.read<NotificationBloc>().updateToken();
       context.read<HomeBloc>().updateToken();
     });
