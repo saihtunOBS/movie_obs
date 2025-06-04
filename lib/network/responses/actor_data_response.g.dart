@@ -24,7 +24,7 @@ ActorDataResponse _$ActorDataResponseFromJson(Map<String, dynamic> json) =>
               .toList(),
       seasons:
           (json['seasons'] as List<dynamic>?)
-              ?.map((e) => SeasonVO.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => MovieVO.fromJson(e as Map<String, dynamic>))
               .toList(),
     );
 

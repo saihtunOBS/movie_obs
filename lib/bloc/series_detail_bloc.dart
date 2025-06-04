@@ -23,13 +23,13 @@ class SeriesDetailBloc extends ChangeNotifier {
   List<MovieVO>? recommendedList;
   SeasonEpisodeResponse? seasonEpisodeResponse;
   BuildContext? myContext;
-  String movieId = '';
+  String seriesId = '';
 
   final MovieModel _movieModel = MovieModelImpl();
 
   SeriesDetailBloc(id, context) {
     myContext = context;
-    movieId = id;
+    seriesId = id;
     token = PersistenceData.shared.getToken();
     getSeriesDetail();
     getRecommendedSeries();
@@ -37,7 +37,7 @@ class SeriesDetailBloc extends ChangeNotifier {
 
   getSeriesDetail() {
     _movieModel
-        .getSeriesDetail(token, movieId, true)
+        .getSeriesDetail(token, seriesId, true)
         .then((response) {
           seriesResponse = response;
 
@@ -63,7 +63,7 @@ class SeriesDetailBloc extends ChangeNotifier {
   }
 
   getRecommendedSeries() {
-    _movieModel.getRecommendedSeries(movieId).then((response) {
+    _movieModel.getRecommendedSeries(seriesId).then((response) {
       recommendedList = response;
       notifyListeners();
     });
@@ -73,7 +73,7 @@ class SeriesDetailBloc extends ChangeNotifier {
     _showLoading();
     var request = WatchlistRequest(
       userDataListener.value.id ?? '',
-      movieId,
+      seriesId,
       'MOVIE',
     );
     _movieModel
@@ -94,7 +94,7 @@ class SeriesDetailBloc extends ChangeNotifier {
     _showLoading();
     var request = HistoryRequest(
       userDataListener.value.id ?? '',
-      movieId,
+      seriesId,
       0,
       'MOVIE',
     );

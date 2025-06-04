@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/actor_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
-import 'package:movie_obs/list_items/season_list_item.dart';
 import 'package:movie_obs/screens/home/movie_detail_screen.dart';
 import 'package:movie_obs/screens/series/series_detail_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
@@ -117,7 +116,7 @@ class ActorViewScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
           child: Text(
-            'Seasons',
+            AppLocalizations.of(context)?.series ?? '',
             style: TextStyle(
               fontSize: kTextRegular2x,
               color: kWhiteColor,
@@ -144,13 +143,13 @@ class ActorViewScreen extends StatelessWidget {
               onTap: () {
                 PageNavigator(ctx: context).nextPage(
                   page: SeriesDetailScreen(
-                    series: bloc.actorData?.seasons?[index].series,
+                    series: bloc.actorData?.seasons?[index],
                   ),
                 );
               },
-              child: seasonListItem(
+              child: movieListItem(
                 isHomeScreen: true,
-                season: bloc.actorData?.seasons?[index],
+                movies: bloc.actorData?.seasons?[index],
                 type: bloc.actorData?.seasons?[index].plan,
               ),
             );

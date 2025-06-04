@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/data/vos/role_vo.dart';
-import 'package:movie_obs/data/vos/season_vo.dart';
 
 part 'actor_data_response.g.dart';
 
@@ -31,7 +30,7 @@ class ActorDataResponse {
   final List<MovieVO>? movies;
 
   @JsonKey(name: "seasons")
-  final List<SeasonVO>? seasons;
+  final List<MovieVO>? seasons;
 
   ActorDataResponse({
     this.id,

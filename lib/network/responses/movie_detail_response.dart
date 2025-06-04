@@ -49,8 +49,8 @@ class MovieDetailResponse {
   @JsonKey(name: "viewCount")
   final int? viewCount;
 
-  @JsonKey(name: "category")
-  final CategoryVO? category;
+  // @JsonKey(name: "category")
+  // final CategoryVO? category;
 
   @JsonKey(name: "duration")
   final int? duration;
@@ -99,7 +99,7 @@ class MovieDetailResponse {
     this.tags,
     this.scriptWriter,
     this.viewCount,
-    this.category,
+    // this.category,
     this.duration,
     this.payPerViewPrice,
     this.publishedYear,
@@ -228,4 +228,3 @@ class CastVO {
 
   Map<String, dynamic> toJson() => _$CastVOToJson(this);
 }
-

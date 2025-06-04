@@ -171,6 +171,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
         .map((response) => response)
         .first
         .catchError((error) {
+          print('error is....$error');
           throw _createException(error);
         });
   }
@@ -493,7 +494,6 @@ class MovieDataAgentsImpl extends MovieDataAgents {
         .map((response) => response)
         .first
         .catchError((error) {
-          print('error is....$error');
           throw _createException(error);
         });
   }

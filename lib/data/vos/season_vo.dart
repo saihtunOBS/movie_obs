@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:movie_obs/data/vos/movie_vo.dart';
 part 'season_vo.g.dart';
 
 @JsonSerializable()
@@ -37,8 +36,8 @@ class SeasonVO {
   @JsonKey(name: "publishedYear")
   final String? publishedYear;
 
-  @JsonKey(name: "series")
-  final MovieVO? series;
+  // @JsonKey(name: "series")
+  // final MovieVO? series;
 
   @JsonKey(name: "payPerViewPrice")
   final int? payPerViewPrice;
@@ -76,7 +75,7 @@ class SeasonVO {
     this.trailerUrl,
     this.viewCount,
     this.publishedYear,
-    this.series,
+    // this.series,
     this.payPerViewPrice,
     this.actors,
     this.actresses,

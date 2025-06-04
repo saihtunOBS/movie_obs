@@ -18,10 +18,6 @@ SeasonVO _$SeasonVOFromJson(Map<String, dynamic> json) => SeasonVO(
   trailerUrl: json['trailerUrl'] as String?,
   viewCount: (json['viewCount'] as num?)?.toInt(),
   publishedYear: json['publishedYear'] as String?,
-  series:
-      json['series'] == null
-          ? null
-          : MovieVO.fromJson(json['series'] as Map<String, dynamic>),
   payPerViewPrice: (json['payPerViewPrice'] as num?)?.toInt(),
   actors:
       (json['actors'] as List<dynamic>?)
@@ -53,7 +49,6 @@ Map<String, dynamic> _$SeasonVOToJson(SeasonVO instance) => <String, dynamic>{
   'trailerUrl': instance.trailerUrl,
   'viewCount': instance.viewCount,
   'publishedYear': instance.publishedYear,
-  'series': instance.series,
   'payPerViewPrice': instance.payPerViewPrice,
   'actors': instance.actors,
   'actresses': instance.actresses,
