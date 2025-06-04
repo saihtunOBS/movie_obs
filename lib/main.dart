@@ -32,6 +32,7 @@ StreamController<String> languageStreamController = BehaviorSubject<String>();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final RouteObserver<PageRoute> routeObserver = CurrentRouteObserver();
 void main() async {
+  ErrorWidget.builder = (FlutterErrorDetails details) => Container();
   WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isAndroid) {

@@ -271,7 +271,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     }
 
     if (isClickPopUp != true) {
-      videoPlayerController?.pause();
+      videoPlayerController?.dispose();
       playerStatus.value = 1;
     }
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

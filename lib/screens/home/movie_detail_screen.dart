@@ -33,10 +33,6 @@ class MovieDetailScreen extends StatefulWidget {
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<HomeBloc>().updateViewCount('Movie', widget.movie?.id ?? '');
-    });
-
     super.initState();
   }
 
@@ -217,6 +213,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             context,
             widget.movie?.id ?? '',
             widget.movie?.videoUrl ?? '',
+            bloc,
           ),
           _buildCastView(bloc),
           _buildDescription(bloc, context),
@@ -354,17 +351,27 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     BuildContext context,
     String videoId,
     String url,
+    MovieDetailBloc bloc,
   ) {
     return GestureDetector(
       onTap: () {
-        PageNavigator(ctx: context).nextPage(
-          page: VideoPlayerScreen(
-            url: widget.movie?.videoUrl ?? '',
-            isFirstTime: true,
-            videoId: videoId,
-            type: 'MOVIE',
-          ),
-        );
+        PageNavigator(ctx: context)
+            .nextPage(
+              page: VideoPlayerScreen(
+                url: widget.movie?.videoUrl ?? '',
+                isFirstTime: true,
+                videoId: videoId,
+                type: 'MOVIE',
+              ),
+            )
+            .whenComplete(() {
+              context.read<HomeBloc>().updateViewCount(
+                'Movie',
+                widget.movie?.id ?? '',
+              );
+              bloc.getMovieDetail();
+              setState(() {});
+            });
       },
       child: Column(
         spacing: 2,
