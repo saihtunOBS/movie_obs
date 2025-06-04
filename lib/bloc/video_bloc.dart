@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:video_player/video_player.dart';
 
 import '../data/model/movie_model_impl.dart';
@@ -29,7 +30,6 @@ class VideoBloc extends ChangeNotifier {
 
   bool wasScreenOff = false;
   bool isMuted = false;
-  bool hasPrinted = false;
   Timer? hideControlTimer;
   Timer? hideMiniControlTimer;
   double manualSeekProgress = 0.0;
@@ -83,6 +83,16 @@ class VideoBloc extends ChangeNotifier {
     }
   }
 
+  void showLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void hideLoading() {
+    isLoading = false;
+    notifyListeners();
+  }
+
   void pausedPlayer() {
     videoPlayerController?.pause();
     notifyListeners();
@@ -111,6 +121,7 @@ class VideoBloc extends ChangeNotifier {
 
   /// Fetch and parse M3U8 file to extract quality options
   Future<void> fetchQualityOptions() async {
+    showLoading();
     try {
       final response = await http.get(Uri.parse(currentUrl));
       if (response.statusCode == 200) {
@@ -143,6 +154,7 @@ class VideoBloc extends ChangeNotifier {
         qualityOptions = qualities;
         notifyListeners();
       }
+      hideLoading();
     } catch (e) {
       debugPrint("Error fetching M3U8: $e");
     }
@@ -172,8 +184,7 @@ class VideoBloc extends ChangeNotifier {
     String? videoId,
     String? type,
   }) async {
-    isLoading = true;
-    notifyListeners();
+    showLoading();
     videoPlayerController = VideoPlayerController.networkUrl(
       Uri.parse(
         'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
@@ -182,18 +193,19 @@ class VideoBloc extends ChangeNotifier {
     );
     videoPlayerController?.initialize().then((_) {
       chewieControllerNotifier = ChewieController(
-        videoPlayerController: videoPlayerController as VideoPlayerController,
+        videoPlayerController: videoPlayerController!,
         showControls: false,
         aspectRatio: 16 / 9,
         useRootNavigator: false,
         allowFullScreen: false,
         draggableProgressBar: false,
+        bufferingBuilder: (context) {
+          return const LoadingView();
+        },
       );
 
       fetchQualityOptions();
     });
-
-    isLoading = false;
 
     videoPlayerController?.addListener(() {
       if (videoPlayerController?.value.isCompleted ?? true) {
@@ -203,6 +215,7 @@ class VideoBloc extends ChangeNotifier {
         notifyListeners();
       }
     });
+    hideLoading();
   }
 
   void resetControlVisibility({bool isSeek = false}) {
@@ -234,9 +247,7 @@ class VideoBloc extends ChangeNotifier {
     Duration? currentDuration, [
     String? quality,
   ]) async {
-    if (isFirstTime == true) {}
-    isLoading = true;
-    updateListener();
+    showLoading();
     selectedQuality = quality ?? selectedQuality;
     currentUrl = url;
     final currentPosition = videoPlayerController?.value.position;
@@ -247,25 +258,30 @@ class VideoBloc extends ChangeNotifier {
 
     videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
 
-    await videoPlayerController?.initialize().then((_) async {
+    videoPlayerController?.initialize().then((_) async {
       await videoPlayerController?.seekTo(
         currentDuration ?? currentPosition ?? Duration.zero,
       );
 
       if (wasPlaying) {
         videoPlayerController?.play();
-        isLoading = false;
-        notifyListeners();
+        hideLoading();
       } else {
         videoPlayerController?.pause();
-        isLoading = false;
-        notifyListeners();
+        hideLoading();
       }
     });
 
     chewieControllerNotifier = ChewieController(
       videoPlayerController: videoPlayerController as VideoPlayerController,
       showControls: false,
+      aspectRatio: 16 / 9,
+      useRootNavigator: false,
+      allowFullScreen: false,
+      draggableProgressBar: false,
+      bufferingBuilder: (context) {
+        return const LoadingView();
+      },
     );
     videoPlayerController?.setVolume(isMuted ? 0.0 : 1.0);
     videoPlayerController?.addListener(() {
@@ -276,7 +292,7 @@ class VideoBloc extends ChangeNotifier {
         notifyListeners();
       }
     });
-    notifyListeners();
+    hideLoading();
   }
 
   //toggle full screen
@@ -374,7 +390,11 @@ class VideoBloc extends ChangeNotifier {
     } else {
       await videoPlayerController?.seekTo(newPosition);
     }
-    notifyListeners();
+    if (!(videoPlayerController?.value.isPlaying ?? true)) {
+      await videoPlayerController?.play();
+      await chewieControllerNotifier?.play();
+      playerStatus.value = 2;
+    }
   }
 
   void startSeekUpdateLoop() {
@@ -389,8 +409,6 @@ class VideoBloc extends ChangeNotifier {
 
   @override
   void dispose() {
-    videoPlayerController?.dispose();
-    chewieControllerNotifier?.dispose();
     hideControlTimer?.cancel();
     toggleTimer?.cancel();
     seekTimer?.cancel();

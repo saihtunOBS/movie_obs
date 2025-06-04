@@ -38,7 +38,7 @@ class _EpisodeScreenState extends State<EpisodeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeBloc>().updateViewCount(
-        'Season',
+        'Episode',
         widget.episodeData?.id ?? '',
       );
       AnalyticsService().logEpisodeView(

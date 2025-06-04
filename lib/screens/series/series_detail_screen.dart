@@ -31,7 +31,7 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeBloc>().updateViewCount(
-        'Season',
+        'Series',
         widget.series?.id ?? '',
       );
       AnalyticsService().logSeriesView(seriesId: widget.series?.id ?? '');

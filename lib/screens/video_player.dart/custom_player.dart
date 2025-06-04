@@ -16,7 +16,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
     super.initState();
     _controller = VideoPlayerController.networkUrl(
         Uri.parse(
-          'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
         ),
       )
       ..initialize().then((_) {

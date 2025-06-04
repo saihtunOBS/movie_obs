@@ -16,18 +16,21 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/utils/rotation_detector.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:video_player/video_player.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 final ValueNotifier<bool> isPlay = ValueNotifier(false);
 final ValueNotifier<int> playerStatus = ValueNotifier(1);
 
 bool showControl = true;
 bool isAutoRotateEnabled = false;
-double deviceVolume = 1.0; // Initial volume
+double deviceVolume = 1.0;
+double bufferedProgress = 0.0;
 
 class VideoPlayerScreen extends StatefulWidget {
   const VideoPlayerScreen({
@@ -57,7 +60,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   StreamSubscription<bool>? _subscription;
   double brightness = 1.0;
   double progress = 0.0;
-  double bufferedProgress = 0.0;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -109,7 +111,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   void initState() {
     super.initState();
 
-    bufferedProgress = 0.0;
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
@@ -118,7 +119,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
     WidgetsBinding.instance.addObserver(this);
     bloc = Provider.of<VideoBloc>(context, listen: false);
-    bloc.isLoading = widget.isFirstTime == true ? true : false;
+
     if (Platform.isAndroid) {
       _subscription = RotationDetector.onRotationLockChanged.listen((
         isEnabled,
@@ -146,7 +147,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      if (widget.isFirstTime == true) playerStatus.value = 1;
+      WakelockPlus.enable();
       showControl = true;
       bloc.toggleHistory(widget.videoId ?? '', widget.type);
       bloc.isMuted = false;
@@ -156,6 +157,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
       if (widget.isFirstTime == true) {
         if (widget.isTrailer == true) {
+          bloc.showLoading();
+          playerStatus.value = 1;
           bloc.initializeVideo(widget.url ?? '');
         } else {
           await _loadCurrentPosition(); // Added await
@@ -183,7 +186,31 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
         debugPrint('Loading saved position: ${_savedVideo?.position}');
         selectedQuality = 'Auto';
-        await bloc.fetchQualityOptions(); // Added await
+        await bloc.fetchQualityOptions();
+
+        // Initialize the video first to get duration
+        await bloc.initializeVideo(
+          widget.url ?? '',
+          videoId: widget.videoId,
+          type: widget.type,
+        );
+
+        // Now calculate the proper buffered progress ratio
+        if (videoPlayerController?.value.duration.inMilliseconds != null &&
+            videoPlayerController!.value.duration.inMilliseconds > 0) {
+          final durationMs =
+              videoPlayerController!.value.duration.inMilliseconds;
+          final savedPositionMs = _savedVideo?.position.inMilliseconds ?? 0;
+
+          setState(() {
+            bufferedProgress = (savedPositionMs / durationMs).clamp(0.0, 1.0);
+          });
+        } else {
+          setState(() {
+            bufferedProgress = 0.0;
+          });
+        }
+
         await bloc.changeQuality(
           widget.url ?? '',
           widget.videoId,
@@ -192,6 +219,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         );
         bloc.updateListener();
       } else {
+        setState(() {
+          bufferedProgress = 0.0;
+        });
         await bloc.initializeVideo(
           widget.url ?? '',
           videoId: widget.videoId,
@@ -202,6 +232,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     } catch (e) {
       debugPrint('Error loading current position: $e');
       if (mounted) {
+        setState(() {
+          bufferedProgress = 0.0;
+        });
         await bloc.initializeVideo(
           widget.url ?? '',
           videoId: widget.videoId,
@@ -239,7 +272,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
     if (isClickPopUp != true) {
       videoPlayerController?.pause();
-      chewieControllerNotifier?.pause();
+      playerStatus.value = 1;
     }
     super.dispose();
   }
@@ -314,91 +347,62 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildVideoPlayerSection() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double screenHeight = constraints.maxHeight;
-        final screenWidth = constraints.maxWidth;
-        final leftZone = screenWidth * 0.3;
-        final rightZone = screenWidth * 0.7;
-        return Container(
-          color: Colors.transparent,
+    return Consumer<VideoBloc>(
+      builder:
+          (context, bloc, child) => LayoutBuilder(
+            builder: (context, constraints) {
+              double screenHeight = constraints.maxHeight;
+              final screenWidth = constraints.maxWidth;
+              final leftZone = screenWidth * 0.3;
+              return bloc.isLoading == true
+                  ? LoadingView()
+                  : Container(
+                    color: Colors.transparent,
 
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              bloc.resetControlVisibility();
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        bloc.resetControlVisibility();
+                      },
+                      child: Stack(
+                        children: [
+                          _buildVideoPlayer(),
+
+                          showControl == true
+                              ? _buildPlayPauseControls()
+                              : SizedBox.shrink(),
+                          // Left Zone
+                          Positioned(
+                            left: 0,
+                            width: leftZone,
+                            height: screenHeight,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onVerticalDragStart: _onVerticalDragStart,
+                              onVerticalDragUpdate:
+                                  (details) => _onVerticalDragUpdate(
+                                    details,
+                                    'left',
+                                    screenHeight,
+                                  ),
+                              onVerticalDragEnd: _onVerticalDragEnd,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
             },
-            child: Stack(
-              children: [
-                bloc.isLoading ? _buildLoadingIndicator() : _buildVideoPlayer(),
-
-                bloc.isLoading
-                    ? _buildLoadingIndicator()
-                    : showControl == true
-                    ? _buildPlayPauseControls()
-                    : SizedBox.shrink(),
-                // Left Zone
-                Positioned(
-                  left: 0,
-                  width: leftZone,
-                  height: screenHeight,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onVerticalDragStart: _onVerticalDragStart,
-                    onVerticalDragUpdate:
-                        (details) => _onVerticalDragUpdate(
-                          details,
-                          'left',
-                          screenHeight,
-                        ),
-                    onVerticalDragEnd: _onVerticalDragEnd,
-                  ),
-                ),
-                // Right Zone
-                Positioned(
-                  left: rightZone,
-                  width: screenWidth - rightZone,
-                  height: screenHeight,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onVerticalDragStart: _onVerticalDragStart,
-                    onVerticalDragUpdate:
-                        (details) => _onVerticalDragUpdate(
-                          details,
-                          'right',
-                          screenHeight,
-                        ),
-                    onVerticalDragEnd: _onVerticalDragEnd,
-                  ),
-                ),
-              ],
-            ),
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildLoadingIndicator() {
-    return const Center(
-      child: CircularProgressIndicator(
-        strokeWidth: 2,
-        color: kPrimaryColor,
-        backgroundColor: kWhiteColor,
-      ),
     );
   }
 
   Widget _buildVideoPlayer() {
     return Stack(
       children: [
-        Stack(
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              child: IgnorePointer(ignoring: true, child: Player(bloc: bloc)),
-            ),
-          ],
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          child: IgnorePointer(ignoring: true, child: Player()),
         ),
       ],
     );
@@ -1137,41 +1141,41 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 }
 
 class Player extends StatelessWidget {
-  const Player({super.key, required this.bloc});
-
-  final VideoBloc bloc;
-
+  const Player({super.key});
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: ClipRRect(
-              child: AspectRatio(
-                aspectRatio: videoPlayerController?.value.aspectRatio ?? 0.0,
-                child: IgnorePointer(
-                  child:
-                      bloc.isLoading
-                          ? SizedBox()
-                          : Chewie(
-                            controller:
-                                chewieControllerNotifier ??
-                                ChewieController(
-                                  videoPlayerController:
-                                      videoPlayerController
-                                          as VideoPlayerController,
-                                ),
-                          ),
+    return Consumer<VideoBloc>(
+      builder:
+          (context, bloc, child) => Stack(
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: ClipRRect(
+                  child: AspectRatio(
+                    aspectRatio:
+                        videoPlayerController?.value.aspectRatio ?? 0.0,
+                    child: IgnorePointer(
+                      child:
+                          bloc.isLoading
+                              ? LoadingView()
+                              : Chewie(
+                                controller:
+                                    chewieControllerNotifier ??
+                                    ChewieController(
+                                      videoPlayerController:
+                                          videoPlayerController
+                                              as VideoPlayerController,
+                                      showControls: false,
+                                    ),
+                              ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
 
-          if (showControl) _buildOverlay(),
-        ],
-      ),
+              if (showControl) _buildOverlay(),
+            ],
+          ),
     );
   }
 
