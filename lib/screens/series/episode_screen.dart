@@ -5,6 +5,7 @@ import 'package:movie_obs/bloc/episode_bloc.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/data/vos/episode_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/network/analytics_service/analytics_service.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:movie_obs/utils/calculate_time.dart';
@@ -39,6 +40,9 @@ class _EpisodeScreenState extends State<EpisodeScreen> {
       context.read<HomeBloc>().updateViewCount(
         'Season',
         widget.episodeData?.id ?? '',
+      );
+      AnalyticsService().logEpisodeView(
+        episodeId: widget.episodeData?.id ?? '',
       );
     });
   }

@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import '../../extension/page_navigator.dart';
 import '../../list_items/cast_list_item.dart';
 import '../../list_items/episode_list_item.dart';
+import '../../network/analytics_service/analytics_service.dart';
 import '../../utils/images.dart';
 import '../../widgets/common_dialog.dart';
 import '../../widgets/custom_button.dart';
@@ -48,6 +49,7 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
         'Season',
         widget.season?.id ?? '',
       );
+      AnalyticsService().logSeasonView(seasonId: widget.season?.id ?? '');
     });
   }
 
