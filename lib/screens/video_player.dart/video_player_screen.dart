@@ -274,6 +274,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       videoPlayerController?.pause();
       playerStatus.value = 1;
     }
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     super.dispose();
   }
 
@@ -752,6 +753,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
               if (newPosition != videoPlayerController?.value.duration) {
                 bloc.playPlayer();
+                playerStatus.value = 2;
               }
             },
           );

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:movie_obs/data/vos/movie_vo.dart';
 part 'season_vo.g.dart';
 
 @JsonSerializable()
@@ -37,7 +38,7 @@ class SeasonVO {
   final String? publishedYear;
 
   @JsonKey(name: "series")
-  final dynamic series;
+  final MovieVO? series;
 
   @JsonKey(name: "payPerViewPrice")
   final int? payPerViewPrice;
@@ -83,10 +84,11 @@ class SeasonVO {
     this.createdAt,
     this.updatedAt,
     this.duration,
-    this.episodeCount
+    this.episodeCount,
   });
 
-  factory SeasonVO.fromJson(Map<String, dynamic> json) => _$SeasonVOFromJson(json);
+  factory SeasonVO.fromJson(Map<String, dynamic> json) =>
+      _$SeasonVOFromJson(json);
 
   Map<String, dynamic> toJson() => _$SeasonVOToJson(this);
 }
@@ -105,14 +107,10 @@ class SeasonCastVO {
   @JsonKey(name: "_id")
   final String? id;
 
-  SeasonCastVO({
-    this.cast,
-    this.sortOrder,
-    this.characterName,
-    this.id,
-  });
+  SeasonCastVO({this.cast, this.sortOrder, this.characterName, this.id});
 
-  factory SeasonCastVO.fromJson(Map<String, dynamic> json) => _$SeasonCastVOFromJson(json);
+  factory SeasonCastVO.fromJson(Map<String, dynamic> json) =>
+      _$SeasonCastVOFromJson(json);
 
   Map<String, dynamic> toJson() => _$SeasonCastVOToJson(this);
 }

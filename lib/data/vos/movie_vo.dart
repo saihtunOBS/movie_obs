@@ -50,8 +50,8 @@ class MovieVO {
   @JsonKey(name: "viewCount")
   final int? viewCount;
 
-  @JsonKey(name: "category")
-  final CategoryVO? category;
+  // @JsonKey(name: "category")
+  // final CategoryVO? category;
 
   @JsonKey(name: "duration")
   final int? duration;
@@ -102,7 +102,7 @@ class MovieVO {
     this.tags,
     this.scriptWriter,
     this.viewCount,
-    this.category,
+    //this.category,
     this.duration,
     this.publishedYear,
     this.scheduleAt,

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/actor_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/season_list_item.dart';
+import 'package:movie_obs/screens/home/movie_detail_screen.dart';
+import 'package:movie_obs/screens/series/series_detail_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
@@ -86,10 +89,19 @@ class ActorViewScreen extends StatelessWidget {
             vertical: kMarginMedium2 - 5,
           ),
           itemBuilder: (context, index) {
-            return movieListItem(
-              isHomeScreen: true,
-              movies: bloc.actorData?.movies?[index],
-              type: 'movie',
+            return GestureDetector(
+              onTap: () {
+                PageNavigator(ctx: context).nextPage(
+                  page: MovieDetailScreen(
+                    movie: bloc.actorData?.movies?[index],
+                  ),
+                );
+              },
+              child: movieListItem(
+                isHomeScreen: true,
+                movies: bloc.actorData?.movies?[index],
+                type: 'movie',
+              ),
             );
           },
         ),
@@ -128,10 +140,19 @@ class ActorViewScreen extends StatelessWidget {
             vertical: kMarginMedium2 - 5,
           ),
           itemBuilder: (context, index) {
-            return seasonListItem(
-              isHomeScreen: true,
-              season: bloc.actorData?.seasons?[index],
-              type: bloc.actorData?.seasons?[index].plan,
+            return GestureDetector(
+              onTap: () {
+                PageNavigator(ctx: context).nextPage(
+                  page: SeriesDetailScreen(
+                    series: bloc.actorData?.seasons?[index].series,
+                  ),
+                );
+              },
+              child: seasonListItem(
+                isHomeScreen: true,
+                season: bloc.actorData?.seasons?[index],
+                type: bloc.actorData?.seasons?[index].plan,
+              ),
             );
           },
         ),
