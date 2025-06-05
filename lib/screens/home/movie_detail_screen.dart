@@ -430,7 +430,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           children: [
             Icon(CupertinoIcons.eye, size: 20, color: Colors.grey),
             Text(
-              bloc.moviesResponse?.viewCount.toString() ?? '',
+              formatViewCount(bloc.moviesResponse?.viewCount ?? 0),
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
             ),
           ],

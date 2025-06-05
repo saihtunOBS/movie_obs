@@ -6,6 +6,7 @@ import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/screens/series/episode_screen.dart';
+import 'package:movie_obs/utils/calculate_time.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
@@ -209,7 +210,7 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
           children: [
             Icon(CupertinoIcons.eye, size: 20),
             Text(
-              '${bloc.seasonEpisodeResponse?.viewCount ?? 0}',
+              formatViewCount(bloc.seasonEpisodeResponse?.viewCount ?? 0),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -304,10 +305,11 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
                 PageNavigator(ctx: context)
                     .nextPage(
                       page: EpisodeScreen(
-                        episodeResponse: bloc.seasonEpisodeResponse,
+                        seasonResponse: bloc.seasonEpisodeResponse,
                         episodeData:
                             bloc.seasonEpisodeResponse?.episodes?[index],
                         seriesId: widget.seriesId ?? '',
+                        seasonId: widget.season?.id ?? '',
                       ),
                     )
                     .whenComplete(() {

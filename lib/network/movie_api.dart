@@ -1,6 +1,7 @@
 import 'dart:io' show File, Platform;
 
 import 'package:dio/dio.dart';
+import 'package:movie_obs/data/vos/episode_vo.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/api_constants.dart';
@@ -101,6 +102,12 @@ abstract class MovieApi {
     @Path() String id,
     @Query('include_episodes') bool isSeasonInclude,
     @Query('status') String status,
+  );
+
+  @GET('$kEndPointEpisode/{id}')
+  Future<EpisodeVO> getEpisodeById(
+    @Header(kHeaderAuthorization) String token,
+    @Path() String id,
   );
 
   @GET('$kEndPointCast/{id}')

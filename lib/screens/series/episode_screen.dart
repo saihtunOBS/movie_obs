@@ -1,10 +1,10 @@
-import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/episode_bloc.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/data/vos/episode_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/network/analytics_service/analytics_service.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
@@ -12,6 +12,7 @@ import 'package:movie_obs/utils/calculate_time.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../list_items/episode_list_item.dart';
@@ -20,13 +21,15 @@ import '../../widgets/expandable_text.dart';
 class EpisodeScreen extends StatefulWidget {
   const EpisodeScreen({
     super.key,
-    this.episodeResponse,
     this.episodeData,
     required this.seriesId,
+    required this.seasonResponse,
+    required this.seasonId,
   });
-  final SeasonEpisodeResponse? episodeResponse;
   final EpisodeVO? episodeData;
+  final SeasonEpisodeResponse? seasonResponse;
   final String seriesId;
+  final String seasonId;
 
   @override
   State<EpisodeScreen> createState() => _EpisodeScreenState();
@@ -36,21 +39,14 @@ class _EpisodeScreenState extends State<EpisodeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<HomeBloc>().updateViewCount(
-        'Episode',
-        widget.episodeData?.id ?? '',
-      );
-      AnalyticsService().logEpisodeView(
-        episodeId: widget.episodeData?.id ?? '',
-      );
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => EpisodeBloc(widget.episodeData ?? EpisodeVO()),
+      create:
+          (_) =>
+              EpisodeBloc(widget.episodeData ?? EpisodeVO(), widget.seasonId),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         body: Consumer<EpisodeBloc>(
@@ -78,7 +74,7 @@ class _EpisodeScreenState extends State<EpisodeScreen> {
                               bottomRight: Radius.circular(35),
                             ),
                             child: cacheImage(
-                              widget.episodeResponse?.bannerImageUrl,
+                              widget.seasonResponse?.bannerImageUrl,
                             ),
                           ),
                         ),
@@ -164,7 +160,7 @@ class _EpisodeScreenState extends State<EpisodeScreen> {
           children: [
             Icon(CupertinoIcons.eye, size: 20),
             Text(
-              bloc.currentEpisode?.viewCount.toString() ?? '0',
+              formatViewCount(bloc.currentEpisode?.viewCount ?? 0),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -214,32 +210,33 @@ class _EpisodeScreenState extends State<EpisodeScreen> {
       padding: EdgeInsets.zero,
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: widget.episodeResponse?.episodes?.length,
+      itemCount: bloc.seasonEpisodeResponse?.episodes?.length ?? 0,
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
             bloc.changeEpisode(
-              widget.episodeResponse?.episodes?[index] ?? EpisodeVO(),
+              bloc.seasonEpisodeResponse?.episodes?[index] ?? EpisodeVO(),
             );
           },
           child: Container(
             padding: EdgeInsets.symmetric(
               horizontal:
                   bloc.currentEpisode?.id ==
-                          widget.episodeResponse?.episodes?[index].id
-                      ? 20
+                          bloc.seasonEpisodeResponse?.episodes?[index].id
+                      ? 10
                       : 0,
             ),
 
             child: episodeListItem(
-              imageUrl: widget.episodeResponse?.bannerImageUrl,
+              imageUrl: bloc.seasonEpisodeResponse?.bannerImageUrl,
               isSeries: false,
               isLast:
-                  index == (widget.episodeResponse?.episodes?.length ?? 0) - 1,
-              data: widget.episodeResponse?.episodes?[index],
+                  index ==
+                  (bloc.seasonEpisodeResponse?.episodes?.length ?? 0) - 1,
+              data: bloc.seasonEpisodeResponse?.episodes?[index],
               color:
                   bloc.currentEpisode?.id ==
-                          widget.episodeResponse?.episodes?[index].id
+                          bloc.seasonEpisodeResponse?.episodes?[index].id
                       ? kSecondaryColor.withValues(alpha: 0.2)
                       : Colors.transparent,
             ),
@@ -264,14 +261,29 @@ class _EpisodeScreenState extends State<EpisodeScreen> {
   Widget _buildWatchNowButton(BuildContext context, EpisodeBloc bloc) {
     return GestureDetector(
       onTap: () {
-        context.pushTransparentRoute(
-          VideoPlayerScreen(
-            url: bloc.currentEpisode?.videoUrl ?? '',
-            isFirstTime: true,
-            type: 'SERIES',
-            videoId: widget.seriesId,
-          ),
-        );
+        PageNavigator(ctx: context)
+            .nextPage(
+              page: VideoPlayerScreen(
+                url: bloc.currentEpisode?.videoUrl ?? '',
+                isFirstTime: true,
+                type: 'SERIES',
+                videoId: widget.seriesId,
+              ),
+            )
+            .whenComplete(() {
+              setState(() {
+                context
+                    .read<HomeBloc>()
+                    .updateViewCount('Episode', bloc.currentEpisode?.id ?? '')
+                    .then((_) {
+                      bloc.getSeasonEpisode();
+                    });
+              });
+
+              AnalyticsService().logEpisodeView(
+                episodeId: bloc.currentEpisode?.id ?? '',
+              );
+            });
       },
       child: Container(
         height: 48,

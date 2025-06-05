@@ -13,7 +13,7 @@ Widget episodeListItem({
   EpisodeVO? data,
   bool? isLast,
   Color? color,
-  String? imageUrl
+  String? imageUrl,
 }) {
   return Column(
     spacing: 2,
@@ -67,7 +67,7 @@ Widget episodeListItem({
                                   data?.plan ?? '',
                                   style: TextStyle(
                                     color: kPrimaryColor,
-                                    fontSize: 13,
+                                    fontSize: 11,
                                   ),
                                 ),
                               ),
@@ -90,7 +90,7 @@ Widget episodeListItem({
                             : '25 Episodes',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 13,
+                          fontSize: 11,
                           color: Colors.grey,
                         ),
                       ),
@@ -110,7 +110,7 @@ Widget episodeListItem({
                             color: Colors.grey,
                           ),
                           Text(
-                            data?.viewCount.toString() ?? '',
+                            formatViewCount(data?.viewCount ?? 0),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 13,

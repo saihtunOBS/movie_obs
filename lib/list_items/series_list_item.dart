@@ -97,7 +97,7 @@ Widget seriesListItem({
                       children: [
                         Icon(CupertinoIcons.eye, size: 20, color: Colors.grey),
                         Text(
-                          data?.viewCount.toString() ?? '',
+                          formatViewCount(data?.viewCount ?? 0),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
