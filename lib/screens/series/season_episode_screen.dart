@@ -10,7 +10,6 @@ import 'package:movie_obs/utils/calculate_time.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
-import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/page_navigator.dart';
@@ -284,7 +283,7 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
                   fontSize: kTextRegular18,
                 ),
               ),
-          bloc.isLoading ? LoadingView() : _episodeListView(bloc),
+          _episodeListView(bloc),
         ],
       ),
     );
