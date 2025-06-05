@@ -32,7 +32,6 @@ class EpisodeBloc extends ChangeNotifier {
         .getSeasonEpisode(token, seasonId)
         .then((response) {
           seasonEpisodeResponse = response;
-          print(seasonEpisodeResponse?.episodes?.length);
           final episodeList = seasonEpisodeResponse?.episodes ?? [];
           final matchedEpisode = episodeList.firstWhere(
             (e) => e.id == currentEpisode?.id,

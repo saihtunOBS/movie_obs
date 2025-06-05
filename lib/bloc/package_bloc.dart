@@ -31,8 +31,9 @@ class PackageBloc extends ChangeNotifier {
         })
         .whenComplete(() {
           _hideLoading();
-        }).catchError((_){
-          PersistenceData.shared.clearToken();
+        })
+        .catchError((_) {
+          PersistenceData.shared.saveFirstTime(true);
           showCommonDialog(
             context: myContext!,
             isBarrierDismiss: false,

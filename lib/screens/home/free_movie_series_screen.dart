@@ -120,7 +120,7 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                                               getDeviceType() == 'phone'
                                                   ? 2
                                                   : 3,
-                                          mainAxisExtent: 200,
+                                          mainAxisExtent: 230,
                                           mainAxisSpacing: 10,
                                           crossAxisSpacing: 10,
                                         ),

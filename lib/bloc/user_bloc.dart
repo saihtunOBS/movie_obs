@@ -53,13 +53,13 @@ class UserBloc extends ChangeNotifier {
         .then((_) {
           tab.value = false;
           hideLoading();
-          PersistenceData.shared.clearToken();
+          PersistenceData.shared.saveFirstTime(true);
           PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
         })
         .catchError((_) {
           tab.value = false;
           hideLoading();
-          PersistenceData.shared.clearToken();
+          PersistenceData.shared.saveFirstTime(true);
           PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
           ToastService.warningToast('Session Expired. Please Login Again');
         });
@@ -74,7 +74,7 @@ class UserBloc extends ChangeNotifier {
           notifyListeners();
         })
         .catchError((_) {
-          PersistenceData.shared.clearToken();
+          PersistenceData.shared.saveFirstTime(true);
           showCommonDialog(
             context: context!,
             isBarrierDismiss: false,

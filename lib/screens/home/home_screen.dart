@@ -150,6 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               SliverToBoxAdapter(child: SizedBox(height: 10)),
                             ],
+
+                            ///top trending
                             if (bloc.topTrendingMoviesList.isNotEmpty) ...[
                               SliverPersistentHeader(
                                 pinned: false,
@@ -169,6 +171,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               SliverToBoxAdapter(child: SizedBox(height: 10)),
                             ],
+
+                            ///new release
                             if (bloc.newReleaseMoviesList.isNotEmpty) ...[
                               SliverPersistentHeader(
                                 pinned: false,
@@ -177,6 +181,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                       AppLocalizations.of(
                                         context,
                                       )?.newRelease ??
+                                      '',
+                                  onPress: () {
+                                    PageNavigator(
+                                      ctx: context,
+                                    ).nextPage(page: NewReleaseScreen());
+                                  },
+                                ),
+                              ),
+                              SliverToBoxAdapter(
+                                child: _buildMovieOptions(
+                                  bloc.newReleaseMoviesList,
+                                ),
+                              ),
+                              SliverToBoxAdapter(child: SizedBox(height: 10)),
+                            ],
+
+                            //collection
+                            if (bloc.newReleaseMoviesList.isNotEmpty) ...[
+                              SliverPersistentHeader(
+                                pinned: false,
+                                delegate: _SliverHeader(
+                                  title:
+                                      AppLocalizations.of(
+                                        context,
+                                      )?.collectionTitle ??
                                       '',
                                   onPress: () {
                                     PageNavigator(
@@ -413,7 +442,7 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisCount: 2,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        mainAxisExtent: 220,
+        mainAxisExtent: 230,
       ),
     );
   }

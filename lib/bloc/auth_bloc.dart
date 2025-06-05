@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/model/movie_model_impl.dart';
+import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
@@ -16,7 +17,7 @@ class AuthBloc extends ChangeNotifier {
     _notifySafely();
   }
 
-  _hideLoading() {
+  hideLoading() {
     isLoading = false;
     _notifySafely();
   }
@@ -27,11 +28,20 @@ class AuthBloc extends ChangeNotifier {
     }
   }
 
+  Future getAuthUser() async {
+    _showLoading();
+    var _token = PersistenceData.shared.getToken();
+    return _movieModel.getUser(_token).then((value) {
+      print(value.email);
+      hideLoading();
+    });
+  }
+
   Future<OTPResponse> verifyOtp(String phone, String requestId, String otp) {
     _showLoading();
     var request = VerifyOtpRequest(phone, 'CUSTOMER', otp, requestId);
     return _movieModel.verifyOtp(request).whenComplete(() {
-      _hideLoading();
+      hideLoading();
     });
   }
 
@@ -39,7 +49,7 @@ class AuthBloc extends ChangeNotifier {
     _showLoading();
     var request = SendOtpRequest(phoneNubmer);
     return _movieModel.sendOtp(request).whenComplete(() {
-      _hideLoading();
+      hideLoading();
     });
   }
 

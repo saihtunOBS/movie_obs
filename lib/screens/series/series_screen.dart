@@ -173,7 +173,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount:
                                           getDeviceType() == 'phone' ? 2 : 3,
-                                      mainAxisExtent: 200,
+                                      mainAxisExtent: 230,
                                       mainAxisSpacing: 10,
                                       crossAxisSpacing: 10,
                                     ),

@@ -112,6 +112,30 @@ class AppLocalizationsMy extends AppLocalizations {
   String get searchMovieTitle => 'ရုပ်ရှင်များကို ရှာဖွေပါ';
 
   @override
+  String get collectionTitle => 'စုစည်းမှုခေါင်းစဥ်';
+
+  @override
+  String get giftCard => 'လက်ဆောင်ကဒ်';
+
+  @override
+  String get usegiftCard => 'သင့်ရဲ့ကဒ်က်ိုအသုံးပြုမည်';
+
+  @override
+  String get enterPint => 'နံပါတ်';
+
+  @override
+  String get useNow => 'အသုံးပြုမည်';
+
+  @override
+  String get cancel => 'မလုပ်ပါ';
+
+  @override
+  String get giftNow => 'Gift Now';
+
+  @override
+  String get claim => 'ရယူမည်';
+
+  @override
   String get newRelease => 'အသစ်ထွက်ရှိထားသော';
 
   @override

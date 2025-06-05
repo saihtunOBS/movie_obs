@@ -1,5 +1,3 @@
-
-
 import 'package:get_storage/get_storage.dart';
 
 enum PersistenceList { loginUser, locale, isFirstTime, token, userData, tenant }
@@ -19,18 +17,15 @@ class PersistenceData {
     await GetStorage().write(PersistenceList.locale.name, locale);
   }
 
-
   /// get...
 
-  getFirstTimeStatus() {
-    return GetStorage().read(PersistenceList.isFirstTime.name);
+  bool getFirstTimeStatus() {
+    return GetStorage().read(PersistenceList.isFirstTime.name) ?? true;
   }
 
   getToken() {
     return GetStorage().read(PersistenceList.token.name) ?? '';
   }
-
-
 
   getLocale() {
     return GetStorage().read(PersistenceList.locale.name) ?? 'en';
@@ -41,7 +36,7 @@ class PersistenceData {
     await GetStorage().remove(PersistenceList.token.name);
   }
 
-  clearUserData() {
-    GetStorage().remove(PersistenceList.userData.name);
+  clearUserData() async {
+    await GetStorage().remove(PersistenceList.userData.name);
   }
 }

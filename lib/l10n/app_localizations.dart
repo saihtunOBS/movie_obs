@@ -302,6 +302,54 @@ abstract class AppLocalizations {
   /// **'Search by movie title'**
   String get searchMovieTitle;
 
+  /// No description provided for @collectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection\'s Title'**
+  String get collectionTitle;
+
+  /// No description provided for @giftCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift Card'**
+  String get giftCard;
+
+  /// No description provided for @usegiftCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Your Gift Card'**
+  String get usegiftCard;
+
+  /// No description provided for @enterPint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Pin'**
+  String get enterPint;
+
+  /// No description provided for @useNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Now'**
+  String get useNow;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @giftNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift Now'**
+  String get giftNow;
+
+  /// No description provided for @claim.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim'**
+  String get claim;
+
   /// No description provided for @newRelease.
   ///
   /// In en, this message translates to:

@@ -172,7 +172,7 @@ class _MovieScreenState extends State<MovieScreen> {
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount:
                                           getDeviceType() == 'phone' ? 2 : 3,
-                                      mainAxisExtent: 200,
+                                      mainAxisExtent: 230,
                                       mainAxisSpacing: 10,
                                       crossAxisSpacing: 10,
                                     ),

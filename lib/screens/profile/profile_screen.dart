@@ -8,6 +8,7 @@ import 'package:movie_obs/screens/auth/change_language_screen.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
 import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/screens/profile/faq_screen.dart';
+import 'package:movie_obs/screens/profile/gift_cart_screen.dart';
 import 'package:movie_obs/screens/profile/history_screen.dart';
 import 'package:movie_obs/screens/profile/privacy_policy_screen.dart';
 import 'package:movie_obs/screens/profile/promotion_screen.dart';
@@ -35,6 +36,7 @@ class ProfileScreen extends StatefulWidget {
 List<Widget> iconArray = [
   Icon(CupertinoIcons.person_fill, size: 20, color: kWhiteColor),
   Image.asset(kPromotionIcon, color: kWhiteColor),
+  Icon(CupertinoIcons.gift, size: 20, color: kWhiteColor),
   Icon(CupertinoIcons.bookmark_fill, size: 20, color: kWhiteColor),
   Icon(CupertinoIcons.arrow_clockwise, size: 20, color: kWhiteColor),
   Icon(Icons.language, color: kWhiteColor),
@@ -60,6 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     var titleArray = [
       AppLocalizations.of(context)?.profile ?? '',
       AppLocalizations.of(context)?.promotion ?? '',
+      AppLocalizations.of(context)?.giftCard ?? '',
       AppLocalizations.of(context)?.watchlist ?? '',
       AppLocalizations.of(context)?.history ?? '',
       AppLocalizations.of(context)?.profileLanguage ?? '',
@@ -110,28 +113,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               case 2:
                                 PageNavigator(
                                   ctx: context,
-                                ).nextPage(page: WatchListScreen());
+                                ).nextPage(page: GiftCartScreen());
                               case 3:
                                 PageNavigator(
                                   ctx: context,
-                                ).nextPage(page: HistoryScreen());
+                                ).nextPage(page: WatchListScreen());
                               case 4:
+                                PageNavigator(
+                                  ctx: context,
+                                ).nextPage(page: HistoryScreen());
+                              case 5:
                                 PageNavigator(ctx: context).nextPage(
                                   page: ChangeLanguageScreen(isProfile: true),
                                 );
-                              case 5:
-                                PageNavigator(
-                                  ctx: context,
-                                ).nextPage(page: FaqScreen());
                               case 6:
                                 PageNavigator(
                                   ctx: context,
-                                ).nextPage(page: TermAndConditionScreen());
+                                ).nextPage(page: FaqScreen());
                               case 7:
                                 PageNavigator(
                                   ctx: context,
-                                ).nextPage(page: PrivacyPolicyScreen());
+                                ).nextPage(page: TermAndConditionScreen());
                               case 8:
+                                PageNavigator(
+                                  ctx: context,
+                                ).nextPage(page: PrivacyPolicyScreen());
+                              case 9:
                                 showCommonDialog(
                                   context: context,
                                   dialogWidget: _buildAlert(),
@@ -427,7 +434,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               onPress: () {
                                 if (isLogout == true) {
                                   tab.value = false;
-                                  PersistenceData.shared.clearToken();
+                                  PersistenceData.shared.saveFirstTime(true);
                                   PageNavigator(
                                     ctx: context,
                                   ).nextPageOnly(page: LoginScreen());

@@ -114,6 +114,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchMovieTitle => 'Search by movie title';
 
   @override
+  String get collectionTitle => 'Collection\'s Title';
+
+  @override
+  String get giftCard => 'Gift Card';
+
+  @override
+  String get usegiftCard => 'Use Your Gift Card';
+
+  @override
+  String get enterPint => 'Enter Pin';
+
+  @override
+  String get useNow => 'Use Now';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get giftNow => 'Gift Now';
+
+  @override
+  String get claim => 'Claim';
+
+  @override
   String get newRelease => 'New Releases';
 
   @override

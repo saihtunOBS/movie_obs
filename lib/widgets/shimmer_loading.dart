@@ -25,7 +25,7 @@ Widget shimmerLoading({bool? isVertical}) {
         ),
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: 2,
-      mainAxisExtent: 200,
+      mainAxisExtent: 230,
       mainAxisSpacing: 10,
       crossAxisSpacing: 10,
     ),

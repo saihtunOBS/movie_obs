@@ -45,7 +45,7 @@ class _AdsScreenState extends State<AdsScreen> {
   }
 
   void _navigateNext() {
-    if (PersistenceData.shared.getToken() != '') {
+    if (PersistenceData.shared.getFirstTimeStatus() == false) {
       PageNavigator(ctx: context).nextPageOnly(page: BottomNavScreen());
     } else {
       PageNavigator(ctx: context).nextPageOnly(page: AuthScreen());

@@ -6,6 +6,7 @@ import 'package:movie_obs/bloc/auth_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/otp_screen.dart';
+import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
@@ -237,25 +238,37 @@ class _LoginScreenState extends State<LoginScreen> {
                                     if (_formKey.currentState?.validate() ??
                                         false) {
                                       bloc
-                                          .userLogin(
-                                            '${selectedCountryCode?.phoneCode ?? '95'}${_phoneController.text.trim()}',
-                                          )
-                                          .then((response) {
+                                          .getAuthUser()
+                                          .then((_) {
+                                            tab.value = true;
                                             PageNavigator(
                                               ctx: context,
-                                            ).nextPage(
-                                              page: OTPScreen(
-                                                phone:
-                                                    '${selectedCountryCode?.phoneCode ?? '95'}${_phoneController.text.trim()}',
-                                                requestId:
-                                                    '${response.requestId}',
-                                              ),
+                                            ).nextPageOnly(
+                                              page: BottomNavScreen(),
                                             );
                                           })
-                                          .catchError((error) {
-                                            ToastService.warningToast(
-                                              error.toString(),
-                                            );
+                                          .catchError((_) {
+                                            bloc
+                                                .userLogin(
+                                                  '${selectedCountryCode?.phoneCode ?? '95'}${_phoneController.text.trim()}',
+                                                )
+                                                .then((response) {
+                                                  PageNavigator(
+                                                    ctx: context,
+                                                  ).nextPage(
+                                                    page: OTPScreen(
+                                                      phone:
+                                                          '${selectedCountryCode?.phoneCode ?? '95'}${_phoneController.text.trim()}',
+                                                      requestId:
+                                                          '${response.requestId}',
+                                                    ),
+                                                  );
+                                                })
+                                                .catchError((error) {
+                                                  ToastService.warningToast(
+                                                    error.toString(),
+                                                  );
+                                                });
                                           });
                                     }
                                   },

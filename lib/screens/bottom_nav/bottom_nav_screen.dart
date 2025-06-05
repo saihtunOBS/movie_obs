@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/bloc/notification_bloc.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
+import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/screens/home/home_screen.dart';
 import 'package:movie_obs/screens/movie/movie_screen.dart';
 import 'package:movie_obs/screens/profile/profile_screen.dart';
@@ -42,10 +43,10 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserBloc>().updateToken();
-
-      ///context.read<UserBloc>().getUser(context);
+      context.read<UserBloc>().getUser(context);
       context.read<NotificationBloc>().updateToken();
       context.read<HomeBloc>().updateToken();
+      PersistenceData.shared.saveFirstTime(false);
     });
     volumeController = VolumeController.instance;
 

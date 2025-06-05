@@ -4,18 +4,24 @@ import 'package:movie_obs/bloc/package_bloc.dart';
 import 'package:movie_obs/data/vos/package_vo.dart';
 import 'package:movie_obs/list_items/promotion_list_items.dart';
 import 'package:movie_obs/utils/colors.dart';
+import 'package:movie_obs/widgets/common_dialog.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../extension/extension.dart';
 import '../../utils/dimens.dart';
-import '../../utils/images.dart';
 import '../../widgets/custom_button.dart';
 import 'package:movie_obs/l10n/app_localizations.dart';
 
-class PromotionScreen extends StatelessWidget {
+class PromotionScreen extends StatefulWidget {
   const PromotionScreen({super.key});
 
+  @override
+  State<PromotionScreen> createState() => _PromotionScreenState();
+}
+
+class _PromotionScreenState extends State<PromotionScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -38,22 +44,46 @@ class PromotionScreen extends StatelessWidget {
               ),
         ),
         bottomNavigationBar: Container(
-          height: 90,
-          padding: const EdgeInsets.symmetric(
-            horizontal: kMarginMedium2,
-          ),
-          child: Column(
+          height: 100,
+          padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+          child: Row(
             mainAxisSize: MainAxisSize.min,
-            spacing: 2,
+            spacing: 10,
             children: [
-              customButton(
-                onPress: () {},
-                context: context,
-                backgroundColor: kSecondaryColor,
-                title: 'Continue for Payment',
-                textColor: kWhiteColor,
+              GestureDetector(
+                onTap: () {
+                  showCommonDialog(
+                    context: context,
+                    dialogWidget: _buildAlert(),
+                  );
+                },
+                child: Container(
+                  height: 49,
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    color: Colors.grey.withValues(alpha: 0.2),
+                  ),
+                  child: Center(
+                    child: Text(
+                      AppLocalizations.of(context)?.giftNow ?? '',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: kWhiteColor,
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              Image.asset(kShadowImage),
+              Expanded(
+                child: customButton(
+                  onPress: () {},
+                  context: context,
+                  backgroundColor: kSecondaryColor,
+                  title: 'Continue for Payment',
+                  textColor: kWhiteColor,
+                ),
+              ),
             ],
           ),
         ),
@@ -150,6 +180,72 @@ class PromotionScreen extends StatelessWidget {
           bloc.packages?[index] ?? PackageVO(),
         );
       },
+    );
+  }
+
+  shareGift(dynamic data) {
+    SharePlus.instance.share(ShareParams(text: data));
+  }
+
+  Widget _buildAlert() {
+    return Dialog(
+      child: Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(CupertinoIcons.gift, size: 24, color: Colors.white),
+            15.vGap,
+
+            Text(
+              AppLocalizations.of(context)?.giftCard ?? '',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                color: kWhiteColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            10.vGap,
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 38,
+                    decoration: BoxDecoration(color: kThirdColor),
+                    child: Center(
+                      child: Text(
+                        '098-984-985',
+                        style: TextStyle(
+                          color: kBlackColor,
+                          fontSize: kTextRegular2x,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    shareGift('Your gift.....');
+                  },
+                  child: Container(
+                    height: 38,
+                    width: 44,
+                    decoration: BoxDecoration(color: kSecondaryColor),
+                    child: Center(
+                      child: Icon(
+                        CupertinoIcons.arrowshape_turn_up_right_fill,
+                        size: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
