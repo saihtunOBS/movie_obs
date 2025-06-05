@@ -32,6 +32,7 @@ class MovieDetailBloc extends ChangeNotifier {
   }
 
   getMovieDetail() {
+    _showLoading();
     _movieModel
         .getMovieDetail(token, movieId)
         .then((response) {
@@ -55,6 +56,7 @@ class MovieDetailBloc extends ChangeNotifier {
               isLogin: true,
             ),
           );
+          _hideLoading();
         })
         .whenComplete(() {
           _hideLoading();

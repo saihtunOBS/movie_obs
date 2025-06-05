@@ -287,10 +287,18 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             toolbarHeight: 80,
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
+
             title:
                 showControl == true
                     ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      padding: EdgeInsets.symmetric(
+                        horizontal:
+                            Platform.isAndroid
+                                ? 25
+                                : bloc.isFullScreen
+                                ? 0
+                                : 25,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -586,7 +594,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return GestureDetector(
       onTap: () => bloc.toggleMute(),
       child: Container(
-        //margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         height: bloc.isFullScreen ? 42 : 30,
         width: bloc.isFullScreen ? 50 : 46,
         decoration: BoxDecoration(

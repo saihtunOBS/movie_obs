@@ -1,109 +1,43 @@
-// import 'package:flutter/material.dart';
-// import 'package:lecle_yoyo_player/lecle_yoyo_player.dart';
+import 'package:flutter/material.dart';
+import 'package:flick_video_player/flick_video_player.dart';
+import 'package:video_player/video_player.dart';
 
-// class CustomPlayer extends StatefulWidget {
-//   const CustomPlayer({Key? key}) : super(key: key);
+class SamplePlayer extends StatefulWidget {
+  @override
+  _SamplePlayerState createState() => _SamplePlayerState();
+}
 
-//   @override
-//   _MyAppState createState() => _MyAppState();
-// }
+class _SamplePlayerState extends State<SamplePlayer> {
+  late FlickManager flickManager;
+  @override
+  void initState() {
+    super.initState();
+    flickManager = FlickManager(
+      videoPlayerController: VideoPlayerController.networkUrl(
+        Uri.parse(
+          "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        ),
+        videoPlayerOptions: VideoPlayerOptions(),
+      ),
+    );
+  }
 
-// class _MyAppState extends State<CustomPlayer> {
-//   bool fullscreen = false;
+  @override
+  void dispose() {
+    flickManager.dispose();
+    super.dispose();
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       title: 'Material App',
-//       home: Scaffold(
-//         appBar:
-//             fullscreen == false
-//                 ? AppBar(
-//                   backgroundColor: Colors.blue,
-//                   title: const Image(
-//                     image: AssetImage('image/yoyo_logo.png'),
-//                     fit: BoxFit.fitHeight,
-//                     height: 50,
-//                   ),
-//                   centerTitle: true,
-//                   leading: IconButton(
-//                     icon: const Icon(Icons.arrow_back),
-//                     onPressed: () {
-//                       Navigator.pop(context);
-//                     },
-//                   ),
-//                 )
-//                 : null,
-//         body: Padding(
-//           padding:
-//               fullscreen ? EdgeInsets.zero : const EdgeInsets.only(top: 32.0),
-//           child: YoYoPlayer(
-//             aspectRatio: 16 / 9,
-//             url:
-//                 'https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/Movie2/master.m3u8',
-//             allowCacheFile: true,
-//             onCacheFileCompleted: (files) {
-//               print('Cached file length ::: ${files?.length}');
-
-//               if (files != null && files.isNotEmpty) {
-//                 for (var file in files) {
-//                   print('File path ::: ${file.path}');
-//                 }
-//               }
-//             },
-//             onCacheFileFailed: (error) {
-//               print('Cache file error ::: $error');
-//             },
-//             videoStyle: const VideoStyle(
-//               qualityStyle: TextStyle(
-//                 fontSize: 16.0,
-//                 fontWeight: FontWeight.w500,
-//                 color: Colors.white,
-//               ),
-//               forwardAndBackwardBtSize: 30.0,
-//               playButtonIconSize: 40.0,
-//               playIcon: Icon(
-//                 Icons.add_circle_outline_outlined,
-//                 size: 40.0,
-//                 color: Colors.white,
-//               ),
-//               pauseIcon: Icon(
-//                 Icons.remove_circle_outline_outlined,
-//                 size: 40.0,
-//                 color: Colors.white,
-//               ),
-//               videoQualityPadding: EdgeInsets.all(5.0),
-//               // showLiveDirectButton: true,
-//               // enableSystemOrientationsOverride: false,
-//             ),
-//             videoLoadingStyle: const VideoLoadingStyle(
-//               loading: Center(
-//                 child: Column(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   crossAxisAlignment: CrossAxisAlignment.center,
-//                   children: [
-//                     Image(
-//                       image: AssetImage('image/yoyo_logo.png'),
-//                       fit: BoxFit.fitHeight,
-//                       height: 50,
-//                     ),
-//                     SizedBox(height: 16.0),
-//                     Text("Loading video..."),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//             onFullScreen: (value) {
-//               setState(() {
-//                 if (fullscreen != value) {
-//                   fullscreen = value;
-//                 }
-//               });
-//             },
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: Center(
+        child: Container(
+          height: 250,
+          child: FlickVideoPlayer(flickManager: flickManager),
+        ),
+      ),
+    );
+  }
+}

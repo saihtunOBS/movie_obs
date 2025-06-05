@@ -46,10 +46,10 @@ class HomeBloc extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateViewCount(String type, String id) {
+  Future<void> updateViewCount(String type, String id) {
     updateToken();
     var request = ViewCountRequest(type);
-    _movieModel.updateViewCount(token, id, request);
+    return _movieModel.updateViewCount(token, id, request);
   }
 
   getAllMovieAndSeries() {

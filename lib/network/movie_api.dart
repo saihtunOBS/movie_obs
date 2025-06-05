@@ -46,6 +46,7 @@ abstract class MovieApi {
     @Query('limit') int limit,
     @Query('genres') String genres,
     @Query('page') int page,
+    @Query('status') String status,
   );
 
   @GET('$kEndPointMovie/{id}')
@@ -62,10 +63,16 @@ abstract class MovieApi {
   );
 
   @GET('$kEndPointSeries/{id}/similar-contents')
-  Future<List<MovieVO>> getRecommendedSeries(@Path() String id);
+  Future<List<MovieVO>> getRecommendedSeries(
+    @Path() String id,
+    @Query('status') String status,
+  );
 
   @GET('$kEndPointMovie/{id}/similar-contents')
-  Future<List<MovieVO>> getRecommendedMovies(@Path() String id);
+  Future<List<MovieVO>> getRecommendedMovies(
+    @Path() String id,
+    @Query('status') String status,
+  );
 
   @GET(kEndPointHomeMovieAndSeries)
   Future<MovieResponse> getAllMoviesAndSeries(
@@ -76,6 +83,7 @@ abstract class MovieApi {
     @Query('contentType') String type,
     @Query('getAll') bool getAll,
     @Query('page') int page,
+    @Query('status') String status,
   );
 
   @GET(kEndPointAds)
@@ -85,13 +93,14 @@ abstract class MovieApi {
   Future<AdsBannerResponse> getBanner();
 
   @GET(kEndPointSeason)
-  Future<SeasonResponse> getAllSeason();
+  Future<SeasonResponse> getAllSeason(@Query('status') String status);
 
   @GET('$kEndPointSeason/{id}')
   Future<SeasonEpisodeResponse> getSeasonEpisode(
     @Header(kHeaderAuthorization) String token,
     @Path() String id,
     @Query('include_episodes') bool isSeasonInclude,
+    @Query('status') String status,
   );
 
   @GET('$kEndPointCast/{id}')
@@ -105,12 +114,14 @@ abstract class MovieApi {
   Future<MovieResponse> getMovieSeriesByGenre(
     @Header(kHeaderAuthorization) String token,
     @Query('genre') String id,
+    @Query('status') String status,
   );
 
   @GET(kEndPointSeason)
   Future<MovieResponse> getMovieSeriesByCategory(
     @Header(kHeaderAuthorization) String token,
     @Query('category') String id,
+    @Query('status') String status,
   );
 
   @GET(kEndPointCategory)
@@ -123,6 +134,7 @@ abstract class MovieApi {
   Future<MovieResponse> getTopTrending(
     @Header(kHeaderAuthorization) String token,
     @Query('isTrending') bool isTrending,
+    @Query('status') String status,
   );
 
   @GET(kEndPointHomeMovieAndSeries)
@@ -132,6 +144,7 @@ abstract class MovieApi {
     @Query('sortOrder') String sortOrder,
     @Query('plan') String plan,
     @Query('getAll') bool getAll,
+    @Query('status') String status,
   );
 
   @GET(kEndPointSeries)
@@ -141,6 +154,7 @@ abstract class MovieApi {
     @Query('limit') int limit,
     @Query('genres') String genres,
     @Query('page') int page,
+    @Query('status') String status,
   );
 
   @GET(kEndPointPackage)

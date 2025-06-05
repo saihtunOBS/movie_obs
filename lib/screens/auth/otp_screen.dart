@@ -148,7 +148,6 @@ class _OTPScreenState extends State<OTPScreen> {
                                         });
                                       })
                                       .catchError((error) {
-                                        print('error$error');
                                         ToastService.warningToast(
                                           error.toString(),
                                         );
@@ -259,7 +258,15 @@ class _OTPScreenState extends State<OTPScreen> {
             controller: pinController,
             length: 6,
             autofocus: true,
-            focusNode: focusNode,
+            cursor: Container(
+              width: 3,
+              height: 22,
+
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: kPrimaryColor,
+              ),
+            ),
             defaultPinTheme: defaultPinTheme,
             submittedPinTheme: submittedPinTheme,
             focusedPinTheme: submittedPinTheme,

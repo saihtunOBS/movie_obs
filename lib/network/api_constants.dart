@@ -9,6 +9,7 @@ const String kEndPointVerifyOtp = '/auth/customer/login/otp/verify';
 const String kEndPointMovie = '/videos/movies';
 const String kEndPointSeries = '/videos/series';
 const String kEndPointSeason = '/videos/seasons';
+const String kEndPointEpisode = 'videos/episodes';
 const String kEndPointHomeMovieAndSeries = '/videos/movies-series';
 const String kEndPointCategory = '/videos/categories';
 const String kEndPointGenre = '/videos/genres';

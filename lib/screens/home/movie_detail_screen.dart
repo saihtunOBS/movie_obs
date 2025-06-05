@@ -14,7 +14,6 @@ import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:movie_obs/widgets/common_dialog.dart';
-import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../list_items/recommended_movie_list_item.dart';
@@ -136,7 +135,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     ],
                   ),
                   //loading
-                  bloc.isLoading ? LoadingView() : SizedBox.shrink(),
+                  //bloc.isLoading ? LoadingView() : SizedBox.shrink(),
                 ],
               ),
             ),
@@ -213,7 +212,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             context,
             widget.movie?.id ?? '',
             widget.movie?.videoUrl ?? '',
-            bloc,
           ),
           _buildCastView(bloc),
           _buildDescription(bloc, context),
@@ -351,56 +349,64 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     BuildContext context,
     String videoId,
     String url,
-    MovieDetailBloc bloc,
   ) {
-    return GestureDetector(
-      onTap: () {
-        PageNavigator(ctx: context)
-            .nextPage(
-              page: VideoPlayerScreen(
-                url: widget.movie?.videoUrl ?? '',
-                isFirstTime: true,
-                videoId: videoId,
-                type: 'MOVIE',
-              ),
-            )
-            .whenComplete(() {
-              context.read<HomeBloc>().updateViewCount(
-                'Movie',
-                widget.movie?.id ?? '',
-              );
-              bloc.getMovieDetail();
-              setState(() {});
-            });
-      },
-      child: Column(
-        spacing: 2,
-        children: [
-          Container(
-            height: 48,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: kSecondaryColor,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 10,
+    return Consumer<MovieDetailBloc>(
+      builder:
+          (context, bloc, child) => GestureDetector(
+            onTap: () {
+              PageNavigator(ctx: context)
+                  .nextPage(
+                    page: VideoPlayerScreen(
+                      url: widget.movie?.videoUrl ?? '',
+                      isFirstTime: true,
+                      videoId: videoId,
+                      type: 'MOVIE',
+                    ),
+                  )
+                  .whenComplete(() {
+                    setState(() {
+                      context
+                          .read<HomeBloc>()
+                          .updateViewCount('Movie', widget.movie?.id ?? '')
+                          .then((_) {
+                            bloc.getMovieDetail();
+                          });
+                    });
+                  });
+            },
+            child: Column(
+              spacing: 2,
               children: [
-                Icon(CupertinoIcons.video_camera, color: kWhiteColor, size: 27),
-                Text(
-                  AppLocalizations.of(context)?.watchNow ?? '',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: kWhiteColor,
+                Container(
+                  height: 48,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: kSecondaryColor,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 10,
+                    children: [
+                      Icon(
+                        CupertinoIcons.video_camera,
+                        color: kWhiteColor,
+                        size: 27,
+                      ),
+                      Text(
+                        AppLocalizations.of(context)?.watchNow ?? '',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: kWhiteColor,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                Image.asset(kShadowImage),
               ],
             ),
           ),
-          Image.asset(kShadowImage),
-        ],
-      ),
     );
   }
 
