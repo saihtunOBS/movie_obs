@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
+import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:video_player/video_player.dart';
@@ -300,8 +301,11 @@ class VideoBloc extends ChangeNotifier {
     Duration? currentDuration, [
     String? quality,
   ]) async {
+    if (isFirstTime) {
+      showLoading();
+      notifyListeners();
+    }
     selectedQuality = quality ?? selectedQuality;
-
     final oldController = videoPlayerController;
     final oldChewieController = chewieControllerNotifier;
 
@@ -312,13 +316,15 @@ class VideoBloc extends ChangeNotifier {
     final newController = VideoPlayerController.networkUrl(Uri.parse(url));
     await newController.initialize();
 
-    // Seek to previous position
-    await newController.seekTo(currentDuration ?? currentPosition);
+    // 👇 Prevent Android from displaying first frame
+    await newController.pause(); // pause immediately
+    await newController.setLooping(false); // ensure it doesn't auto-loop
 
-    // Start playing if previously playing
-    if (wasPlaying) {
-      await newController.play();
-    }
+    // Seek to previous position BEFORE playing
+    await newController.seekTo(
+      (currentDuration ?? currentPosition) +
+          Duration(seconds: isFirstTime == true ? 0 : 8),
+    );
 
     // Set volume
     newController.setVolume(isMuted ? 0.0 : 1.0);
@@ -341,11 +347,22 @@ class VideoBloc extends ChangeNotifier {
       useRootNavigator: false,
       allowFullScreen: false,
       draggableProgressBar: false,
+      autoInitialize: true,
+      autoPlay: false, // 👈 Prevent autoPlay flicker
       bufferingBuilder: (context) {
         return const LoadingView();
       },
     );
-
+    await Future.delayed(
+      Duration(
+        milliseconds:
+            isFirstTime == true
+                ? 0
+                : Platform.isIOS
+                ? 0
+                : 7000,
+      ),
+    );
     // Now replace the current player
     await oldController?.pause();
     await oldController?.dispose();
@@ -354,6 +371,10 @@ class VideoBloc extends ChangeNotifier {
     videoPlayerController = newController;
     chewieControllerNotifier = newChewieController;
 
+    // Start playing only after everything is ready
+    if (wasPlaying) {
+      await newController.play();
+    }
     hideLoading();
     notifyListeners();
   }
@@ -440,24 +461,35 @@ class VideoBloc extends ChangeNotifier {
     return "$minutes:$seconds";
   }
 
-  void seekBy(Duration offset) async {
-    final currentPosition =
-        videoPlayerController?.value.position ?? Duration.zero;
-    final duration = videoPlayerController?.value.duration ?? Duration.zero;
-    final newPosition = currentPosition + offset;
+  Duration _seekOffset = Duration.zero;
+  Timer? _debounceSeekTimer;
 
-    if (newPosition < Duration.zero) {
-      await videoPlayerController?.seekTo(Duration.zero);
-    } else if (newPosition > duration) {
-      await videoPlayerController?.seekTo(duration);
-    } else {
-      await videoPlayerController?.seekTo(newPosition);
-    }
-    if (!(videoPlayerController?.value.isPlaying ?? true)) {
-      await videoPlayerController?.play();
-      await chewieControllerNotifier?.play();
-      playerStatus.value = 2;
-    }
+  void seekBy(Duration offset) {
+    _seekOffset += offset;
+    _debounceSeekTimer?.cancel();
+
+    _debounceSeekTimer = Timer(const Duration(milliseconds: 300), () async {
+      final controller = videoPlayerController;
+      if (controller == null || !controller.value.isInitialized) return;
+
+      final currentPosition = controller.value.position;
+      final duration = controller.value.duration;
+
+      final newPosition = (currentPosition + _seekOffset).clamp(
+        Duration.zero,
+        duration,
+      );
+
+      _seekOffset = Duration.zero;
+
+      await controller.seekTo(newPosition);
+
+      if (!controller.value.isPlaying) {
+        await controller.play();
+      }
+
+      notifyListeners();
+    });
   }
 
   void startSeekUpdateLoop() {

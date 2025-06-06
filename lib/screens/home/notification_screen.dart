@@ -21,12 +21,14 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
-    context.read<NotificationBloc>().updateToken();
-    context.read<NotificationBloc>().getNotifications().catchError((_) {
-      PersistenceData.shared.clearToken();
-      PageNavigator(ctx: context).nextPage(page: LoginScreen());
-    });
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<NotificationBloc>().updateToken();
+      context.read<NotificationBloc>().getNotifications().catchError((_) {
+        PersistenceData.shared.clearToken();
+        PageNavigator(ctx: context).nextPage(page: LoginScreen());
+      });
+    });
   }
 
   @override

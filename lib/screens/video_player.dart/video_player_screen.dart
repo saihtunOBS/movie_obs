@@ -64,6 +64,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      if (videoPlayerController?.value.isPlaying ?? true) {
+        playerStatus.value = 2;
+      } else if (videoPlayerController?.value.isCompleted ?? true) {
+        playerStatus.value = 3;
+      } else {
+        playerStatus.value = 1;
+      }
       if (Platform.isIOS) {
         SystemChrome.setPreferredOrientations([]);
       }
@@ -110,7 +117,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   @override
   void initState() {
     super.initState();
-
+    showControl = true;
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
@@ -157,7 +164,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
       if (widget.isFirstTime == true) {
         if (widget.isTrailer == true) {
-          bloc.showLoading();
           playerStatus.value = 1;
           bloc.initializeVideo(widget.url ?? '');
         } else {
@@ -184,32 +190,23 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       if (!mounted) return;
 
       if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
-        debugPrint('Loading saved position: ${_savedVideo?.position}');
         selectedQuality = 'Auto';
         await bloc.fetchQualityOptions();
+        // // Now calculate the proper buffered progress ratio
+        // if (videoPlayerController?.value.duration.inMilliseconds != null &&
+        //     videoPlayerController!.value.duration.inMilliseconds > 0) {
+        //   final durationMs =
+        //       videoPlayerController!.value.duration.inMilliseconds;
+        //   final savedPositionMs = _savedVideo?.position.inMilliseconds ?? 0;
 
-        // Initialize the video first to get duration
-        await bloc.initializeVideo(
-          widget.url ?? '',
-          videoId: widget.videoId,
-          type: widget.type,
-        );
-
-        // Now calculate the proper buffered progress ratio
-        if (videoPlayerController?.value.duration.inMilliseconds != null &&
-            videoPlayerController!.value.duration.inMilliseconds > 0) {
-          final durationMs =
-              videoPlayerController!.value.duration.inMilliseconds;
-          final savedPositionMs = _savedVideo?.position.inMilliseconds ?? 0;
-
-          setState(() {
-            bufferedProgress = (savedPositionMs / durationMs).clamp(0.0, 1.0);
-          });
-        } else {
-          setState(() {
-            bufferedProgress = 0.0;
-          });
-        }
+        //   setState(() {
+        //     bufferedProgress = (savedPositionMs / durationMs).clamp(0.0, 1.0);
+        //   });
+        // } else {
+        //   setState(() {
+        //     bufferedProgress = 0.0;
+        //   });
+        // }
 
         await bloc.changeQuality(
           widget.url ?? '',
@@ -219,6 +216,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         );
         bloc.updateListener();
       } else {
+        selectedQuality = 'Auto';
         setState(() {
           bufferedProgress = 0.0;
         });
@@ -272,6 +270,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
     if (isClickPopUp != true) {
       videoPlayerController?.dispose();
+      chewieControllerNotifier?.dispose();
       playerStatus.value = 1;
     }
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -376,7 +375,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                       child: Stack(
                         children: [
                           _buildVideoPlayer(),
-
                           showControl == true
                               ? _buildPlayPauseControls()
                               : SizedBox.shrink(),
@@ -433,7 +431,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             onPressed: () {
               bloc.resetControlVisibility(isSeek: true);
               if (videoPlayerController?.value.isInitialized ?? true) {
-                bloc.seekBy(Duration(seconds: -5));
+                bloc.seekBy(Duration(seconds: -10));
               }
               isPlay.value = false;
             },
@@ -444,9 +442,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             onPressed: () {
               bloc.resetControlVisibility(isSeek: true);
               if (videoPlayerController?.value.isInitialized ?? true) {
-                bloc.seekBy(Duration(seconds: 5));
+                bloc.seekBy(Duration(seconds: 10));
               }
-              isPlay.value = false;
             },
           ),
         ],
@@ -495,6 +492,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     if (videoPlayerController?.value.isCompleted ?? true) {
       videoPlayerController?.seekTo(Duration.zero).then((_) {
         videoPlayerController?.play();
+        chewieControllerNotifier?.play();
         isPlay.value = true;
         playerStatus.value = 2;
       });
