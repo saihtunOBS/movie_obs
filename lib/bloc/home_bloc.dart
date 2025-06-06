@@ -6,6 +6,7 @@ import 'package:movie_obs/data/vos/adsAndBanner_vo.dart';
 import 'package:movie_obs/data/vos/collection_vo.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/network/requests/view_count_request.dart';
+import 'package:movie_obs/network/responses/collection_detail_response.dart';
 
 class HomeBloc extends ChangeNotifier {
   bool isLoading = false;
@@ -23,9 +24,15 @@ class HomeBloc extends ChangeNotifier {
   List<MovieVO> newReleaseMoviesList = [];
   List<AdsAndBannerVO> bannerList = [];
   List<CollectionVO> categoryCollectionLists = [];
+  CollectionDetailResponse? collectionDetail;
+
   final MovieModel _movieModel = MovieModelImpl();
 
-  HomeBloc({BuildContext? context}) {
+  HomeBloc({
+    BuildContext? context,
+    bool? isCollectionDetail,
+    String? collectionId,
+  }) {
     token = PersistenceData.shared.getToken();
 
     getBanner();
@@ -34,6 +41,10 @@ class HomeBloc extends ChangeNotifier {
     getTopTrending();
     getNewRelease();
     getCategoryCollections();
+
+    if (isCollectionDetail == true) {
+      getCollectionDetail(collectionId ?? '');
+    }
   }
 
   void onRefresh() {
@@ -92,6 +103,19 @@ class HomeBloc extends ChangeNotifier {
         .getAllMovieAndSeries(token, 'FREE', genre, contentType, false, 1)
         .then((response) {
           freeMovieLists = response.data ?? [];
+          _hideLoading();
+        })
+        .whenComplete(() {
+          _hideLoading();
+        });
+  }
+
+  getCollectionDetail(String id) {
+    _showLoading();
+    _movieModel
+        .getCategoryCollectionDetail(token, id)
+        .then((response) {
+          collectionDetail = response;
           _hideLoading();
         })
         .whenComplete(() {

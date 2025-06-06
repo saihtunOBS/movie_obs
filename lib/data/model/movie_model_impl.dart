@@ -14,6 +14,7 @@ import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
+import 'package:movie_obs/network/responses/collection_detail_response.dart';
 import 'package:movie_obs/network/responses/collection_response.dart';
 import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
@@ -281,5 +282,13 @@ class MovieModelImpl extends MovieModel {
     RedeemCodeRequest request,
   ) {
     return movieDataAgent.redeemCode(token, userId, request);
+  }
+
+  @override
+  Future<CollectionDetailResponse> getCategoryCollectionDetail(
+    String token,
+    String id,
+  ) {
+    return movieDataAgent.getCategoryCollectionDetail(token, id);
   }
 }

@@ -15,6 +15,7 @@ import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
+import 'package:movie_obs/network/responses/collection_detail_response.dart';
 import 'package:movie_obs/network/responses/collection_response.dart';
 import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
@@ -57,6 +58,14 @@ abstract class MovieApi {
     @Header(kHeaderAuthorization) String token,
     @Query('limit') int limit,
     @Query('page') int page,
+  );
+
+  @GET('$kEndPointCategoryGroup/{id}')
+  Future<CollectionDetailResponse> getCategoryCollectionsDetail(
+    @Header(kHeaderAuthorization) String token,
+    @Path() String id,
+    @Query('genres') String genres,
+    @Query('contentType') String contentType,
   );
 
   @GET('$kEndPointMovie/{id}')

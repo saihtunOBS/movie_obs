@@ -44,6 +44,7 @@ class SeriesDetailBloc extends ChangeNotifier {
           notifyListeners();
         })
         .catchError((error) {
+          PersistenceData.shared.clearToken();
           PersistenceData.shared.saveFirstTime(true);
           showCommonDialog(
             context: myContext!,

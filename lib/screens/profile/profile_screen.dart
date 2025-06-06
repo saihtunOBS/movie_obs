@@ -434,6 +434,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               onPress: () {
                                 if (isLogout == true) {
                                   tab.value = false;
+                                  PersistenceData.shared.clearToken();
                                   PersistenceData.shared.saveFirstTime(true);
                                   PageNavigator(
                                     ctx: context,

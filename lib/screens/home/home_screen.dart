@@ -8,6 +8,7 @@ import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
+import 'package:movie_obs/screens/home/collection_detail_screen.dart';
 import 'package:movie_obs/screens/home/free_movie_series_screen.dart';
 import 'package:movie_obs/screens/home/notification_screen.dart';
 import 'package:movie_obs/screens/home/search_screen.dart';
@@ -206,7 +207,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   pinned: false,
                                   delegate: _SliverHeader(
                                     title: collectionData.name ?? '',
-                                    onPress: () {},
+                                    onPress: () {
+                                      PageNavigator(ctx: context).nextPage(
+                                        page: CollectionDetailScreen(
+                                          collectionData: collectionData,
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                                 SliverToBoxAdapter(

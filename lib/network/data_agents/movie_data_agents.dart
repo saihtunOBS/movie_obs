@@ -10,6 +10,7 @@ import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
+import 'package:movie_obs/network/responses/collection_detail_response.dart';
 import 'package:movie_obs/network/responses/collection_response.dart';
 import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
@@ -120,6 +121,11 @@ abstract class MovieDataAgents {
   );
 
   Future<CollectionResponse> getCategoryCollection(String token);
+
+  Future<CollectionDetailResponse> getCategoryCollectionDetail(
+    String token,
+    String id,
+  );
 
   Future<void> redeemCode(
     String token,

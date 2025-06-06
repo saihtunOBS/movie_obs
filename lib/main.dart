@@ -34,7 +34,6 @@ final RouteObserver<PageRoute> routeObserver = CurrentRouteObserver();
 void main() async {
   ErrorWidget.builder = (FlutterErrorDetails details) => Container();
   WidgetsFlutterBinding.ensureInitialized();
-
   if (Platform.isAndroid) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
