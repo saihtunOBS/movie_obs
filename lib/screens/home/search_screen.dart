@@ -168,27 +168,32 @@ class _SearchScreenState extends State<SearchScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children:
                 bloc.filteredSuggestions.map((value) {
-                  return GestureDetector(
-                    onTap: () {
-                      value.type == 'movie'
-                          ? PageNavigator(
-                            ctx: context,
-                          ).nextPage(page: MovieDetailScreen(movie: value))
-                          : PageNavigator(
-                            ctx: context,
-                          ).nextPage(page: SeriesDetailScreen(series: value));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: kMarginMedium,
-                        vertical: kMarginMedium,
-                      ),
-                      child: SubstringHighlight(
-                        text: value.name ?? '',
-                        term: _controller.text,
-                        textStyleHighlight: TextStyle(
-                          color: kSecondaryColor,
-                          fontWeight: FontWeight.w600,
+                  return SizedBox(
+                    width: double.infinity,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        value.type == 'movie'
+                            ? PageNavigator(
+                              ctx: context,
+                            ).nextPage(page: MovieDetailScreen(movie: value))
+                            : PageNavigator(
+                              ctx: context,
+                            ).nextPage(page: SeriesDetailScreen(series: value));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: kMarginMedium,
+                          vertical: kMarginMedium,
+                        ),
+                        child: SubstringHighlight(
+                          text: value.name ?? '',
+                          term: _controller.text,
+                          textStyleHighlight: TextStyle(
+                            color: kSecondaryColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                          ),
                         ),
                       ),
                     ),

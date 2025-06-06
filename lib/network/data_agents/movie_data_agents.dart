@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
+import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
 import 'package:movie_obs/network/requests/view_count_request.dart';
@@ -9,6 +10,7 @@ import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
+import 'package:movie_obs/network/responses/collection_response.dart';
 import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
@@ -115,5 +117,13 @@ abstract class MovieDataAgents {
     String token,
     String id,
     ViewCountRequest request,
+  );
+
+  Future<CollectionResponse> getCategoryCollection(String token);
+
+  Future<void> redeemCode(
+    String token,
+    String userId,
+    RedeemCodeRequest request,
   );
 }

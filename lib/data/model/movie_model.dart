@@ -4,7 +4,9 @@ import 'package:movie_obs/data/vos/movie_vo.dart' show MovieVO;
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/requests/history_request.dart'
     show HistoryRequest;
+import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/view_count_request.dart';
+import 'package:movie_obs/network/responses/collection_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 
@@ -113,5 +115,12 @@ abstract class MovieModel {
     String token,
     String id,
     ViewCountRequest request,
+  );
+
+  Future<CollectionResponse> getCategoryCollection(String token);
+  Future<void> redeemCode(
+    String token,
+    String userId,
+    RedeemCodeRequest request,
   );
 }

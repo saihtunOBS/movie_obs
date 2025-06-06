@@ -8,6 +8,7 @@ import 'package:movie_obs/exception/custom_exception.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/movie_api.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
+import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
 import 'package:movie_obs/network/requests/view_count_request.dart';
@@ -15,6 +16,7 @@ import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
+import 'package:movie_obs/network/responses/collection_response.dart';
 import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
@@ -499,6 +501,34 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   ) {
     return movieApi
         .updateViewCount('Bearer $token', id, request)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<CollectionResponse> getCategoryCollection(String token) {
+    return movieApi
+        .getCategoryCollections('Bearer $token', 10, 1)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<void> redeemCode(
+    String token,
+    String userId,
+    RedeemCodeRequest request,
+  ) {
+    return movieApi
+        .redeemCode('Bearer $token', userId, request)
         .asStream()
         .map((response) => response)
         .first

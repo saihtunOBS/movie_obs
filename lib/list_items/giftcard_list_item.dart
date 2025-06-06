@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -53,6 +53,7 @@ Widget giftCardListItem() {
             Text('122-112-333', style: TextStyle(fontSize: 13)),
             GestureDetector(
               onTap: () {
+                Clipboard.setData(ClipboardData(text: ''));
                 ToastService.successToast('Copied success!');
               },
               child: Padding(

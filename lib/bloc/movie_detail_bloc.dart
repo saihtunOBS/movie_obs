@@ -48,6 +48,7 @@ class MovieDetailBloc extends ChangeNotifier {
           notifyListeners();
         })
         .catchError((error) {
+          PersistenceData.shared.saveFirstTime(true);
           showCommonDialog(
             context: myContext!,
             isBarrierDismiss: false,

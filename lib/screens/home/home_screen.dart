@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
+import 'package:movie_obs/data/vos/collection_vo.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
@@ -198,28 +199,23 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
 
                             //collection
-                            if (bloc.newReleaseMoviesList.isNotEmpty) ...[
-                              SliverPersistentHeader(
-                                pinned: false,
-                                delegate: _SliverHeader(
-                                  title:
-                                      AppLocalizations.of(
-                                        context,
-                                      )?.collectionTitle ??
-                                      '',
-                                  onPress: () {
-                                    PageNavigator(
-                                      ctx: context,
-                                    ).nextPage(page: NewReleaseScreen());
-                                  },
+                            if (bloc.categoryCollectionLists.isNotEmpty) ...[
+                              for (var collectionData
+                                  in bloc.categoryCollectionLists) ...[
+                                SliverPersistentHeader(
+                                  pinned: false,
+                                  delegate: _SliverHeader(
+                                    title: collectionData.name ?? '',
+                                    onPress: () {},
+                                  ),
                                 ),
-                              ),
-                              SliverToBoxAdapter(
-                                child: _buildMovieOptions(
-                                  bloc.newReleaseMoviesList,
+                                SliverToBoxAdapter(
+                                  child: _buildCollectionMovie(
+                                    collectionData.items ?? [],
+                                  ),
                                 ),
-                              ),
-                              SliverToBoxAdapter(child: SizedBox(height: 10)),
+                                SliverToBoxAdapter(child: SizedBox(height: 10)),
+                              ],
                             ],
                             if (bloc.movieLists.isNotEmpty) ...[
                               SliverPersistentHeader(
@@ -404,6 +400,41 @@ class _HomeScreenState extends State<HomeScreen> {
                 movies: movies[index],
                 padding: kMarginMedium,
                 type: movies[index].type,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildCollectionMovie(List<CollectionItemVO> movies) {
+    return SizedBox(
+      height: 180,
+      width: double.infinity,
+      child: ListView.builder(
+        padding: EdgeInsets.symmetric(horizontal: kMarginMedium2),
+        scrollDirection: Axis.horizontal,
+        itemCount: movies.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              if (movies[index].referenceModel == 'Movie') {
+                PageNavigator(ctx: context).nextPage(
+                  page: MovieDetailScreen(movie: movies[index].reference),
+                );
+              } else {
+                PageNavigator(ctx: context).nextPage(
+                  page: SeriesDetailScreen(series: movies[index].reference),
+                );
+              }
+            },
+            child: SizedBox(
+              width: 140,
+              child: movieListItem(
+                movies: movies[index].reference,
+                padding: kMarginMedium,
+                type: movies[index].referenceModel?.toLowerCase(),
               ),
             ),
           );

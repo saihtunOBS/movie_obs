@@ -13,6 +13,8 @@ const String kEndPointEpisode = 'videos/episodes';
 const String kEndPointHomeMovieAndSeries = '/videos/movies-series';
 const String kEndPointCategory = '/videos/categories';
 const String kEndPointGenre = '/videos/genres';
+const String kEndPointCategoryGroup = '/videos/category-groups';
+const String kEndPointRedeemCode = '/transactions/redeem-code';
 
 const String kEndPointAds = '/cms/ads';
 const String kEndPointBanner = '/cms/banners';

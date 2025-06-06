@@ -6,6 +6,7 @@ import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/api_constants.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
+import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart'
     show SendOtpRequest;
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
@@ -14,6 +15,7 @@ import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
+import 'package:movie_obs/network/responses/collection_response.dart';
 import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
@@ -48,6 +50,13 @@ abstract class MovieApi {
     @Query('genres') String genres,
     @Query('page') int page,
     @Query('status') String status,
+  );
+
+  @GET(kEndPointCategoryGroup)
+  Future<CollectionResponse> getCategoryCollections(
+    @Header(kHeaderAuthorization) String token,
+    @Query('limit') int limit,
+    @Query('page') int page,
   );
 
   @GET('$kEndPointMovie/{id}')
@@ -243,5 +252,12 @@ abstract class MovieApi {
     @Header(kHeaderAuthorization) String token,
     @Path() String id,
     @Body() ViewCountRequest request,
+  );
+
+  @POST('$kEndPointRedeemCode/{id}')
+  Future<void> redeemCode(
+    @Header(kHeaderAuthorization) String token,
+    @Path() String id,
+    @Body() RedeemCodeRequest request,
   );
 }

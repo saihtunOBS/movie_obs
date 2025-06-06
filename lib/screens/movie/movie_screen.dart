@@ -140,9 +140,7 @@ class _MovieScreenState extends State<MovieScreen> {
                         onChanged: (value) => bloc.onSearchChanged(value),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              24,
-                            ), // your border radius
+                            borderRadius: BorderRadius.circular(24),
                           ),
                         ),
                       ),
@@ -257,27 +255,33 @@ class _MovieScreenState extends State<MovieScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children:
                                       bloc.filteredSuggestions.map((value) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            PageNavigator(
-                                              ctx: context,
-                                            ).nextPage(
-                                              page: MovieDetailScreen(
-                                                movie: value,
-                                              ),
-                                            );
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: kMarginMedium,
-                                              vertical: kMarginMedium,
-                                            ),
-                                            child: SubstringHighlight(
-                                              text: value.name ?? '',
-                                              term: _controller.text,
-                                              textStyleHighlight: TextStyle(
-                                                color: kSecondaryColor,
-                                                fontWeight: FontWeight.w600,
+                                        return SizedBox(
+                                          width: double.infinity,
+                                          child: GestureDetector(
+                                            behavior: HitTestBehavior.opaque,
+                                            onTap: () {
+                                              PageNavigator(
+                                                ctx: context,
+                                              ).nextPage(
+                                                page: MovieDetailScreen(
+                                                  movie: value,
+                                                ),
+                                              );
+                                            },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: kMarginMedium,
+                                                    vertical: kMarginMedium,
+                                                  ),
+                                              child: SubstringHighlight(
+                                                text: value.name ?? '',
+                                                term: _controller.text,
+                                                textStyleHighlight: TextStyle(
+                                                  color: kSecondaryColor,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 18,
+                                                ),
                                               ),
                                             ),
                                           ),

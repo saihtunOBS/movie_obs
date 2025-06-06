@@ -11,6 +11,7 @@ Future<bool?> showCommonDialog({
     barrierColor: Colors.black.withValues(alpha: 0.5),
     transitionDuration: const Duration(milliseconds: 300),
     context: context,
+    useRootNavigator: true,
     pageBuilder: (context, anim1, anim2) {
       return Align(
         alignment: Alignment.center,

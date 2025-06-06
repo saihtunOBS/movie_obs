@@ -3,6 +3,7 @@ import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/adsAndBanner_vo.dart';
+import 'package:movie_obs/data/vos/collection_vo.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/network/requests/view_count_request.dart';
 
@@ -21,6 +22,7 @@ class HomeBloc extends ChangeNotifier {
   List<MovieVO> topTrendingMoviesList = [];
   List<MovieVO> newReleaseMoviesList = [];
   List<AdsAndBannerVO> bannerList = [];
+  List<CollectionVO> categoryCollectionLists = [];
   final MovieModel _movieModel = MovieModelImpl();
 
   HomeBloc({BuildContext? context}) {
@@ -31,6 +33,7 @@ class HomeBloc extends ChangeNotifier {
     getAllMovieAndSeries();
     getTopTrending();
     getNewRelease();
+    getCategoryCollections();
   }
 
   void onRefresh() {
@@ -39,6 +42,7 @@ class HomeBloc extends ChangeNotifier {
     getAllMovieAndSeries();
     getTopTrending();
     getNewRelease();
+    getCategoryCollections();
   }
 
   void updateToken() {
@@ -137,6 +141,13 @@ class HomeBloc extends ChangeNotifier {
   getNewRelease() {
     _movieModel.getNewRelease(token, '').then((response) {
       newReleaseMoviesList = response.data ?? [];
+      notifyListeners();
+    });
+  }
+
+  getCategoryCollections() async {
+    _movieModel.getCategoryCollection(token).then((response) {
+      categoryCollectionLists = response.data ?? [];
       notifyListeners();
     });
   }

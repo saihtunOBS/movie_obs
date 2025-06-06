@@ -6,6 +6,7 @@ import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents_impl.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
+import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
 import 'package:movie_obs/network/requests/view_count_request.dart';
@@ -13,6 +14,7 @@ import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/actor_data_response.dart';
 import 'package:movie_obs/network/responses/ads_banner_response.dart';
 import 'package:movie_obs/network/responses/category_response.dart';
+import 'package:movie_obs/network/responses/collection_response.dart';
 import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
@@ -265,5 +267,19 @@ class MovieModelImpl extends MovieModel {
     ViewCountRequest request,
   ) {
     return movieDataAgent.updateViewCount(token, id, request);
+  }
+
+  @override
+  Future<CollectionResponse> getCategoryCollection(String token) {
+    return movieDataAgent.getCategoryCollection(token);
+  }
+
+  @override
+  Future<void> redeemCode(
+    String token,
+    String userId,
+    RedeemCodeRequest request,
+  ) {
+    return movieDataAgent.redeemCode(token, userId, request);
   }
 }

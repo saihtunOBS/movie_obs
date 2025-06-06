@@ -257,6 +257,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
                               width: double.infinity,
                               margin: EdgeInsets.symmetric(
                                 horizontal: kMarginMedium2,
+                                vertical: 10,
                               ),
                               padding: EdgeInsets.symmetric(
                                 vertical: kMarginMedium,
@@ -270,35 +271,39 @@ class _WatchListScreenState extends State<WatchListScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children:
                                     bloc.filteredSuggestions.map((value) {
-                                      return GestureDetector(
-                                        onTap: () {
-                                          value.type == 'MOVIE'
-                                              ? PageNavigator(
-                                                ctx: context,
-                                              ).nextPage(
-                                                page: MovieDetailScreen(
-                                                  movie: value.reference,
-                                                ),
-                                              )
-                                              : PageNavigator(
-                                                ctx: context,
-                                              ).nextPage(
-                                                page: SeriesDetailScreen(
-                                                  series: value.reference,
-                                                ),
-                                              );
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: kMarginMedium,
-                                            vertical: kMarginMedium,
-                                          ),
-                                          child: SubstringHighlight(
-                                            text: value.reference?.name ?? '',
-                                            term: _controller.text,
-                                            textStyleHighlight: TextStyle(
-                                              color: kSecondaryColor,
-                                              fontWeight: FontWeight.w600,
+                                      return SizedBox(
+                                        width: double.infinity,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            value.type == 'MOVIE'
+                                                ? PageNavigator(
+                                                  ctx: context,
+                                                ).nextPage(
+                                                  page: MovieDetailScreen(
+                                                    movie: value.reference,
+                                                  ),
+                                                )
+                                                : PageNavigator(
+                                                  ctx: context,
+                                                ).nextPage(
+                                                  page: SeriesDetailScreen(
+                                                    series: value.reference,
+                                                  ),
+                                                );
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: kMarginMedium,
+                                              vertical: kMarginMedium,
+                                            ),
+                                            child: SubstringHighlight(
+                                              text: value.reference?.name ?? '',
+                                              term: _controller.text,
+                                              textStyleHighlight: TextStyle(
+                                                color: kSecondaryColor,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 18,
+                                              ),
                                             ),
                                           ),
                                         ),
