@@ -184,6 +184,7 @@ class VideoBloc extends ChangeNotifier {
     String url, {
     String? videoId,
     String? type,
+    Duration? duration,
   }) async {
     showLoading();
     videoPlayerController = VideoPlayerController.networkUrl(
@@ -191,6 +192,7 @@ class VideoBloc extends ChangeNotifier {
       videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: true),
     );
     videoPlayerController?.initialize().then((_) {
+      videoPlayerController?.seekTo(duration ?? Duration.zero);
       chewieControllerNotifier = ChewieController(
         videoPlayerController: videoPlayerController!,
         showControls: false,
@@ -237,62 +239,6 @@ class VideoBloc extends ChangeNotifier {
     });
     notifyListeners();
   }
-
-  // //quality change
-  // Future<void> changeQuality(
-  //   String url,
-  //   String? videoId,
-  //   bool isFirstTime,
-  //   Duration? currentDuration, [
-  //   String? quality,
-  // ]) async {
-  //   showLoading();
-  //   selectedQuality = quality ?? selectedQuality;
-  //   currentUrl = url;
-  //   final currentPosition = videoPlayerController?.value.position;
-  //   final wasPlaying = videoPlayerController?.value.isPlaying ?? true;
-
-  //   await videoPlayerController?.pause();
-  //   await videoPlayerController?.dispose();
-
-  //   videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
-
-  //   videoPlayerController?.initialize().then((_) async {
-  //     await videoPlayerController?.seekTo(
-  //       currentDuration ?? currentPosition ?? Duration.zero,
-  //     );
-
-  //     if (wasPlaying) {
-  //       videoPlayerController?.play();
-  //       hideLoading();
-  //     } else {
-  //       videoPlayerController?.pause();
-  //       hideLoading();
-  //     }
-  //   });
-
-  //   chewieControllerNotifier = ChewieController(
-  //     videoPlayerController: videoPlayerController as VideoPlayerController,
-  //     showControls: false,
-  //     aspectRatio: 16 / 9,
-  //     useRootNavigator: false,
-  //     allowFullScreen: false,
-  //     draggableProgressBar: false,
-  //     bufferingBuilder: (context) {
-  //       return const LoadingView();
-  //     },
-  //   );
-  //   videoPlayerController?.setVolume(isMuted ? 0.0 : 1.0);
-  //   videoPlayerController?.addListener(() {
-  //     if (videoPlayerController?.value.isCompleted ?? true) {
-  //       isPlay.value = false;
-  //       showControl = true;
-  //       playerStatus.value = 3;
-  //       notifyListeners();
-  //     }
-  //   });
-  //   hideLoading();
-  // }
 
   Future<void> changeQuality(
     String url,
@@ -486,6 +432,7 @@ class VideoBloc extends ChangeNotifier {
 
       if (!controller.value.isPlaying) {
         await controller.play();
+        chewieControllerNotifier?.play();
       }
 
       notifyListeners();

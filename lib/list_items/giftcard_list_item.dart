@@ -30,7 +30,7 @@ Widget giftCardListItem() {
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: kSecondaryColor,
                 borderRadius: BorderRadius.circular(15),
@@ -39,6 +39,7 @@ Widget giftCardListItem() {
                 'Unused',
                 style: TextStyle(
                   color: kWhiteColor,
+                  fontSize: kTextSmall,
                   fontWeight: FontWeight.w600,
                 ),
               ),

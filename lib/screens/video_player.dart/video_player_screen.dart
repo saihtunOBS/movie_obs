@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:auto_orientation_v2/auto_orientation_v2.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
@@ -126,7 +127,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
     WidgetsBinding.instance.addObserver(this);
     bloc = Provider.of<VideoBloc>(context, listen: false);
-
     if (Platform.isAndroid) {
       _subscription = RotationDetector.onRotationLockChanged.listen((
         isEnabled,
@@ -191,40 +191,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
       if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
         selectedQuality = 'Auto';
-        await bloc.fetchQualityOptions();
-        // // Now calculate the proper buffered progress ratio
-        // if (videoPlayerController?.value.duration.inMilliseconds != null &&
-        //     videoPlayerController!.value.duration.inMilliseconds > 0) {
-        //   final durationMs =
-        //       videoPlayerController!.value.duration.inMilliseconds;
-        //   final savedPositionMs = _savedVideo?.position.inMilliseconds ?? 0;
-
-        //   setState(() {
-        //     bufferedProgress = (savedPositionMs / durationMs).clamp(0.0, 1.0);
-        //   });
-        // } else {
-        //   setState(() {
-        //     bufferedProgress = 0.0;
-        //   });
-        // }
-
-        await bloc.changeQuality(
+        await bloc.initializeVideo(
           widget.url ?? '',
-          widget.videoId,
-          true,
-          _savedVideo?.position,
+          duration: _savedVideo?.position,
         );
-        bloc.updateListener();
       } else {
         selectedQuality = 'Auto';
         setState(() {
           bufferedProgress = 0.0;
         });
-        await bloc.initializeVideo(
-          widget.url ?? '',
-          videoId: widget.videoId,
-          type: widget.type,
-        );
+        await bloc.initializeVideo(widget.url ?? '', videoId: widget.videoId);
         bloc.updateListener();
       }
     } catch (e) {
@@ -270,7 +246,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
     if (isClickPopUp != true) {
       videoPlayerController?.dispose();
-      chewieControllerNotifier?.dispose();
       playerStatus.value = 1;
     }
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -311,7 +286,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           extendBodyBehindAppBar: true,
           extendBody: true,
           backgroundColor: kBlackColor,
-          body: _buildVideoPlayerSection(),
+          body:
+              bloc.isLoading ||
+                      !(videoPlayerController?.value.isInitialized ?? true)
+                  ? LoadingView()
+                  : _buildVideoPlayerSection(),
           bottomNavigationBar: SizedBox(
             height: 90,
             child: Visibility(
@@ -431,7 +410,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             onPressed: () {
               bloc.resetControlVisibility(isSeek: true);
               if (videoPlayerController?.value.isInitialized ?? true) {
-                bloc.seekBy(Duration(seconds: -10));
+                bloc.seekBy(Duration(seconds: -5));
               }
               isPlay.value = false;
             },
@@ -442,7 +421,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             onPressed: () {
               bloc.resetControlVisibility(isSeek: true);
               if (videoPlayerController?.value.isInitialized ?? true) {
-                bloc.seekBy(Duration(seconds: 10));
+                bloc.seekBy(Duration(seconds: 5));
               }
             },
           ),
@@ -685,7 +664,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   Widget _buildSlider() {
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
-        allowedInteraction: SliderInteraction.slideOnly,
+        allowedInteraction: SliderInteraction.slideThumb,
         trackHeight: bloc.isFullScreen ? 2.0 : 3.0,
         inactiveTrackColor: Colors.white.withValues(alpha: 0.5),
         activeTrackColor: kPrimaryColor,
@@ -1157,25 +1136,22 @@ class Player extends StatelessWidget {
             children: [
               Align(
                 alignment: Alignment.center,
-                child: ClipRRect(
-                  child: AspectRatio(
-                    aspectRatio:
-                        videoPlayerController?.value.aspectRatio ?? 0.0,
-                    child: IgnorePointer(
-                      child:
-                          bloc.isLoading
-                              ? LoadingView()
-                              : Chewie(
-                                controller:
-                                    chewieControllerNotifier ??
-                                    ChewieController(
-                                      videoPlayerController:
-                                          videoPlayerController
-                                              as VideoPlayerController,
-                                      showControls: false,
-                                    ),
-                              ),
-                    ),
+                child: AspectRatio(
+                  aspectRatio: videoPlayerController?.value.aspectRatio ?? 0.0,
+                  child: IgnorePointer(
+                    child:
+                        bloc.isLoading
+                            ? LoadingView()
+                            : Chewie(
+                              controller:
+                                  chewieControllerNotifier ??
+                                  ChewieController(
+                                    videoPlayerController:
+                                        videoPlayerController
+                                            as VideoPlayerController,
+                                    showControls: false,
+                                  ),
+                            ),
                   ),
                 ),
               ),
