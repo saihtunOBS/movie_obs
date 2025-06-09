@@ -15,9 +15,9 @@ class AdsBloc extends ChangeNotifier {
     getAds();
   }
 
-  getAds() {
+  getAds() async {
     _showLoading();
-    _movieModel.getAds('').then((response) {
+    await _movieModel.getAds('').then((response) {
       adsLists = response.data ?? [];
       notifyListeners();
       _hideLoading();

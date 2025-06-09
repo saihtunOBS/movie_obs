@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:auto_orientation_v2/auto_orientation_v2.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -60,6 +61,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   StreamSubscription<bool>? _subscription;
   double brightness = 1.0;
   double progress = 0.0;
+  List<ConnectivityResult> _connectionStatus = [ConnectivityResult.none];
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -108,6 +112,43 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     bloc.isFullScreen = _lastOrientation == Orientation.landscape;
   }
 
+  Future<void> initConnectivity() async {
+    late List<ConnectivityResult> result;
+    try {
+      result = await _connectivity.checkConnectivity();
+    } on PlatformException catch (_) {
+      return;
+    }
+
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(List<ConnectivityResult> result) async {
+    setState(() {
+      _connectionStatus = result;
+    });
+    if (_connectionStatus.isNotEmpty) {
+      if (Platform.isAndroid) {
+        playerStatus.value = 2;
+        bloc
+            .changeQuality(
+              bloc.currentUrl,
+              widget.videoId,
+              false,
+              bloc.lastKnownPosition,
+            )
+            .then((_) {
+              videoPlayerController?.play();
+              chewieControllerNotifier?.play();
+            });
+      }
+    }
+  }
+
   @override
   void didChangeMetrics() {
     _checkOrientation();
@@ -118,6 +159,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   void initState() {
     super.initState();
     showControl = true;
+    initConnectivity();
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
+      _updateConnectionStatus,
+    );
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
@@ -221,8 +266,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _subscription?.cancel();
-
-    // Save video progress before disposing
+    _connectivitySubscription.cancel();
     if (widget.videoId != null &&
         (videoPlayerController?.value.isInitialized ?? true)) {
       final position = videoPlayerController?.value.position ?? Duration.zero;
@@ -336,43 +380,41 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
               double screenHeight = constraints.maxHeight;
               final screenWidth = constraints.maxWidth;
               final leftZone = screenWidth * 0.3;
-              return bloc.isLoading == true
-                  ? LoadingView()
-                  : Container(
-                    color: Colors.transparent,
+              return Container(
+                color: Colors.transparent,
 
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        bloc.resetControlVisibility();
-                      },
-                      child: Stack(
-                        children: [
-                          _buildVideoPlayer(),
-                          showControl == true
-                              ? _buildPlayPauseControls()
-                              : SizedBox.shrink(),
-                          // Left Zone
-                          Positioned(
-                            left: 0,
-                            width: leftZone,
-                            height: screenHeight,
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onVerticalDragStart: _onVerticalDragStart,
-                              onVerticalDragUpdate:
-                                  (details) => _onVerticalDragUpdate(
-                                    details,
-                                    'left',
-                                    screenHeight,
-                                  ),
-                              onVerticalDragEnd: _onVerticalDragEnd,
-                            ),
-                          ),
-                        ],
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    bloc.resetControlVisibility();
+                  },
+                  child: Stack(
+                    children: [
+                      _buildVideoPlayer(),
+                      showControl == true
+                          ? _buildPlayPauseControls()
+                          : SizedBox.shrink(),
+                      // Left Zone
+                      Positioned(
+                        left: 0,
+                        width: leftZone,
+                        height: screenHeight,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onVerticalDragStart: _onVerticalDragStart,
+                          onVerticalDragUpdate:
+                              (details) => _onVerticalDragUpdate(
+                                details,
+                                'left',
+                                screenHeight,
+                              ),
+                          onVerticalDragEnd: _onVerticalDragEnd,
+                        ),
                       ),
-                    ),
-                  );
+                    ],
+                  ),
+                ),
+              );
             },
           ),
     );
@@ -410,7 +452,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
               isPlay.value = false;
             },
           ),
-          _buildPlayPauseButton(),
+          bloc.isLoading == true ||
+                  !(videoPlayerController?.value.isInitialized ?? true)
+              ? SizedBox(width: 70, height: 70, child: LoadingView())
+              : _buildPlayPauseButton(),
           _buildSeekButton(
             icon: CupertinoIcons.goforward_10,
             onPressed: () {
@@ -463,13 +508,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   void _togglePlayPause() {
-    if (videoPlayerController?.value.hasError ?? true) {
-      videoPlayerController?.seekTo(Duration(seconds: 20)).then((_) {
-        setState(() {
-          videoPlayerController?.play();
-        });
-      });
-    } else if (videoPlayerController?.value.isCompleted ?? true) {
+    if (videoPlayerController?.value.isCompleted ?? true) {
       videoPlayerController?.seekTo(Duration.zero).then((_) {
         videoPlayerController?.play();
         chewieControllerNotifier?.play();
