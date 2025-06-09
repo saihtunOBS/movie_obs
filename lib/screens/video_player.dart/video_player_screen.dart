@@ -131,9 +131,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     setState(() {
       _connectionStatus = result;
     });
-    if (_connectionStatus.isNotEmpty) {
+    if (_connectionStatus.first != ConnectivityResult.none) {
       if (Platform.isAndroid) {
-        playerStatus.value = 2;
         bloc
             .changeQuality(
               bloc.currentUrl,
@@ -144,6 +143,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             .then((_) {
               videoPlayerController?.play();
               chewieControllerNotifier?.play();
+              playerStatus.value = 2;
             });
       }
     }
@@ -445,23 +445,32 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           _buildSeekButton(
             icon: CupertinoIcons.gobackward_10,
             onPressed: () {
-              bloc.resetControlVisibility(isSeek: true);
-              if (videoPlayerController?.value.isInitialized ?? true) {
-                bloc.seekBy(Duration(seconds: -5));
+              if (_connectionStatus.first != ConnectivityResult.none) {
+                bloc.resetControlVisibility(isSeek: true);
+                if (videoPlayerController?.value.isInitialized ?? true) {
+                  bloc.seekBy(Duration(seconds: -5));
+                }
+                isPlay.value = false;
+              } else {
+                ToastService.warningToast('Please check your connection!');
               }
-              isPlay.value = false;
             },
           ),
           bloc.isLoading == true ||
-                  !(videoPlayerController?.value.isInitialized ?? true)
-              ? SizedBox(width: 70, height: 70, child: LoadingView())
+                  !(videoPlayerController?.value.isInitialized ?? true) ||
+                  _connectionStatus.first == ConnectivityResult.none
+              ? SizedBox(width: 50, height: 50, child: LoadingView())
               : _buildPlayPauseButton(),
           _buildSeekButton(
             icon: CupertinoIcons.goforward_10,
             onPressed: () {
-              bloc.resetControlVisibility(isSeek: true);
-              if (videoPlayerController?.value.isInitialized ?? true) {
-                bloc.seekBy(Duration(seconds: 5));
+              if (_connectionStatus.first != ConnectivityResult.none) {
+                bloc.resetControlVisibility(isSeek: true);
+                if (videoPlayerController?.value.isInitialized ?? true) {
+                  bloc.seekBy(Duration(seconds: 5));
+                }
+              } else {
+                ToastService.warningToast('Please check your connection!');
               }
             },
           ),
@@ -631,25 +640,29 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   Widget _buildSettingsButton() {
     return GestureDetector(
       onTap: () {
-        showControl = true;
-        showModalBottomSheet(
-          backgroundColor: Colors.transparent,
-          context: context,
-          builder: (_) => _buildAdditionalOptions(),
-        ).whenComplete(() async {
-          if (bloc.isQualityClick == 0) return;
-          await Future.delayed(const Duration(milliseconds: 400), () {
-            showModalBottomSheet(
-              backgroundColor: Colors.transparent,
-              context: context,
-              builder: (builder) {
-                return bloc.isQualityClick == 1
-                    ? _qualityModalSheet()
-                    : _buildPlaybackModalSheet();
-              },
-            ).whenComplete(() => bloc.isQualityClick = 0);
+        if (_connectionStatus.first == ConnectivityResult.none) {
+          ToastService.warningToast('Please check your connection!');
+        } else {
+          showControl = true;
+          showModalBottomSheet(
+            backgroundColor: Colors.transparent,
+            context: context,
+            builder: (_) => _buildAdditionalOptions(),
+          ).whenComplete(() async {
+            if (bloc.isQualityClick == 0) return;
+            await Future.delayed(const Duration(milliseconds: 400), () {
+              showModalBottomSheet(
+                backgroundColor: Colors.transparent,
+                context: context,
+                builder: (builder) {
+                  return bloc.isQualityClick == 1
+                      ? _qualityModalSheet()
+                      : _buildPlaybackModalSheet();
+                },
+              ).whenComplete(() => bloc.isQualityClick = 0);
+            });
           });
-        });
+        }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -702,86 +715,89 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildSlider() {
-    return SliderTheme(
-      data: SliderTheme.of(context).copyWith(
-        allowedInteraction: SliderInteraction.slideThumb,
-        trackHeight: bloc.isFullScreen ? 2.0 : 3.0,
-        inactiveTrackColor: Colors.white.withValues(alpha: 0.5),
-        activeTrackColor: kPrimaryColor,
-        secondaryActiveTrackColor:
-            bloc.isSeeking
-                ? Colors.transparent
-                : !(videoPlayerController?.value.isInitialized ?? true)
-                ? Colors.transparent
-                : Colors.white,
-        thumbColor: kPrimaryColor,
-        trackShape: const RoundedRectSliderTrackShape(),
-        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7.0),
-      ),
-      child: ValueListenableBuilder(
-        valueListenable: videoPlayerController as VideoPlayerController,
-        builder: (context, VideoPlayerValue value, child) {
-          if (value.isInitialized) {
-            final duration = value.duration;
-            final position = value.position;
+    return IgnorePointer(
+      ignoring: _connectionStatus.first == ConnectivityResult.none,
+      child: SliderTheme(
+        data: SliderTheme.of(context).copyWith(
+          allowedInteraction: SliderInteraction.slideThumb,
+          trackHeight: bloc.isFullScreen ? 2.0 : 3.0,
+          inactiveTrackColor: Colors.white.withValues(alpha: 0.5),
+          activeTrackColor: kPrimaryColor,
+          secondaryActiveTrackColor:
+              bloc.isSeeking
+                  ? Colors.transparent
+                  : !(videoPlayerController?.value.isInitialized ?? true)
+                  ? Colors.transparent
+                  : Colors.white,
+          thumbColor: kPrimaryColor,
+          trackShape: const RoundedRectSliderTrackShape(),
+          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7.0),
+        ),
+        child: ValueListenableBuilder(
+          valueListenable: videoPlayerController as VideoPlayerController,
+          builder: (context, VideoPlayerValue value, child) {
+            if (value.isInitialized) {
+              final duration = value.duration;
+              final position = value.position;
 
-            if (duration.inMilliseconds > 0 && !bloc.isSeeking) {
-              progress = (position.inMilliseconds / duration.inMilliseconds)
-                  .clamp(0.0, 1.0);
-            } else {
-              progress = bloc.manualSeekProgress;
-            }
-
-            if (value.buffered.isNotEmpty) {
-              bufferedProgress = (value.buffered.last.end.inMilliseconds /
-                      duration.inMilliseconds)
-                  .clamp(0.0, 1.0);
-            }
-          }
-
-          return Slider(
-            value:
-                !(videoPlayerController?.value.isInitialized ?? true)
-                    ? 0.0
-                    : progress,
-            secondaryTrackValue:
-                !(videoPlayerController?.value.isInitialized ?? true)
-                    ? 0.0
-                    : bufferedProgress,
-            onChanged: (newValue) {
-              bloc.resetControlVisibility(isSeek: true);
-              bloc.isSeeking = true;
-              bloc.manualSeekProgress = newValue;
-              bloc.throttleSliderUpdate();
-            },
-            onChangeStart: (value) {
-              bloc.pausedPlayer();
-              bloc.startSeekUpdateLoop();
-              bloc.resetControlVisibility(isSeek: true);
-            },
-            onChangeEnd: (value) async {
-              isPlay.value = false;
-              bloc.seekUpdateTimer?.cancel();
-
-              final newPosition = Duration(
-                milliseconds:
-                    ((videoPlayerController?.value.duration.inMilliseconds ??
-                                0) *
-                            value)
-                        .toInt(),
-              );
-
-              await videoPlayerController?.seekTo(newPosition);
-              bloc.isSeeking = false;
-              bloc.resetControlVisibility(isSeek: true);
-
-              if (newPosition != videoPlayerController?.value.duration) {
-                bloc.playPlayer();
-                playerStatus.value = 2;
+              if (duration.inMilliseconds > 0 && !bloc.isSeeking) {
+                progress = (position.inMilliseconds / duration.inMilliseconds)
+                    .clamp(0.0, 1.0);
+              } else {
+                progress = bloc.manualSeekProgress;
               }
-            },
-          );
-        },
+
+              if (value.buffered.isNotEmpty) {
+                bufferedProgress = (value.buffered.last.end.inMilliseconds /
+                        duration.inMilliseconds)
+                    .clamp(0.0, 1.0);
+              }
+            }
+
+            return Slider(
+              value:
+                  !(videoPlayerController?.value.isInitialized ?? true)
+                      ? 0.0
+                      : progress,
+              secondaryTrackValue:
+                  !(videoPlayerController?.value.isInitialized ?? true)
+                      ? 0.0
+                      : bufferedProgress,
+              onChanged: (newValue) {
+                bloc.resetControlVisibility(isSeek: true);
+                bloc.isSeeking = true;
+                bloc.manualSeekProgress = newValue;
+                bloc.throttleSliderUpdate();
+              },
+              onChangeStart: (value) {
+                bloc.pausedPlayer();
+                bloc.startSeekUpdateLoop();
+                bloc.resetControlVisibility(isSeek: true);
+              },
+              onChangeEnd: (value) async {
+                isPlay.value = false;
+                bloc.seekUpdateTimer?.cancel();
+
+                final newPosition = Duration(
+                  milliseconds:
+                      ((videoPlayerController?.value.duration.inMilliseconds ??
+                                  0) *
+                              value)
+                          .toInt(),
+                );
+
+                await videoPlayerController?.seekTo(newPosition);
+                bloc.isSeeking = false;
+                bloc.resetControlVisibility(isSeek: true);
+
+                if (newPosition != videoPlayerController?.value.duration) {
+                  bloc.playPlayer();
+                  playerStatus.value = 2;
+                }
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -1176,23 +1192,20 @@ class Player extends StatelessWidget {
             children: [
               Align(
                 alignment: Alignment.center,
-                child: AspectRatio(
-                  aspectRatio: videoPlayerController?.value.aspectRatio ?? 0.0,
-                  child: IgnorePointer(
-                    child:
-                        bloc.isLoading
-                            ? LoadingView()
-                            : Chewie(
-                              controller:
-                                  chewieControllerNotifier ??
-                                  ChewieController(
-                                    videoPlayerController:
-                                        videoPlayerController
-                                            as VideoPlayerController,
-                                    showControls: false,
-                                  ),
-                            ),
-                  ),
+                child: IgnorePointer(
+                  child:
+                      bloc.isLoading
+                          ? LoadingView()
+                          : Chewie(
+                            controller:
+                                chewieControllerNotifier ??
+                                ChewieController(
+                                  videoPlayerController:
+                                      videoPlayerController
+                                          as VideoPlayerController,
+                                  showControls: false,
+                                ),
+                          ),
                 ),
               ),
 
