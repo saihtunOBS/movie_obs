@@ -7,8 +7,6 @@ import 'package:movie_obs/data/vos/movie_vo.dart' show MovieVO;
 import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/watchlist_request.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
-import 'package:movie_obs/widgets/common_dialog.dart';
-import 'package:movie_obs/widgets/error_dialog.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 
 class MovieDetailBloc extends ChangeNotifier {
@@ -48,17 +46,17 @@ class MovieDetailBloc extends ChangeNotifier {
           notifyListeners();
         })
         .catchError((error) {
-          PersistenceData.shared.clearToken();
-          PersistenceData.shared.saveFirstTime(true);
-          showCommonDialog(
-            context: myContext!,
-            isBarrierDismiss: false,
-            dialogWidget: ErrorDialogView(
-              errorMessage: 'Session Expired. Please Login Again',
-              isLogin: true,
-            ),
-          );
-          _hideLoading();
+          // PersistenceData.shared.clearToken();
+          // PersistenceData.shared.saveFirstTime(true);
+          // showCommonDialog(
+          //   context: myContext!,
+          //   isBarrierDismiss: false,
+          //   dialogWidget: ErrorDialogView(
+          //     errorMessage: 'Session Expired. Please Login Again',
+          //     isLogin: true,
+          //   ),
+          // );
+          // _hideLoading();
         })
         .whenComplete(() {
           _hideLoading();

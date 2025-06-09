@@ -1,39 +1,54 @@
-// import 'package:flutter/material.dart';
-// import 'package:media_kit/media_kit.dart';
-// import 'package:media_kit_video/media_kit_video.dart';
+import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 
-// class VideoScreen extends StatefulWidget {
-//   const VideoScreen({super.key});
+class SimpleVideoPlayer extends StatefulWidget {
+  final String videoUrl;
 
-//   @override
-//   State<VideoScreen> createState() => _VideoScreenState();
-// }
+  const SimpleVideoPlayer({Key? key, required this.videoUrl}) : super(key: key);
 
-// class _VideoScreenState extends State<VideoScreen> {
-//   late final player = Player();
-//   late final videoController = VideoController(player);
+  @override
+  _SimpleVideoPlayerState createState() => _SimpleVideoPlayerState();
+}
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     player.open(
-//       Media(
-//         "https://moviedatatesting.s3.ap-southeast-1.amazonaws.com/output_test+10min/master.m3u8",
-//       ),
-//     );
-//   }
+class _SimpleVideoPlayerState extends State<SimpleVideoPlayer> {
+  late VideoPlayerController _videoPlayerController;
+  ChewieController? _chewieController;
 
-//   @override
-//   void dispose() {
-//     player.dispose();
-//     super.dispose();
-//   }
+  @override
+  void initState() {
+    super.initState();
+    initializePlayer();
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text("MediaKit Video")),
-//       body: Center(child: Video(controller: videoController)),
-//     );
-//   }
-// }
+  Future<void> initializePlayer() async {
+    _videoPlayerController = VideoPlayerController.network(widget.videoUrl);
+    await _videoPlayerController.initialize();
+
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      autoPlay: true,
+      looping: false,
+      allowFullScreen: true,
+      allowMuting: true,
+      aspectRatio: _videoPlayerController.value.aspectRatio,
+    );
+
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+    _chewieController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _chewieController != null &&
+            _chewieController!.videoPlayerController.value.isInitialized
+        ? Chewie(controller: _chewieController!)
+        : const Center(child: CircularProgressIndicator());
+  }
+}

@@ -248,7 +248,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                             );
                                           })
                                           .catchError((_) {
-                                            print('hello');
                                             bloc
                                                 .userLogin(
                                                   '${selectedCountryCode?.phoneCode ?? '95'}${_phoneController.text.trim()}',

@@ -185,6 +185,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  charcode:
+    dependency: transitive
+    description:
+      name: charcode
+      sha256: fb0f1107cac15a5ea6ef0a6ef71a807b9e4267c713bb93e00e92d737cc8dbd8a
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   checked_yaml:
     dependency: transitive
     description:
@@ -241,6 +249,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.27"
+  country_state_city_picker:
+    dependency: "direct main"
+    description:
+      name: country_state_city_picker
+      sha256: "509c282165df329ee5a29babb28e13dce3bc32166cea21b202a49c44d20cfef3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.8"
   crop_image:
     dependency: "direct main"
     description:
@@ -281,6 +297,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  custom_sliding_segmented_control:
+    dependency: "direct main"
+    description:
+      name: custom_sliding_segmented_control
+      sha256: bc747b1500284bff36fc8c61774c9a3ca35c1dca4d570141c8a2569b4f984bf3
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.8.5"
   dart_style:
     dependency: transitive
     description:
@@ -465,6 +489,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  flick_video_player:
+    dependency: "direct main"
+    description:
+      name: flick_video_player
+      sha256: f011cc28c6e4932485ac3a9d09ccacd25d9d430c99090480ccad2f5ebca9366e
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -1450,6 +1482,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  universal_html:
+    dependency: transitive
+    description:
+      name: universal_html
+      sha256: "56536254004e24d9d8cfdb7dbbf09b74cf8df96729f38a2f5c238163e3d58971"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.4"
   universal_io:
     dependency: transitive
     description:
@@ -1610,14 +1650,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.4"
-  video_thumbnail:
-    dependency: "direct main"
-    description:
-      name: video_thumbnail
-      sha256: "181a0c205b353918954a881f53a3441476b9e301641688a581e0c13f00dc588b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.6"
   vm_service:
     dependency: transitive
     description:

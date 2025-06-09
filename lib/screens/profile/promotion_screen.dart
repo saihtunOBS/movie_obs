@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/package_bloc.dart';
 import 'package:movie_obs/data/vos/package_vo.dart';
+import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/promotion_list_items.dart';
+import 'package:movie_obs/screens/profile/payment_method_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/widgets/common_dialog.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
@@ -77,7 +79,11 @@ class _PromotionScreenState extends State<PromotionScreen> {
               ),
               Expanded(
                 child: customButton(
-                  onPress: () {},
+                  onPress: () {
+                    PageNavigator(
+                      ctx: context,
+                    ).nextPage(page: PaymentMethodScreen());
+                  },
                   context: context,
                   backgroundColor: kSecondaryColor,
                   title: 'Continue for Payment',

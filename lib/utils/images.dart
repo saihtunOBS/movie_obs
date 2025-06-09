@@ -31,3 +31,10 @@ const kHomePromotionIcon = 'assets/images/home_promotion.png';
 const kAppIcon = 'assets/images/app_icon.png';
 const kAppTextLogo = 'assets/images/text_logo.png';
 const kLockOpenLogo = 'assets/images/lock_open.png';
+
+const kMerchantLogo = 'assets/images/merchant.png';
+const kKpayLogo = 'assets/images/kpay.png';
+const kAyaPayLogo = 'assets/images/aya_pay.png';
+const kGlobalCardLogo = 'assets/images/global_card.png';
+const kMpuLogo = 'assets/images/mpu.png';
+const kInAppLogo = 'assets/images/in_app.png';

@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:auto_orientation_v2/auto_orientation_v2.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
@@ -286,11 +285,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           extendBodyBehindAppBar: true,
           extendBody: true,
           backgroundColor: kBlackColor,
-          body:
-              bloc.isLoading ||
-                      !(videoPlayerController?.value.isInitialized ?? true)
-                  ? LoadingView()
-                  : _buildVideoPlayerSection(),
+          body: bloc.isLoading ? LoadingView() : _buildVideoPlayerSection(),
           bottomNavigationBar: SizedBox(
             height: 90,
             child: Visibility(
@@ -468,7 +463,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   void _togglePlayPause() {
-    if (videoPlayerController?.value.isCompleted ?? true) {
+    if (videoPlayerController?.value.hasError ?? true) {
+      videoPlayerController?.seekTo(Duration(seconds: 20)).then((_) {
+        setState(() {
+          videoPlayerController?.play();
+        });
+      });
+    } else if (videoPlayerController?.value.isCompleted ?? true) {
       videoPlayerController?.seekTo(Duration.zero).then((_) {
         videoPlayerController?.play();
         chewieControllerNotifier?.play();

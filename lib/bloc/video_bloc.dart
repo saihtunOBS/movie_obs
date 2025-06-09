@@ -47,7 +47,7 @@ class VideoBloc extends ChangeNotifier {
   double volume = 0.5;
   double videoCurrentSpeed = 1.0;
   int isQualityClick = 0;
-
+  Duration errorDuration = Duration.zero;
   Timer? _timer;
   int _elapsedSeconds = 0;
 
@@ -209,14 +209,71 @@ class VideoBloc extends ChangeNotifier {
     });
 
     videoPlayerController?.addListener(() {
+      print('your position is...${videoPlayerController?.value.position}');
       if (videoPlayerController?.value.isCompleted ?? true) {
         isPlay.value = false;
         playerStatus.value = 3;
         showControl = true;
         notifyListeners();
+      } else if (videoPlayerController?.value.hasError ?? true) {
+        _handlePlaybackError();
+        playerStatus.value = 2;
       }
     });
     hideLoading();
+  }
+
+  Future<void> _handlePlaybackError() async {
+    // Store the current position
+    final errorPosition =
+        videoPlayerController?.value.position ?? Duration.zero;
+
+    // Try to recover after a short delay
+    await Future.delayed(Duration(seconds: 2));
+
+    if (videoPlayerController?.value.hasError ?? false) {
+      // If still in error state, try to reinitialize
+      await _recoverPlayback(errorPosition);
+    }
+  }
+
+  Future<void> _recoverPlayback(Duration position) async {
+    try {
+      // Pause the current player
+      await videoPlayerController?.pause();
+
+      // Create a new controller with the same URL
+      final newController = VideoPlayerController.networkUrl(
+        Uri.parse(currentUrl),
+        videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: true),
+      );
+
+      await newController.initialize();
+      await newController.seekTo(position);
+
+      // Replace the old controller
+      final oldController = videoPlayerController;
+      videoPlayerController = newController;
+
+      // Update Chewie controller
+      chewieControllerNotifier = ChewieController(
+        videoPlayerController: newController,
+        showControls: false,
+        aspectRatio: 16 / 9,
+        useRootNavigator: false,
+        allowFullScreen: false,
+        draggableProgressBar: false,
+        bufferingBuilder: (context) => const LoadingView(),
+      );
+
+      // Try to play again
+      await newController.play();
+
+      // Dispose old controller
+      oldController?.dispose();
+    } catch (e) {
+      debugPrint("Recovery failed: $e");
+    } finally {}
   }
 
   void resetControlVisibility({bool isSeek = false}) {
@@ -324,6 +381,104 @@ class VideoBloc extends ChangeNotifier {
     hideLoading();
     notifyListeners();
   }
+
+  // Future<void> changeQuality(
+  //   String url,
+  //   String? videoId,
+  //   bool isFirstTime,
+  //   Duration? currentDuration, [
+  //   String? quality,
+  // ]) async {
+  //   if (isFirstTime) {
+  //     showLoading();
+  //     notifyListeners();
+  //   }
+
+  //   selectedQuality = quality ?? selectedQuality;
+  //   final oldController = videoPlayerController;
+  //   final oldChewieController = chewieControllerNotifier;
+
+  //   final currentPosition = oldController?.value.position ?? Duration.zero;
+  //   final wasPlaying = oldController?.value.isPlaying ?? true;
+
+  //   // Load new controller in the background
+  //   final newController = VideoPlayerController.networkUrl(Uri.parse(url));
+  //   await newController.initialize();
+
+  //   // Pause to prevent first frame display
+  //   await newController.pause();
+  //   await newController.setLooping(false);
+
+  //   // Seek to previous position + buffer offset if not first time
+  //   final positionToSeek =
+  //       (currentDuration ?? currentPosition) + Duration(seconds: 8);
+
+  //   await newController.seekTo(positionToSeek);
+
+  //   // Set volume
+  //   newController.setVolume(isMuted ? 0.0 : 1.0);
+
+  //   // Completion listener
+  //   newController.addListener(() {
+  //     if (newController.value.isCompleted) {
+  //       isPlay.value = false;
+  //       showControl = true;
+  //       playerStatus.value = 3;
+  //       notifyListeners();
+  //     }
+  //   });
+
+  //   // Wait until frame is ready (max 10 seconds)
+  //   const maxWait = Duration(seconds: 8);
+  //   final startTime = DateTime.now();
+
+  //   while (true) {
+  //     final now = DateTime.now();
+  //     final isReady =
+  //         newController.value.isInitialized &&
+  //         !newController.value.isBuffering &&
+  //         newController.value.position >= positionToSeek;
+
+  //     if (isReady) break;
+
+  //     if (now.difference(startTime) > maxWait) {
+  //       debugPrint("Timeout waiting for video to buffer.");
+  //       break;
+  //     }
+
+  //     await Future.delayed(Duration(milliseconds: 200));
+  //   }
+
+  //   // Create Chewie controller AFTER readiness
+  //   final newChewieController = ChewieController(
+  //     videoPlayerController: newController,
+  //     showControls: false,
+  //     aspectRatio: 16 / 9,
+  //     useRootNavigator: false,
+  //     allowFullScreen: false,
+  //     draggableProgressBar: false,
+  //     autoInitialize: true,
+  //     autoPlay: false,
+  //     bufferingBuilder: (context) => const LoadingView(),
+  //   );
+
+  //   // Clean up old controllers
+  //   await oldController?.pause();
+  //   await oldController?.dispose();
+  //   oldChewieController?.dispose();
+
+  //   // Assign new controllers
+  //   videoPlayerController = newController;
+  //   chewieControllerNotifier = newChewieController;
+
+  //   // Start playing after everything is ready
+  //   if (wasPlaying) {
+  //     await newController.play();
+  //   }
+
+  //   hideLoading();
+  //   notifyListeners();
+  // }
 
   //toggle full screen
   void toggleFullScreen({bool? isLock}) async {
