@@ -7,6 +7,7 @@ import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/exception/custom_exception.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/movie_api.dart';
+import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
@@ -184,7 +185,6 @@ class MovieDataAgentsImpl extends MovieDataAgents {
         .map((response) => response)
         .first
         .catchError((error) {
-          print('error is....$error');
           throw _createException(error);
         });
   }
@@ -558,6 +558,18 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   Future<GiftDataResponse> getGift(String token, String userId) {
     return movieApi
         .getGifts(token, userId)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<OTPResponse> googleLogin(GoogleLoginRequest request) {
+    return movieApi
+        .googleLogin(request)
         .asStream()
         .map((response) => response)
         .first

@@ -5,6 +5,7 @@ import 'package:movie_obs/data/vos/movie_vo.dart' show MovieVO;
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents_impl.dart';
+import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
@@ -296,5 +297,10 @@ class MovieModelImpl extends MovieModel {
   @override
   Future<GiftDataResponse> getGift(String token, String userId) {
     return movieDataAgent.getGift(token, userId);
+  }
+
+  @override
+  Future<OTPResponse> googleLogin(GoogleLoginRequest request) {
+    return movieDataAgent.googleLogin(request);
   }
 }

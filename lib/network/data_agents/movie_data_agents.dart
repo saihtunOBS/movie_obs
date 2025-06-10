@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:movie_obs/data/vos/movie_vo.dart';
+import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
@@ -30,6 +31,7 @@ import '../responses/watchlist_history_response.dart';
 abstract class MovieDataAgents {
   Future<OTPResponse> sendOtp(SendOtpRequest request);
   Future<OTPResponse> verifyOtp(VerifyOtpRequest request);
+  Future<OTPResponse> googleLogin(GoogleLoginRequest request);
 
   Future<MovieResponse> getMovies(
     String token,
