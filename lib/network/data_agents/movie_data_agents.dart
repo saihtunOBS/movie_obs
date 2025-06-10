@@ -14,6 +14,7 @@ import 'package:movie_obs/network/responses/collection_detail_response.dart';
 import 'package:movie_obs/network/responses/collection_response.dart';
 import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
+import 'package:movie_obs/network/responses/gift_data_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
@@ -132,4 +133,6 @@ abstract class MovieDataAgents {
     String userId,
     RedeemCodeRequest request,
   );
+
+  Future<GiftDataResponse> getGift(String token, String userId);
 }

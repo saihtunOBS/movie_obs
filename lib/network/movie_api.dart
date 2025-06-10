@@ -19,6 +19,7 @@ import 'package:movie_obs/network/responses/collection_detail_response.dart';
 import 'package:movie_obs/network/responses/collection_response.dart';
 import 'package:movie_obs/network/responses/faq_response.dart';
 import 'package:movie_obs/network/responses/genre_response.dart';
+import 'package:movie_obs/network/responses/gift_data_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/notification_response.dart';
@@ -268,5 +269,11 @@ abstract class MovieApi {
     @Header(kHeaderAuthorization) String token,
     @Path() String id,
     @Body() RedeemCodeRequest request,
+  );
+
+  @GET(kEndPointGift)
+  Future<GiftDataResponse> getGifts(
+    @Header(kHeaderAuthorization) String token,
+    @Query('user_id') String userId,
   );
 }

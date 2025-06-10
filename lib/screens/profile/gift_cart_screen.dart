@@ -7,6 +7,7 @@ import 'package:movie_obs/list_items/giftcard_list_item.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/common_dialog.dart';
+import 'package:movie_obs/widgets/empty_view.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
@@ -73,20 +74,33 @@ class _GiftCartScreenState extends State<GiftCartScreen> {
             10.hGap,
           ],
         ),
-        body: ListView.builder(
-          itemCount: 3,
-          padding: EdgeInsets.only(
-            top: 10,
-            bottom: 10,
-            left: kMarginMedium2,
-            right: kMarginMedium2,
-          ),
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: giftCardListItem(),
-            );
-          },
+        body: Consumer<GiftCartBloc>(
+          builder:
+              (context, bloc, child) =>
+                  bloc.isLoading
+                      ? LoadingView()
+                      : bloc.giftResponse?.data?.isNotEmpty ?? true
+                      ? ListView.builder(
+                        itemCount: bloc.giftResponse?.data?.length ?? 0,
+                        padding: EdgeInsets.only(
+                          top: 10,
+                          bottom: 10,
+                          left: kMarginMedium2,
+                          right: kMarginMedium2,
+                        ),
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: giftCardListItem(),
+                          );
+                        },
+                      )
+                      : EmptyView(
+                        reload: () {
+                          bloc.getGift();
+                        },
+                        title: 'There is no Gift to show.',
+                      ),
         ),
       ),
     );

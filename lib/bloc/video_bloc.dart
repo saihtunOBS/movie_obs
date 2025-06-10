@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
-// import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:video_player/video_player.dart';
@@ -102,16 +101,6 @@ class VideoBloc extends ChangeNotifier {
   void updateSpeed(double value) {
     videoCurrentSpeed = value;
     videoPlayerController?.setPlaybackSpeed(value);
-    notifyListeners();
-  }
-
-  void playPauseVideoPlayer() {
-    if (videoPlayerController?.value.isPlaying ?? true) {
-      videoPlayerController?.pause();
-    } else {
-      videoPlayerController?.play();
-    }
-    resetControlVisibility();
     notifyListeners();
   }
 

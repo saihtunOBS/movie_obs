@@ -8,6 +8,7 @@ import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/view_count_request.dart';
 import 'package:movie_obs/network/responses/collection_detail_response.dart';
 import 'package:movie_obs/network/responses/collection_response.dart';
+import 'package:movie_obs/network/responses/gift_data_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 
@@ -129,4 +130,5 @@ abstract class MovieModel {
     String token,
     String id,
   );
+  Future<GiftDataResponse> getGift(String token, String userId);
 }
