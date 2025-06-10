@@ -5,6 +5,7 @@ import 'package:movie_obs/data/vos/episode_vo.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/api_constants.dart';
+import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart'
@@ -38,8 +39,11 @@ part 'movie_api.g.dart';
 abstract class MovieApi {
   factory MovieApi(Dio dio) = _MovieApi;
 
-  @POST(kEndPointSendOtp)
+  @POST(kEndPointGoogleLogin)
   Future<OTPResponse> sendOTP(@Body() SendOtpRequest request);
+
+  @POST(kEndPointSendOtp)
+  Future<OTPResponse> googleLogin(@Body() GoogleLoginRequest request);
 
   @POST(kEndPointVerifyOtp)
   Future<OTPResponse> verifyOTP(@Body() VerifyOtpRequest request);

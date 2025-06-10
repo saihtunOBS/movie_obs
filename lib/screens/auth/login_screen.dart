@@ -291,84 +291,98 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            spacing: 5,
-            children: [
-              //spacer
-              Row(
-                spacing: kMargin24,
-                children: [
-                  Expanded(child: Divider(color: kWhiteColor, thickness: 0.5)),
-                  Text('Or', style: TextStyle(fontSize: kTextRegular2x)),
-                  Expanded(child: Divider(color: kWhiteColor, thickness: 0.5)),
-                ],
-              ),
-              5.vGap,
-              GestureDetector(
-                child: Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    color: kWhiteColor,
-                  ),
-                  child: Row(
-                    spacing: 5,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: Icon(Icons.apple, color: kBlackColor, size: 35),
-                      ),
-                      Text(
-                        'Sign in with Apple',
-                        style: TextStyle(
-                          color: kBlackColor,
-                          fontWeight: FontWeight.w700,
-                          fontSize: kTextRegular2x,
+        bottomNavigationBar: Consumer<AuthBloc>(
+          builder:
+              (context, bloc, child) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 5,
+                  children: [
+                    //spacer
+                    Row(
+                      spacing: kMargin24,
+                      children: [
+                        Expanded(
+                          child: Divider(color: kWhiteColor, thickness: 0.5),
+                        ),
+                        Text('Or', style: TextStyle(fontSize: kTextRegular2x)),
+                        Expanded(
+                          child: Divider(color: kWhiteColor, thickness: 0.5),
+                        ),
+                      ],
+                    ),
+                    5.vGap,
+                    GestureDetector(
+                      child: Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          color: kWhiteColor,
+                        ),
+                        child: Row(
+                          spacing: 5,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: Icon(
+                                Icons.apple,
+                                color: kBlackColor,
+                                size: 35,
+                              ),
+                            ),
+                            Text(
+                              'Sign in with Apple',
+                              style: TextStyle(
+                                color: kBlackColor,
+                                fontWeight: FontWeight.w700,
+                                fontSize: kTextRegular2x,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              3.vGap,
-              GestureDetector(
-                child: Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    color: kWhiteColor,
-                  ),
-                  child: Row(
-                    spacing: 10,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: Image.asset(kGoogleIcon),
-                      ),
-                      Text(
-                        'Sign in with Google',
-                        style: TextStyle(
-                          color: kBlackColor,
-                          fontWeight: FontWeight.w700,
-                          fontSize: kTextRegular2x,
+                    ),
+                    3.vGap,
+                    GestureDetector(
+                      onTap: () {
+                        bloc.loginGoogle();
+                      },
+                      child: Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          color: kWhiteColor,
+                        ),
+                        child: Row(
+                          spacing: 10,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: Image.asset(kGoogleIcon),
+                            ),
+                            Text(
+                              'Sign in with Google',
+                              style: TextStyle(
+                                color: kBlackColor,
+                                fontWeight: FontWeight.w700,
+                                fontSize: kTextRegular2x,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    5.vGap,
+                    privacyPolicyText(),
+                    30.vGap,
+                  ],
                 ),
               ),
-              5.vGap,
-              privacyPolicyText(),
-              30.vGap,
-            ],
-          ),
         ),
       ),
     );

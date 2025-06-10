@@ -14,7 +14,9 @@ Widget castListItem({ActorVO? actor}) {
           child: Container(
             height: 70,
             width: 70,
-            decoration: BoxDecoration(color: Colors.grey.withValues(alpha: 0.2)),
+            decoration: BoxDecoration(
+              color: Colors.grey.withValues(alpha: 0.2),
+            ),
             child: cacheImage(actor?.cast?.profilePictureUrl ?? ''),
           ),
         ),
@@ -23,8 +25,14 @@ Widget castListItem({ActorVO? actor}) {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 5,
           children: [
-            Text(actor?.cast?.name ?? '',style: TextStyle(fontWeight: FontWeight.bold),),
-            Text(actor?.cast?.role?.role ?? '',style: TextStyle(color: Colors.grey),),
+            Text(
+              actor?.cast?.name ?? '',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              actor?.characterName ?? '',
+              style: TextStyle(color: Colors.grey),
+            ),
           ],
         ),
       ],

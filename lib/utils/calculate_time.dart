@@ -1,8 +1,14 @@
 String formatMinutesToHoursAndMinutes(int minutes) {
-  final int hours = minutes ~/ 60; // Integer division
+  if (minutes < 60) {
+    return '$minutes mins';
+  }
+
+  final int hours = minutes ~/ 60;
   final int remainingMinutes = minutes % 60;
 
-  return '$hours hr $remainingMinutes mins';
+  return remainingMinutes == 0
+      ? '$hours hr'
+      : '$hours hr $remainingMinutes mins';
 }
 
 String formatViewCount(int count) {

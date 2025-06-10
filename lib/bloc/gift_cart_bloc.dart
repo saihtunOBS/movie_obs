@@ -15,6 +15,7 @@ class GiftCartBloc extends ChangeNotifier {
 
   GiftCartBloc({BuildContext? context}) {
     token = PersistenceData.shared.getToken();
+    getGift();
   }
 
   Future<void> claimGift(String code) {

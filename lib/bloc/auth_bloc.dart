@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
@@ -28,11 +29,19 @@ class AuthBloc extends ChangeNotifier {
     }
   }
 
+  void loginGoogle() {
+    _showLoading();
+    GoogleSignIn googleSignIn = GoogleSignIn();
+    googleSignIn.signIn().then((response) {}).whenComplete(() {
+      hideLoading();
+      googleSignIn.signOut();
+    });
+  }
+
   Future getAuthUser() async {
     _showLoading();
-    var _token = PersistenceData.shared.getToken();
-    return _movieModel.getUser(_token).then((value) {
-      print(value.email);
+    var token = PersistenceData.shared.getToken();
+    return _movieModel.getUser(token).then((value) {
       hideLoading();
     });
   }
