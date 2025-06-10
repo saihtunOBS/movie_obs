@@ -285,7 +285,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
 
                       //show lading
-                      bloc.isLoading ? LoadingView() : SizedBox.shrink(),
+                      bloc.isLoading
+                          ? LoadingView(
+                            bgColor:
+                                bloc.isSocialLogin
+                                    ? Colors.transparent
+                                    : Colors.black12,
+                          )
+                          : SizedBox.shrink(),
                     ],
                   ),
             ),

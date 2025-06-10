@@ -15,6 +15,7 @@ import 'package:movie_obs/widgets/toast_service.dart';
 class AuthBloc extends ChangeNotifier {
   bool isLoading = false;
   bool isDisposed = false;
+  bool isSocialLogin = false;
 
   final MovieModel _movieModel = MovieModelImpl();
 
@@ -36,11 +37,13 @@ class AuthBloc extends ChangeNotifier {
 
   void loginGoogle(BuildContext context) async {
     _showLoading();
+    isSocialLogin = true;
     String? fcmToken = await FirebaseMessaging.instance.getToken();
     GoogleSignIn googleSignIn = GoogleSignIn();
     googleSignIn
         .signIn()
         .then((response) {
+          isSocialLogin = false;
           if (response?.displayName?.isEmpty ?? true) {
             hideLoading();
             return;
@@ -67,8 +70,10 @@ class AuthBloc extends ChangeNotifier {
         })
         .catchError((_) {
           googleSignIn.signOut();
+          isSocialLogin = false;
         })
         .whenComplete(() {
+          isSocialLogin = false;
           googleSignIn.signOut();
         });
   }
