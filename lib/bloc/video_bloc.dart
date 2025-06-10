@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
-import 'package:movie_obs/extension/extension.dart';
+// import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:video_player/video_player.dart';
@@ -29,22 +29,15 @@ String selectedQuality = 'Auto';
 class VideoBloc extends ChangeNotifier {
   bool isFullScreen = false;
 
-  bool wasScreenOff = false;
   bool isMuted = false;
   Timer? hideControlTimer;
-  Timer? hideMiniControlTimer;
   double manualSeekProgress = 0.0;
   bool isSeeking = false;
   Timer? seekUpdateTimer;
-  double dragOffset = 0.0; // Track vertical drag
-  final double dragThreshold = 100.0; // Distance needed to exit fullscreen
+
   Timer? toggleTimer;
   int toggleCount = 0;
-  Duration duration = Duration.zero;
-  Duration position = Duration.zero;
-  double bufferedProgress = 0.0;
-  double progress = 0.0;
-  double volume = 0.5;
+
   double videoCurrentSpeed = 1.0;
   int isQualityClick = 0;
   Timer? _timer;
@@ -62,6 +55,8 @@ class VideoBloc extends ChangeNotifier {
 
   final MovieModel _movieModel = MovieModelImpl();
   String token = '';
+
+  bool isPlaying = true;
 
   VideoBloc() {
     initializeVideo(currentUrl);
@@ -196,6 +191,7 @@ class VideoBloc extends ChangeNotifier {
       chewieControllerNotifier = ChewieController(
         videoPlayerController: videoPlayerController!,
         showControls: false,
+        autoPlay: true,
         aspectRatio: 16 / 9,
         useRootNavigator: false,
         allowFullScreen: false,
@@ -204,12 +200,13 @@ class VideoBloc extends ChangeNotifier {
           return const LoadingView();
         },
       );
-
+      playerStatus.value = 2;
       fetchQualityOptions();
     });
 
     videoPlayerController?.addListener(() {
       if (videoPlayerController?.value.isPlaying ?? true) {
+        isPlaying = true;
         lastKnownPosition =
             videoPlayerController?.value.position ?? Duration.zero;
       } else if (videoPlayerController?.value.isCompleted ?? true) {
@@ -217,8 +214,6 @@ class VideoBloc extends ChangeNotifier {
         playerStatus.value = 3;
         showControl = true;
         notifyListeners();
-      } else if (videoPlayerController?.value.hasError ?? true) {
-        playerStatus.value = 1;
       }
     });
     hideLoading();
@@ -283,6 +278,7 @@ class VideoBloc extends ChangeNotifier {
     // Attach listener
     newController.addListener(() {
       if (videoPlayerController?.value.isPlaying ?? true) {
+        isPlaying = true;
         lastKnownPosition =
             videoPlayerController?.value.position ?? Duration.zero;
       } else if (videoPlayerController?.value.isCompleted ?? true) {
@@ -333,6 +329,7 @@ class VideoBloc extends ChangeNotifier {
       await videoPlayerController?.play();
       await chewieControllerNotifier?.play();
     }
+    showControl = false;
     hideLoading();
     notifyListeners();
   }
@@ -419,36 +416,28 @@ class VideoBloc extends ChangeNotifier {
     return "$minutes:$seconds";
   }
 
-  Duration _seekOffset = Duration.zero;
-  Timer? _debounceSeekTimer;
-
   void seekBy(Duration offset) {
-    _seekOffset += offset;
-    _debounceSeekTimer?.cancel();
+    final currentPosition =
+        videoPlayerController?.value.position ?? Duration.zero;
+    final duration = videoPlayerController?.value.duration ?? Duration.zero;
+    final newPosition = currentPosition + offset;
 
-    _debounceSeekTimer = Timer(const Duration(milliseconds: 300), () async {
-      final controller = videoPlayerController;
-      if (controller == null || !controller.value.isInitialized) return;
-
-      final currentPosition = controller.value.position;
-      final duration = controller.value.duration;
-
-      final newPosition = (currentPosition + _seekOffset).clamp(
-        Duration.zero,
-        duration,
-      );
-
-      _seekOffset = Duration.zero;
-
-      await controller.seekTo(newPosition);
-
-      if (!controller.value.isPlaying) {
-        await controller.play();
-        chewieControllerNotifier?.play();
-      }
-
+    if (newPosition < duration && newPosition > Duration.zero) {
+      resetControlVisibility(isSeek: true);
+      isPlaying = false;
       notifyListeners();
-    });
+
+      !(videoPlayerController?.value.isBuffering ?? true)
+          ? null // Wait for buffering to complete
+          : videoPlayerController?.seekTo(newPosition).whenComplete(() {
+            videoPlayerController?.addListener(() {
+              if (videoPlayerController?.value.isPlaying ?? true) {
+                isPlaying = true;
+                notifyListeners();
+              }
+            });
+          });
+    }
   }
 
   void startSeekUpdateLoop() {
