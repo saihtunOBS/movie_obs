@@ -12,13 +12,22 @@ class PackageBloc extends ChangeNotifier {
   bool isDisposed = false;
   String token = '';
   List<PackageVO>? packages;
+  PackageVO? selectedPackage;
   final MovieModel _movieModel = MovieModelImpl();
   BuildContext? myContext;
+  String packageId = '';
 
   PackageBloc({BuildContext? context}) {
     myContext = context;
+    packageId = '';
     token = PersistenceData.shared.getToken();
     getPackage();
+  }
+
+  choosePackage(String package, PackageVO packageData) {
+    packageId = package;
+    selectedPackage = packageData;
+    notifyListeners();
   }
 
   getPackage() {

@@ -17,6 +17,7 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/utils/rotation_detector.dart';
+import 'package:movie_obs/widgets/empty_view.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
@@ -331,7 +332,20 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           extendBodyBehindAppBar: true,
           extendBody: true,
           backgroundColor: kBlackColor,
-          body: bloc.isLoading ? LoadingView() : _buildVideoPlayerSection(),
+          body:
+              bloc.hasError
+                  ? EmptyView(
+                    reload: () {
+                      setState(() {
+                        showControl = true;
+                      });
+                      bloc.initializeVideo(widget.url ?? '');
+                    },
+                    title: 'Video can\'t play!',
+                  )
+                  : bloc.isLoading
+                  ? LoadingView()
+                  : _buildVideoPlayerSection(),
           bottomNavigationBar: SizedBox(
             height: 90,
             child: Visibility(

@@ -50,7 +50,6 @@ class AuthBloc extends ChangeNotifier {
           }
           var request = GoogleLoginRequest(
             response?.email ?? '',
-            response?.email ?? '',
             response?.displayName ?? '',
             fcmToken,
           );
@@ -79,7 +78,7 @@ class AuthBloc extends ChangeNotifier {
   }
 
   Future getAuthUser() async {
-    _showLoading();
+    //_showLoading();
     var token = PersistenceData.shared.getToken();
     return _movieModel.getUser(token).then((value) {
       hideLoading();

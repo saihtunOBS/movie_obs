@@ -5,7 +5,12 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/date_formatter.dart';
 import 'package:movie_obs/utils/dimens.dart';
 
-Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
+Widget promotionListItem(
+  bool isPremium,
+  BuildContext context,
+  PackageVO data,
+  bool isSelected,
+) {
   return Container(
     margin: EdgeInsets.only(bottom: 30),
     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -123,6 +128,13 @@ Widget promotionListItem(bool isPremium, BuildContext context, PackageVO data) {
             5.vGap,
           ],
         ),
+        isSelected
+            ? Positioned(
+              right: -20,
+              top: -10,
+              child: Icon(Icons.check_circle, color: kSecondaryColor),
+            )
+            : SizedBox.shrink(),
       ],
     ),
   );

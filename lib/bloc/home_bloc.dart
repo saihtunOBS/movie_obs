@@ -36,12 +36,6 @@ class HomeBloc extends ChangeNotifier {
     token = PersistenceData.shared.getToken();
 
     getBanner();
-    getFreeMovieAndSeries();
-    getAllMovieAndSeries();
-    getTopTrending();
-    getNewRelease();
-    getCategoryCollections();
-
     if (isCollectionDetail == true) {
       getCollectionDetail(collectionId ?? '');
     }
@@ -49,11 +43,6 @@ class HomeBloc extends ChangeNotifier {
 
   void onRefresh() {
     getBanner();
-    getFreeMovieAndSeries();
-    getAllMovieAndSeries();
-    getTopTrending();
-    getNewRelease();
-    getCategoryCollections();
   }
 
   void updateToken() {
@@ -72,6 +61,7 @@ class HomeBloc extends ChangeNotifier {
         .getAllMovieAndSeries(token, '', '', 'BOTH', false, 1)
         .then((response) {
           movieLists = response.data ?? [];
+          getTopTrending();
           notifyListeners();
         })
         .catchError((_) {});
@@ -87,6 +77,7 @@ class HomeBloc extends ChangeNotifier {
         .getAllMovieAndSeries(token, 'FREE', '', 'BOTH', false, 1)
         .then((response) {
           freeMovieLists = response.data ?? [];
+          getAllMovieAndSeries();
           _hideLoading();
         })
         .whenComplete(() {
@@ -158,6 +149,7 @@ class HomeBloc extends ChangeNotifier {
   getTopTrending() {
     _movieModel.getTopTrending(token).then((response) {
       topTrendingMoviesList = response.data ?? [];
+      getNewRelease();
       notifyListeners();
     });
   }
@@ -165,6 +157,7 @@ class HomeBloc extends ChangeNotifier {
   getNewRelease() {
     _movieModel.getNewRelease(token, '').then((response) {
       newReleaseMoviesList = response.data ?? [];
+      getCategoryCollections();
       notifyListeners();
     });
   }
@@ -179,6 +172,7 @@ class HomeBloc extends ChangeNotifier {
   getBanner() {
     _movieModel.getBanner(token).then((response) {
       bannerList = response.data ?? [];
+      getFreeMovieAndSeries();
       notifyListeners();
     });
   }

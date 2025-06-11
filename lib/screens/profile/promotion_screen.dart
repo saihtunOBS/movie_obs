@@ -8,6 +8,7 @@ import 'package:movie_obs/screens/profile/payment_method_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/widgets/common_dialog.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
+import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -45,53 +46,64 @@ class _PromotionScreenState extends State<PromotionScreen> {
                 ],
               ),
         ),
-        bottomNavigationBar: Container(
-          height: 100,
-          padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            spacing: 10,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  showCommonDialog(
-                    context: context,
-                    dialogWidget: _buildAlert(),
-                  );
-                },
-                child: Container(
-                  height: 49,
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    color: Colors.grey.withValues(alpha: 0.2),
-                  ),
-                  child: Center(
-                    child: Text(
-                      AppLocalizations.of(context)?.giftNow ?? '',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: kWhiteColor,
+        bottomNavigationBar: Consumer<PackageBloc>(
+          builder:
+              (context, bloc, child) => Container(
+                height: 100,
+                padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 10,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        showCommonDialog(
+                          context: context,
+                          dialogWidget: _buildAlert(),
+                        );
+                      },
+                      child: Container(
+                        height: 49,
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          color: Colors.grey.withValues(alpha: 0.2),
+                        ),
+                        child: Center(
+                          child: Text(
+                            AppLocalizations.of(context)?.giftNow ?? '',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: kWhiteColor,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    Expanded(
+                      child: customButton(
+                        onPress: () {
+                          bloc.packageId == ''
+                              ? ToastService.warningToast(
+                                'Please choose package to continue.',
+                              )
+                              : PageNavigator(ctx: context).nextPage(
+                                page: PaymentMethodScreen(
+                                  plan: bloc.packageId,
+                                  packageData:
+                                      bloc.selectedPackage ?? PackageVO(),
+                                ),
+                              );
+                        },
+                        context: context,
+                        backgroundColor: kSecondaryColor,
+                        title: 'Continue for Payment',
+                        textColor: kWhiteColor,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Expanded(
-                child: customButton(
-                  onPress: () {
-                    PageNavigator(
-                      ctx: context,
-                    ).nextPage(page: PaymentMethodScreen());
-                  },
-                  context: context,
-                  backgroundColor: kSecondaryColor,
-                  title: 'Continue for Payment',
-                  textColor: kWhiteColor,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -180,10 +192,19 @@ class _PromotionScreenState extends State<PromotionScreen> {
       ),
       itemCount: bloc.packages?.length,
       itemBuilder: (context, index) {
-        return promotionListItem(
-          false,
-          context,
-          bloc.packages?[index] ?? PackageVO(),
+        return GestureDetector(
+          onTap: () {
+            bloc.choosePackage(
+              bloc.packages?[index].id ?? '',
+              bloc.packages?[index] ?? PackageVO(),
+            );
+          },
+          child: promotionListItem(
+            false,
+            context,
+            bloc.packages?[index] ?? PackageVO(),
+            bloc.packageId == bloc.packages?[index].id,
+          ),
         );
       },
     );

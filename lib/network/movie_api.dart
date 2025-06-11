@@ -7,6 +7,7 @@ import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/api_constants.dart';
 import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
+import 'package:movie_obs/network/requests/payment_request.dart';
 import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart'
     show SendOtpRequest;
@@ -26,6 +27,7 @@ import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/notification_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
+import 'package:movie_obs/network/responses/payment_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
 import 'package:movie_obs/network/responses/term_privacy_response.dart';
@@ -42,7 +44,7 @@ abstract class MovieApi {
   @POST(kEndPointGoogleLogin)
   Future<OTPResponse> sendOTP(@Body() SendOtpRequest request);
 
-  @POST(kEndPointSendOtp)
+  @POST(kEndPointGoogleLogin)
   Future<OTPResponse> googleLogin(@Body() GoogleLoginRequest request);
 
   @POST(kEndPointVerifyOtp)
@@ -279,5 +281,12 @@ abstract class MovieApi {
   Future<GiftDataResponse> getGifts(
     @Header(kHeaderAuthorization) String token,
     @Query('user_id') String userId,
+  );
+
+  @POST(kEndPointTransition)
+  Future<PaymentResponse> createPayment(
+    @Header(kHeaderAuthorization) String token,
+
+    @Body() PaymentRequest request,
   );
 }

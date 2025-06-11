@@ -18,6 +18,7 @@ const String kEndPointGenre = '/videos/genres';
 const String kEndPointCategoryGroup = '/videos/category-groups';
 const String kEndPointRedeemCode = '/transactions/redeem-code';
 const String kEndPointGift = '/transactions/gift-code-by-user';
+const String kEndPointTransition = '/transactions';
 
 const String kEndPointAds = '/cms/ads';
 const String kEndPointBanner = '/cms/banners';

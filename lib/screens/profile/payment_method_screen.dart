@@ -1,18 +1,34 @@
+import 'dart:async';
+
 import 'package:country_state_city_picker/country_state_city_picker.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/payment_method_bloc.dart';
+import 'package:movie_obs/data/vos/package_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/l10n/app_localizations.dart';
+import 'package:movie_obs/network/responses/payment_response.dart';
+import 'package:movie_obs/screens/profile/payment_status_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
+import 'package:movie_obs/widgets/common_dialog.dart';
 import 'package:movie_obs/widgets/gradient_button.dart';
+import 'package:movie_obs/widgets/show_loading.dart';
+import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class PaymentMethodScreen extends StatefulWidget {
-  const PaymentMethodScreen({super.key});
+  const PaymentMethodScreen({
+    super.key,
+    required this.plan,
+    required this.packageData,
+  });
+  final String plan;
+  final PackageVO packageData;
 
   @override
   State<PaymentMethodScreen> createState() => _PaymentMethodScreenState();
@@ -22,7 +38,16 @@ enum DigitalWallet { kPay, ayaPay }
 
 class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   DigitalWallet? _selectedWallet;
-  int selectedIndex = 1;
+  int ayaSelectedIndex = 1;
+  int kpaySelectedIndex = 1;
+  bool isLoading = false;
+  PaymentResponse? payment;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -48,7 +73,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   child: Column(
                     spacing: kMarginMedium2,
                     children: [
-                      merchantView(),
+                      merchantView(widget.packageData),
                       paymentMethodView(context),
                       Row(
                         spacing: 10,
@@ -72,10 +97,35 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                         ],
                       ),
                       gradientButton(
-                        onPress: () {},
+                        onPress: () {
+                          bloc.payment == ''
+                              ? null
+                              : PageNavigator(
+                                ctx: context,
+                              ).nextPage(page: PaymentStatusScreen());
+                        },
                         context: context,
                         title: bloc.payment == '' ? 'PAYMENT' : bloc.payment,
                         isGradient: bloc.payment != '',
+                      ),
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: 5,
+                        children: [
+                          Text(
+                            'Powered by',
+                            style: TextStyle(color: kBlackColor),
+                          ),
+                          Text(
+                            'OBS',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: kGradientTwo,
+                            ),
+                          ),
+                        ],
                       ),
                       20.vGap,
                     ],
@@ -246,7 +296,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     );
   }
 
-  Widget merchantView() {
+  Widget merchantView(PackageVO package) {
     return Card(
       color: kWhiteColor,
       child: Padding(
@@ -267,7 +317,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   Align(
                     alignment: Alignment.bottomRight,
                     child: Text(
-                      '2000000 Ks',
+                      '${package.price} Ks',
                       style: TextStyle(
                         fontSize: kTextRegular3x,
                         color: kBlackColor,
@@ -290,7 +340,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   ),
                 ),
                 Text(
-                  'User',
+                  package.name ?? '',
                   style: TextStyle(
                     fontSize: kTextRegular2x,
                     fontWeight: FontWeight.bold,
@@ -301,6 +351,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             ),
             16.vGap,
             Row(
+              spacing: 20,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
@@ -310,12 +361,16 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                     color: kBlackColor,
                   ),
                 ),
-                Text(
-                  '22233434',
-                  style: TextStyle(
-                    fontSize: kTextRegular2x,
-                    fontWeight: FontWeight.bold,
-                    color: kBlackColor,
+                Expanded(
+                  child: Text(
+                    textAlign: TextAlign.end,
+                    overflow: TextOverflow.ellipsis,
+                    package.id ?? '',
+                    style: TextStyle(
+                      fontSize: kTextRegular2x,
+                      fontWeight: FontWeight.bold,
+                      color: kBlackColor,
+                    ),
                   ),
                 ),
               ],
@@ -370,12 +425,14 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   onChanged: (value) {
                     setState(() {
                       _selectedWallet = value!;
+                      ayaSelectedIndex = 1;
+                      kpaySelectedIndex = 1;
                     });
                     bloc.selectedPayment('Pay with KBZ Pay');
                   },
                 ),
                 _selectedWallet == DigitalWallet.kPay
-                    ? segmentControl(true)
+                    ? kpaySegmentControl()
                     : SizedBox.shrink(),
                 Divider(color: Colors.grey, thickness: 0.7),
                 RadioListTile<DigitalWallet>(
@@ -397,12 +454,14 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   onChanged: (value) {
                     setState(() {
                       _selectedWallet = value!;
+                      ayaSelectedIndex = 1;
+                      kpaySelectedIndex = 1;
                       bloc.selectedPayment('Pay with AYA Pay');
                     });
                   },
                 ),
                 _selectedWallet == DigitalWallet.ayaPay
-                    ? segmentControl(false)
+                    ? ayaSegmentControl(bloc)
                     : SizedBox.shrink(),
               ],
             ),
@@ -420,7 +479,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     );
   }
 
-  Widget segmentControl(bool isKpay) {
+  Widget ayaSegmentControl(PaymentMethodBloc bloc) {
     return Column(
       children: [
         Center(
@@ -450,13 +509,13 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                     height: 25,
                     child: Image.asset(
                       kInAppLogo,
-                      color: selectedIndex == 1 ? kWhiteColor : kBlackColor,
+                      color: ayaSelectedIndex == 1 ? kWhiteColor : kBlackColor,
                     ),
                   ),
                   Text(
                     'In App Pay',
                     style: TextStyle(
-                      color: selectedIndex == 1 ? kWhiteColor : kBlackColor,
+                      color: ayaSelectedIndex == 1 ? kWhiteColor : kBlackColor,
                     ),
                   ),
                 ],
@@ -466,12 +525,12 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 children: [
                   Icon(
                     CupertinoIcons.qrcode,
-                    color: selectedIndex == 2 ? kWhiteColor : kBlackColor,
+                    color: ayaSelectedIndex == 2 ? kWhiteColor : kBlackColor,
                   ),
                   Text(
                     'QR Code',
                     style: TextStyle(
-                      color: selectedIndex == 2 ? kWhiteColor : kBlackColor,
+                      color: ayaSelectedIndex == 2 ? kWhiteColor : kBlackColor,
                     ),
                   ),
                 ],
@@ -479,55 +538,128 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             },
             onValueChanged: (value) {
               setState(() {
-                selectedIndex = value;
+                ayaSelectedIndex = value;
               });
+              if (value == 2) {
+                showCommonDialog(
+                  context: context,
+                  dialogWidget: _buildAlert(bloc),
+                ).whenComplete(() {
+                  setState(() {
+                    isLoading = false;
+                  });
+                });
+              }
             },
           ),
         ),
 
-        isKpay == false
-            ? Column(
-              spacing: 5,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                10.vGap,
-                Text(
-                  'Enter Phone Number',
-                  style: TextStyle(
-                    fontSize: kTextRegular2x,
-                    color: kBlackColor,
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  height: 48,
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: Center(
-                    child: Row(
-                      spacing: 10,
-                      children: [
-                        Text('+95', style: TextStyle(color: kBlackColor)),
-                        Container(height: 20, width: 1, color: kBlackColor),
-                        Expanded(
-                          child: TextField(
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Phone Number',
-                            ),
-                          ),
+        Column(
+          spacing: 5,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            10.vGap,
+            Text(
+              'Enter Phone Number',
+              style: TextStyle(fontSize: kTextRegular2x, color: kBlackColor),
+            ),
+            Container(
+              width: double.infinity,
+              height: 48,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.grey),
+              ),
+              child: Center(
+                child: Row(
+                  spacing: 10,
+                  children: [
+                    Text('+95', style: TextStyle(color: kBlackColor)),
+                    Container(height: 20, width: 1, color: kBlackColor),
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Phone Number',
                         ),
-                      ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget kpaySegmentControl() {
+    return Column(
+      children: [
+        Center(
+          child: CustomSlidingSegmentedControl(
+            decoration: BoxDecoration(
+              color: CupertinoColors.lightBackgroundGray,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            customSegmentSettings: CustomSegmentSettings(
+              highlightColor: Colors.red,
+            ),
+            thumbDecoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.center,
+                colors: [kGradientOne, kGradientTwo],
+              ),
+            ),
+            children: {
+              1: Row(
+                spacing: 5,
+                children: [
+                  SizedBox(
+                    width: 25,
+                    height: 25,
+                    child: Image.asset(
+                      kInAppLogo,
+                      color: kpaySelectedIndex == 1 ? kWhiteColor : kBlackColor,
                     ),
                   ),
-                ),
-              ],
-            )
-            : SizedBox.shrink(),
+                  Text(
+                    'In App Pay',
+                    style: TextStyle(
+                      color: kpaySelectedIndex == 1 ? kWhiteColor : kBlackColor,
+                    ),
+                  ),
+                ],
+              ),
+              2: Row(
+                spacing: 5,
+                children: [
+                  Icon(
+                    CupertinoIcons.qrcode,
+                    color: kpaySelectedIndex == 2 ? kWhiteColor : kBlackColor,
+                  ),
+                  Text(
+                    'QR Code',
+                    style: TextStyle(
+                      color: kpaySelectedIndex == 2 ? kWhiteColor : kBlackColor,
+                    ),
+                  ),
+                ],
+              ),
+            },
+            onValueChanged: (value) {
+              setState(() {
+                kpaySelectedIndex = value;
+              });
+            },
+          ),
+        ),
       ],
     );
   }
@@ -659,6 +791,182 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
               ),
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAlert(PaymentMethodBloc bloc) {
+    int dialogStart = 60;
+    Timer? dialogTimer;
+    bool hasFetchedPayment = false;
+
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        dialogTimer?.cancel(); // cancel timer on back press
+      },
+      child: Dialog(
+        insetPadding: const EdgeInsets.all(16),
+        backgroundColor: kWhiteColor,
+        child: StatefulBuilder(
+          builder: (context, dialogSetState) {
+            void startDialogTimer() {
+              dialogTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+                if (dialogStart > 0) {
+                  dialogSetState(() {
+                    dialogStart--;
+                  });
+                } else {
+                  dialogTimer?.cancel();
+                }
+              });
+            }
+
+            String dialogTimerText() {
+              final minutes = (dialogStart ~/ 60).toString().padLeft(2, '0');
+              final seconds = (dialogStart % 60).toString().padLeft(2, '0');
+              return '$minutes:$seconds';
+            }
+
+            if (!hasFetchedPayment) {
+              hasFetchedPayment = true;
+              startDialogTimer();
+              dialogSetState(() => isLoading = true);
+
+              bloc
+                  .createPayment('ayapay', widget.plan)
+                  .then((response) {
+                    dialogSetState(() {
+                      payment = response;
+                      isLoading = false;
+                    });
+                  })
+                  .catchError((e) {
+                    dialogSetState(() => isLoading = false);
+                    ToastService.warningToast(e.toString());
+                  });
+            }
+
+            return Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  10.vGap,
+                  Center(
+                    child: Text(
+                      'Scan with your phone to make payment.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: kBlackColor,
+                        fontSize: kTextRegular2x,
+                      ),
+                    ),
+                  ),
+                  isLoading
+                      ? _buildLoading()
+                      : _buildQrView(payment?.qrData ?? '', () {
+                        dialogTimer?.cancel(); // cancel old timer
+                        dialogStart = 60; // reset counter
+                        startDialogTimer(); // start new timer
+
+                        dialogSetState(() => isLoading = true);
+                        bloc
+                            .createPayment('ayapay', widget.plan)
+                            .then((response) {
+                              dialogSetState(() {
+                                payment = response;
+                                isLoading = false;
+                                dialogStart = 60; // reset timer
+                              });
+                            })
+                            .catchError((e) {
+                              dialogSetState(() => isLoading = false);
+                              ToastService.warningToast(e.toString());
+                            });
+                      }, dialogTimerText()),
+                  10.vGap,
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  _buildLoading() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        40.vGap,
+        SizedBox(
+          height: 20,
+          width: 20,
+          child: LoadingView(bgColor: Colors.transparent),
+        ),
+        10.vGap,
+        Text(
+          'loading....',
+          style: TextStyle(fontSize: kTextRegular13, color: kBlackColor),
+        ),
+        10.vGap,
+      ],
+    );
+  }
+
+  _buildQrView(String qrCode, VoidCallback onPerss, String timer) {
+    return Column(
+      children: [
+        10.vGap,
+        qrCode.isEmpty
+            ? SizedBox(
+              height: 80,
+              child: Center(
+                child: Column(
+                  children: [
+                    Icon(CupertinoIcons.question, size: 38, color: Colors.red),
+                    15.vGap,
+                    Text(
+                      'Uh oh! Something went wrong...',
+                      style: TextStyle(color: kBlackColor, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            )
+            : QrImageView(
+              data: qrCode,
+              version: QrVersions.auto,
+              size: 170,
+              gapless: false,
+              errorStateBuilder: (cxt, err) {
+                return Center(
+                  child: Text(
+                    'Uh oh! Something went wrong...',
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              },
+            ),
+        TextButton(
+          onPressed: onPerss,
+          child: Text(
+            'Refresh Code',
+            style: TextStyle(
+              decoration: TextDecoration.underline,
+              color: kGradientOne,
+              decorationThickness: 2.0,
+              decorationColor: kGradientOne,
+            ),
+          ),
+        ),
+
+        Text(
+          'Code expires in : $timer',
+          style: TextStyle(color: Colors.grey, fontSize: 13),
         ),
       ],
     );

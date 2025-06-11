@@ -9,6 +9,7 @@ import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/movie_api.dart';
 import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
+import 'package:movie_obs/network/requests/payment_request.dart';
 import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
 import 'package:movie_obs/network/requests/verify_otp_request.dart';
@@ -27,6 +28,7 @@ import 'package:movie_obs/network/responses/movie_response.dart';
 import 'package:movie_obs/network/responses/notification_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
+import 'package:movie_obs/network/responses/payment_response.dart';
 import 'package:movie_obs/network/responses/season_episode_response.dart';
 import 'package:movie_obs/network/responses/season_response.dart';
 import 'package:movie_obs/network/responses/term_privacy_response.dart';
@@ -545,7 +547,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     String id,
   ) {
     return movieApi
-        .getCategoryCollectionsDetail(token, id, '', 'contentType')
+        .getCategoryCollectionsDetail('Bearer $token', id, '', 'contentType')
         .asStream()
         .map((response) => response)
         .first
@@ -557,7 +559,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   @override
   Future<GiftDataResponse> getGift(String token, String userId) {
     return movieApi
-        .getGifts(token, userId)
+        .getGifts('Bearer $token', userId)
         .asStream()
         .map((response) => response)
         .first
@@ -570,6 +572,18 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   Future<OTPResponse> googleLogin(GoogleLoginRequest request) {
     return movieApi
         .googleLogin(request)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<PaymentResponse> createPayment(String token, PaymentRequest request) {
+    return movieApi
+        .createPayment('Bearer $token', request)
         .asStream()
         .map((response) => response)
         .first

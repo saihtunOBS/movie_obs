@@ -9,6 +9,7 @@ import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
+import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:video_player/video_player.dart';
 
 import '../data/model/movie_model_impl.dart';
@@ -48,7 +49,7 @@ class VideoBloc extends ChangeNotifier {
 
   String currentUrl = '';
   double scale = 1.0;
-
+  bool hasError = false;
   int seekCount = 0;
   Timer? seekTimer;
 
@@ -171,27 +172,36 @@ class VideoBloc extends ChangeNotifier {
     Duration? duration,
   }) async {
     showLoading();
+    hasError = false;
+    notifyListeners();
     videoPlayerController = VideoPlayerController.networkUrl(
       Uri.parse(url),
       videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: true),
     );
-    videoPlayerController?.initialize().then((_) {
-      videoPlayerController?.seekTo(duration ?? Duration.zero);
-      chewieControllerNotifier = ChewieController(
-        videoPlayerController: videoPlayerController!,
-        showControls: false,
-        autoPlay: true,
-        aspectRatio: 16 / 9,
-        useRootNavigator: false,
-        allowFullScreen: false,
-        draggableProgressBar: false,
-        bufferingBuilder: (context) {
-          return const LoadingView();
-        },
-      );
-      playerStatus.value = 2;
-      fetchQualityOptions();
-    });
+    videoPlayerController
+        ?.initialize()
+        .then((_) {
+          videoPlayerController?.seekTo(duration ?? Duration.zero);
+          chewieControllerNotifier = ChewieController(
+            videoPlayerController: videoPlayerController!,
+            showControls: false,
+            autoPlay: true,
+            aspectRatio: 16 / 9,
+            useRootNavigator: false,
+            allowFullScreen: false,
+            draggableProgressBar: false,
+            bufferingBuilder: (context) {
+              return const LoadingView();
+            },
+          );
+          playerStatus.value = 2;
+          fetchQualityOptions();
+        })
+        .catchError((e) {
+          hasError = true;
+          notifyListeners();
+          ToastService.warningToast('Something wrong!');
+        });
 
     videoPlayerController?.addListener(() {
       if (videoPlayerController?.value.isPlaying ?? true) {

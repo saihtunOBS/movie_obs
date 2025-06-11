@@ -38,3 +38,7 @@ const kAyaPayLogo = 'assets/images/aya_pay.png';
 const kGlobalCardLogo = 'assets/images/global_card.png';
 const kMpuLogo = 'assets/images/mpu.png';
 const kInAppLogo = 'assets/images/in_app.png';
+
+const kPaymentSuccessLogo = 'assets/images/payment_success.png';
+const kPaymentFailLogo = 'assets/images/payment_fail.png';
+const kPaymentBarLogo = 'assets/images/payment_bar.png';

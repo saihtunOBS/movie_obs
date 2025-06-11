@@ -8,7 +8,6 @@ part of 'google_login_request.dart';
 
 GoogleLoginRequest _$GoogleLoginRequestFromJson(Map<String, dynamic> json) =>
     GoogleLoginRequest(
-      json['phone'] as String?,
       json['email'] as String?,
       json['name'] as String?,
       json['fcmToken'] as String?,
@@ -16,7 +15,6 @@ GoogleLoginRequest _$GoogleLoginRequestFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$GoogleLoginRequestToJson(GoogleLoginRequest instance) =>
     <String, dynamic>{
-      'phone': instance.phone,
       'email': instance.email,
       'name': instance.name,
       'fcmToken': instance.fcmToken,
