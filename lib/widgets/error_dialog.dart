@@ -15,7 +15,7 @@ class ErrorDialogView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: const EdgeInsets.all(10),
+      insetPadding: const EdgeInsets.all(16),
       backgroundColor: kWhiteColor,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),

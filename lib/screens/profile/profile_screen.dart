@@ -367,7 +367,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Consumer<UserBloc>(
       builder:
           (context, userBloc, child) => Dialog(
-            insetPadding: const EdgeInsets.all(10),
+            insetPadding: const EdgeInsets.all(16),
             backgroundColor: kWhiteColor,
             child: Container(
               height: null,

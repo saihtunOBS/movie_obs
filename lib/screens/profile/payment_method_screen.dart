@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:country_state_city_picker/country_state_city_picker.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -698,21 +697,6 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 _textfield('Last Name'),
                 _textfield('E-mail'),
                 _textfield('Phone Number'),
-                10.vGap,
-                SelectState(
-                  style: TextStyle(color: kBlackColor),
-                  dropdownColor: kWhiteColor,
-                  onCountryChanged: (value) {
-                    setState(() {});
-                  },
-                  onStateChanged: (value) {
-                    setState(() {});
-                  },
-                  onCityChanged: (value) {
-                    setState(() {});
-                  },
-                ),
-
                 _addressTextfield('Address'),
               ],
             ),

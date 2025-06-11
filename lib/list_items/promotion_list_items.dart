@@ -17,7 +17,10 @@ Widget promotionListItem(
     decoration: BoxDecoration(
       color: Colors.grey.withValues(alpha: 0.2),
       borderRadius: BorderRadius.circular(15),
-      // border: Border.all(color: Colors.grey, width: 0.3),
+      border: Border.all(
+        color: isSelected ? Colors.white : Colors.transparent,
+        width: 0.5,
+      ),
     ),
     child: Stack(
       clipBehavior: Clip.none,
