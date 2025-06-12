@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_obs/extension/extension.dart';
+import 'package:movie_obs/network/responses/gift_data_response.dart';
+import 'package:movie_obs/utils/calculate_time.dart';
 import 'package:movie_obs/utils/colors.dart';
+import 'package:movie_obs/utils/date_formatter.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 
-Widget giftCardListItem() {
+Widget giftCardListItem(GiftVO data) {
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 10),
     height: 108,
@@ -22,7 +25,7 @@ Widget giftCardListItem() {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Gift Name',
+              data.plan?.name ?? '',
               style: TextStyle(
                 fontSize: kTextRegular18,
                 color: kWhiteColor,
@@ -36,7 +39,7 @@ Widget giftCardListItem() {
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Text(
-                'Unused',
+                data.status ?? '',
                 style: TextStyle(
                   color: kWhiteColor,
                   fontSize: kTextSmall,
@@ -51,10 +54,13 @@ Widget giftCardListItem() {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('122-112-333', style: TextStyle(fontSize: 13)),
+            Text(
+              formatWithDashes(data.code ?? ''),
+              style: TextStyle(fontSize: 13),
+            ),
             GestureDetector(
               onTap: () {
-                Clipboard.setData(ClipboardData(text: ''));
+                Clipboard.setData(ClipboardData(text: data.code ?? ''));
                 ToastService.successToast('Copied success!');
               },
               child: Padding(
@@ -72,7 +78,7 @@ Widget giftCardListItem() {
             borderRadius: BorderRadius.circular(15),
           ),
           child: Text(
-            'Valid before 06/05/2025',
+            'Valid before ${DateFormatter.formatDate(data.expiresAt ?? DateTime.now())}',
             style: TextStyle(
               color: kWhiteColor,
               fontWeight: FontWeight.w600,

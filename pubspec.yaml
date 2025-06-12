@@ -59,6 +59,9 @@ dependencies:
   connectivity_plus: ^6.1.4
   google_sign_in: ^6.3.0
   qr_flutter: ^4.1.0
+  gallery_saver_plus: ^3.2.8
+  permission_handler: ^12.0.0+1
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:

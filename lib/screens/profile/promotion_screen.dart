@@ -204,6 +204,7 @@ class _PromotionScreenState extends State<PromotionScreen> {
             context,
             bloc.packages?[index] ?? PackageVO(),
             bloc.packageId == bloc.packages?[index].id,
+            bloc.packages?[index].promotion == null ? 13 : 30,
           ),
         );
       },

@@ -4,6 +4,7 @@ import 'package:movie_obs/bloc/gift_cart_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/l10n/app_localizations.dart';
 import 'package:movie_obs/list_items/giftcard_list_item.dart';
+import 'package:movie_obs/network/responses/gift_data_response.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/common_dialog.dart';
@@ -48,6 +49,7 @@ class _GiftCartScreenState extends State<GiftCartScreen> {
                         ),
                       ).whenComplete(() {
                         _pinCodeController.clear();
+                        bloc.getGift();
                       });
                     },
                     child: Card(
@@ -76,31 +78,38 @@ class _GiftCartScreenState extends State<GiftCartScreen> {
         ),
         body: Consumer<GiftCartBloc>(
           builder:
-              (context, bloc, child) =>
-                  bloc.isLoading
-                      ? LoadingView()
-                      : bloc.giftResponse?.data?.isNotEmpty ?? true
-                      ? ListView.builder(
-                        itemCount: bloc.giftResponse?.data?.length ?? 0,
-                        padding: EdgeInsets.only(
-                          top: 10,
-                          bottom: 10,
-                          left: kMarginMedium2,
-                          right: kMarginMedium2,
+              (context, bloc, child) => RefreshIndicator(
+                onRefresh: () async {
+                  bloc.getGift();
+                },
+                child:
+                    bloc.isLoading
+                        ? LoadingView()
+                        : bloc.giftResponse?.data?.isNotEmpty ?? true
+                        ? ListView.builder(
+                          itemCount: bloc.giftResponse?.data?.length ?? 0,
+                          padding: EdgeInsets.only(
+                            top: 10,
+                            bottom: 10,
+                            left: kMarginMedium2,
+                            right: kMarginMedium2,
+                          ),
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: giftCardListItem(
+                                bloc.giftResponse?.data?[index] ?? GiftVO(),
+                              ),
+                            );
+                          },
+                        )
+                        : EmptyView(
+                          reload: () {
+                            bloc.getGift();
+                          },
+                          title: 'There is no Gift to show.',
                         ),
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: giftCardListItem(),
-                          );
-                        },
-                      )
-                      : EmptyView(
-                        reload: () {
-                          bloc.getGift();
-                        },
-                        title: 'There is no Gift to show.',
-                      ),
+              ),
         ),
       ),
     );

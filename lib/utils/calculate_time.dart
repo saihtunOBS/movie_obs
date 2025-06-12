@@ -22,3 +22,14 @@ String formatViewCount(int count) {
     return count.toString();
   }
 }
+
+String formatWithDashes(String input) {
+  final buffer = StringBuffer();
+  for (int i = 0; i < input.length; i++) {
+    buffer.write(input[i]);
+    if ((i + 1) % 3 == 0 && i != input.length - 1) {
+      buffer.write('-');
+    }
+  }
+  return buffer.toString();
+}

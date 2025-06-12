@@ -10,16 +10,17 @@ Widget promotionListItem(
   BuildContext context,
   PackageVO data,
   bool isSelected,
+  double margin,
 ) {
   return Container(
-    margin: EdgeInsets.only(bottom: 30),
+    margin: EdgeInsets.only(bottom: margin),
     padding: EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
       color: Colors.grey.withValues(alpha: 0.2),
       borderRadius: BorderRadius.circular(15),
       border: Border.all(
         color: isSelected ? Colors.white : Colors.transparent,
-        width: 0.5,
+        width: 1,
       ),
     ),
     child: Stack(
@@ -131,13 +132,13 @@ Widget promotionListItem(
             5.vGap,
           ],
         ),
-        isSelected
-            ? Positioned(
-              right: -20,
-              top: -10,
-              child: Icon(Icons.check_circle, color: kSecondaryColor),
-            )
-            : SizedBox.shrink(),
+        // isSelected
+        //     ? Positioned(
+        //       right: -20,
+        //       top: -10,
+        //       child: Icon(Icons.check_circle, color: kSecondaryColor),
+        //     )
+        //     : SizedBox.shrink(),
       ],
     ),
   );

@@ -6,10 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/payment_method_bloc.dart';
 import 'package:movie_obs/data/vos/package_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
-import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/l10n/app_localizations.dart';
 import 'package:movie_obs/network/responses/payment_response.dart';
-import 'package:movie_obs/screens/profile/payment_status_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
@@ -41,6 +39,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   int kpaySelectedIndex = 1;
   bool isLoading = false;
   PaymentResponse? payment;
+  String selectedPayment = '';
+  final GlobalKey qrKey = GlobalKey();
 
   @override
   void dispose() {
@@ -97,11 +97,16 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                       ),
                       gradientButton(
                         onPress: () {
-                          bloc.payment == ''
-                              ? null
-                              : PageNavigator(
-                                ctx: context,
-                              ).nextPage(page: PaymentStatusScreen());
+                          if (bloc.payment.isNotEmpty) {
+                            if (bloc.payment == 'Pay with AYA Pay') {
+                              if (bloc.digitalWalletPayment == 'aya_qr') {
+                                showCommonDialog(
+                                  context: context,
+                                  dialogWidget: _buildAlert(bloc),
+                                );
+                              }
+                            }
+                          }
                         },
                         context: context,
                         title: bloc.payment == '' ? 'PAYMENT' : bloc.payment,
@@ -539,58 +544,58 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
               setState(() {
                 ayaSelectedIndex = value;
               });
-              if (value == 2) {
-                showCommonDialog(
-                  context: context,
-                  dialogWidget: _buildAlert(bloc),
-                ).whenComplete(() {
-                  setState(() {
-                    isLoading = false;
-                  });
-                });
+              if (value == 1) {
+                bloc.selectedInAppOrQr('aya_inApp');
+              } else {
+                bloc.selectedInAppOrQr('aya_qr');
               }
             },
           ),
         ),
 
-        Column(
-          spacing: 5,
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            10.vGap,
-            Text(
-              'Enter Phone Number',
-              style: TextStyle(fontSize: kTextRegular2x, color: kBlackColor),
-            ),
-            Container(
-              width: double.infinity,
-              height: 48,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: Colors.grey),
-              ),
-              child: Center(
-                child: Row(
-                  spacing: 10,
-                  children: [
-                    Text('+95', style: TextStyle(color: kBlackColor)),
-                    Container(height: 20, width: 1, color: kBlackColor),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Phone Number',
-                        ),
-                      ),
-                    ),
-                  ],
+        ayaSelectedIndex == 2
+            ? SizedBox.shrink()
+            : Column(
+              spacing: 5,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                10.vGap,
+                Text(
+                  'Enter Phone Number',
+                  style: TextStyle(
+                    fontSize: kTextRegular2x,
+                    color: kBlackColor,
+                  ),
                 ),
-              ),
+                Container(
+                  width: double.infinity,
+                  height: 48,
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: Center(
+                    child: Row(
+                      spacing: 10,
+                      children: [
+                        Text('+95', style: TextStyle(color: kBlackColor)),
+                        Container(height: 20, width: 1, color: kBlackColor),
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Phone Number',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
       ],
     );
   }
@@ -815,14 +820,17 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
 
             if (!hasFetchedPayment) {
               hasFetchedPayment = true;
-              startDialogTimer();
+
               dialogSetState(() => isLoading = true);
 
               bloc
                   .createPayment('ayapay', widget.plan)
                   .then((response) {
+                    startDialogTimer();
+
                     dialogSetState(() {
                       payment = response;
+                      bloc.saveQrToGalleryWithGallerySaver(qrKey);
                       isLoading = false;
                     });
                   })
@@ -832,46 +840,54 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   });
             }
 
-            return Container(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  10.vGap,
-                  Center(
-                    child: Text(
-                      'Scan with your phone to make payment.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: kBlackColor,
-                        fontSize: kTextRegular2x,
+            return RepaintBoundary(
+              key: qrKey,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: kWhiteColor,
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    10.vGap,
+                    Center(
+                      child: Text(
+                        'Scan with your phone to make payment.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: kBlackColor,
+                          fontSize: kTextRegular2x,
+                        ),
                       ),
                     ),
-                  ),
-                  isLoading
-                      ? _buildLoading()
-                      : _buildQrView(payment?.qrData ?? '', () {
-                        dialogTimer?.cancel(); // cancel old timer
-                        dialogStart = 60; // reset counter
-                        startDialogTimer(); // start new timer
+                    isLoading
+                        ? _buildLoading()
+                        : _buildQrView(payment?.qrData ?? '', () {
+                          dialogSetState(() => isLoading = true);
+                          bloc
+                              .createPayment('ayapay', widget.plan)
+                              .then((response) {
+                                dialogTimer?.cancel();
+                                dialogStart = 60;
+                                startDialogTimer();
 
-                        dialogSetState(() => isLoading = true);
-                        bloc
-                            .createPayment('ayapay', widget.plan)
-                            .then((response) {
-                              dialogSetState(() {
-                                payment = response;
-                                isLoading = false;
-                                dialogStart = 60; // reset timer
+                                dialogSetState(() {
+                                  payment = response;
+                                  isLoading = false;
+                                  bloc.saveQrToGalleryWithGallerySaver(qrKey);
+                                  dialogStart = 60;
+                                });
+                              })
+                              .catchError((e) {
+                                dialogSetState(() => isLoading = false);
+                                ToastService.warningToast(e.toString());
                               });
-                            })
-                            .catchError((e) {
-                              dialogSetState(() => isLoading = false);
-                              ToastService.warningToast(e.toString());
-                            });
-                      }, dialogTimerText()),
-                  10.vGap,
-                ],
+                        }, dialogTimerText()),
+                    10.vGap,
+                  ],
+                ),
               ),
             );
           },

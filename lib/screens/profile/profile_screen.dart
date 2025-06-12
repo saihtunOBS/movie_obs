@@ -103,13 +103,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onPress: () {
                             switch (index) {
                               case 0:
-                                PageNavigator(
-                                  ctx: context,
-                                ).nextPage(page: UserProfileScreen());
+                                PageNavigator(ctx: context)
+                                    .nextPage(page: UserProfileScreen())
+                                    .whenComplete(() {});
                               case 1:
-                                PageNavigator(
-                                  ctx: context,
-                                ).nextPage(page: PromotionScreen());
+                                PageNavigator(ctx: context)
+                                    .nextPage(page: PromotionScreen())
+                                    .whenComplete(() {
+                                      bloc.getUser(context);
+                                    });
                               case 2:
                                 PageNavigator(
                                   ctx: context,
@@ -265,7 +267,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    'Free user',
+                                    userData.status == 'FREE'
+                                        ? 'Free user'
+                                        : 'Premium',
                                     style: TextStyle(fontSize: 11),
                                   ),
                                 ),
@@ -282,18 +286,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ctx: context,
                         ).nextPage(page: PromotionScreen()),
                     child: Container(
-                      height: 40,
+                      height: 30,
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Colors.grey.withValues(alpha: 0.3),
+                        color: Colors.grey.withValues(alpha: 0.2),
+                        border: Border.all(color: Colors.grey),
                       ),
                       child: Center(
                         child: Text(
-                          'Upgrade Premium',
+                          userData.status == 'FREE'
+                              ? 'Upgrade Premium'
+                              : 'View All Plans',
                           style: TextStyle(
-                            color: kWhiteColor,
-                            fontSize: kTextRegular,
+                            color: kPrimaryColor,
+                            fontSize: kTextRegular13,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
