@@ -4,8 +4,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/notification_bloc.dart';
 import 'package:movie_obs/main.dart';
-import 'package:movie_obs/network/notification_service/localization_service.dart';
+import 'package:movie_obs/network/notification_service/local_notification_service.dart';
+import 'package:movie_obs/screens/profile/payment_status_screen.dart';
+import 'package:movie_obs/utils/route_observer.dart';
 import 'package:provider/provider.dart';
+
+import '../../data/persistence/persistence_data.dart';
 
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
@@ -50,15 +54,32 @@ class NotificationService {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      // Handle navigation after a user taps on the notification
-      // if (CurrentRouteObserver.currentRoute != 'AnnouncementPage') {
-      //   navigatorKey.currentState!.push(
-      //     MaterialPageRoute(
-      //       builder: (_) => AnnouncementPage(),
-      //       settings: RouteSettings(name: "AnnouncementPage"),
-      //     ),
-      //   );
-      // }
+      debugPrint('Notification tapped!');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+          navigatorKey.currentState?.pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (_) => PaymentStatusScreen(),
+              settings: RouteSettings(name: "PaymentStatusScreen"),
+            ),
+            (route) => false,
+          );
+        }
+      });
+    });
+    FirebaseMessaging.instance.getInitialMessage().then((message) async {
+      if (message == null || PersistenceData.shared.getToken() == null) return;
+
+      Future.delayed((Duration(seconds: 3)), () {
+        if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+          navigatorKey.currentState!.push(
+            MaterialPageRoute(
+              builder: (_) => PaymentStatusScreen(),
+              settings: RouteSettings(name: "PaymentStatusScreen"),
+            ),
+          );
+        }
+      });
     });
   }
 
