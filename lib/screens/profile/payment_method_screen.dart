@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:movie_obs/bloc/payment_method_bloc.dart';
 import 'package:movie_obs/data/vos/package_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
@@ -41,10 +45,26 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   PaymentResponse? payment;
   String selectedPayment = '';
   final GlobalKey qrKey = GlobalKey();
+  // final ScreenshotController _screenshotController = ScreenshotController();
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  _saveImage() async {
+    RenderRepaintBoundary boundary =
+        qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    ui.Image image = await boundary.toImage();
+    ByteData? byteData = await (image.toByteData(
+      format: ui.ImageByteFormat.png,
+    ));
+    if (byteData != null) {
+      await ImageGallerySaverPlus.saveImage(byteData.buffer.asUint8List());
+      ToastService.successToast('Image saved to gallery.');
+    } else {
+      ToastService.warningToast('Fail to saved image to gallery.');
+    }
   }
 
   @override
@@ -830,8 +850,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
 
                     dialogSetState(() {
                       payment = response;
-                      bloc.saveQrToGalleryWithGallerySaver(qrKey);
                       isLoading = false;
+                      _saveImage();
                     });
                   })
                   .catchError((e) {
@@ -876,8 +896,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                                 dialogSetState(() {
                                   payment = response;
                                   isLoading = false;
-                                  bloc.saveQrToGalleryWithGallerySaver(qrKey);
                                   dialogStart = 60;
+                                  _saveImage();
                                 });
                               })
                               .catchError((e) {
