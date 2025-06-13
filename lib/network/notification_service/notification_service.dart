@@ -56,34 +56,34 @@ class NotificationService {
       }
     });
 
-    //   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    //     debugPrint('Notification tapped!');
-    //     WidgetsBinding.instance.addPostFrameCallback((_) {
-    //       if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-    //         navigatorKey.currentState?.pushAndRemoveUntil(
-    //           MaterialPageRoute(
-    //             builder: (_) => PaymentStatusScreen(),
-    //             settings: RouteSettings(name: "PaymentStatusScreen"),
-    //           ),
-    //           (route) => false,
-    //         );
-    //       }
-    //     });
-    //   });
-    //   FirebaseMessaging.instance.getInitialMessage().then((message) async {
-    //     if (message == null || PersistenceData.shared.getToken() == null) return;
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      debugPrint('Notification tapped!');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+          navigatorKey.currentState?.pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (_) => PaymentStatusScreen(),
+              settings: RouteSettings(name: "PaymentStatusScreen"),
+            ),
+            (route) => false,
+          );
+        }
+      });
+    });
+    FirebaseMessaging.instance.getInitialMessage().then((message) async {
+      if (message == null || PersistenceData.shared.getToken() == null) return;
 
-    //     Future.delayed((Duration(seconds: 3)), () {
-    //       if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-    //         navigatorKey.currentState!.push(
-    //           MaterialPageRoute(
-    //             builder: (_) => PaymentStatusScreen(),
-    //             settings: RouteSettings(name: "PaymentStatusScreen"),
-    //           ),
-    //         );
-    //       }
-    //     });
-    //   });
+      Future.delayed((Duration(seconds: 3)), () {
+        if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+          navigatorKey.currentState!.push(
+            MaterialPageRoute(
+              builder: (_) => PaymentStatusScreen(),
+              settings: RouteSettings(name: "PaymentStatusScreen"),
+            ),
+          );
+        }
+      });
+    });
   }
 
   Future<void> getFCMToken() async {

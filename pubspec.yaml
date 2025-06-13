@@ -59,7 +59,6 @@ dependencies:
   connectivity_plus: ^6.1.4
   google_sign_in: ^6.3.0
   qr_flutter: ^4.1.0
-  screenshot: ^3.0.0
   image_gallery_saver_plus: ^4.0.1
   
 

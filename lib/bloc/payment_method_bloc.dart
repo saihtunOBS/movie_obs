@@ -44,7 +44,7 @@ class PaymentMethodBloc extends ChangeNotifier {
   }
 
   Future<PaymentResponse> createPayment(String paymentType, String plan) async {
-    return Future.delayed(Duration(seconds: 2), () {
+    return Future.delayed(Duration(seconds: 1), () {
       var request = PaymentRequest(
         userDataListener.value.id ?? '',
         plan,

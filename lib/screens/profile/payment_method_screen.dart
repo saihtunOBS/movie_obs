@@ -55,7 +55,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   _saveImage() async {
     RenderRepaintBoundary boundary =
         qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    ui.Image image = await boundary.toImage();
+    ui.Image image = await boundary.toImage(pixelRatio: 4.0);
     ByteData? byteData = await (image.toByteData(
       format: ui.ImageByteFormat.png,
     ));
@@ -851,6 +851,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                     dialogSetState(() {
                       payment = response;
                       isLoading = false;
+                    });
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
                       _saveImage();
                     });
                   })
@@ -897,6 +899,10 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                                   payment = response;
                                   isLoading = false;
                                   dialogStart = 60;
+                                });
+                                WidgetsBinding.instance.addPostFrameCallback((
+                                  _,
+                                ) {
                                   _saveImage();
                                 });
                               })
