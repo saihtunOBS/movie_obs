@@ -78,7 +78,6 @@ class AuthBloc extends ChangeNotifier {
   }
 
   Future getAuthUser() async {
-    //_showLoading();
     var token = PersistenceData.shared.getToken();
     return _movieModel.getUser(token).then((value) {
       hideLoading();

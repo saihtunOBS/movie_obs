@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/notification_bloc.dart';
+import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/main.dart';
 import 'package:movie_obs/network/notification_service/local_notification_service.dart';
 import 'package:movie_obs/screens/profile/payment_status_screen.dart';
@@ -50,37 +51,39 @@ class NotificationService {
         );
 
         notiBloc.getNotifications();
+        context.read<UserBloc>().updateToken();
+        context.read<UserBloc>().getUser(context);
       }
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint('Notification tapped!');
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-          navigatorKey.currentState?.pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (_) => PaymentStatusScreen(),
-              settings: RouteSettings(name: "PaymentStatusScreen"),
-            ),
-            (route) => false,
-          );
-        }
-      });
-    });
-    FirebaseMessaging.instance.getInitialMessage().then((message) async {
-      if (message == null || PersistenceData.shared.getToken() == null) return;
+    //   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    //     debugPrint('Notification tapped!');
+    //     WidgetsBinding.instance.addPostFrameCallback((_) {
+    //       if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+    //         navigatorKey.currentState?.pushAndRemoveUntil(
+    //           MaterialPageRoute(
+    //             builder: (_) => PaymentStatusScreen(),
+    //             settings: RouteSettings(name: "PaymentStatusScreen"),
+    //           ),
+    //           (route) => false,
+    //         );
+    //       }
+    //     });
+    //   });
+    //   FirebaseMessaging.instance.getInitialMessage().then((message) async {
+    //     if (message == null || PersistenceData.shared.getToken() == null) return;
 
-      Future.delayed((Duration(seconds: 3)), () {
-        if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-          navigatorKey.currentState!.push(
-            MaterialPageRoute(
-              builder: (_) => PaymentStatusScreen(),
-              settings: RouteSettings(name: "PaymentStatusScreen"),
-            ),
-          );
-        }
-      });
-    });
+    //     Future.delayed((Duration(seconds: 3)), () {
+    //       if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+    //         navigatorKey.currentState!.push(
+    //           MaterialPageRoute(
+    //             builder: (_) => PaymentStatusScreen(),
+    //             settings: RouteSettings(name: "PaymentStatusScreen"),
+    //           ),
+    //         );
+    //       }
+    //     });
+    //   });
   }
 
   Future<void> getFCMToken() async {

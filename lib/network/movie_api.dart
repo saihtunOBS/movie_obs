@@ -41,7 +41,7 @@ part 'movie_api.g.dart';
 abstract class MovieApi {
   factory MovieApi(Dio dio) = _MovieApi;
 
-  @POST(kEndPointGoogleLogin)
+  @POST(kEndPointSendOtp)
   Future<OTPResponse> sendOTP(@Body() SendOtpRequest request);
 
   @POST(kEndPointGoogleLogin)

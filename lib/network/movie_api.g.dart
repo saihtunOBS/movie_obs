@@ -30,7 +30,7 @@ class _MovieApi implements MovieApi {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/auth/customer/login/google-login',
+            '/auth/customer/login/otp/send',
             queryParameters: queryParameters,
             data: _data,
           )

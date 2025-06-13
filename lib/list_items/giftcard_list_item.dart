@@ -35,7 +35,12 @@ Widget giftCardListItem(GiftVO data) {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: kSecondaryColor,
+                color:
+                    data.status == 'ACTIVE'
+                        ? kSecondaryColor
+                        : data.status == 'PENDING'
+                        ? Colors.orange
+                        : Colors.red,
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Text(
