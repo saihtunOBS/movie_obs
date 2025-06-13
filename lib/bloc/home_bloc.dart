@@ -170,6 +170,7 @@ class HomeBloc extends ChangeNotifier {
   }
 
   getBanner() {
+    _showLoading();
     _movieModel.getBanner(token).then((response) {
       bannerList = response.data ?? [];
       getFreeMovieAndSeries();
