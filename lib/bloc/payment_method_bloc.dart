@@ -92,6 +92,8 @@ class PaymentMethodBloc extends ChangeNotifier {
         userDataListener.value.id ?? '',
         plan,
         paymentType,
+        'QR_CODE',
+        userDataListener.value.phone,
       );
       return _movieModel.createPayment(token, request);
     });
