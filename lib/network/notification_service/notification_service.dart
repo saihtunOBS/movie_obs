@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:movie_obs/bloc/notification_bloc.dart';
@@ -77,16 +78,18 @@ class NotificationService {
 
 void _handleNotificationTap(RemoteMessage message) {
   if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-    navigatorKey.currentState?.push(
+    navigatorKey.currentState?.pushAndRemoveUntil(
       CupertinoPageRoute(
         builder: (_) => PaymentStatusScreen(),
         settings: RouteSettings(name: "PaymentStatusScreen"),
       ),
+      (route) => false,
     );
   }
 }
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await LocalNotificationService().displayNotification(message);
+  await Firebase.initializeApp();
+  //await LocalNotificationService().displayNotification(message);
 }

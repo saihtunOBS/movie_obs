@@ -33,11 +33,12 @@ class LocalNotificationService {
         Future.delayed(Duration(seconds: 1), () {
           if (PersistenceData.shared.getToken() == '') return;
           if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-            navigatorKey.currentState?.push(
+            navigatorKey.currentState?.pushAndRemoveUntil(
               CupertinoPageRoute(
                 builder: (_) => PaymentStatusScreen(),
                 settings: RouteSettings(name: "PaymentStatusScreen"),
               ),
+              (route) => false,
             );
           }
         });
