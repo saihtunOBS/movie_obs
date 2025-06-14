@@ -1,16 +1,14 @@
 import 'dart:async';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:movie_obs/bloc/notification_bloc.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
+import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/main.dart';
 import 'package:movie_obs/network/notification_service/local_notification_service.dart';
 import 'package:movie_obs/screens/profile/payment_status_screen.dart';
 import 'package:movie_obs/utils/route_observer.dart';
 import 'package:provider/provider.dart';
-
-import '../../data/persistence/persistence_data.dart';
 
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
@@ -34,7 +32,7 @@ class NotificationService {
           sound: true,
         );
 
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
     listenIncomingMessage();
     getFCMToken();
@@ -49,40 +47,25 @@ class NotificationService {
           listen: false,
           currentContext,
         );
+        var userBloc = Provider.of<UserBloc>(listen: false, currentContext);
 
         notiBloc.getNotifications();
-        context.read<UserBloc>().updateToken();
-        context.read<UserBloc>().getUser(context);
+        userBloc.updateToken();
+        userBloc.getUser(context: context);
       }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint('Notification tapped!');
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-          navigatorKey.currentState?.pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (_) => PaymentStatusScreen(),
-              settings: RouteSettings(name: "PaymentStatusScreen"),
-            ),
-            (route) => false,
-          );
-        }
-      });
+      if (PersistenceData.shared.getToken() == '') return;
+      _handleNotificationTap(message);
     });
-    FirebaseMessaging.instance.getInitialMessage().then((message) async {
-      if (message == null || PersistenceData.shared.getToken() == null) return;
 
-      Future.delayed((Duration(seconds: 3)), () {
-        if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-          navigatorKey.currentState!.push(
-            MaterialPageRoute(
-              builder: (_) => PaymentStatusScreen(),
-              settings: RouteSettings(name: "PaymentStatusScreen"),
-            ),
-          );
-        }
-      });
+    // Handle when the app is launched from terminated state
+    FirebaseMessaging.instance.getInitialMessage().then((
+      RemoteMessage? message,
+    ) {
+      if (message == null || PersistenceData.shared.getToken() == '') return;
+      _handleNotificationTap(message);
     });
   }
 
@@ -92,7 +75,18 @@ class NotificationService {
   }
 }
 
+void _handleNotificationTap(RemoteMessage message) {
+  if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+    navigatorKey.currentState?.push(
+      CupertinoPageRoute(
+        builder: (_) => PaymentStatusScreen(),
+        settings: RouteSettings(name: "PaymentStatusScreen"),
+      ),
+    );
+  }
+}
+
 @pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await LocalNotificationService().displayNotification(message);
 }

@@ -30,7 +30,7 @@ class UserBloc extends ChangeNotifier {
   UserBloc({BuildContext? context}) {
     myContext = context;
     updateToken();
-    getUser(context);
+    getUser(context: context);
   }
 
   onTapupdate() {
@@ -43,6 +43,7 @@ class UserBloc extends ChangeNotifier {
 
   updateToken() {
     token = PersistenceData.shared.getToken();
+    getUser(context: myContext);
     notifyListeners();
   }
 
@@ -67,7 +68,7 @@ class UserBloc extends ChangeNotifier {
         });
   }
 
-  getUser(BuildContext? context) {
+  getUser({BuildContext? context}) {
     _movieModel
         .getUser(token)
         .then((response) {

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/firebase_options.dart';
+import 'package:movie_obs/network/notification_service/notification_service.dart';
 import 'package:movie_obs/screens/auth/splash_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -32,7 +34,6 @@ StreamController<String> languageStreamController = BehaviorSubject<String>();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final RouteObserver<PageRoute> routeObserver = CurrentRouteObserver();
 void main() async {
-  ErrorWidget.builder = (FlutterErrorDetails details) => Container();
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isAndroid) {
     await Firebase.initializeApp(
@@ -42,8 +43,9 @@ void main() async {
   {
     await Firebase.initializeApp();
   }
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  ErrorWidget.builder = (FlutterErrorDetails details) => Container();
   await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
-
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await GetStorage.init();
   runApp(

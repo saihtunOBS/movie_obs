@@ -1,7 +1,11 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:movie_obs/data/persistence/persistence_data.dart';
+import 'package:movie_obs/main.dart';
+import 'package:movie_obs/screens/profile/payment_status_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
+import 'package:movie_obs/utils/route_observer.dart';
 
 class LocalNotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -23,8 +27,21 @@ class LocalNotificationService {
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse:
-          (NotificationResponse notificationResponse) async {},
+      onDidReceiveNotificationResponse: (
+        NotificationResponse notificationResponse,
+      ) async {
+        Future.delayed(Duration(seconds: 1), () {
+          if (PersistenceData.shared.getToken() == '') return;
+          if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+            navigatorKey.currentState?.push(
+              CupertinoPageRoute(
+                builder: (_) => PaymentStatusScreen(),
+                settings: RouteSettings(name: "PaymentStatusScreen"),
+              ),
+            );
+          }
+        });
+      },
     );
 
     await flutterLocalNotificationsPlugin

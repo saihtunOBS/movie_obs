@@ -192,7 +192,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         )
                         .then((_) {
                           bloc.updateToken();
-                          bloc.getUser(context);
+                          bloc.getUser(context: context);
                           Future.delayed(Duration(milliseconds: 300), () {
                             Navigator.of(context).pop();
                           });

@@ -45,7 +45,6 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   PaymentResponse? payment;
   String selectedPayment = '';
   final GlobalKey qrKey = GlobalKey();
-  // final ScreenshotController _screenshotController = ScreenshotController();
 
   @override
   void dispose() {

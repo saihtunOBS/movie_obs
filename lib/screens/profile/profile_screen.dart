@@ -51,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserBloc>().updateToken();
-      context.read<UserBloc>().getUser(context);
+      context.read<UserBloc>().getUser(context: context);
     });
 
     super.initState();
@@ -110,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 PageNavigator(ctx: context)
                                     .nextPage(page: PromotionScreen())
                                     .whenComplete(() {
-                                      bloc.getUser(context);
+                                      bloc.getUser(context: context);
                                     });
                               case 2:
                                 PageNavigator(
