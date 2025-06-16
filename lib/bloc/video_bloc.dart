@@ -7,9 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
+import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/screens/video_player.dart/video_player_screen.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
-import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:video_player/video_player.dart';
 
 import '../data/model/movie_model_impl.dart';
@@ -171,37 +171,27 @@ class VideoBloc extends ChangeNotifier {
     String? type,
     Duration? duration,
   }) async {
-    showLoading();
-    hasError = false;
-    notifyListeners();
     videoPlayerController = VideoPlayerController.networkUrl(
       Uri.parse(url),
       videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: true),
     );
-    videoPlayerController
-        ?.initialize()
-        .then((_) {
-          videoPlayerController?.seekTo(duration ?? Duration.zero);
-          chewieControllerNotifier = ChewieController(
-            videoPlayerController: videoPlayerController!,
-            showControls: false,
-            autoPlay: true,
-            aspectRatio: 16 / 9,
-            useRootNavigator: false,
-            allowFullScreen: false,
-            draggableProgressBar: false,
-            bufferingBuilder: (context) {
-              return const LoadingView();
-            },
-          );
-          playerStatus.value = 2;
-          fetchQualityOptions();
-        })
-        .catchError((e) {
-          hasError = true;
-          notifyListeners();
-          ToastService.warningToast('Something wrong!');
-        });
+    videoPlayerController?.initialize().then((_) {
+      videoPlayerController?.seekTo(duration ?? Duration.zero);
+      chewieControllerNotifier = ChewieController(
+        videoPlayerController: videoPlayerController!,
+        showControls: false,
+        autoPlay: true,
+        aspectRatio: 16 / 9,
+        useRootNavigator: false,
+        allowFullScreen: false,
+        draggableProgressBar: false,
+        bufferingBuilder: (context) {
+          return const LoadingView();
+        },
+      );
+      playerStatus.value = 2;
+      fetchQualityOptions();
+    });
 
     videoPlayerController?.addListener(() {
       if (videoPlayerController?.value.isPlaying ?? true) {
@@ -415,27 +405,69 @@ class VideoBloc extends ChangeNotifier {
     return "$minutes:$seconds";
   }
 
+  Duration _seekOffset = Duration.zero;
+  Timer? _debounceSeekTimer;
+  bool _isSeeking = false;
+
   void seekBy(Duration offset) {
     final currentPosition =
         videoPlayerController?.value.position ?? Duration.zero;
-    final duration = videoPlayerController?.value.duration ?? Duration.zero;
     final newPosition = currentPosition + offset;
+    final duration = videoPlayerController?.value.duration ?? Duration.zero;
 
     if (newPosition < duration && newPosition > Duration.zero) {
-      resetControlVisibility(isSeek: true);
       isPlaying = false;
       notifyListeners();
+      _seekOffset += offset;
+      _debounceSeekTimer?.cancel();
 
-      !(videoPlayerController?.value.isBuffering ?? true)
-          ? null // Wait for buffering to complete
-          : videoPlayerController?.seekTo(newPosition).whenComplete(() {
-            videoPlayerController?.addListener(() {
-              if (videoPlayerController?.value.isPlaying ?? true) {
-                isPlaying = true;
-                notifyListeners();
-              }
-            });
-          });
+      _debounceSeekTimer = Timer(const Duration(milliseconds: 300), () async {
+        final controller = videoPlayerController;
+        if (controller == null ||
+            !controller.value.isInitialized ||
+            _isSeeking) {
+          return;
+        }
+
+        final currentPosition = controller.value.position;
+        final duration = controller.value.duration;
+
+        final newPosition = (currentPosition + _seekOffset).clamp(
+          Duration.zero,
+          duration,
+        );
+
+        final isCompleted = controller.value.isCompleted;
+        final isSeekingTooFarBack =
+            newPosition <= Duration.zero && offset.isNegative;
+
+        if (isCompleted || isSeekingTooFarBack) {
+          _seekOffset = Duration.zero;
+          return;
+        }
+
+        _isSeeking = true;
+        _seekOffset = Duration.zero;
+
+        try {
+          isPlaying = false;
+          notifyListeners();
+          await controller.seekTo(newPosition);
+
+          if (!controller.value.isPlaying) {
+            await controller.play();
+            chewieControllerNotifier?.play();
+            isPlaying = true;
+            playerStatus.value = 2;
+            notifyListeners();
+          }
+        } catch (e) {
+          debugPrint("Seek error: $e");
+        } finally {
+          _isSeeking = false;
+          notifyListeners();
+        }
+      });
     }
   }
 

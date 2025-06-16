@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
-import 'package:movie_obs/screens/profile/promotion_screen.dart';
+import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
@@ -88,9 +88,11 @@ class PaymentStatusScreen extends StatelessWidget {
             visible: status == 'fail',
             child: gradientButton(
               onPress: () {
+                initialIndex = 3;
+                tab.value = true;
                 PageNavigator(
                   ctx: context,
-                ).nextPageOnly(page: PromotionScreen());
+                ).nextPageOnly(page: BottomNavScreen(openPromotion: true));
               },
               context: context,
               isGradient: false,
@@ -99,7 +101,11 @@ class PaymentStatusScreen extends StatelessWidget {
           ),
           gradientButton(
             onPress: () {
-              PageNavigator(ctx: context).nextPageOnly(page: PromotionScreen());
+              initialIndex = 3;
+              tab.value = true;
+              PageNavigator(
+                ctx: context,
+              ).nextPageOnly(page: BottomNavScreen(openPromotion: true));
             },
             context: context,
             isGradient: true,

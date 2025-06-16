@@ -17,6 +17,7 @@ class MiniVideoPlayer {
   static late Animation<Offset> _slideAnimation;
   static late bool isPlay;
   static late String videoId;
+  static late String url;
 
   static void showMiniPlayer(
     BuildContext context,
@@ -60,6 +61,7 @@ class MiniVideoPlayer {
     _animationController.forward();
     isPlay = isPlaying;
     videoId = id;
+    url = videoUrl;
   }
 
   static void removeMiniPlayer({bool? isClose}) {
@@ -71,12 +73,6 @@ class MiniVideoPlayer {
       _overlayEntry?.remove();
       _overlayEntry = null;
       _animationController.dispose();
-      saveVideoProgress([
-        VideoProgress(
-          videoId: videoId,
-          position: videoPlayerController?.value.position ?? Duration.zero,
-        ),
-      ]);
     });
   }
 }
@@ -191,178 +187,215 @@ class __MiniPlayerOverlayState extends State<_MiniPlayerOverlay>
       _position = Offset(20, screenSize.height - _height - 105);
     }
 
-    return Stack(
-      children: [
-        Positioned(
-          left: _position.dx,
-          top: _position.dy,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onPanStart: (details) {
-              _dragStartY = details.globalPosition.dy;
-              _dragStartX = details.globalPosition.dx;
-            },
-            onPanUpdate: (details) {
-              double deltaX = details.globalPosition.dx - _dragStartX;
-              double deltaY = details.globalPosition.dy - _dragStartY;
+    return Consumer<VideoBloc>(
+      builder:
+          (context, value, child) => Stack(
+            children: [
+              Positioned(
+                left: _position.dx,
+                top: _position.dy,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onPanStart: (details) {
+                    _dragStartY = details.globalPosition.dy;
+                    _dragStartX = details.globalPosition.dx;
+                  },
+                  onPanUpdate: (details) {
+                    double deltaX = details.globalPosition.dx - _dragStartX;
+                    double deltaY = details.globalPosition.dy - _dragStartY;
 
-              setState(() {
-                _position = Offset(
-                  _position.dx + details.delta.dx,
-                  _position.dy + details.delta.dy,
-                );
-                _isDraggingDown = deltaY > 0 && deltaY.abs() > deltaX.abs();
-              });
-            },
-            onPanEnd: _onDragEnd,
-            child: Material(
-              elevation: 3,
-              borderRadius: BorderRadius.circular(10),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    IgnorePointer(
-                      ignoring: true,
-                      child: Container(
-                        color: Colors.grey.withValues(alpha: 0.4),
-                        width: _width,
-                        height: _height,
-                        child: Chewie(controller: chewieControllerNotifier!),
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      left: 0,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () {
-                          PageNavigator(ctx: context).nextPage(
-                            page: VideoPlayerScreen(
-                              url: '',
-                              isFirstTime: false,
-                              type: '',
-                            ),
-                          );
-                        },
-                        child: SizedBox(height: 230),
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: IconButton(
-                        icon: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black45,
-                          ),
-                          child: Icon(
-                            Icons.close_rounded,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-
-                        onPressed:
-                            () =>
-                                MiniVideoPlayer.removeMiniPlayer(isClose: true),
-                      ),
-                    ),
-                    ValueListenableBuilder(
-                      valueListenable: playerStatus,
-                      builder:
-                          (
-                            BuildContext context,
-                            int value,
-                            Widget? child,
-                          ) => IconButton.filled(
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.black45,
-                            ),
-                            onPressed: () {
-                              if (videoPlayerController?.value.isCompleted ??
-                                  true) {
-                                videoPlayerController
-                                    ?.seekTo(Duration.zero)
-                                    .then((_) {
-                                      videoPlayerController?.play();
-                                      isPlay.value = true;
-                                      playerStatus.value = 2;
-                                    });
-                              } else {
-                                if (videoPlayerController?.value.isPlaying ??
-                                    true) {
-                                  videoPlayerController?.pause();
-                                  playerStatus.value = 1;
-                                } else {
-                                  videoPlayerController?.play();
-                                  playerStatus.value = 2;
-                                }
-                              }
-                            },
-                            icon: Icon(
-                              value == 3
-                                  ? CupertinoIcons.arrow_clockwise
-                                  : value == 2
-                                  ? CupertinoIcons.pause
-                                  : CupertinoIcons.play,
-                              size: 25,
-                              color: Colors.white,
+                    setState(() {
+                      _position = Offset(
+                        _position.dx + details.delta.dx,
+                        _position.dy + details.delta.dy,
+                      );
+                      _isDraggingDown =
+                          deltaY > 0 && deltaY.abs() > deltaX.abs();
+                    });
+                  },
+                  onPanEnd: _onDragEnd,
+                  child: Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(10),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          IgnorePointer(
+                            ignoring: true,
+                            child: Container(
+                              color: Colors.grey.withValues(alpha: 0.4),
+                              width: _width,
+                              height: _height,
+                              child: Chewie(
+                                controller: chewieControllerNotifier!,
+                              ),
                             ),
                           ),
-                    ),
-                    Positioned(
-                      right: -23,
-                      left: -23,
-                      bottom: -22,
-                      child: IgnorePointer(
-                        ignoring: true,
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            trackHeight: 1.0,
-                            inactiveTrackColor: Colors.transparent,
-                            activeTrackColor: kSecondaryColor,
-                            trackShape: const RoundedRectSliderTrackShape(),
-                            thumbShape: const RoundSliderThumbShape(
-                              enabledThumbRadius: 0.0,
+                          Positioned(
+                            right: 0,
+                            left: 0,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                PageNavigator(ctx: context).nextPage(
+                                  page: VideoPlayerScreen(
+                                    url: MiniVideoPlayer.url,
+                                    isFirstTime: false,
+                                    type: '',
+                                  ),
+                                );
+                              },
+                              child: SizedBox(height: 230),
                             ),
                           ),
-                          child: ValueListenableBuilder(
-                            valueListenable:
-                                videoPlayerController as VideoPlayerController,
-                            builder: (context, VideoPlayerValue value, child) {
-                              if (value.isInitialized) {
-                                final duration = value.duration;
-                                final position = value.position;
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ValueListenableBuilder(
+                                  valueListenable: playerStatus,
+                                  builder:
+                                      (
+                                        BuildContext context,
+                                        int value,
+                                        Widget? child,
+                                      ) => IconButton(
+                                        onPressed: () {
+                                          if (videoPlayerController
+                                                  ?.value
+                                                  .isCompleted ??
+                                              true) {
+                                            bloc.initializeVideo(
+                                              MiniVideoPlayer.url,
+                                            );
+                                            bloc.updateListener();
+                                          } else {
+                                            if (videoPlayerController
+                                                    ?.value
+                                                    .isPlaying ??
+                                                true) {
+                                              videoPlayerController?.pause();
+                                              playerStatus.value = 1;
+                                            } else {
+                                              videoPlayerController?.play();
+                                              playerStatus.value = 2;
+                                            }
+                                          }
+                                        },
+                                        icon: Container(
+                                          padding: EdgeInsets.all(7),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.black45,
+                                          ),
+                                          child: Icon(
+                                            value == 3
+                                                ? CupertinoIcons.arrow_clockwise
+                                                : value == 2
+                                                ? CupertinoIcons.pause
+                                                : CupertinoIcons.play,
+                                            color: Colors.white,
+                                            size: 20,
+                                          ),
+                                        ),
+                                      ),
+                                ),
+                                IconButton(
+                                  icon: Container(
+                                    padding: EdgeInsets.all(7),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.black45,
+                                    ),
+                                    child: Icon(
+                                      Icons.close_rounded,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
 
-                                if (duration.inMilliseconds > 0 &&
-                                    !bloc.isSeeking) {
-                                  progress = (position.inMilliseconds /
-                                          duration.inMilliseconds)
-                                      .clamp(0.0, 1.0);
-                                } else {
-                                  progress = bloc.manualSeekProgress;
-                                }
-                              }
-
-                              return Slider(
-                                value: progress,
-                                onChanged: (newValue) {},
-                              );
-                            },
+                                  onPressed: () {
+                                    MiniVideoPlayer.removeMiniPlayer(
+                                      isClose: true,
+                                    );
+                                    saveVideoProgress([
+                                      VideoProgress(
+                                        videoId: MiniVideoPlayer.videoId,
+                                        position:
+                                            videoPlayerController
+                                                ?.value
+                                                .position ??
+                                            Duration.zero,
+                                      ),
+                                    ]);
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+
+                          Positioned(
+                            right: -23,
+                            left: -23,
+                            bottom: -22,
+                            child: IgnorePointer(
+                              ignoring: true,
+                              child: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  trackHeight: 1.0,
+                                  inactiveTrackColor: Colors.transparent,
+                                  activeTrackColor: kSecondaryColor,
+                                  trackShape:
+                                      const RoundedRectSliderTrackShape(),
+                                  thumbShape: const RoundSliderThumbShape(
+                                    enabledThumbRadius: 0.0,
+                                  ),
+                                ),
+                                child: ValueListenableBuilder(
+                                  valueListenable:
+                                      videoPlayerController
+                                          as VideoPlayerController,
+                                  builder: (
+                                    context,
+                                    VideoPlayerValue value,
+                                    child,
+                                  ) {
+                                    if (value.isInitialized) {
+                                      final duration = value.duration;
+                                      final position = value.position;
+
+                                      if (duration.inMilliseconds > 0 &&
+                                          !bloc.isSeeking) {
+                                        progress = (position.inMilliseconds /
+                                                duration.inMilliseconds)
+                                            .clamp(0.0, 1.0);
+                                      } else {
+                                        progress = bloc.manualSeekProgress;
+                                      }
+                                    }
+
+                                    return Slider(
+                                      value: progress,
+                                      onChanged: (newValue) {},
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ),
-      ],
     );
   }
 }

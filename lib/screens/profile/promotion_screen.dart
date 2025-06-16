@@ -4,7 +4,6 @@ import 'package:movie_obs/bloc/package_bloc.dart';
 import 'package:movie_obs/data/vos/package_vo.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/promotion_list_items.dart';
-import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/screens/profile/payment_method_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
@@ -29,38 +28,67 @@ class _PromotionScreenState extends State<PromotionScreen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => PackageBloc(context: context),
-      child: PopScope(
-        canPop: false,
-        child: Scaffold(
-          backgroundColor: kBackgroundColor,
-          body: Consumer<PackageBloc>(
-            builder:
-                (context, bloc, child) => Column(
-                  children: [
-                    _buildAppBar(context),
-                    20.vGap,
-                    Expanded(
-                      child:
-                          bloc.isLoading
-                              ? LoadingView()
-                              : _buildListView(context, bloc),
-                    ),
-                  ],
-                ),
-          ),
-          bottomNavigationBar: Consumer<PackageBloc>(
-            builder:
-                (context, bloc, child) => Container(
-                  height: 100,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kMarginMedium2,
+      child: Scaffold(
+        backgroundColor: kBackgroundColor,
+        body: Consumer<PackageBloc>(
+          builder:
+              (context, bloc, child) => Column(
+                children: [
+                  _buildAppBar(context),
+                  20.vGap,
+                  Expanded(
+                    child:
+                        bloc.isLoading
+                            ? LoadingView()
+                            : _buildListView(context, bloc),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 10,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
+                ],
+              ),
+        ),
+        bottomNavigationBar: Consumer<PackageBloc>(
+          builder:
+              (context, bloc, child) => Container(
+                height: 100,
+                padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 10,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        bloc.packageId == ''
+                            ? ToastService.warningToast(
+                              'Please choose package to continue.',
+                            )
+                            : PageNavigator(ctx: context).nextPage(
+                              page: PaymentMethodScreen(
+                                plan: bloc.packageId,
+                                packageData:
+                                    bloc.selectedPackage ?? PackageVO(),
+                              ),
+                            );
+                      },
+                      child: Container(
+                        height: 49,
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          color: Colors.grey.withValues(alpha: 0.2),
+                        ),
+                        child: Center(
+                          child: Text(
+                            AppLocalizations.of(context)?.giftNow ?? '',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: kWhiteColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: customButton(
+                        onPress: () {
                           bloc.packageId == ''
                               ? ToastService.warningToast(
                                 'Please choose package to continue.',
@@ -73,49 +101,15 @@ class _PromotionScreenState extends State<PromotionScreen> {
                                 ),
                               );
                         },
-                        child: Container(
-                          height: 49,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(24),
-                            color: Colors.grey.withValues(alpha: 0.2),
-                          ),
-                          child: Center(
-                            child: Text(
-                              AppLocalizations.of(context)?.giftNow ?? '',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: kWhiteColor,
-                              ),
-                            ),
-                          ),
-                        ),
+                        context: context,
+                        backgroundColor: kSecondaryColor,
+                        title: 'Continue for Payment',
+                        textColor: kWhiteColor,
                       ),
-                      Expanded(
-                        child: customButton(
-                          onPress: () {
-                            bloc.packageId == ''
-                                ? ToastService.warningToast(
-                                  'Please choose package to continue.',
-                                )
-                                : PageNavigator(ctx: context).nextPage(
-                                  page: PaymentMethodScreen(
-                                    plan: bloc.packageId,
-                                    packageData:
-                                        bloc.selectedPackage ?? PackageVO(),
-                                  ),
-                                );
-                          },
-                          context: context,
-                          backgroundColor: kSecondaryColor,
-                          title: 'Continue for Payment',
-                          textColor: kWhiteColor,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-          ),
+              ),
         ),
       ),
     );
@@ -131,11 +125,7 @@ class _PromotionScreenState extends State<PromotionScreen> {
             children: [
               GestureDetector(
                 onTap: () {
-                  tab.value = true;
-                  initialIndex = 3;
-                  PageNavigator(
-                    ctx: context,
-                  ).nextPageOnly(page: BottomNavScreen());
+                  Navigator.of(context).pop();
                 },
                 child: Container(
                   padding: EdgeInsets.all(10),

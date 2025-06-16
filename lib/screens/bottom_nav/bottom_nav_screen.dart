@@ -26,7 +26,8 @@ PersistentTabController? tabController;
 int initialIndex = 0;
 
 class BottomNavScreen extends StatefulWidget {
-  const BottomNavScreen({super.key});
+  const BottomNavScreen({super.key, this.openPromotion});
+  final bool? openPromotion;
 
   @override
   State<BottomNavScreen> createState() => _BottomNavScreenState();
@@ -34,15 +35,16 @@ class BottomNavScreen extends StatefulWidget {
 //hello
 
 class _BottomNavScreenState extends State<BottomNavScreen> {
-  List<Widget> screens = [
-    HomeScreen(),
-    MovieScreen(),
-    SeriesScreen(),
-    ProfileScreen(),
-  ];
+  late List<Widget> screens;
 
   @override
   void initState() {
+    screens = [
+      HomeScreen(),
+      MovieScreen(),
+      SeriesScreen(),
+      ProfileScreen(openPromotion: widget.openPromotion),
+    ];
     tabController = PersistentTabController(initialIndex: initialIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserBloc>().updateToken();

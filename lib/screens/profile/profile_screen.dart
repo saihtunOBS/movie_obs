@@ -28,7 +28,8 @@ import '../../utils/dimens.dart';
 import 'package:movie_obs/l10n/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({super.key, this.openPromotion});
+  final bool? openPromotion;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -53,6 +54,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserBloc>().updateToken();
       context.read<UserBloc>().getUser(context: context);
+
+      if (widget.openPromotion == true) {
+        PageNavigator(ctx: context).nextPage(page: PromotionScreen());
+      }
     });
 
     super.initState();

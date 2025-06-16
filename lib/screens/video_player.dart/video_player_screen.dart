@@ -17,7 +17,6 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/utils/rotation_detector.dart';
-import 'package:movie_obs/widgets/empty_view.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
@@ -57,7 +56,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     with WidgetsBindingObserver {
   late final VideoBloc bloc;
   Orientation? _lastOrientation;
-  // VideoProgress? _savedVideo;
+  VideoProgress? _savedVideo;
   bool isClickPopUp = false;
   StreamSubscription<bool>? _subscription;
   double brightness = 1.0;
@@ -133,22 +132,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       _connectionStatus = result;
     });
     if (_connectionStatus.first == ConnectivityResult.none) {
-      videoPlayerController?.pause();
-      chewieControllerNotifier?.pause();
-      // if (Platform.isAndroid) {
-      //   bloc
-      //       .changeQuality(
-      //         bloc.currentUrl,
-      //         widget.videoId,
-      //         false,
-      //         bloc.lastKnownPosition,
-      //       )
-      //       .then((_) {
-      //         videoPlayerController?.play();
-      //         chewieControllerNotifier?.play();
-      //         playerStatus.value = 2;
-      //       });
-      // }
+      ToastService.warningToast('Connection lost!');
     }
   }
 
@@ -213,10 +197,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
       if (widget.isFirstTime == true) {
         if (widget.isTrailer == true) {
-          playerStatus.value = 1;
           bloc.initializeVideo(widget.url ?? '', duration: Duration.zero);
         } else {
-          await bloc.initializeVideo(widget.url ?? '', duration: Duration.zero);
+          _loadCurrentPosition();
         }
       } else {
         bloc.resetControlVisibility(isSeek: true);
@@ -224,48 +207,20 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     });
   }
 
-  // Future<void> _loadCurrentPosition() async {
-  //   try {
-  //     final savedProgressList = await loadVideoProgress();
-  //     _savedVideo = savedProgressList.firstWhere(
-  //       (progress) => progress.videoId == widget.videoId,
-  //       orElse:
-  //           () => VideoProgress(
-  //             videoId: widget.videoId ?? '',
-  //             position: Duration.zero,
-  //           ),
-  //     );
-
-  //     if (!mounted) return;
-
-  //     if ((_savedVideo?.position ?? Duration.zero) > Duration.zero) {
-  //       selectedQuality = 'Auto';
-  //       await bloc.initializeVideo(
-  //         widget.url ?? '',
-  //         duration: _savedVideo?.position,
-  //       );
-  //     } else {
-  //       selectedQuality = 'Auto';
-  //       setState(() {
-  //         bufferedProgress = 0.0;
-  //       });
-  //       await bloc.initializeVideo(widget.url ?? '', videoId: widget.videoId);
-  //       bloc.updateListener();
-  //     }
-  //   } catch (e) {
-  //     debugPrint('Error loading current position: $e');
-  //     if (mounted) {
-  //       setState(() {
-  //         bufferedProgress = 0.0;
-  //       });
-  //       await bloc.initializeVideo(
-  //         widget.url ?? '',
-  //         videoId: widget.videoId,
-  //         type: widget.type,
-  //       );
-  //     }
-  //   }
-  // }
+  Future<void> _loadCurrentPosition() async {
+    final savedProgressList = await loadVideoProgress();
+    _savedVideo = savedProgressList.firstWhere(
+      (progress) => progress.videoId == widget.videoId,
+      orElse:
+          () => VideoProgress(
+            videoId: widget.videoId ?? '',
+            position: Duration.zero,
+          ),
+    );
+    bloc.initializeVideo(widget.url ?? '', duration: _savedVideo?.position);
+    bloc.updateListener();
+    bloc.resetControlVisibility();
+  }
 
   @override
   void dispose() {
@@ -335,17 +290,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           extendBody: true,
           backgroundColor: kBlackColor,
           body:
-              bloc.hasError
-                  ? EmptyView(
-                    reload: () {
-                      setState(() {
-                        showControl = true;
-                      });
-                      bloc.initializeVideo(widget.url ?? '');
-                    },
-                    title: 'Video can\'t play!',
-                  )
-                  : bloc.isLoading
+              !(videoPlayerController?.value.isInitialized ?? true)
                   ? LoadingView()
                   : _buildVideoPlayerSection(),
           bottomNavigationBar: SizedBox(
@@ -462,41 +407,49 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
               spacing: 20,
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildSeekButton(
-                  icon: CupertinoIcons.gobackward_10,
-                  onPressed: () {
-                    if (_connectionStatus.first != ConnectivityResult.none) {
-                      if (videoPlayerController?.value.isInitialized ?? true) {
-                        bloc.seekBy(Duration(seconds: -10));
-                      }
-                      isPlay.value = false;
-                    } else {
-                      ToastService.warningToast(
-                        'Please check your connection!',
-                      );
-                    }
-                  },
-                ),
+                videoPlayerController?.value.isCompleted ?? true
+                    ? SizedBox.shrink()
+                    : _buildSeekButton(
+                      icon: CupertinoIcons.gobackward_10,
+                      onPressed: () {
+                        if (_connectionStatus.first !=
+                            ConnectivityResult.none) {
+                          if (videoPlayerController?.value.isInitialized ??
+                              true) {
+                            bloc.seekBy(Duration(seconds: -10));
+                          }
+                          isPlay.value = false;
+                        } else {
+                          ToastService.warningToast(
+                            'Please check your connection!',
+                          );
+                        }
+                      },
+                    ),
                 bloc.isLoading == true ||
                         !(videoPlayerController?.value.isInitialized ?? true) ||
                         _connectionStatus.first == ConnectivityResult.none ||
                         bloc.isPlaying == false
                     ? SizedBox(width: 50, height: 50, child: LoadingView())
                     : _buildPlayPauseButton(),
-                _buildSeekButton(
-                  icon: CupertinoIcons.goforward_10,
-                  onPressed: () {
-                    if (_connectionStatus.first != ConnectivityResult.none) {
-                      if (videoPlayerController?.value.isInitialized ?? true) {
-                        bloc.seekBy(Duration(seconds: 10));
-                      }
-                    } else {
-                      ToastService.warningToast(
-                        'Please check your connection!',
-                      );
-                    }
-                  },
-                ),
+                videoPlayerController?.value.isCompleted ?? true
+                    ? SizedBox.shrink()
+                    : _buildSeekButton(
+                      icon: CupertinoIcons.goforward_10,
+                      onPressed: () {
+                        if (_connectionStatus.first !=
+                            ConnectivityResult.none) {
+                          if (videoPlayerController?.value.isInitialized ??
+                              true) {
+                            bloc.seekBy(Duration(seconds: 10));
+                          }
+                        } else {
+                          ToastService.warningToast(
+                            'Please check your connection!',
+                          );
+                        }
+                      },
+                    ),
               ],
             ),
           ),
@@ -542,12 +495,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   void _togglePlayPause() {
     if (videoPlayerController?.value.isCompleted ?? true) {
-      videoPlayerController?.seekTo(Duration.zero).then((_) {
-        videoPlayerController?.play();
-        chewieControllerNotifier?.play();
-        isPlay.value = true;
-        playerStatus.value = 2;
-      });
+      bloc.initializeVideo(bloc.currentUrl);
     } else {
       if (videoPlayerController?.value.isPlaying ?? true) {
         videoPlayerController?.pause();
@@ -742,7 +690,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return IgnorePointer(
       ignoring:
           _connectionStatus.first == ConnectivityResult.none ||
-          bloc.isPlaying == false,
+          bloc.isPlaying == false ||
+          (videoPlayerController?.value.isCompleted ?? true),
       child: SliderTheme(
         data: SliderTheme.of(context).copyWith(
           allowedInteraction: SliderInteraction.slideThumb,
