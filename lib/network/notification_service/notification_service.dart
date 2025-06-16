@@ -53,21 +53,41 @@ class NotificationService {
         notiBloc.getNotifications();
         userBloc.updateToken();
         userBloc.getUser(context: context);
+
+        if (PersistenceData.shared.getToken() == null) return;
+        if (message.notification?.body == 'Payment successful' ||
+            message.notification?.body == 'Payment unsuccessful') {
+          if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+            navigatorKey.currentState?.pushAndRemoveUntil(
+              CupertinoPageRoute(
+                builder:
+                    (_) => PaymentStatusScreen(
+                      status:
+                          message.notification?.body == 'Payment successful'
+                              ? 'success'
+                              : 'fail',
+                    ),
+                settings: RouteSettings(name: "PaymentStatusScreen"),
+              ),
+              (route) => false,
+            );
+          }
+        }
       }
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      if (PersistenceData.shared.getToken() == '') return;
-      _handleNotificationTap(message);
-    });
+    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    //   if (PersistenceData.shared.getToken() == '') return;
+    //   _handleNotificationTap(message);
+    // });
 
-    // Handle when the app is launched from terminated state
-    FirebaseMessaging.instance.getInitialMessage().then((
-      RemoteMessage? message,
-    ) {
-      if (message == null || PersistenceData.shared.getToken() == '') return;
-      _handleNotificationTap(message);
-    });
+    // // Handle when the app is launched from terminated state
+    // FirebaseMessaging.instance.getInitialMessage().then((
+    //   RemoteMessage? message,
+    // ) {
+    //   if (message == null || PersistenceData.shared.getToken() == '') return;
+    //   _handleNotificationTap(message);
+    // });
   }
 
   Future<void> getFCMToken() async {
@@ -76,20 +96,20 @@ class NotificationService {
   }
 }
 
-void _handleNotificationTap(RemoteMessage message) {
-  if (message.notification?.body == 'Payment successful' ||
-      message.notification?.body == 'Payment unsuccessful') {
-    if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-      navigatorKey.currentState?.pushAndRemoveUntil(
-        CupertinoPageRoute(
-          builder: (_) => PaymentStatusScreen(),
-          settings: RouteSettings(name: "PaymentStatusScreen"),
-        ),
-        (route) => false,
-      );
-    }
-  }
-}
+// void _handleNotificationTap(RemoteMessage message) {
+//   if (message.notification?.body == 'Payment successful' ||
+//       message.notification?.body == 'Payment unsuccessful') {
+//     if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+//       navigatorKey.currentState?.pushAndRemoveUntil(
+//         CupertinoPageRoute(
+//           builder: (_) => PaymentStatusScreen(),
+//           settings: RouteSettings(name: "PaymentStatusScreen"),
+//         ),
+//         (route) => false,
+//       );
+//     }
+//   }
+// }
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {

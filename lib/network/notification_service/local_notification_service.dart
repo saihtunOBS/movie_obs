@@ -1,11 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:movie_obs/data/persistence/persistence_data.dart';
-import 'package:movie_obs/main.dart';
-import 'package:movie_obs/screens/profile/payment_status_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
-import 'package:movie_obs/utils/route_observer.dart';
 
 class LocalNotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -30,20 +26,20 @@ class LocalNotificationService {
       onDidReceiveNotificationResponse: (
         NotificationResponse notificationResponse,
       ) async {
-        if (notificationResponse.payload == 'payment') {
-          Future.delayed(Duration(seconds: 1), () {
-            if (PersistenceData.shared.getToken() == '') return;
-            if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-              navigatorKey.currentState?.pushAndRemoveUntil(
-                CupertinoPageRoute(
-                  builder: (_) => PaymentStatusScreen(),
-                  settings: RouteSettings(name: "PaymentStatusScreen"),
-                ),
-                (route) => false,
-              );
-            }
-          });
-        }
+        // if (notificationResponse.data['body'] == 'payment') {
+        //   Future.delayed(Duration(seconds: 1), () {
+        //     if (PersistenceData.shared.getToken() == '') return;
+        //     if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+        //       navigatorKey.currentState?.pushAndRemoveUntil(
+        //         CupertinoPageRoute(
+        //           builder: (_) => PaymentStatusScreen(),
+        //           settings: RouteSettings(name: "PaymentStatusScreen"),
+        //         ),
+        //         (route) => false,
+        //       );
+        //     }
+        //   });
+        // }
       },
     );
 

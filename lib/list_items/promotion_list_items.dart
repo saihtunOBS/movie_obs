@@ -13,7 +13,7 @@ Widget promotionListItem(
   double margin,
 ) {
   return Container(
-    margin: EdgeInsets.only(bottom: margin),
+    margin: EdgeInsets.only(top: margin),
     padding: EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
       color: Colors.grey.withValues(alpha: 0.2),

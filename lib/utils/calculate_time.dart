@@ -33,3 +33,7 @@ String formatWithDashes(String input) {
   }
   return buffer.toString();
 }
+
+String normalizePhoneNumber(String input) {
+  return input.replaceFirst(RegExp(r'^(\+?95)'), '');
+}

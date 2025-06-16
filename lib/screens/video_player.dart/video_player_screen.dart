@@ -132,21 +132,23 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     setState(() {
       _connectionStatus = result;
     });
-    if (_connectionStatus.first != ConnectivityResult.none) {
-      if (Platform.isAndroid) {
-        bloc
-            .changeQuality(
-              bloc.currentUrl,
-              widget.videoId,
-              false,
-              bloc.lastKnownPosition,
-            )
-            .then((_) {
-              videoPlayerController?.play();
-              chewieControllerNotifier?.play();
-              playerStatus.value = 2;
-            });
-      }
+    if (_connectionStatus.first == ConnectivityResult.none) {
+      videoPlayerController?.pause();
+      chewieControllerNotifier?.pause();
+      // if (Platform.isAndroid) {
+      //   bloc
+      //       .changeQuality(
+      //         bloc.currentUrl,
+      //         widget.videoId,
+      //         false,
+      //         bloc.lastKnownPosition,
+      //       )
+      //       .then((_) {
+      //         videoPlayerController?.play();
+      //         chewieControllerNotifier?.play();
+      //         playerStatus.value = 2;
+      //       });
+      // }
     }
   }
 

@@ -15,6 +15,7 @@ import 'package:movie_obs/screens/profile/promotion_screen.dart';
 import 'package:movie_obs/screens/profile/term_condition_screen.dart';
 import 'package:movie_obs/screens/profile/user_profile_screen.dart';
 import 'package:movie_obs/screens/profile/watch_list_screen.dart';
+import 'package:movie_obs/utils/calculate_time.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
@@ -247,7 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.32,
                                 child: Text(
-                                  userData.name ?? '',
+                                  normalizePhoneNumber(userData.name ?? ''),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   softWrap: true,

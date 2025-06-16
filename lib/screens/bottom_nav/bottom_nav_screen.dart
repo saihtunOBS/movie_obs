@@ -22,6 +22,8 @@ import 'package:volume_controller/volume_controller.dart';
 final ValueNotifier<bool> tab = ValueNotifier(true);
 VolumeController? volumeController;
 StreamSubscription<double>? _subscription;
+PersistentTabController? tabController;
+int initialIndex = 0;
 
 class BottomNavScreen extends StatefulWidget {
   const BottomNavScreen({super.key});
@@ -41,6 +43,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
   @override
   void initState() {
+    tabController = PersistentTabController(initialIndex: initialIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserBloc>().updateToken();
       context.read<UserBloc>().getUser(context: context);
@@ -76,6 +79,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
               (context, value, child) => PersistentTabView(
                 backgroundColor: Colors.transparent,
                 context,
+                controller: tabController,
                 isVisible: value,
                 screens: screens,
                 handleAndroidBackButtonPress: false,

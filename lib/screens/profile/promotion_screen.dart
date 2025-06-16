@@ -4,9 +4,9 @@ import 'package:movie_obs/bloc/package_bloc.dart';
 import 'package:movie_obs/data/vos/package_vo.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/promotion_list_items.dart';
+import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/screens/profile/payment_method_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
-import 'package:movie_obs/widgets/common_dialog.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
@@ -29,60 +29,38 @@ class _PromotionScreenState extends State<PromotionScreen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => PackageBloc(context: context),
-      child: Scaffold(
-        backgroundColor: kBackgroundColor,
-        body: Consumer<PackageBloc>(
-          builder:
-              (context, bloc, child) => Column(
-                children: [
-                  _buildAppBar(context),
-                  20.vGap,
-                  Expanded(
-                    child:
-                        bloc.isLoading
-                            ? LoadingView()
-                            : _buildListView(context, bloc),
-                  ),
-                ],
-              ),
-        ),
-        bottomNavigationBar: Consumer<PackageBloc>(
-          builder:
-              (context, bloc, child) => Container(
-                height: 100,
-                padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  spacing: 10,
+      child: PopScope(
+        canPop: false,
+        child: Scaffold(
+          backgroundColor: kBackgroundColor,
+          body: Consumer<PackageBloc>(
+            builder:
+                (context, bloc, child) => Column(
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        showCommonDialog(
-                          context: context,
-                          dialogWidget: _buildAlert(),
-                        );
-                      },
-                      child: Container(
-                        height: 49,
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          color: Colors.grey.withValues(alpha: 0.2),
-                        ),
-                        child: Center(
-                          child: Text(
-                            AppLocalizations.of(context)?.giftNow ?? '',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: kWhiteColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    _buildAppBar(context),
+                    20.vGap,
                     Expanded(
-                      child: customButton(
-                        onPress: () {
+                      child:
+                          bloc.isLoading
+                              ? LoadingView()
+                              : _buildListView(context, bloc),
+                    ),
+                  ],
+                ),
+          ),
+          bottomNavigationBar: Consumer<PackageBloc>(
+            builder:
+                (context, bloc, child) => Container(
+                  height: 100,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kMarginMedium2,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: 10,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
                           bloc.packageId == ''
                               ? ToastService.warningToast(
                                 'Please choose package to continue.',
@@ -95,15 +73,49 @@ class _PromotionScreenState extends State<PromotionScreen> {
                                 ),
                               );
                         },
-                        context: context,
-                        backgroundColor: kSecondaryColor,
-                        title: 'Continue for Payment',
-                        textColor: kWhiteColor,
+                        child: Container(
+                          height: 49,
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            color: Colors.grey.withValues(alpha: 0.2),
+                          ),
+                          child: Center(
+                            child: Text(
+                              AppLocalizations.of(context)?.giftNow ?? '',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: kWhiteColor,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: customButton(
+                          onPress: () {
+                            bloc.packageId == ''
+                                ? ToastService.warningToast(
+                                  'Please choose package to continue.',
+                                )
+                                : PageNavigator(ctx: context).nextPage(
+                                  page: PaymentMethodScreen(
+                                    plan: bloc.packageId,
+                                    packageData:
+                                        bloc.selectedPackage ?? PackageVO(),
+                                  ),
+                                );
+                          },
+                          context: context,
+                          backgroundColor: kSecondaryColor,
+                          title: 'Continue for Payment',
+                          textColor: kWhiteColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+          ),
         ),
       ),
     );
@@ -119,7 +131,11 @@ class _PromotionScreenState extends State<PromotionScreen> {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.pop(context);
+                  tab.value = true;
+                  initialIndex = 3;
+                  PageNavigator(
+                    ctx: context,
+                  ).nextPageOnly(page: BottomNavScreen());
                 },
                 child: Container(
                   padding: EdgeInsets.all(10),
@@ -179,7 +195,7 @@ class _PromotionScreenState extends State<PromotionScreen> {
     return ListView.builder(
       physics: ClampingScrollPhysics(),
       padding: EdgeInsets.only(
-        top: 30,
+        top: 0,
         left:
             getDeviceType() == 'phone'
                 ? kMarginMedium2
@@ -215,65 +231,65 @@ class _PromotionScreenState extends State<PromotionScreen> {
     SharePlus.instance.share(ShareParams(text: data));
   }
 
-  Widget _buildAlert() {
-    return Dialog(
-      child: Container(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(CupertinoIcons.gift, size: 24, color: Colors.white),
-            15.vGap,
+  // Widget _buildAlert() {
+  //   return Dialog(
+  //     child: Container(
+  //       padding: EdgeInsets.all(20),
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           Icon(CupertinoIcons.gift, size: 24, color: Colors.white),
+  //           15.vGap,
 
-            Text(
-              AppLocalizations.of(context)?.giftCard ?? '',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 15,
-                color: kWhiteColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            10.vGap,
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 38,
-                    decoration: BoxDecoration(color: kThirdColor),
-                    child: Center(
-                      child: Text(
-                        '098-984-985',
-                        style: TextStyle(
-                          color: kBlackColor,
-                          fontSize: kTextRegular2x,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    shareGift('Your gift.....');
-                  },
-                  child: Container(
-                    height: 38,
-                    width: 44,
-                    decoration: BoxDecoration(color: kSecondaryColor),
-                    child: Center(
-                      child: Icon(
-                        CupertinoIcons.arrowshape_turn_up_right_fill,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  //           Text(
+  //             AppLocalizations.of(context)?.giftCard ?? '',
+  //             textAlign: TextAlign.center,
+  //             style: TextStyle(
+  //               fontSize: 15,
+  //               color: kWhiteColor,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //           10.vGap,
+  //           Row(
+  //             children: [
+  //               Expanded(
+  //                 child: Container(
+  //                   height: 38,
+  //                   decoration: BoxDecoration(color: kThirdColor),
+  //                   child: Center(
+  //                     child: Text(
+  //                       '098-984-985',
+  //                       style: TextStyle(
+  //                         color: kBlackColor,
+  //                         fontSize: kTextRegular2x,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //               GestureDetector(
+  //                 onTap: () {
+  //                   shareGift('Your gift.....');
+  //                 },
+  //                 child: Container(
+  //                   height: 38,
+  //                   width: 44,
+  //                   decoration: BoxDecoration(color: kSecondaryColor),
+  //                   child: Center(
+  //                     child: Icon(
+  //                       CupertinoIcons.arrowshape_turn_up_right_fill,
+  //                       size: 16,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }
