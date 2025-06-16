@@ -294,7 +294,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                   ? LoadingView()
                   : _buildVideoPlayerSection(),
           bottomNavigationBar: SizedBox(
-            height: 90,
+            height: 70,
             child: Visibility(
               visible: showControl == true,
               child: _buildProgressBar(),
@@ -430,7 +430,20 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                         !(videoPlayerController?.value.isInitialized ?? true) ||
                         _connectionStatus.first == ConnectivityResult.none ||
                         bloc.isPlaying == false
-                    ? SizedBox(width: 50, height: 50, child: LoadingView())
+                    ? Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black45,
+                      ),
+                      padding: EdgeInsets.all(8),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: kPrimaryColor,
+                        backgroundColor: kWhiteColor,
+                      ),
+                    )
                     : _buildPlayPauseButton(),
                 videoPlayerController?.value.isCompleted ?? true
                     ? SizedBox.shrink()
@@ -462,7 +475,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }) {
     return IconButton.filled(
       onPressed: onPressed,
-      icon: Icon(icon, color: kWhiteColor, size: 27),
+      icon: Icon(icon, color: kWhiteColor, size: 25),
       style: IconButton.styleFrom(backgroundColor: Colors.black45),
     );
   }

@@ -56,7 +56,7 @@ class MovieDetailBloc extends ChangeNotifier {
           //     isLogin: true,
           //   ),
           // );
-          // _hideLoading();
+          _hideLoading();
         })
         .whenComplete(() {
           _hideLoading();

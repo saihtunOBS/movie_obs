@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/extension/extension.dart';
@@ -449,6 +450,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   tab.value = false;
                                   PersistenceData.shared.clearToken();
                                   PersistenceData.shared.saveFirstTime(true);
+                                  GoogleSignIn googleSignIn = GoogleSignIn();
+                                  googleSignIn.signOut();
                                   PageNavigator(
                                     ctx: context,
                                   ).nextPageOnly(page: LoginScreen());

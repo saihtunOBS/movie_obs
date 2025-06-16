@@ -410,64 +410,73 @@ class VideoBloc extends ChangeNotifier {
   bool _isSeeking = false;
 
   void seekBy(Duration offset) {
+    resetControlVisibility(isSeek: true);
     final currentPosition =
         videoPlayerController?.value.position ?? Duration.zero;
     final newPosition = currentPosition + offset;
     final duration = videoPlayerController?.value.duration ?? Duration.zero;
 
     if (newPosition < duration && newPosition > Duration.zero) {
-      isPlaying = false;
-      notifyListeners();
-      _seekOffset += offset;
-      _debounceSeekTimer?.cancel();
+      if (Platform.isAndroid) {
+        isPlaying = false;
+        notifyListeners();
+        _seekOffset += offset;
+        _debounceSeekTimer?.cancel();
 
-      _debounceSeekTimer = Timer(const Duration(milliseconds: 300), () async {
-        final controller = videoPlayerController;
-        if (controller == null ||
-            !controller.value.isInitialized ||
-            _isSeeking) {
-          return;
-        }
+        _debounceSeekTimer = Timer(const Duration(milliseconds: 300), () async {
+          final controller = videoPlayerController;
+          if (controller == null ||
+              !controller.value.isInitialized ||
+              _isSeeking) {
+            return;
+          }
 
-        final currentPosition = controller.value.position;
-        final duration = controller.value.duration;
+          final currentPosition = controller.value.position;
+          final duration = controller.value.duration;
 
-        final newPosition = (currentPosition + _seekOffset).clamp(
-          Duration.zero,
-          duration,
-        );
+          final newPosition = (currentPosition + _seekOffset).clamp(
+            Duration.zero,
+            duration,
+          );
 
-        final isCompleted = controller.value.isCompleted;
-        final isSeekingTooFarBack =
-            newPosition <= Duration.zero && offset.isNegative;
+          final isCompleted = controller.value.isCompleted;
+          final isSeekingTooFarBack =
+              newPosition <= Duration.zero && offset.isNegative;
 
-        if (isCompleted || isSeekingTooFarBack) {
+          if (isCompleted || isSeekingTooFarBack) {
+            _seekOffset = Duration.zero;
+            return;
+          }
+
+          _isSeeking = true;
           _seekOffset = Duration.zero;
-          return;
-        }
 
-        _isSeeking = true;
-        _seekOffset = Duration.zero;
+          try {
+            isPlaying = false;
+            notifyListeners();
+            await controller.seekTo(newPosition);
 
-        try {
-          isPlaying = false;
-          notifyListeners();
-          await controller.seekTo(newPosition);
-
-          if (!controller.value.isPlaying) {
-            await controller.play();
-            chewieControllerNotifier?.play();
-            isPlaying = true;
-            playerStatus.value = 2;
+            if (!controller.value.isPlaying) {
+              await controller.play();
+              chewieControllerNotifier?.play();
+              isPlaying = true;
+              playerStatus.value = 2;
+              notifyListeners();
+            }
+          } catch (e) {
+            debugPrint("Seek error: $e");
+          } finally {
+            _isSeeking = false;
             notifyListeners();
           }
-        } catch (e) {
-          debugPrint("Seek error: $e");
-        } finally {
-          _isSeeking = false;
-          notifyListeners();
-        }
-      });
+        });
+      } else {
+        videoPlayerController?.seekTo(newPosition).whenComplete(() {
+          videoPlayerController?.play();
+          chewieControllerNotifier?.play();
+          playerStatus.value = 2;
+        });
+      }
     }
   }
 

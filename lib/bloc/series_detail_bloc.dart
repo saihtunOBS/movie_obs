@@ -34,12 +34,13 @@ class SeriesDetailBloc extends ChangeNotifier {
   }
 
   getSeriesDetail() {
+    _showLoading();
     _movieModel
         .getSeriesDetail(token, seriesId, true)
         .then((response) {
           seriesResponse = response;
 
-          notifyListeners();
+          _hideLoading();
         })
         .catchError((error) {
           // PersistenceData.shared.clearToken();
@@ -52,6 +53,7 @@ class SeriesDetailBloc extends ChangeNotifier {
           //     isLogin: true,
           //   ),
           // );
+          _hideLoading();
         });
   }
 
