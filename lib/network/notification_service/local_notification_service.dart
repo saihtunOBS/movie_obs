@@ -30,18 +30,20 @@ class LocalNotificationService {
       onDidReceiveNotificationResponse: (
         NotificationResponse notificationResponse,
       ) async {
-        Future.delayed(Duration(seconds: 1), () {
-          if (PersistenceData.shared.getToken() == '') return;
-          if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-            navigatorKey.currentState?.pushAndRemoveUntil(
-              CupertinoPageRoute(
-                builder: (_) => PaymentStatusScreen(),
-                settings: RouteSettings(name: "PaymentStatusScreen"),
-              ),
-              (route) => false,
-            );
-          }
-        });
+        if (notificationResponse.payload == 'payment') {
+          Future.delayed(Duration(seconds: 1), () {
+            if (PersistenceData.shared.getToken() == '') return;
+            if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+              navigatorKey.currentState?.pushAndRemoveUntil(
+                CupertinoPageRoute(
+                  builder: (_) => PaymentStatusScreen(),
+                  settings: RouteSettings(name: "PaymentStatusScreen"),
+                ),
+                (route) => false,
+              );
+            }
+          });
+        }
       },
     );
 

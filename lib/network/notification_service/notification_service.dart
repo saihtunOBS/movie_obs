@@ -77,14 +77,17 @@ class NotificationService {
 }
 
 void _handleNotificationTap(RemoteMessage message) {
-  if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-    navigatorKey.currentState?.pushAndRemoveUntil(
-      CupertinoPageRoute(
-        builder: (_) => PaymentStatusScreen(),
-        settings: RouteSettings(name: "PaymentStatusScreen"),
-      ),
-      (route) => false,
-    );
+  if (message.notification?.body == 'Payment successful' ||
+      message.notification?.body == 'Payment unsuccessful') {
+    if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+      navigatorKey.currentState?.pushAndRemoveUntil(
+        CupertinoPageRoute(
+          builder: (_) => PaymentStatusScreen(),
+          settings: RouteSettings(name: "PaymentStatusScreen"),
+        ),
+        (route) => false,
+      );
+    }
   }
 }
 
