@@ -17,7 +17,6 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/utils/rotation_detector.dart';
-import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
 import 'package:chewie/chewie.dart';
@@ -132,6 +131,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       _connectionStatus = result;
     });
     if (_connectionStatus.first == ConnectivityResult.none) {
+      videoPlayerController?.pause();
+      chewieControllerNotifier?.pause();
       ToastService.warningToast('Connection lost!');
     }
   }
@@ -145,7 +146,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   @override
   void initState() {
     super.initState();
-    showControl = true;
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -183,7 +183,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       WakelockPlus.enable();
-      showControl = true;
       bloc.toggleHistory(widget.videoId ?? '', widget.type);
       bloc.isMuted = false;
       bloc.currentUrl = widget.url ?? '';
@@ -261,10 +260,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       builder: (context, value, child) {
         return Scaffold(
           appBar: AppBar(
-            toolbarHeight: 80,
-            backgroundColor: Colors.transparent,
+            toolbarHeight: 60,
+            backgroundColor:
+                showControl == true ? Colors.black45 : Colors.transparent,
             automaticallyImplyLeading: false,
-
             title:
                 showControl == true
                     ? Padding(
@@ -289,15 +288,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           extendBodyBehindAppBar: true,
           extendBody: true,
           backgroundColor: kBlackColor,
-          body:
-              !(videoPlayerController?.value.isInitialized ?? true)
-                  ? LoadingView()
-                  : _buildVideoPlayerSection(),
+          body: _buildVideoPlayerSection(),
           bottomNavigationBar: SizedBox(
-            height: 70,
+            height: 100,
             child: Visibility(
               visible: showControl == true,
-              child: _buildProgressBar(),
+              child: _buildProgressBarContent(),
             ),
           ),
         );
@@ -345,19 +341,17 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
               final leftZone = screenWidth * 0.3;
               return Container(
                 color: Colors.transparent,
-
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
+                    if (_connectionStatus.first == ConnectivityResult.none) {
+                      ToastService.warningToast('Please check your connection');
+                    }
                     bloc.resetControlVisibility();
                   },
                   child: Stack(
                     children: [
                       _buildVideoPlayer(),
-                      showControl == true
-                          ? _buildPlayPauseControls()
-                          : SizedBox.shrink(),
-                      // Left Zone
                       Positioned(
                         left: 0,
                         width: leftZone,
@@ -374,6 +368,26 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                           onVerticalDragEnd: _onVerticalDragEnd,
                         ),
                       ),
+                      bloc.isLoading == true ||
+                              !(videoPlayerController?.value.isInitialized ??
+                                  true) ||
+                              _connectionStatus.first ==
+                                  ConnectivityResult.none ||
+                              bloc.isPlaying == false
+                          ? Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              width: 60,
+                              height: 60,
+                              padding: EdgeInsets.all(8),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: kPrimaryColor,
+                                backgroundColor: kWhiteColor,
+                              ),
+                            ),
+                          )
+                          : SizedBox(),
                     ],
                   ),
                 ),
@@ -394,17 +408,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     );
   }
 
-  Widget _buildPlayPauseControls() {
-    return Align(alignment: Alignment.center, child: _buildControlButtons());
-  }
-
   Widget _buildControlButtons() {
     return Consumer<VideoBloc>(
       builder:
           (context, bloc, child) => IgnorePointer(
             ignoring: !showControl,
             child: Row(
-              spacing: 20,
+              spacing: 10,
               mainAxisSize: MainAxisSize.min,
               children: [
                 videoPlayerController?.value.isCompleted ?? true
@@ -426,25 +436,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                         }
                       },
                     ),
-                bloc.isLoading == true ||
-                        !(videoPlayerController?.value.isInitialized ?? true) ||
-                        _connectionStatus.first == ConnectivityResult.none ||
-                        bloc.isPlaying == false
-                    ? Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black45,
-                      ),
-                      padding: EdgeInsets.all(8),
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: kPrimaryColor,
-                        backgroundColor: kWhiteColor,
-                      ),
-                    )
-                    : _buildPlayPauseButton(),
+                _buildPlayPauseButton(),
                 videoPlayerController?.value.isCompleted ?? true
                     ? SizedBox.shrink()
                     : _buildSeekButton(
@@ -473,10 +465,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     required IconData icon,
     required VoidCallback onPressed,
   }) {
-    return IconButton.filled(
+    return IconButton(
       onPressed: onPressed,
       icon: Icon(icon, color: kWhiteColor, size: 25),
-      style: IconButton.styleFrom(backgroundColor: Colors.black45),
     );
   }
 
@@ -484,7 +475,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return ValueListenableBuilder(
       valueListenable: playerStatus,
       builder:
-          (context, value, child) => IconButton.filled(
+          (context, value, child) => IconButton(
             onPressed: _togglePlayPause,
             icon: Padding(
               padding: const EdgeInsets.all(5.0),
@@ -492,16 +483,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                   value == 3
                       ? const Icon(
                         CupertinoIcons.arrow_counterclockwise,
-                        size: 35,
+                        size: 30,
                         color: kWhiteColor,
                       )
                       : Icon(
                         value == 2 ? CupertinoIcons.pause : CupertinoIcons.play,
                         color: kWhiteColor,
-                        size: 35,
+                        size: 30,
                       ),
             ),
-            style: IconButton.styleFrom(backgroundColor: Colors.black45),
           ),
     );
   }
@@ -530,7 +520,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   Widget _buildExitButton() {
     if (bloc.isFullScreen) return const SizedBox();
     return Row(
-      spacing: 15,
+      spacing: 20,
       children: [
         GestureDetector(
           behavior: HitTestBehavior.opaque,
@@ -553,23 +543,28 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            if (videoPlayerController?.value.isInitialized ?? true) {
-              isClickPopUp = true;
-              Navigator.pop(context);
-              isPlay.value = !(videoPlayerController?.value.isPlaying ?? true);
-              showControl = false;
-              bloc.updateListener();
-              MiniVideoPlayer.showMiniPlayer(
-                context,
-                bloc.currentUrl,
-                videoPlayerController?.value.isPlaying ?? true
-                    ? isPlay.value = true
-                    : isPlay.value = false,
-                widget.videoId ?? '',
-              );
-              SystemChrome.setPreferredOrientations([
-                DeviceOrientation.portraitUp,
-              ]);
+            if (_connectionStatus.first == ConnectivityResult.none) {
+              ToastService.warningToast('Please check your connection');
+            } else {
+              if (videoPlayerController?.value.isInitialized ?? true) {
+                isClickPopUp = true;
+                Navigator.pop(context);
+                isPlay.value =
+                    !(videoPlayerController?.value.isPlaying ?? true);
+                showControl = false;
+                bloc.updateListener();
+                MiniVideoPlayer.showMiniPlayer(
+                  context,
+                  bloc.currentUrl,
+                  videoPlayerController?.value.isPlaying ?? true
+                      ? isPlay.value = true
+                      : isPlay.value = false,
+                  widget.videoId ?? '',
+                );
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.portraitUp,
+                ]);
+              }
             }
           },
           child: Container(
@@ -598,27 +593,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     return IgnorePointer(
       ignoring: !showControl,
       child: Row(children: [_buildSettingsButton()]),
-    );
-  }
-
-  Widget buildMuteButton() {
-    return GestureDetector(
-      onTap: () => bloc.toggleMute(),
-      child: Container(
-        height: bloc.isFullScreen ? 42 : 30,
-        width: bloc.isFullScreen ? 50 : 46,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Colors.transparent,
-        ),
-        child: Icon(
-          !bloc.isMuted
-              ? CupertinoIcons.speaker_3_fill
-              : CupertinoIcons.speaker_slash_fill,
-          color: Colors.white,
-          size: 22,
-        ),
-      ),
     );
   }
 
@@ -659,22 +633,62 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     );
   }
 
-  Widget _buildProgressBar() {
-    return _buildProgressBarContent();
-  }
-
   Widget _buildProgressBarContent() {
     return IgnorePointer(
-      ignoring: !showControl,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
+      ignoring:
+          !showControl || _connectionStatus.first == ConnectivityResult.none,
+      child: Container(
+        color: Colors.black45,
+        padding: const EdgeInsets.only(left: 16, right: 16),
+        child: Column(
           children: [
-            _buildTimeDisplay(),
-            Expanded(child: _buildSlider()),
-            _buildFullScreenButton(),
-            SizedBox(width: 15),
+            _buildSlider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildTimeDisplay(),
+
+                Text(
+                  bloc.formatDuration(
+                    videoPlayerController?.value.duration ?? Duration.zero,
+                  ),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildMuteButton(),
+                _buildControlButtons(),
+                _buildFullScreenButton(),
+              ],
+            ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMuteButton() {
+    return GestureDetector(
+      onTap: () => bloc.toggleMute(),
+      child: Container(
+        height: bloc.isFullScreen ? 42 : 30,
+        width: bloc.isFullScreen ? 50 : 46,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.transparent,
+        ),
+        child: Icon(
+          !bloc.isMuted
+              ? CupertinoIcons.speaker_3_fill
+              : CupertinoIcons.speaker_slash_fill,
+          color: Colors.white,
+          size: 22,
         ),
       ),
     );
@@ -687,7 +701,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         return Padding(
           padding: const EdgeInsets.only(left: 10),
           child: Text(
-            "${bloc.formatDuration(value.position)} / ${bloc.formatDuration(value.duration)}",
+            bloc.formatDuration(value.position),
             style: const TextStyle(
               color: Colors.white,
               // fontSize: 12,
@@ -705,86 +719,93 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           _connectionStatus.first == ConnectivityResult.none ||
           bloc.isPlaying == false ||
           (videoPlayerController?.value.isCompleted ?? true),
-      child: SliderTheme(
-        data: SliderTheme.of(context).copyWith(
-          allowedInteraction: SliderInteraction.slideThumb,
-          trackHeight: bloc.isFullScreen ? 2.0 : 3.0,
-          inactiveTrackColor: Colors.white.withValues(alpha: 0.5),
-          activeTrackColor: kPrimaryColor,
-          secondaryActiveTrackColor:
-              bloc.isSeeking
-                  ? Colors.transparent
-                  : !(videoPlayerController?.value.isInitialized ?? true)
-                  ? Colors.transparent
-                  : Colors.white,
-          thumbColor: kPrimaryColor,
-          trackShape: const RoundedRectSliderTrackShape(),
-          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7.0),
-        ),
-        child: ValueListenableBuilder(
-          valueListenable: videoPlayerController as VideoPlayerController,
-          builder: (context, VideoPlayerValue value, child) {
-            if (value.isInitialized) {
-              final duration = value.duration;
-              final position = value.position;
+      child: Padding(
+        padding: const EdgeInsets.only(left: 5, right: 5, bottom: 1),
+        child: SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            allowedInteraction: SliderInteraction.slideThumb,
+            trackHeight: bloc.isFullScreen ? 2.0 : 3.0,
+            inactiveTrackColor: Colors.white.withValues(alpha: 0.5),
+            activeTrackColor: kPrimaryColor,
+            padding: EdgeInsets.zero,
+            secondaryActiveTrackColor:
+                bloc.isSeeking
+                    ? Colors.transparent
+                    : !(videoPlayerController?.value.isInitialized ?? true)
+                    ? Colors.transparent
+                    : Colors.white,
+            thumbColor: kPrimaryColor,
+            trackShape: const RoundedRectSliderTrackShape(),
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7.0),
+          ),
+          child: ValueListenableBuilder(
+            valueListenable: videoPlayerController as VideoPlayerController,
+            builder: (context, VideoPlayerValue value, child) {
+              if (value.isInitialized) {
+                final duration = value.duration;
+                final position = value.position;
 
-              if (duration.inMilliseconds > 0 && !bloc.isSeeking) {
-                progress = (position.inMilliseconds / duration.inMilliseconds)
-                    .clamp(0.0, 1.0);
-              } else {
-                progress = bloc.manualSeekProgress;
-              }
-
-              if (value.buffered.isNotEmpty) {
-                bufferedProgress = (value.buffered.last.end.inMilliseconds /
-                        duration.inMilliseconds)
-                    .clamp(0.0, 1.0);
-              }
-            }
-
-            return Slider(
-              value:
-                  !(videoPlayerController?.value.isInitialized ?? true)
-                      ? 0.0
-                      : progress,
-              secondaryTrackValue:
-                  !(videoPlayerController?.value.isInitialized ?? true)
-                      ? 0.0
-                      : bufferedProgress,
-              onChanged: (newValue) {
-                bloc.resetControlVisibility(isSeek: true);
-                bloc.isSeeking = true;
-                bloc.manualSeekProgress = newValue;
-                bloc.throttleSliderUpdate();
-              },
-              onChangeStart: (value) {
-                bloc.pausedPlayer();
-                bloc.startSeekUpdateLoop();
-                bloc.resetControlVisibility(isSeek: true);
-              },
-              onChangeEnd: (value) async {
-                isPlay.value = false;
-                bloc.seekUpdateTimer?.cancel();
-
-                final newPosition = Duration(
-                  milliseconds:
-                      ((videoPlayerController?.value.duration.inMilliseconds ??
-                                  0) *
-                              value)
-                          .toInt(),
-                );
-
-                await videoPlayerController?.seekTo(newPosition);
-                bloc.isSeeking = false;
-                bloc.resetControlVisibility(isSeek: true);
-
-                if (newPosition != videoPlayerController?.value.duration) {
-                  bloc.playPlayer();
-                  playerStatus.value = 2;
+                if (duration.inMilliseconds > 0 && !bloc.isSeeking) {
+                  progress = (position.inMilliseconds / duration.inMilliseconds)
+                      .clamp(0.0, 1.0);
+                } else {
+                  progress = bloc.manualSeekProgress;
                 }
-              },
-            );
-          },
+
+                if (value.buffered.isNotEmpty) {
+                  bufferedProgress = (value.buffered.last.end.inMilliseconds /
+                          duration.inMilliseconds)
+                      .clamp(0.0, 1.0);
+                }
+              }
+
+              return Slider(
+                value:
+                    !(videoPlayerController?.value.isInitialized ?? true)
+                        ? 0.0
+                        : progress,
+                secondaryTrackValue:
+                    !(videoPlayerController?.value.isInitialized ?? true)
+                        ? 0.0
+                        : bufferedProgress,
+                onChanged: (newValue) {
+                  bloc.resetControlVisibility(isSeek: true);
+                  bloc.isSeeking = true;
+                  bloc.manualSeekProgress = newValue;
+                  bloc.throttleSliderUpdate();
+                },
+                onChangeStart: (value) {
+                  bloc.pausedPlayer();
+                  bloc.startSeekUpdateLoop();
+                  bloc.resetControlVisibility(isSeek: true);
+                },
+                onChangeEnd: (value) async {
+                  isPlay.value = false;
+                  bloc.seekUpdateTimer?.cancel();
+
+                  final newPosition = Duration(
+                    milliseconds:
+                        ((videoPlayerController
+                                        ?.value
+                                        .duration
+                                        .inMilliseconds ??
+                                    0) *
+                                value)
+                            .toInt(),
+                  );
+
+                  await videoPlayerController?.seekTo(newPosition);
+                  bloc.isSeeking = false;
+                  bloc.resetControlVisibility(isSeek: true);
+
+                  if (newPosition != videoPlayerController?.value.duration) {
+                    bloc.playPlayer();
+                    playerStatus.value = 2;
+                  }
+                },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -1176,34 +1197,21 @@ class Player extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<VideoBloc>(
       builder:
-          (context, bloc, child) => Stack(
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: IgnorePointer(
-                  child:
-                      bloc.isLoading
-                          ? LoadingView()
-                          : Chewie(
-                            controller:
-                                chewieControllerNotifier ??
-                                ChewieController(
-                                  videoPlayerController:
-                                      videoPlayerController
-                                          as VideoPlayerController,
-                                  showControls: false,
-                                ),
-                          ),
-                ),
+          (context, bloc, child) => Align(
+            alignment: Alignment.center,
+            child: AspectRatio(
+              aspectRatio: videoPlayerController?.value.aspectRatio ?? 0.0,
+              child: Chewie(
+                controller:
+                    chewieControllerNotifier ??
+                    ChewieController(
+                      videoPlayerController:
+                          videoPlayerController as VideoPlayerController,
+                      showControls: false,
+                    ),
               ),
-
-              if (showControl) _buildOverlay(),
-            ],
+            ),
           ),
     );
-  }
-
-  Widget _buildOverlay() {
-    return Positioned.fill(child: Container(color: Colors.black45));
   }
 }
