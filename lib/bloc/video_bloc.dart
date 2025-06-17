@@ -325,7 +325,6 @@ class VideoBloc extends ChangeNotifier {
 
   //toggle full screen
   void toggleFullScreen({bool? isLock}) async {
-    //isLockScreen = isLock ?? false;
     _stopTimer();
     isFullScreen = !isFullScreen;
     scale = 1.0;
@@ -358,8 +357,6 @@ class VideoBloc extends ChangeNotifier {
     }
 
     if (Platform.isAndroid) _startTimer();
-
-    resetControlVisibility(isSeek: true);
 
     notifyListeners();
   }

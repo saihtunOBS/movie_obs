@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
 import 'dart:io';
 import 'package:auto_orientation_v2/auto_orientation_v2.dart';
@@ -146,7 +144,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   @override
   void initState() {
     super.initState();
-
+    setState(() {
+      showControl = true;
+    });
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
@@ -290,7 +290,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           backgroundColor: kBlackColor,
           body: _buildVideoPlayerSection(),
           bottomNavigationBar: SizedBox(
-            height: 100,
+            height: bloc.isFullScreen ? 75 : 100,
             child: Visibility(
               visible: showControl == true,
               child: _buildProgressBarContent(),
@@ -518,7 +518,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildExitButton() {
-    if (bloc.isFullScreen) return const SizedBox();
     return Row(
       spacing: 20,
       children: [
@@ -540,47 +539,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             ),
           ),
         ),
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            if (_connectionStatus.first == ConnectivityResult.none) {
-              ToastService.warningToast('Please check your connection');
-            } else {
-              if (videoPlayerController?.value.isInitialized ?? true) {
-                isClickPopUp = true;
-                Navigator.pop(context);
-                isPlay.value =
-                    !(videoPlayerController?.value.isPlaying ?? true);
-                showControl = false;
-                bloc.updateListener();
-                MiniVideoPlayer.showMiniPlayer(
-                  context,
-                  bloc.currentUrl,
-                  videoPlayerController?.value.isPlaying ?? true
-                      ? isPlay.value = true
-                      : isPlay.value = false,
-                  widget.videoId ?? '',
-                );
-                SystemChrome.setPreferredOrientations([
-                  DeviceOrientation.portraitUp,
-                ]);
-              }
-            }
-          },
-          child: Container(
-            height: 25,
-            width: 25,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.transparent,
-            ),
-            child: Image.asset(
-              kPictureInPictureIcon,
-              width: 30,
-              color: kWhiteColor,
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -592,7 +550,55 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   Widget _buildSettingsButtons() {
     return IgnorePointer(
       ignoring: !showControl,
-      child: Row(children: [_buildSettingsButton()]),
+      child: Row(
+        spacing: 20,
+        children: [
+          bloc.isFullScreen
+              ? SizedBox.shrink()
+              : GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  if (_connectionStatus.first == ConnectivityResult.none) {
+                    ToastService.warningToast('Please check your connection');
+                  } else {
+                    if (videoPlayerController?.value.isInitialized ?? true) {
+                      isClickPopUp = true;
+                      Navigator.pop(context);
+                      isPlay.value =
+                          !(videoPlayerController?.value.isPlaying ?? true);
+                      showControl = false;
+                      bloc.updateListener();
+                      MiniVideoPlayer.showMiniPlayer(
+                        context,
+                        bloc.currentUrl,
+                        videoPlayerController?.value.isPlaying ?? true
+                            ? isPlay.value = true
+                            : isPlay.value = false,
+                        widget.videoId ?? '',
+                      );
+                      SystemChrome.setPreferredOrientations([
+                        DeviceOrientation.portraitUp,
+                      ]);
+                    }
+                  }
+                },
+                child: Container(
+                  height: 25,
+                  width: 25,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.transparent,
+                  ),
+                  child: Image.asset(
+                    kPictureInPictureIcon,
+                    width: 30,
+                    color: kWhiteColor,
+                  ),
+                ),
+              ),
+          _buildSettingsButton(),
+        ],
+      ),
     );
   }
 
@@ -642,23 +648,43 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         padding: const EdgeInsets.only(left: 16, right: 16),
         child: Column(
           children: [
-            _buildSlider(),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              spacing: bloc.isFullScreen ? 10 : 0,
               children: [
-                _buildTimeDisplay(),
-
-                Text(
-                  bloc.formatDuration(
-                    videoPlayerController?.value.duration ?? Duration.zero,
-                  ),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                !bloc.isFullScreen ? SizedBox.shrink() : _buildTimeDisplay(),
+                Expanded(child: _buildSlider()),
+                !bloc.isFullScreen
+                    ? SizedBox.shrink()
+                    : Text(
+                      bloc.formatDuration(
+                        videoPlayerController?.value.duration ?? Duration.zero,
+                      ),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
               ],
             ),
+
+            bloc.isFullScreen
+                ? SizedBox.shrink()
+                : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildTimeDisplay(),
+
+                    Text(
+                      bloc.formatDuration(
+                        videoPlayerController?.value.duration ?? Duration.zero,
+                      ),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -813,7 +839,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
 
   Widget _buildFullScreenButton() {
     return GestureDetector(
-      onTap: () => bloc.toggleFullScreen(),
+      onTap: () {
+        showControl = false;
+        bloc.toggleFullScreen();
+      },
+
       child: SizedBox(
         child: Icon(Icons.fullscreen, color: Colors.white, size: 30),
       ),
