@@ -8,7 +8,9 @@ import 'package:movie_obs/screens/auth/login_screen.dart';
 import 'package:movie_obs/screens/home/noti_details_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
+import 'package:movie_obs/widgets/empty_view.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
+import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -24,9 +26,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NotificationBloc>().updateToken();
-      context.read<NotificationBloc>().getNotifications().catchError((_) {
+      context.read<NotificationBloc>().getNotifications().catchError((e) {
         PersistenceData.shared.clearToken();
-        PageNavigator(ctx: context).nextPage(page: LoginScreen());
+        PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
+        ToastService.warningToast(e.toString());
       });
     });
   }
@@ -75,9 +78,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         },
                       ),
                     )
-                    : Text(
-                      AppLocalizations.of(context)?.noNotification ?? '',
-                      style: TextStyle(color: kWhiteColor),
+                    : EmptyView(
+                      reload: () {
+                        bloc.getNotifications();
+                      },
+                      title: AppLocalizations.of(context)?.noNotification ?? '',
                     ),
       ),
     );
