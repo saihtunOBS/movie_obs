@@ -8,6 +8,7 @@ import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/change_language_screen.dart';
+import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/widgets/custom_button.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
@@ -208,9 +209,24 @@ class _OTPScreenState extends State<OTPScreen> {
                                   PersistenceData.shared.saveToken(
                                     response.accessToken ?? '',
                                   );
-                                  PageNavigator(
-                                    ctx: context,
-                                  ).nextPage(page: ChangeLanguageScreen());
+
+                                  Future.delayed(
+                                    Duration(milliseconds: 300),
+                                    () {
+                                      if (PersistenceData.shared
+                                              .getFirstTimeStatus() ==
+                                          true) {
+                                        PageNavigator(ctx: context).nextPage(
+                                          page: ChangeLanguageScreen(),
+                                        );
+                                      } else {
+                                        tab.value = true;
+                                        PageNavigator(
+                                          ctx: context,
+                                        ).nextPage(page: BottomNavScreen());
+                                      }
+                                    },
+                                  );
                                 })
                                 .catchError((error) {
                                   ToastService.warningToast(error.toString());

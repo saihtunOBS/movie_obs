@@ -30,7 +30,6 @@ class UserBloc extends ChangeNotifier {
   UserBloc({BuildContext? context}) {
     myContext = context;
     updateToken();
-    getUser(context: context);
   }
 
   onTapupdate() {
@@ -55,14 +54,12 @@ class UserBloc extends ChangeNotifier {
           tab.value = false;
           hideLoading();
           PersistenceData.shared.clearToken();
-          PersistenceData.shared.saveFirstTime(true);
           PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
         })
         .catchError((_) {
           tab.value = false;
           hideLoading();
           PersistenceData.shared.clearToken();
-          PersistenceData.shared.saveFirstTime(true);
           PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
           ToastService.warningToast('Session Expired. Please Login Again');
         });
@@ -76,8 +73,7 @@ class UserBloc extends ChangeNotifier {
           userDataListener.value = response;
           notifyListeners();
         })
-        .catchError((_) {
-          PersistenceData.shared.saveFirstTime(true);
+        .catchError((e) {
           PersistenceData.shared.clearToken();
           showCommonDialog(
             context: context!,

@@ -42,7 +42,6 @@ class PackageBloc extends ChangeNotifier {
           _hideLoading();
         })
         .catchError((_) {
-          PersistenceData.shared.saveFirstTime(true);
           showCommonDialog(
             context: myContext!,
             isBarrierDismiss: false,

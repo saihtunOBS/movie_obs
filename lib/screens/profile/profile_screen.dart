@@ -449,7 +449,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 if (isLogout == true) {
                                   tab.value = false;
                                   PersistenceData.shared.clearToken();
-                                  PersistenceData.shared.saveFirstTime(true);
                                   GoogleSignIn googleSignIn = GoogleSignIn();
                                   googleSignIn.signOut();
                                   PageNavigator(
