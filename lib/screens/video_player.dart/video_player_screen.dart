@@ -199,7 +199,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           _loadCurrentPosition();
         }
       } else {
-        bloc.resetControlVisibility(isSeek: true);
+        // bloc.resetControlVisibility(isSeek: true);
       }
     });
   }
@@ -216,7 +216,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     );
     bloc.initializeVideo(widget.url ?? '', duration: _savedVideo?.position);
     bloc.updateListener();
-    bloc.resetControlVisibility();
   }
 
   @override
@@ -258,7 +257,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       builder: (context, value, child) {
         return Scaffold(
           appBar: AppBar(
-            toolbarHeight: 60,
+            toolbarHeight: bloc.isFullScreen ? 50 : 60,
             backgroundColor:
                 showControl == true ? Colors.black45 : Colors.transparent,
             automaticallyImplyLeading: false,
@@ -288,7 +287,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           backgroundColor: kBlackColor,
           body: _buildVideoPlayerSection(),
           bottomNavigationBar: SizedBox(
-            height: bloc.isFullScreen ? 75 : 100,
+            height: bloc.isFullScreen ? 80 : 100,
             child: Visibility(
               visible: showControl == true,
               child: _buildProgressBarContent(),
@@ -533,7 +532,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             child: const Icon(
               CupertinoIcons.clear_thick,
               color: Colors.white,
-              size: 22,
+              size: 25,
             ),
           ),
         ),
@@ -646,6 +645,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         padding: const EdgeInsets.only(left: 16, right: 16),
         child: Column(
           children: [
+            3.vGap,
             Row(
               spacing: bloc.isFullScreen ? 10 : 0,
               children: [
@@ -748,7 +748,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         child: SliderTheme(
           data: SliderTheme.of(context).copyWith(
             allowedInteraction: SliderInteraction.slideThumb,
-            trackHeight: bloc.isFullScreen ? 2.0 : 3.0,
+            // trackHeight: bloc.isFullScreen ? 2.0 : 3.0,
             inactiveTrackColor: Colors.white.withValues(alpha: 0.5),
             activeTrackColor: kPrimaryColor,
             padding: EdgeInsets.zero,
@@ -1225,8 +1225,7 @@ class Player extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<VideoBloc>(
       builder:
-          (context, bloc, child) => Align(
-            alignment: Alignment.center,
+          (context, bloc, child) => Center(
             child: AspectRatio(
               aspectRatio: videoPlayerController?.value.aspectRatio ?? 0.0,
               child: Chewie(

@@ -56,7 +56,7 @@ class UserBloc extends ChangeNotifier {
           PersistenceData.shared.clearToken();
           PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
         })
-        .catchError((_) {
+        .catchError((e) {
           tab.value = false;
           hideLoading();
           PersistenceData.shared.clearToken();

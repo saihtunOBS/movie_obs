@@ -171,6 +171,7 @@ class VideoBloc extends ChangeNotifier {
     String? type,
     Duration? duration,
   }) async {
+    resetControlVisibility(isSeek: true);
     videoPlayerController = VideoPlayerController.networkUrl(
       Uri.parse(url),
       videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: true),
