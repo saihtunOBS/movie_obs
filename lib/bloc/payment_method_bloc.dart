@@ -3,10 +3,12 @@ import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
+import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/network/requests/call_mpu_request.dart';
 import 'package:movie_obs/network/requests/mpu_payment_request_.dart';
 import 'package:movie_obs/network/requests/payment_request.dart';
 import 'package:movie_obs/network/responses/payment_response.dart';
+import 'package:movie_obs/screens/profile/mpu_payment_screen.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 
 class PaymentMethodBloc extends ChangeNotifier {
@@ -18,9 +20,11 @@ class PaymentMethodBloc extends ChangeNotifier {
   bool isDisposed = false;
   String token = '';
   PaymentResponse? paymentResponse;
+  BuildContext? myContext;
   final MovieModel _movieModel = MovieModelImpl();
 
-  PaymentMethodBloc() {
+  PaymentMethodBloc(BuildContext context) {
+    myContext = context;
     token = PersistenceData.shared.getToken();
   }
 
@@ -92,7 +96,7 @@ class PaymentMethodBloc extends ChangeNotifier {
           );
 
           Future.delayed(Duration(milliseconds: 300), () {
-            callMpuPayment(request);
+            launchMpuPayment(request);
           });
         })
         .catchError((e) {
@@ -101,17 +105,37 @@ class PaymentMethodBloc extends ChangeNotifier {
         });
   }
 
-  Future<void> callMpuPayment(CallMpuRequest request) {
-    return _movieModel
-        .callMpuPayment(request)
-        .then((response) {
-          _hideLoading();
-        })
-        .catchError((e) {
-          _hideLoading();
-          print('youur error.....${e.toString()}');
-          ToastService.warningToast(e.toString());
-        });
+  // String generatePaymentUrl(CallMpuRequest request) {
+  //   final uri = Uri.https("www.mpuecomuat.com", "/UAT/Payment/Payment/pay", {
+  //     "amount": request.amount,
+  //     "merchantID": request.merchantID,
+  //     "currencyCode": request.currencyCode,
+  //     "userDefined1": request.userDefined1,
+  //     "productDesc": request.productDesc,
+  //     "invoiceNo": request.invoiceNo,
+  //     "hashValue": request.hashValue,
+  //   });
+
+  //   return uri.toString();
+  // }
+
+  Future<void> launchMpuPayment(CallMpuRequest request) async {
+    _hideLoading();
+    var formRequest = <String, String>{
+      "amount": request.amount ?? '',
+      "merchantID": request.merchantID ?? '',
+      "currencyCode": request.currencyCode ?? '',
+      "userDefined1": request.userDefined1 ?? '',
+      "productDesc": request.productDesc ?? '',
+      "invoiceNo": request.invoiceNo ?? '',
+      "hashValue": request.hashValue ?? '',
+    };
+    await PageNavigator(ctx: myContext).nextPage(
+      page: MpuPaymentScreen(
+        paymentUrl: 'https://www.mpuecomuat.com/UAT/Payment/Payment/pay',
+        postData: formRequest,
+      ),
+    );
   }
 
   _showLoading() {

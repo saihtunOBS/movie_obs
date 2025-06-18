@@ -43,6 +43,7 @@ void main() async {
   {
     await Firebase.initializeApp();
   }
+
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   ErrorWidget.builder = (FlutterErrorDetails details) => Container();
   await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);

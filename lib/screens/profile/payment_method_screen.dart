@@ -27,9 +27,11 @@ class PaymentMethodScreen extends StatefulWidget {
     super.key,
     required this.plan,
     required this.packageData,
+    this.isGift,
   });
   final String plan;
   final PackageVO packageData;
+  final bool? isGift;
 
   @override
   State<PaymentMethodScreen> createState() => _PaymentMethodScreenState();
@@ -69,7 +71,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => PaymentMethodBloc(),
+      create: (context) => PaymentMethodBloc(context),
       child: Scaffold(
         backgroundColor: kWhiteColor,
         appBar: AppBar(
@@ -127,7 +129,10 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                                     );
                                   }
                                 } else if (bloc.payment == 'Pay with MPU') {
-                                  bloc.createMpuPayment(false, widget.plan);
+                                  bloc.createMpuPayment(
+                                    widget.isGift ?? false,
+                                    widget.plan,
+                                  );
                                 }
                               }
                             },
@@ -164,8 +169,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   bloc.isLoading
                       ? Center(
                         child: SizedBox(
-                          width: 100,
-                          height: 100,
+                          width: 80,
+                          height: 80,
                           child: LoadingView(),
                         ),
                       )

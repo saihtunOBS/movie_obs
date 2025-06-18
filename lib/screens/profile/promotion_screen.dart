@@ -67,6 +67,7 @@ class _PromotionScreenState extends State<PromotionScreen> {
                             )
                             : PageNavigator(ctx: context).nextPage(
                               page: PaymentMethodScreen(
+                                isGift: true,
                                 plan: bloc.packageId,
                                 packageData:
                                     bloc.selectedPackage ?? PackageVO(),
@@ -100,6 +101,7 @@ class _PromotionScreenState extends State<PromotionScreen> {
                               )
                               : PageNavigator(ctx: context).nextPage(
                                 page: PaymentMethodScreen(
+                                  isGift: false,
                                   plan: bloc.packageId,
                                   packageData:
                                       bloc.selectedPackage ?? PackageVO(),
