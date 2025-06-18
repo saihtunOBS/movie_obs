@@ -1,6 +1,6 @@
 //base url
 //https://movie-b.origin.com.mm/api
-const String kBaseUrl = kUatUrl;
+const String kBaseUrl = 'https://movie-b.origin.com.mm/api';
 const String kUatUrl = 'https://admin-uat-b.toototv.com/api';
 
 const String kEndPointLogin = "/auth/login";

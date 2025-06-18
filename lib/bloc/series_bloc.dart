@@ -9,7 +9,7 @@ class SeriesBloc extends ChangeNotifier {
   bool isDisposed = false;
   String token = '';
   List<MovieVO> seriesLists = [];
-
+  List<MovieVO> allSeriesLists = [];
   List<MovieVO> filteredSuggestions = [];
   bool isLoadMore = false;
   int page = 1;
@@ -20,16 +20,25 @@ class SeriesBloc extends ChangeNotifier {
 
   SeriesBloc() {
     token = PersistenceData.shared.getToken();
+    getSeriesByPage();
     getAllSeries();
   }
 
-  getAllSeries() {
+  getSeriesByPage() {
     moviePlan = '';
     movieGenre = '';
     page = 1;
     _showLoading();
-    _movieModel.getSeriesLists(token, '', '', 1).then((response) {
+    _movieModel.getSeriesLists(token, '', '', false, 1).then((response) {
       seriesLists = response.data ?? [];
+      _hideLoading();
+    });
+  }
+
+  getAllSeries() {
+    _showLoading();
+    _movieModel.getSeriesLists(token, '', '', true, 0).then((response) {
+      allSeriesLists = response.data ?? [];
       _hideLoading();
     });
   }
@@ -39,7 +48,7 @@ class SeriesBloc extends ChangeNotifier {
     movieGenre = genre;
     _showLoading();
     await _movieModel
-        .getSeriesLists(token, plan, genre, 1)
+        .getSeriesLists(token, plan, genre, false, 1)
         .then((response) {
           seriesLists = response.data ?? [];
         })
@@ -60,7 +69,7 @@ class SeriesBloc extends ChangeNotifier {
       return;
     }
     filteredSuggestions =
-        seriesLists
+        allSeriesLists
             .where(
               (item) => item.name!.toLowerCase().contains(value.toLowerCase()),
             )
@@ -73,7 +82,7 @@ class SeriesBloc extends ChangeNotifier {
     _showLoadMoreLoading();
     page += 1;
     _movieModel
-        .getSeriesLists(token, moviePlan, movieGenre, page)
+        .getSeriesLists(token, moviePlan, movieGenre, false, page)
         .then((response) => seriesLists.addAll(response.data ?? []))
         .whenComplete(() => _hideLoadMoreLoading());
   }

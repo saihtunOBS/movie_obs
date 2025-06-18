@@ -10,8 +10,7 @@ class MovieBloc extends ChangeNotifier {
   bool isDisposed = false;
   String token = '';
   List<MovieVO> movieLists = [];
-  List<MovieVO> topTrendingMoviesList = [];
-  List<MovieVO> newReleaseMoviesList = [];
+  List<MovieVO> allMovieLists = [];
   List<MovieVO> filteredSuggestions = [];
   List<CategoryVO> categoryLists = [];
   List<GenreVO> genreLists = [];
@@ -27,7 +26,8 @@ class MovieBloc extends ChangeNotifier {
 
   MovieBloc() {
     token = PersistenceData.shared.getToken();
-    getAllMovie();
+    getMovieByPage();
+    getAllMovies();
     getAllCategory();
     getAllGenre();
   }
@@ -37,7 +37,7 @@ class MovieBloc extends ChangeNotifier {
     movieGenre = genre;
     _showLoading();
     await _movieModel
-        .getMovieLists(token, plan, genre, 1)
+        .getMovieLists(token, plan, genre, false, 1)
         .then((response) {
           movieLists = response.data ?? [];
         })
@@ -46,13 +46,21 @@ class MovieBloc extends ChangeNotifier {
         });
   }
 
-  getAllMovie() {
+  getMovieByPage() {
     movieGenre = '';
     moviePlan = '';
     page = 1;
     _showLoading();
-    _movieModel.getMovieLists(token, '', '', 1).then((response) {
+    _movieModel.getMovieLists(token, '', '', false, 1).then((response) {
       movieLists = response.data ?? [];
+      _hideLoading();
+    });
+  }
+
+  getAllMovies() {
+    _showLoading();
+    _movieModel.getMovieLists(token, '', '', true, 0).then((response) {
+      allMovieLists = response.data ?? [];
       _hideLoading();
     });
   }
@@ -76,26 +84,18 @@ class MovieBloc extends ChangeNotifier {
     });
   }
 
-  void onSearchChanged(String value, {bool? isSearchScreen}) {
+  void onSearchChanged(String value) {
     notifyListeners();
     if (value.isEmpty) {
       filteredSuggestions.clear();
       return;
     }
     filteredSuggestions =
-        isSearchScreen == true
-            ? movieSeriesList
-                .where(
-                  (item) =>
-                      item.name!.toLowerCase().contains(value.toLowerCase()),
-                )
-                .toList()
-            : movieLists
-                .where(
-                  (item) =>
-                      item.name!.toLowerCase().contains(value.toLowerCase()),
-                )
-                .toList();
+        allMovieLists
+            .where(
+              (item) => item.name!.toLowerCase().contains(value.toLowerCase()),
+            )
+            .toList();
     notifyListeners();
   }
 
@@ -105,11 +105,11 @@ class MovieBloc extends ChangeNotifier {
     page += 1;
 
     _movieModel
-        .getMovieLists(token, moviePlan, movieGenre, page)
+        .getMovieLists(token, moviePlan, movieGenre, false, page)
         .then((response) => movieLists.addAll(response.data ?? []))
         .whenComplete(() => _hideLoadMoreLoading());
   }
-  
+
   _showLoadMoreLoading() {
     isLoadMore = true;
     _notifySafely();

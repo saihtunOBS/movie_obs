@@ -57,6 +57,7 @@ abstract class MovieApi {
     @Query('limit') int limit,
     @Query('genres') String genres,
     @Query('page') int page,
+    @Query('getAll') bool getAll,
     @Query('status') String status,
   );
 
@@ -186,6 +187,7 @@ abstract class MovieApi {
     @Query('limit') int limit,
     @Query('genres') String genres,
     @Query('page') int page,
+    @Query('getAll') bool getAll,
     @Query('status') String status,
   );
 

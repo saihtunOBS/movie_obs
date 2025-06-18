@@ -39,12 +39,14 @@ abstract class MovieDataAgents {
     String token,
     String plan,
     String genre,
+    bool getAll,
     int page,
   );
   Future<MovieResponse> getSeries(
     String token,
     String plan,
     String genre,
+    bool getAll,
     int page,
   );
   Future<MovieDetailResponse> getMovieDetail(String token, String id);

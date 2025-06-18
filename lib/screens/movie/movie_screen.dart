@@ -153,7 +153,7 @@ class _MovieScreenState extends State<MovieScreen> {
           builder:
               (context, bloc, child) => RefreshIndicator(
                 onRefresh: () async {
-                  bloc.getAllMovie();
+                  bloc.getMovieByPage();
                 },
                 child:
                     bloc.isLoading
@@ -295,7 +295,7 @@ class _MovieScreenState extends State<MovieScreen> {
                         : EmptyView(
                           title: 'There is no movie to show.',
                           reload: () {
-                            bloc.getAllMovie();
+                            bloc.getMovieByPage();
                           },
                         ),
               ),

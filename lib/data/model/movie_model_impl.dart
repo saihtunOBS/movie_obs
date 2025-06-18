@@ -76,9 +76,10 @@ class MovieModelImpl extends MovieModel {
     String token,
     String plan,
     String genre,
+    bool getAll,
     int page,
   ) {
-    return movieDataAgent.getMovies(token, plan, genre, page);
+    return movieDataAgent.getMovies(token, plan, genre, getAll, page);
   }
 
   @override
@@ -96,9 +97,10 @@ class MovieModelImpl extends MovieModel {
     String token,
     String plan,
     String genre,
+    bool getAll,
     int page,
   ) {
-    return movieDataAgent.getSeries(token, plan, genre, page);
+    return movieDataAgent.getSeries(token, plan, genre, getAll, page);
   }
 
   @override

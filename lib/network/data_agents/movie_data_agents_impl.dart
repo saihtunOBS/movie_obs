@@ -82,10 +82,11 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     String token,
     String plan,
     String genre,
+    bool getAll,
     int page,
   ) {
     return movieApi
-        .getMovies(token, plan, 10, genre, page, 'PUBLISHED')
+        .getMovies(token, plan, 10, genre, page,getAll, 'PUBLISHED')
         .asStream()
         .map((response) => response)
         .first
@@ -151,10 +152,11 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     String token,
     String plan,
     String genre,
+    bool getAll,
     int page,
   ) {
     return movieApi
-        .getSeries(token, plan, 10, genre, page, 'PUBLISHED')
+        .getSeries(token, plan, 10, genre, page,getAll, 'PUBLISHED')
         .asStream()
         .map((response) => response)
         .first

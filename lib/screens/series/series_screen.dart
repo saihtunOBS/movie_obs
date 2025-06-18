@@ -156,7 +156,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
           builder:
               (context, bloc, child) => RefreshIndicator(
                 onRefresh: () async {
-                  bloc.getAllSeries();
+                  bloc.getSeriesByPage();
                 },
                 child:
                     bloc.isLoading
@@ -293,7 +293,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                         )
                         : EmptyView(
                           reload: () {
-                            bloc.getAllSeries();
+                            bloc.getSeriesByPage();
                           },
                           title: 'There is no series to show.',
                         ),

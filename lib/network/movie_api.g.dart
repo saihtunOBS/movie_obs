@@ -10,7 +10,7 @@ part of 'movie_api.dart';
 
 class _MovieApi implements MovieApi {
   _MovieApi(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'https://admin-uat-b.toototv.com/api';
+    baseUrl ??= 'https://movie-b.origin.com.mm/api';
   }
 
   final Dio _dio;
@@ -110,6 +110,7 @@ class _MovieApi implements MovieApi {
     int limit,
     String genres,
     int page,
+    bool getAll,
     String status,
   ) async {
     final _extra = <String, dynamic>{};
@@ -118,6 +119,7 @@ class _MovieApi implements MovieApi {
       r'limit': limit,
       r'genres': genres,
       r'page': page,
+      r'getAll': getAll,
       r'status': status,
     };
     final _headers = <String, dynamic>{r'Authorization': token};
@@ -762,6 +764,7 @@ class _MovieApi implements MovieApi {
     int limit,
     String genres,
     int page,
+    bool getAll,
     String status,
   ) async {
     final _extra = <String, dynamic>{};
@@ -770,6 +773,7 @@ class _MovieApi implements MovieApi {
       r'limit': limit,
       r'genres': genres,
       r'page': page,
+      r'getAll': getAll,
       r'status': status,
     };
     final _headers = <String, dynamic>{r'Authorization': token};
