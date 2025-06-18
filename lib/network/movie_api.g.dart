@@ -1292,6 +1292,73 @@ class _MovieApi implements MovieApi {
     return _value;
   }
 
+  @override
+  Future<MpuPaymentResponse> createMpuPayment(
+    String token,
+    MpuPaymentRequest request,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<MpuPaymentResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/transactions',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late MpuPaymentResponse _value;
+    try {
+      _value = MpuPaymentResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<void> callMpuPayment(
+    String amount,
+    String merchantId,
+    String currencyCode,
+    String userDefine,
+    String productDesc,
+    String invoiceNo,
+    String hashValue,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'amount': amount,
+      r'merchantID': merchantId,
+      r'currencyCode': currencyCode,
+      r'userDefined1': userDefine,
+      r'productDesc': productDesc,
+      r'invoiceNo': invoiceNo,
+      r'hashValue': hashValue,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<void>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'https://www.mpuecomuat.com/UAT/Payment/Payment/pay',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    await _dio.fetch<void>(_options);
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

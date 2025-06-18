@@ -3,9 +3,9 @@ import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/package_vo.dart';
-
-import '../widgets/common_dialog.dart';
-import '../widgets/error_dialog.dart';
+import 'package:movie_obs/extension/page_navigator.dart';
+import 'package:movie_obs/screens/auth/login_screen.dart';
+import 'package:movie_obs/widgets/toast_service.dart';
 
 class PackageBloc extends ChangeNotifier {
   bool isLoading = false;
@@ -41,15 +41,10 @@ class PackageBloc extends ChangeNotifier {
         .whenComplete(() {
           _hideLoading();
         })
-        .catchError((_) {
-          showCommonDialog(
-            context: myContext!,
-            isBarrierDismiss: false,
-            dialogWidget: ErrorDialogView(
-              errorMessage: 'Session Expired. Please Login Again',
-              isLogin: true,
-            ),
-          );
+        .catchError((e) {
+          PersistenceData.shared.clearToken();
+          PageNavigator(ctx: myContext).nextPageOnly(page: LoginScreen());
+          ToastService.warningToast(e.toString());
         });
   }
 

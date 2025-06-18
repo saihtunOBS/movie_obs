@@ -5,6 +5,7 @@ import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart'
     show HistoryRequest;
+import 'package:movie_obs/network/requests/mpu_payment_request_.dart';
 import 'package:movie_obs/network/requests/payment_request.dart';
 import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/view_count_request.dart';
@@ -12,6 +13,7 @@ import 'package:movie_obs/network/responses/collection_detail_response.dart';
 import 'package:movie_obs/network/responses/collection_response.dart';
 import 'package:movie_obs/network/responses/gift_data_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
+import 'package:movie_obs/network/responses/mpu_payment_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/payment_response.dart';
 
@@ -139,4 +141,18 @@ abstract class MovieModel {
   Future<GiftDataResponse> getGift(String token, String userId);
 
   Future<PaymentResponse> createPayment(String token, PaymentRequest request);
+
+  Future<MpuPaymentResponse> createMpuPayment(
+    String token,
+    MpuPaymentRequest request,
+  );
+  Future<void> callMpuPayment({
+    required String amount,
+    required String merchantID,
+    required String currencyCode,
+    required String userDefined1,
+    required String productDesc,
+    required String invoiceNo,
+    required String hashValue,
+  });
 }

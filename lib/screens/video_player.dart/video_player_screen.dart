@@ -144,7 +144,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   @override
   void initState() {
     super.initState();
-
+    selectedQuality = 'Auto';
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
@@ -198,9 +198,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         } else {
           _loadCurrentPosition();
         }
-      } else {
-        // bloc.resetControlVisibility(isSeek: true);
-      }
+      } else {}
     });
   }
 
@@ -214,12 +212,14 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             position: Duration.zero,
           ),
     );
+
     bloc.initializeVideo(widget.url ?? '', duration: _savedVideo?.position);
     bloc.updateListener();
   }
 
   @override
   void dispose() {
+    super.dispose();
     WidgetsBinding.instance.removeObserver(this);
     _subscription?.cancel();
     _connectivitySubscription.cancel();
@@ -248,7 +248,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       playerStatus.value = 1;
     }
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    super.dispose();
+    bloc.isFullScreen = false;
+    bloc.updateListener();
   }
 
   @override
@@ -258,27 +259,19 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         return Scaffold(
           appBar: AppBar(
             toolbarHeight: bloc.isFullScreen ? 50 : 60,
-            backgroundColor:
-                showControl == true ? Colors.black45 : Colors.transparent,
+            backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
             title:
                 showControl == true
-                    ? Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal:
-                            Platform.isAndroid
-                                ? 25
-                                : bloc.isFullScreen
-                                ? 0
-                                : 25,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildTopLeftControls(),
-                          _buildTopRightControls(),
-                        ],
-                      ),
+                    ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        20.hGap,
+                        _buildTopLeftControls(),
+                        Spacer(),
+                        _buildTopRightControls(),
+                        20.hGap,
+                      ],
                     )
                     : SizedBox.shrink(),
           ),
@@ -395,13 +388,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildVideoPlayer() {
-    return Stack(
-      children: [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          child: IgnorePointer(ignoring: true, child: Player()),
+    return Align(
+      alignment: Alignment.center,
+      child: IgnorePointer(
+        ignoring: true,
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: Player(),
         ),
-      ],
+      ),
     );
   }
 
@@ -515,28 +510,24 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   }
 
   Widget _buildExitButton() {
-    return Row(
-      spacing: 20,
-      children: [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            Navigator.pop(context);
-            videoPlayerController?.pause();
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.transparent,
-            ),
-            child: const Icon(
-              CupertinoIcons.clear_thick,
-              color: Colors.white,
-              size: 23,
-            ),
-          ),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        Navigator.pop(context);
+        videoPlayerController?.pause();
+      },
+      child: Container(
+        padding: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: bloc.isFullScreen ? kSecondaryColor : Colors.transparent,
         ),
-      ],
+        child: const Icon(
+          CupertinoIcons.clear_thick,
+          color: Colors.white,
+          size: 23,
+        ),
+      ),
     );
   }
 
@@ -583,7 +574,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                   height: 25,
                   width: 25,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(3),
                     color: Colors.transparent,
                   ),
                   child: Image.asset(
@@ -627,9 +618,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         }
       },
       child: Container(
+        padding: EdgeInsets.all(3),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
-          color: Colors.transparent,
+          color: bloc.isFullScreen ? kSecondaryColor : Colors.transparent,
         ),
         child: const Icon(Icons.settings, color: Colors.white, size: 27),
       ),
@@ -1225,18 +1217,16 @@ class Player extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<VideoBloc>(
       builder:
-          (context, bloc, child) => Center(
-            child: AspectRatio(
-              aspectRatio: videoPlayerController?.value.aspectRatio ?? 0.0,
-              child: Chewie(
-                controller:
-                    chewieControllerNotifier ??
-                    ChewieController(
-                      videoPlayerController:
-                          videoPlayerController as VideoPlayerController,
-                      showControls: false,
-                    ),
-              ),
+          (context, bloc, child) => AspectRatio(
+            aspectRatio: videoPlayerController?.value.aspectRatio ?? 0.0,
+            child: Chewie(
+              controller:
+                  chewieControllerNotifier ??
+                  ChewieController(
+                    videoPlayerController:
+                        videoPlayerController as VideoPlayerController,
+                    showControls: false,
+                  ),
             ),
           ),
     );

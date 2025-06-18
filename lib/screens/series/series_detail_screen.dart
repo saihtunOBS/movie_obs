@@ -12,7 +12,6 @@ import 'package:movie_obs/screens/series/season_episode_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
-import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/vos/movie_vo.dart';
@@ -145,7 +144,7 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
             ],
           ),
           10.vGap,
-          bloc.isLoading ? LoadingView() : _buildDescription(bloc, context),
+          _buildDescription(bloc, context),
           Visibility(
             visible: bloc.seriesResponse?.seasons?.isNotEmpty ?? true,
             child: Text(

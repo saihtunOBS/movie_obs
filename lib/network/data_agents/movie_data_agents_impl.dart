@@ -9,6 +9,7 @@ import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/movie_api.dart';
 import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
+import 'package:movie_obs/network/requests/mpu_payment_request_.dart';
 import 'package:movie_obs/network/requests/payment_request.dart';
 import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
@@ -25,6 +26,7 @@ import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/gift_data_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
+import 'package:movie_obs/network/responses/mpu_payment_response.dart';
 import 'package:movie_obs/network/responses/notification_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
@@ -86,7 +88,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     int page,
   ) {
     return movieApi
-        .getMovies(token, plan, 10, genre, page,getAll, 'PUBLISHED')
+        .getMovies(token, plan, 10, genre, page, getAll, 'PUBLISHED')
         .asStream()
         .map((response) => response)
         .first
@@ -156,7 +158,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     int page,
   ) {
     return movieApi
-        .getSeries(token, plan, 10, genre, page,getAll, 'PUBLISHED')
+        .getSeries(token, plan, 10, genre, page, getAll, 'PUBLISHED')
         .asStream()
         .map((response) => response)
         .first
@@ -586,6 +588,49 @@ class MovieDataAgentsImpl extends MovieDataAgents {
   Future<PaymentResponse> createPayment(String token, PaymentRequest request) {
     return movieApi
         .createPayment('Bearer $token', request)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<MpuPaymentResponse> createMpuPayment(
+    String token,
+    MpuPaymentRequest request,
+  ) {
+    return movieApi
+        .createMpuPayment('Bearer $token', request)
+        .asStream()
+        .map((response) => response)
+        .first
+        .catchError((error) {
+          throw _createException(error);
+        });
+  }
+
+  @override
+  Future<void> callMpuPayment({
+    required String amount,
+    required String merchantID,
+    required String currencyCode,
+    required String userDefined1,
+    required String productDesc,
+    required String invoiceNo,
+    required String hashValue,
+  }) {
+    return movieApi
+        .callMpuPayment(
+          amount,
+          merchantID,
+          currencyCode,
+          userDefined1,
+          productDesc,
+          invoiceNo,
+          hashValue,
+        )
         .asStream()
         .map((response) => response)
         .first

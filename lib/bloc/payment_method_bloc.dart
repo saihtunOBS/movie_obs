@@ -3,8 +3,10 @@ import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
+import 'package:movie_obs/network/requests/mpu_payment_request_.dart';
 import 'package:movie_obs/network/requests/payment_request.dart';
 import 'package:movie_obs/network/responses/payment_response.dart';
+import 'package:movie_obs/widgets/toast_service.dart';
 
 class PaymentMethodBloc extends ChangeNotifier {
   bool isSelectPayment = false;
@@ -54,6 +56,91 @@ class PaymentMethodBloc extends ChangeNotifier {
       );
       return _movieModel.createPayment(token, request);
     });
+  }
+
+  Future<void> createMpuPayment(bool isGift, String plan) async {
+    _showLoading();
+    var request = MpuPaymentRequest(
+      userDataListener.value.id ?? '',
+      plan,
+      'mpu',
+      isGift,
+      '',
+      '',
+    );
+    _movieModel
+        .createMpuPayment(token, request)
+        .then((response) {
+          final url = Uri.parse(response.paymentUrl ?? '');
+          final amount = url.queryParameters['amount'];
+          final merchantID = url.queryParameters['merchantID'];
+          final currencyCode = url.queryParameters['currencyCode'];
+          final userDefined1 = url.queryParameters['userDefined1'];
+          final productDesc = url.queryParameters['productDesc'];
+          final invoiceNo = url.queryParameters['invoiceNo'];
+          final hashValue = url.queryParameters['hashValue'];
+
+          Future.delayed(Duration(milliseconds: 300), () {
+            callMpuPayment(
+              amount ?? '',
+              merchantID,
+              currencyCode,
+              userDefined1,
+              productDesc,
+              invoiceNo,
+              hashValue,
+            );
+          });
+        })
+        .catchError((e) {
+          _hideLoading();
+          ToastService.warningToast(e.toString());
+        });
+  }
+
+  Future<void> callMpuPayment(
+    String amount,
+    merchantID,
+    currencyCode,
+    userDefined1,
+    productDesc,
+    invoiceNo,
+    hashValue,
+  ) {
+    return _movieModel
+        .callMpuPayment(
+          amount: amount,
+          merchantID: merchantID,
+          currencyCode: currencyCode,
+          userDefined1: userDefined1,
+          productDesc: productDesc,
+          invoiceNo: invoiceNo,
+          hashValue: hashValue,
+        )
+        .then((response) {
+          _hideLoading();
+        })
+        .catchError((e) {
+          _hideLoading();
+          print('youur error.....${e.toString()}');
+          ToastService.warningToast(e.toString());
+        });
+  }
+
+  _showLoading() {
+    isLoading = true;
+    _notifySafely();
+  }
+
+  _hideLoading() {
+    isLoading = false;
+    _notifySafely();
+  }
+
+  void _notifySafely() {
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   @override

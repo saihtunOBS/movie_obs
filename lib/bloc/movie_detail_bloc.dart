@@ -46,16 +46,8 @@ class MovieDetailBloc extends ChangeNotifier {
           notifyListeners();
         })
         .catchError((error) {
-          // PersistenceData.shared.clearToken();
-          // PersistenceData.shared.saveFirstTime(true);
-          // showCommonDialog(
-          //   context: myContext!,
-          //   isBarrierDismiss: false,
-          //   dialogWidget: ErrorDialogView(
-          //     errorMessage: 'Session Expired. Please Login Again',
-          //     isLogin: true,
-          //   ),
-          // );
+          ToastService.warningToast(error.toString());
+
           _hideLoading();
         })
         .whenComplete(() {

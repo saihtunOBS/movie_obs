@@ -181,7 +181,7 @@ class VideoBloc extends ChangeNotifier {
       chewieControllerNotifier = ChewieController(
         videoPlayerController: videoPlayerController!,
         showControls: false,
-        autoPlay: true,
+        autoPlay: false,
         aspectRatio: 16 / 9,
         useRootNavigator: false,
         allowFullScreen: false,
@@ -190,7 +190,6 @@ class VideoBloc extends ChangeNotifier {
           return const LoadingView();
         },
       );
-      playerStatus.value = 2;
       fetchQualityOptions();
     });
 

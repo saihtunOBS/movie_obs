@@ -82,12 +82,12 @@ class NotificationService {
     // });
 
     // // Handle when the app is launched from terminated state
-    // FirebaseMessaging.instance.getInitialMessage().then((
-    //   RemoteMessage? message,
-    // ) {
-    //   if (message == null || PersistenceData.shared.getToken() == '') return;
-    //   _handleNotificationTap(message);
-    // });
+    FirebaseMessaging.instance.getInitialMessage().then((
+      RemoteMessage? message,
+    ) {
+      if (message == null || PersistenceData.shared.getToken() == '') return;
+      _handleNotificationTap(message);
+    });
   }
 
   Future<void> getFCMToken() async {
@@ -96,23 +96,28 @@ class NotificationService {
   }
 }
 
-// void _handleNotificationTap(RemoteMessage message) {
-//   if (message.notification?.body == 'Payment successful' ||
-//       message.notification?.body == 'Payment unsuccessful') {
-//     if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
-//       navigatorKey.currentState?.pushAndRemoveUntil(
-//         CupertinoPageRoute(
-//           builder: (_) => PaymentStatusScreen(),
-//           settings: RouteSettings(name: "PaymentStatusScreen"),
-//         ),
-//         (route) => false,
-//       );
-//     }
-//   }
-// }
+void _handleNotificationTap(RemoteMessage message) {
+  if (message.notification?.body == 'Payment successful' ||
+      message.notification?.body == 'Payment unsuccessful') {
+    if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {
+      navigatorKey.currentState?.pushAndRemoveUntil(
+        CupertinoPageRoute(
+          builder:
+              (_) => PaymentStatusScreen(
+                status:
+                    message.notification?.body == 'Payment successful'
+                        ? 'success'
+                        : 'fail',
+              ),
+          settings: RouteSettings(name: "PaymentStatusScreen"),
+        ),
+        (route) => false,
+      );
+    }
+  }
+}
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  //await LocalNotificationService().displayNotification(message);
 }

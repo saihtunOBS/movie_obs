@@ -7,6 +7,7 @@ import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents_impl.dart';
 import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
+import 'package:movie_obs/network/requests/mpu_payment_request_.dart';
 import 'package:movie_obs/network/requests/payment_request.dart';
 import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart';
@@ -23,6 +24,7 @@ import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/gift_data_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
+import 'package:movie_obs/network/responses/mpu_payment_response.dart';
 import 'package:movie_obs/network/responses/notification_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
@@ -311,5 +313,34 @@ class MovieModelImpl extends MovieModel {
   @override
   Future<PaymentResponse> createPayment(String token, PaymentRequest request) {
     return movieDataAgent.createPayment(token, request);
+  }
+
+  @override
+  Future<MpuPaymentResponse> createMpuPayment(
+    String token,
+    MpuPaymentRequest request,
+  ) {
+    return movieDataAgent.createMpuPayment(token, request);
+  }
+
+  @override
+  Future<void> callMpuPayment({
+    required String amount,
+    required String merchantID,
+    required String currencyCode,
+    required String userDefined1,
+    required String productDesc,
+    required String invoiceNo,
+    required String hashValue,
+  }) {
+    return movieDataAgent.callMpuPayment(
+      amount: amount,
+      merchantID: merchantID,
+      currencyCode: currencyCode,
+      userDefined1: userDefined1,
+      productDesc: productDesc,
+      invoiceNo: invoiceNo,
+      hashValue: hashValue,
+    );
   }
 }

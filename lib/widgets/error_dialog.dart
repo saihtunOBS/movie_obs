@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
 import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
@@ -61,6 +62,7 @@ class ErrorDialogView extends StatelessWidget {
                 onTap: () {
                   if (isLogin == true) {
                     tab.value = false;
+                    PersistenceData.shared.clearToken();
                     PageNavigator(
                       ctx: context,
                     ).nextPageOnly(page: LoginScreen());

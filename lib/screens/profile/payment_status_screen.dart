@@ -15,62 +15,65 @@ class PaymentStatusScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kWhiteColor,
-      body: Column(
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Image.asset(kPaymentBarLogo, fit: BoxFit.cover),
-              Positioned(
-                top: 130,
-                left: 0,
-                right: 0,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 198,
-                      height: 198,
-                      child: Image.asset(
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Image.asset(kPaymentBarLogo, fit: BoxFit.cover),
+                Positioned(
+                  top: 130,
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 198,
+                        height: 198,
+                        child: Image.asset(
+                          status == 'success'
+                              ? kPaymentSuccessLogo
+                              : kPaymentFailLogo,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      10.vGap,
+                      Text(
                         status == 'success'
-                            ? kPaymentSuccessLogo
-                            : kPaymentFailLogo,
-                        fit: BoxFit.cover,
+                            ? 'Payment Successful!'
+                            : 'Payment Fail!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: kGradientOne,
+                        ),
                       ),
-                    ),
-                    10.vGap,
-                    Text(
-                      status == 'success'
-                          ? 'Payment Successful!'
-                          : 'Payment Fail!',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: kGradientOne,
+                      10.vGap,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: kMarginMedium2,
+                        ),
+                        child: Text(
+                          status == 'success'
+                              ? 'Thank you for processing your most recent payment.'
+                              : 'Sorry, your payment was not successful proceed. Please try again.',
+                          style: TextStyle(color: kBlackColor),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                    10.vGap,
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: kMarginMedium2,
-                      ),
-                      child: Text(
-                        status == 'success'
-                            ? 'Thank you for processing your most recent payment.'
-                            : 'Sorry, your payment was not successful proceed. Please try again.',
-                        style: TextStyle(color: kBlackColor),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          Spacer(),
-          bottomView(context),
-        ],
+              ],
+            ),
+            Spacer(),
+            bottomView(context),
+          ],
+        ),
       ),
     );
   }

@@ -14,7 +14,6 @@ import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 import 'package:movie_obs/widgets/common_dialog.dart';
-import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../list_items/recommended_movie_list_item.dart';
@@ -214,7 +213,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             widget.movie?.id ?? '',
             widget.movie?.videoUrl ?? '',
           ),
-          bloc.isLoading ? LoadingView() : _buildCastView(bloc),
+          _buildCastView(bloc),
           _buildDescription(bloc, context),
           5.vGap,
           _buildRecommendedView(bloc),

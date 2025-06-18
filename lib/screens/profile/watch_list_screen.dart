@@ -314,7 +314,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
                           ],
                         )
                         : EmptyView(
-                          title: 'There is no movie to show.',
+                          title: 'There is no movies & series to show.',
                           reload: () {
                             bloc.getWatchList();
                           },

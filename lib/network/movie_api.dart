@@ -7,6 +7,7 @@ import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/api_constants.dart';
 import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
+import 'package:movie_obs/network/requests/mpu_payment_request_.dart';
 import 'package:movie_obs/network/requests/payment_request.dart';
 import 'package:movie_obs/network/requests/redeem_code_request.dart';
 import 'package:movie_obs/network/requests/send_otp_request.dart'
@@ -24,6 +25,7 @@ import 'package:movie_obs/network/responses/genre_response.dart';
 import 'package:movie_obs/network/responses/gift_data_response.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/network/responses/movie_response.dart';
+import 'package:movie_obs/network/responses/mpu_payment_response.dart';
 import 'package:movie_obs/network/responses/notification_response.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/network/responses/package_response.dart';
@@ -290,5 +292,23 @@ abstract class MovieApi {
     @Header(kHeaderAuthorization) String token,
 
     @Body() PaymentRequest request,
+  );
+
+  @POST(kEndPointTransition)
+  Future<MpuPaymentResponse> createMpuPayment(
+    @Header(kHeaderAuthorization) String token,
+
+    @Body() MpuPaymentRequest request,
+  );
+
+  @POST('https://www.mpuecomuat.com/UAT/Payment/Payment/pay')
+  Future<void> callMpuPayment(
+    @Query('amount') String amount,
+    @Query('merchantID') String merchantId,
+    @Query('currencyCode') String currencyCode,
+    @Query('userDefined1') String userDefine,
+    @Query('productDesc') String productDesc,
+    @Query('invoiceNo') String invoiceNo,
+    @Query('hashValue') String hashValue,
   );
 }

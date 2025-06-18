@@ -4,6 +4,7 @@ import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/data/vos/genre_vo.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
+import 'package:movie_obs/widgets/toast_service.dart';
 
 class SearchBloc extends ChangeNotifier {
   bool isLoading = false;
@@ -28,9 +29,11 @@ class SearchBloc extends ChangeNotifier {
         .getAllMovieAndSeries(token, '', id, 'BOTH', true, 1)
         .then((response) {
           movieSeriesLists = response.data ?? [];
-        })
-        .whenComplete(() {
           _hideLoading();
+        })
+        .catchError((e) {
+          _hideLoading();
+          ToastService.warningToast(e.toString());
         });
   }
 
