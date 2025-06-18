@@ -532,7 +532,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             child: const Icon(
               CupertinoIcons.clear_thick,
               color: Colors.white,
-              size: 25,
+              size: 23,
             ),
           ),
         ),

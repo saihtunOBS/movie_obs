@@ -61,7 +61,7 @@ class UserBloc extends ChangeNotifier {
           hideLoading();
           PersistenceData.shared.clearToken();
           PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
-          ToastService.warningToast('Session Expired. Please Login Again');
+          ToastService.warningToast(e.toString());
         });
   }
 
@@ -79,7 +79,7 @@ class UserBloc extends ChangeNotifier {
             context: context!,
             isBarrierDismiss: false,
             dialogWidget: ErrorDialogView(
-              errorMessage: 'Session Expired. Please Login Again',
+              errorMessage: e.toString(),
               isLogin: true,
             ),
           );
