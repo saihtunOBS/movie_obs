@@ -3,6 +3,7 @@ import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
+import 'package:movie_obs/network/requests/call_mpu_request.dart';
 import 'package:movie_obs/network/requests/mpu_payment_request_.dart';
 import 'package:movie_obs/network/requests/payment_request.dart';
 import 'package:movie_obs/network/responses/payment_response.dart';
@@ -66,7 +67,7 @@ class PaymentMethodBloc extends ChangeNotifier {
       'mpu',
       isGift,
       '',
-      '',
+      '0988888888888',
     );
     _movieModel
         .createMpuPayment(token, request)
@@ -80,16 +81,18 @@ class PaymentMethodBloc extends ChangeNotifier {
           final invoiceNo = url.queryParameters['invoiceNo'];
           final hashValue = url.queryParameters['hashValue'];
 
+          var request = CallMpuRequest(
+            amount: amount,
+            merchantID: merchantID,
+            currencyCode: currencyCode,
+            userDefined1: userDefined1,
+            productDesc: productDesc,
+            invoiceNo: invoiceNo,
+            hashValue: hashValue,
+          );
+
           Future.delayed(Duration(milliseconds: 300), () {
-            callMpuPayment(
-              amount ?? '',
-              merchantID,
-              currencyCode,
-              userDefined1,
-              productDesc,
-              invoiceNo,
-              hashValue,
-            );
+            callMpuPayment(request);
           });
         })
         .catchError((e) {
@@ -98,25 +101,9 @@ class PaymentMethodBloc extends ChangeNotifier {
         });
   }
 
-  Future<void> callMpuPayment(
-    String amount,
-    merchantID,
-    currencyCode,
-    userDefined1,
-    productDesc,
-    invoiceNo,
-    hashValue,
-  ) {
+  Future<void> callMpuPayment(CallMpuRequest request) {
     return _movieModel
-        .callMpuPayment(
-          amount: amount,
-          merchantID: merchantID,
-          currencyCode: currencyCode,
-          userDefined1: userDefined1,
-          productDesc: productDesc,
-          invoiceNo: invoiceNo,
-          hashValue: hashValue,
-        )
+        .callMpuPayment(request)
         .then((response) {
           _hideLoading();
         })

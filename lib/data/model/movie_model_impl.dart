@@ -5,6 +5,7 @@ import 'package:movie_obs/data/vos/movie_vo.dart' show MovieVO;
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents.dart';
 import 'package:movie_obs/network/data_agents/movie_data_agents_impl.dart';
+import 'package:movie_obs/network/requests/call_mpu_request.dart';
 import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/mpu_payment_request_.dart';
@@ -324,23 +325,7 @@ class MovieModelImpl extends MovieModel {
   }
 
   @override
-  Future<void> callMpuPayment({
-    required String amount,
-    required String merchantID,
-    required String currencyCode,
-    required String userDefined1,
-    required String productDesc,
-    required String invoiceNo,
-    required String hashValue,
-  }) {
-    return movieDataAgent.callMpuPayment(
-      amount: amount,
-      merchantID: merchantID,
-      currencyCode: currencyCode,
-      userDefined1: userDefined1,
-      productDesc: productDesc,
-      invoiceNo: invoiceNo,
-      hashValue: hashValue,
-    );
+  Future<void> callMpuPayment(CallMpuRequest request) {
+    return movieDataAgent.callMpuPayment(request);
   }
 }

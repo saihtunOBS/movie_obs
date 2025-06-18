@@ -1325,27 +1325,12 @@ class _MovieApi implements MovieApi {
   }
 
   @override
-  Future<void> callMpuPayment(
-    String amount,
-    String merchantId,
-    String currencyCode,
-    String userDefine,
-    String productDesc,
-    String invoiceNo,
-    String hashValue,
-  ) async {
+  Future<void> callMpuPayment(CallMpuRequest request) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'amount': amount,
-      r'merchantID': merchantId,
-      r'currencyCode': currencyCode,
-      r'userDefined1': userDefine,
-      r'productDesc': productDesc,
-      r'invoiceNo': invoiceNo,
-      r'hashValue': hashValue,
-    };
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
     final _options = _setStreamType<void>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(

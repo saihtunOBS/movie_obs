@@ -5,6 +5,7 @@ import 'package:movie_obs/data/vos/episode_vo.dart';
 import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/data/vos/user_vo.dart';
 import 'package:movie_obs/network/api_constants.dart';
+import 'package:movie_obs/network/requests/call_mpu_request.dart';
 import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/mpu_payment_request_.dart';
@@ -302,13 +303,5 @@ abstract class MovieApi {
   );
 
   @POST('https://www.mpuecomuat.com/UAT/Payment/Payment/pay')
-  Future<void> callMpuPayment(
-    @Query('amount') String amount,
-    @Query('merchantID') String merchantId,
-    @Query('currencyCode') String currencyCode,
-    @Query('userDefined1') String userDefine,
-    @Query('productDesc') String productDesc,
-    @Query('invoiceNo') String invoiceNo,
-    @Query('hashValue') String hashValue,
-  );
+  Future<void> callMpuPayment(@Body() CallMpuRequest request);
 }

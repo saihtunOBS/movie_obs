@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:movie_obs/data/vos/movie_vo.dart';
+import 'package:movie_obs/network/requests/call_mpu_request.dart';
 import 'package:movie_obs/network/requests/google_login_request.dart';
 import 'package:movie_obs/network/requests/history_request.dart';
 import 'package:movie_obs/network/requests/mpu_payment_request_.dart';
@@ -150,13 +151,5 @@ abstract class MovieDataAgents {
     MpuPaymentRequest request,
   );
 
-  Future<void> callMpuPayment({
-    required String amount,
-    required String merchantID,
-    required String currencyCode,
-    required String userDefined1,
-    required String productDesc,
-    required String invoiceNo,
-    required String hashValue,
-  });
+  Future<void> callMpuPayment(CallMpuRequest request);
 }

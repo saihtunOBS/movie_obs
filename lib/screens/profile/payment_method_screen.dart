@@ -84,76 +84,93 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
         ),
         body: Consumer<PaymentMethodBloc>(
           builder:
-              (context, bloc, child) => Padding(
-                padding: const EdgeInsets.all(16),
-                child: SingleChildScrollView(
-                  physics: ClampingScrollPhysics(),
-                  child: Column(
-                    spacing: kMarginMedium2,
-                    children: [
-                      merchantView(widget.packageData),
-                      paymentMethodView(context),
-                      Row(
-                        spacing: 10,
+              (context, bloc, child) => Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: SingleChildScrollView(
+                      physics: ClampingScrollPhysics(),
+                      child: Column(
+                        spacing: kMarginMedium2,
                         children: [
-                          SizedBox(
-                            width: 17,
-                            height: 17,
-                            child: CircleAvatar(
-                              backgroundColor: kGradientTwo,
-                              child: Icon(
-                                Icons.check,
-                                color: kWhiteColor,
-                                size: 12,
+                          merchantView(widget.packageData),
+                          paymentMethodView(context),
+                          Row(
+                            spacing: 10,
+                            children: [
+                              SizedBox(
+                                width: 17,
+                                height: 17,
+                                child: CircleAvatar(
+                                  backgroundColor: kGradientTwo,
+                                  child: Icon(
+                                    Icons.check,
+                                    color: kWhiteColor,
+                                    size: 12,
+                                  ),
+                                ),
                               ),
-                            ),
+                              Text(
+                                'By choosing, you agree to the  Terms & Conditions',
+                                style: TextStyle(color: kBlackColor),
+                              ),
+                            ],
                           ),
-                          Text(
-                            'By choosing, you agree to the  Terms & Conditions',
-                            style: TextStyle(color: kBlackColor),
-                          ),
-                        ],
-                      ),
-                      gradientButton(
-                        onPress: () {
-                          if (bloc.payment.isNotEmpty) {
-                            if (bloc.payment == 'Pay with AYA Pay') {
-                              if (bloc.digitalWalletPayment == 'aya_qr') {
-                                showCommonDialog(
-                                  context: context,
-                                  dialogWidget: _buildAlert(bloc),
-                                );
+                          gradientButton(
+                            onPress: () {
+                              if (bloc.payment.isNotEmpty) {
+                                if (bloc.payment == 'Pay with AYA Pay') {
+                                  if (bloc.digitalWalletPayment == 'aya_qr') {
+                                    showCommonDialog(
+                                      context: context,
+                                      dialogWidget: _buildAlert(bloc),
+                                    );
+                                  }
+                                } else if (bloc.payment == 'Pay with MPU') {
+                                  bloc.createMpuPayment(false, widget.plan);
+                                }
                               }
-                            }
-                          }
-                        },
-                        context: context,
-                        title: bloc.payment == '' ? 'PAYMENT' : bloc.payment,
-                        isGradient: bloc.payment != '',
-                      ),
+                            },
+                            context: context,
+                            title:
+                                bloc.payment == '' ? 'PAYMENT' : bloc.payment,
+                            isGradient: bloc.payment != '',
+                          ),
 
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        spacing: 5,
-                        children: [
-                          Text(
-                            'Powered by',
-                            style: TextStyle(color: kBlackColor),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            spacing: 5,
+                            children: [
+                              Text(
+                                'Powered by',
+                                style: TextStyle(color: kBlackColor),
+                              ),
+                              Text(
+                                'OBS',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: kGradientTwo,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            'OBS',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: kGradientTwo,
-                            ),
-                          ),
+                          20.vGap,
                         ],
                       ),
-                      20.vGap,
-                    ],
+                    ),
                   ),
-                ),
+                  //loading
+                  bloc.isLoading
+                      ? Center(
+                        child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: LoadingView(),
+                        ),
+                      )
+                      : SizedBox.shrink(),
+                ],
               ),
         ),
       ),
