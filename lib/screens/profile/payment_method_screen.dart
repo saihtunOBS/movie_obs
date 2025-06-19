@@ -95,7 +95,10 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                       child: Column(
                         spacing: kMarginMedium2,
                         children: [
+                          ///merchant view
                           merchantView(widget.packageData),
+
+                          ///payment method view
                           paymentMethodView(context),
                           Row(
                             spacing: 10,
@@ -118,6 +121,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                               ),
                             ],
                           ),
+
+                          //button
                           gradientButton(
                             onPress: () {
                               if (bloc.payment.isNotEmpty) {
