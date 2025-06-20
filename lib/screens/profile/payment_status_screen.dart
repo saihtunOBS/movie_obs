@@ -16,7 +16,7 @@ class PaymentStatusScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: kWhiteColor,
       body: SizedBox(
-        width: double.infinity,
+        width: MediaQuery.of(context).size.width,
         child: Column(
           children: [
             Stack(

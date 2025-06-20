@@ -20,6 +20,7 @@ import 'package:movie_obs/bloc/video_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/firebase_options.dart';
 import 'package:movie_obs/network/notification_service/notification_service.dart';
+import 'package:movie_obs/network/app_link_service.dart';
 import 'package:movie_obs/screens/auth/splash_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -35,6 +36,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final RouteObserver<PageRoute> routeObserver = CurrentRouteObserver();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AppLinkServices.init();
   if (Platform.isAndroid) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
