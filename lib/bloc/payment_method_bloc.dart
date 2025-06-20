@@ -96,7 +96,7 @@ class PaymentMethodBloc extends ChangeNotifier {
           );
 
           Future.delayed(Duration(milliseconds: 300), () {
-            launchMpuPayment(request);
+            launchPayment(request);
           });
         })
         .catchError((e) {
@@ -105,21 +105,52 @@ class PaymentMethodBloc extends ChangeNotifier {
         });
   }
 
-  // String generatePaymentUrl(CallMpuRequest request) {
-  //   final uri = Uri.https("www.mpuecomuat.com", "/UAT/Payment/Payment/pay", {
-  //     "amount": request.amount,
-  //     "merchantID": request.merchantID,
-  //     "currencyCode": request.currencyCode,
-  //     "userDefined1": request.userDefined1,
-  //     "productDesc": request.productDesc,
-  //     "invoiceNo": request.invoiceNo,
-  //     "hashValue": request.hashValue,
-  //   });
+  Future<void> createGlobalPayment(bool isGift, String plan) async {
+    _showLoading();
+    var request = MpuPaymentRequest(
+      userDataListener.value.id ?? '',
+      plan,
+      'cybersource',
+      false,
+      '',
+      '0988888888888',
+    );
+    _movieModel
+        .createMpuPayment(token, request)
+        .then((response) {
+          final url = Uri.parse(response.paymentUrl ?? '');
+          final amount = url.queryParameters['amount'];
+          final merchantID = url.queryParameters['merchantID'];
+          final currencyCode = url.queryParameters['currencyCode'];
+          final userDefined1 = url.queryParameters['userDefined1'];
+          final productDesc = url.queryParameters['productDesc'];
+          final invoiceNo = url.queryParameters['invoiceNo'];
+          final hashValue = url.queryParameters['hashValue'];
 
-  //   return uri.toString();
-  // }
+          print('url.fasdfasdf$url');
+          print('hellofadfasdfsd$merchantID');
 
-  Future<void> launchMpuPayment(CallMpuRequest request) async {
+          var request = CallMpuRequest(
+            amount: amount,
+            merchantID: merchantID,
+            currencyCode: currencyCode,
+            userDefined1: userDefined1,
+            productDesc: productDesc,
+            invoiceNo: invoiceNo,
+            hashValue: hashValue,
+          );
+
+          Future.delayed(Duration(milliseconds: 300), () {
+            launchPayment(request);
+          });
+        })
+        .catchError((e) {
+          _hideLoading();
+          ToastService.warningToast(e.toString());
+        });
+  }
+
+  Future<void> launchPayment(CallMpuRequest request) async {
     _hideLoading();
     var formRequest = <String, String>{
       "amount": request.amount ?? '',

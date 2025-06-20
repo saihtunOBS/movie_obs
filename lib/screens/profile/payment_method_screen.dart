@@ -133,11 +133,13 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                                       dialogWidget: _buildAlert(bloc),
                                     );
                                   }
-                                } else if (bloc.payment == 'Pay with MPU') {
+                                } else if (bloc.method == 'local') {
                                   bloc.createMpuPayment(
                                     widget.isGift ?? false,
                                     widget.plan,
                                   );
+                                } else if (bloc.method == 'global') {
+                                  bloc.createGlobalPayment(false, widget.plan);
                                 }
                               }
                             },
@@ -312,32 +314,57 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                       bloc.onSelectPaymentMethod('global');
                       bloc.selectedPayment('Pay with Global Card');
                     },
-                    child:
-                        bloc.method == 'global'
-                            ? globalCardView()
-                            : Card(
-                              color: kWhiteColor,
-                              child: Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Global Card',
-                                      style: TextStyle(color: kBlackColor),
-                                    ),
+                    child: Stack(
+                      children: [
+                        Card(
+                          elevation: bloc.method == 'global' ? 0.0 : 1.0,
+                          color: kWhiteColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
 
-                                    SizedBox(
-                                      height: 32,
-                                      width:
-                                          MediaQuery.of(context).size.width / 3,
-                                      child: Image.asset(kGlobalCardLogo),
-                                    ),
-                                  ],
+                            side: BorderSide(
+                              color:
+                                  bloc.method == 'global'
+                                      ? kGradientOne
+                                      : Colors.transparent,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Global Card',
+                                  style: TextStyle(color: kBlackColor),
+                                ),
+
+                                SizedBox(
+                                  height: 32,
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Image.asset(kGlobalCardLogo),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        bloc.method == 'global'
+                            ? Positioned(
+                              right: 0,
+                              top: 0,
+                              child: Container(
+                                color: kWhiteColor,
+                                child: Icon(
+                                  Icons.check_circle,
+                                  color: kGradientTwo,
+                                  size: 20,
                                 ),
                               ),
-                            ),
+                            )
+                            : SizedBox.shrink(),
+                      ],
+                    ),
                   ),
                 ],
               ),
