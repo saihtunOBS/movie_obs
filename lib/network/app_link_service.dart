@@ -15,11 +15,13 @@ class AppLinkServices {
     // Subscribe to all events (initial link and further)
     appLinks.uriLinkStream.listen((uri) {
       debugPrint('onAppLink: ${uri.pathSegments.first}');
-      if (uri.pathSegments.first == 'success') {
+      if (uri.path == '/payment') {
+        final status = uri.queryParameters['status'];
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
           navigatorKey.currentState?.pushAndRemoveUntil(
             CupertinoPageRoute(
-              builder: (_) => PaymentStatusScreen(status: 'success'),
+              builder: (_) => PaymentStatusScreen(status: status ?? 'success'),
               settings: RouteSettings(name: "PaymentStatusScreen"),
             ),
             (route) => false,

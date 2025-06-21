@@ -4,7 +4,6 @@ import 'package:movie_obs/bloc/ads_bloc.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
-import 'package:movie_obs/network/notification_service/local_notification_service.dart';
 import 'package:movie_obs/screens/auth/auth_screen.dart';
 import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
@@ -29,7 +28,6 @@ class _AdsScreenState extends State<AdsScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NotificationService(context).requestPermission();
-      LocalNotificationService().initialize();
     });
 
     super.initState();
