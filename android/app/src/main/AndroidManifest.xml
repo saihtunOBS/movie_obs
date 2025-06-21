@@ -39,17 +39,8 @@
 
             <data
                 android:scheme="https"
-                android:host="admin-uat-b.toototv.com" />
-            </intent-filter>
-
-            <intent-filter android:autoVerify="true">
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-
-            <data
-                android:scheme="https"
-                android:host="movie-b.origin.com.mm" />
+                android:host="toototv.com"
+                android:pathPrefix="/payment" />
             </intent-filter>
 
             

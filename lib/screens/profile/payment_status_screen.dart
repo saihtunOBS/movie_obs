@@ -21,6 +21,7 @@ class PaymentStatusScreen extends StatelessWidget {
           children: [
             Stack(
               clipBehavior: Clip.none,
+              fit: StackFit.expand,
               children: [
                 Image.asset(kPaymentBarLogo, fit: BoxFit.cover),
                 Positioned(

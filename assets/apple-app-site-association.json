@@ -1,0 +1,25 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": [
+          "989ABWRM5F.com.tooto.movieObs"
+        ],
+        "paths": [
+          "/payment"
+        ],
+        "components": [
+          {
+            "/": "/*"
+          }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "989ABWRM5F.com.tooto.movieObs"
+    ]
+  }
+}
