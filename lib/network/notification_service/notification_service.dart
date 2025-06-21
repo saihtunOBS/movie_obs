@@ -54,7 +54,7 @@ class NotificationService {
         userBloc.updateToken();
         userBloc.getUser(context: context);
 
-        if (PersistenceData.shared.getToken() == null) return;
+        if (PersistenceData.shared.getToken() == '') return;
         if (message.notification?.body == 'Payment successful' ||
             message.notification?.body == 'Payment unsuccessful') {
           if (CurrentRouteObserver.currentRoute != 'PaymentStatusScreen') {

@@ -7,9 +7,20 @@ import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/gradient_button.dart';
 
-class PaymentStatusScreen extends StatelessWidget {
+class PaymentStatusScreen extends StatefulWidget {
   const PaymentStatusScreen({super.key, required this.status});
   final String status;
+
+  @override
+  State<PaymentStatusScreen> createState() => _PaymentStatusScreenState();
+}
+
+class _PaymentStatusScreenState extends State<PaymentStatusScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +32,6 @@ class PaymentStatusScreen extends StatelessWidget {
           children: [
             Stack(
               clipBehavior: Clip.none,
-              fit: StackFit.expand,
               children: [
                 Image.asset(kPaymentBarLogo, fit: BoxFit.cover),
                 Positioned(
@@ -36,7 +46,7 @@ class PaymentStatusScreen extends StatelessWidget {
                         width: 198,
                         height: 198,
                         child: Image.asset(
-                          status == 'success'
+                          widget.status == 'success'
                               ? kPaymentSuccessLogo
                               : kPaymentFailLogo,
                           fit: BoxFit.cover,
@@ -44,7 +54,7 @@ class PaymentStatusScreen extends StatelessWidget {
                       ),
                       10.vGap,
                       Text(
-                        status == 'success'
+                        widget.status == 'success'
                             ? 'Payment Successful!'
                             : 'Payment Fail!',
                         style: TextStyle(
@@ -54,16 +64,19 @@ class PaymentStatusScreen extends StatelessWidget {
                         ),
                       ),
                       10.vGap,
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: kMarginMedium2,
-                        ),
-                        child: Text(
-                          status == 'success'
-                              ? 'Thank you for processing your most recent payment.'
-                              : 'Sorry, your payment was not successful proceed. Please try again.',
-                          style: TextStyle(color: kBlackColor),
-                          textAlign: TextAlign.center,
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: kMarginMedium2,
+                          ),
+                          child: Text(
+                            widget.status == 'success'
+                                ? 'Thank you for processing your most recent payment.'
+                                : 'Sorry, your payment was not successful proceed. Please try again.',
+                            style: TextStyle(color: kBlackColor),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     ],
@@ -72,10 +85,10 @@ class PaymentStatusScreen extends StatelessWidget {
               ],
             ),
             Spacer(),
-            bottomView(context),
           ],
         ),
       ),
+      bottomNavigationBar: bottomView(context),
     );
   }
 
@@ -87,9 +100,10 @@ class PaymentStatusScreen extends StatelessWidget {
       ),
       child: Column(
         spacing: 10,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Visibility(
-            visible: status == 'fail',
+            visible: widget.status == 'fail',
             child: gradientButton(
               onPress: () {
                 initialIndex = 3;

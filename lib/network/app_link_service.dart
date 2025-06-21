@@ -21,7 +21,7 @@ class AppLinkServices {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           navigatorKey.currentState?.pushAndRemoveUntil(
             CupertinoPageRoute(
-              builder: (_) => PaymentStatusScreen(status: status ?? 'success'),
+              builder: (_) => PaymentStatusScreen(status: status ?? 'fail'),
               settings: RouteSettings(name: "PaymentStatusScreen"),
             ),
             (route) => false,
