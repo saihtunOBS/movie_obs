@@ -56,9 +56,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       },
                       child: ListView.builder(
                         itemCount: bloc.notiLists.length,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: kMarginMedium2,
-                          vertical: kMarginMedium,
+                        padding: EdgeInsets.only(
+                          left: kMarginMedium2,
+                          right: kMarginMedium2,
+                          bottom: 20,
                         ),
                         itemBuilder: (context, index) {
                           return GestureDetector(
