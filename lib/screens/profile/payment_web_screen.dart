@@ -4,29 +4,38 @@ import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class MpuPaymentScreen extends StatefulWidget {
+class PaymentWebScreen extends StatefulWidget {
   final String paymentUrl; // URL that shows the payment UI
   final Map<String, String>? postData; // Optional POST parameters
 
-  const MpuPaymentScreen({super.key, required this.paymentUrl, this.postData});
+  const PaymentWebScreen({super.key, required this.paymentUrl, this.postData});
 
   @override
-  State<MpuPaymentScreen> createState() => _MpuPaymentScreenState();
+  State<PaymentWebScreen> createState() => _PaymentWebScreenState();
 }
 
-class _MpuPaymentScreenState extends State<MpuPaymentScreen> {
+class _PaymentWebScreenState extends State<PaymentWebScreen> {
   late final WebViewController _controller;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+
     _controller =
         WebViewController()
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..setBackgroundColor(kWhiteColor)
           ..setNavigationDelegate(
             NavigationDelegate(
+              onHttpError: (error) {
+                setState(() => _isLoading = false);
+                Center(child: Text(error.toString()));
+              },
+              onWebResourceError: (error) {
+                setState(() => _isLoading = false);
+                Center(child: Text(error.toString()));
+              },
               onPageStarted: (_) {
                 setState(() => _isLoading = true);
               },
@@ -36,7 +45,9 @@ class _MpuPaymentScreenState extends State<MpuPaymentScreen> {
 
               onNavigationRequest: (request) {
                 final url = request.url.toLowerCase();
-                if (url.contains("loadingmerchant")) {
+
+                if (url.contains("loadingmerchant") ||
+                    url.contains('canceled')) {
                   Navigator.pop(context, 'cancel');
                   return NavigationDecision.prevent;
                 }

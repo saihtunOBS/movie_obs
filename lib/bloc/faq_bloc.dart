@@ -19,21 +19,24 @@ class FaqBloc extends ChangeNotifier {
 
   getFaqs() {
     _showLoading();
-    _movieModel
-        .getFaqs()
-        .then((response) {
-          faqs = response.data ?? [];
-          notifyListeners();
-        })
-        .whenComplete(() {
-          _hideLoading();
-        });
+    Future.delayed(Duration(seconds: 1), () {
+      _movieModel
+          .getFaqs()
+          .then((response) {
+            faqs = response.data ?? [];
+            notifyListeners();
+          })
+          .whenComplete(() {
+            _hideLoading();
+          });
+    });
   }
 
   _showLoading() {
     isLoading = true;
     _notifySafely();
   }
+
   onTapExpansion() {
     notifyListeners();
   }

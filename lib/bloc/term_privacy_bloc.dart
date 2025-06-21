@@ -21,17 +21,22 @@ class TermPrivacyBloc extends ChangeNotifier {
 
   getTermAndConditions() {
     _showLoading();
-    _movieModel.getTremAndConditions(token).then((response) {
-      termPrivacyResponse = response;
-      _hideLoading();
+
+    Future.delayed(Duration(seconds: 1), () {
+      _movieModel.getTremAndConditions(token).then((response) {
+        termPrivacyResponse = response;
+        _hideLoading();
+      });
     });
   }
 
   getPrivacyPolicy() {
     _showLoading();
-    _movieModel.getPrivacyPolicy(token).then((response) {
-      privacyResponse = response;
-      _hideLoading();
+    Future.delayed(Duration(seconds: 1), () {
+      _movieModel.getPrivacyPolicy(token).then((response) {
+        privacyResponse = response;
+        _hideLoading();
+      });
     });
   }
 

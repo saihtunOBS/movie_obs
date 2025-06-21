@@ -28,8 +28,12 @@ class TermAndConditionScreen extends StatelessWidget {
                   bloc.isLoading
                       ? LoadingView()
                       : Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: kMarginMedium2,),
-                        child: HtmlWidget(bloc.termPrivacyResponse?.content ?? ''),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: kMarginMedium2,
+                        ),
+                        child: HtmlWidget(
+                          bloc.termPrivacyResponse?.content ?? '',
+                        ),
                       ),
         ),
       ),

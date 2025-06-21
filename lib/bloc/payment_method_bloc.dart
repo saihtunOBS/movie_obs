@@ -8,7 +8,7 @@ import 'package:movie_obs/network/requests/call_mpu_request.dart';
 import 'package:movie_obs/network/requests/mpu_payment_request_.dart';
 import 'package:movie_obs/network/requests/payment_request.dart';
 import 'package:movie_obs/network/responses/payment_response.dart';
-import 'package:movie_obs/screens/profile/mpu_payment_screen.dart';
+import 'package:movie_obs/screens/profile/payment_web_screen.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 
 class PaymentMethodBloc extends ChangeNotifier {
@@ -119,35 +119,41 @@ class PaymentMethodBloc extends ChangeNotifier {
         .createMpuPayment(token, request)
         .then((response) {
           final url = Uri.parse(response.paymentUrl ?? '');
-          final amount = url.queryParameters['amount'];
-          final merchantID = url.queryParameters['merchantID'];
-          final currencyCode = url.queryParameters['currencyCode'];
-          final userDefined1 = url.queryParameters['userDefined1'];
-          final productDesc = url.queryParameters['productDesc'];
-          final invoiceNo = url.queryParameters['invoiceNo'];
-          final hashValue = url.queryParameters['hashValue'];
 
-          print('url.fasdfasdf$url');
-          print('hellofadfasdfsd$merchantID');
-
-          var request = CallMpuRequest(
-            amount: amount,
-            merchantID: merchantID,
-            currencyCode: currencyCode,
-            userDefined1: userDefined1,
-            productDesc: productDesc,
-            invoiceNo: invoiceNo,
-            hashValue: hashValue,
-          );
+          var formRequest = <String, String>{
+            "access_key": url.queryParameters['access_key'] ?? '',
+            "profile_id": url.queryParameters['profile_id'] ?? '',
+            "transaction_uuid": url.queryParameters['transaction_uuid'] ?? '',
+            "signed_date_time": url.queryParameters['signed_date_time'] ?? '',
+            "signed_field_names":
+                url.queryParameters['signed_field_names'] ?? '',
+            "locale": url.queryParameters['locale'] ?? '',
+            "transaction_type": url.queryParameters['transaction_type'] ?? '',
+            "reference_number": url.queryParameters['reference_number'] ?? '',
+            "amount": url.queryParameters['amount'] ?? '',
+            "currency": url.queryParameters['currency'] ?? '',
+            "signature": url.queryParameters['signature'] ?? '',
+          };
 
           Future.delayed(Duration(milliseconds: 300), () {
-            launchPayment(request);
+            launchGlobalPayment(formRequest);
           });
         })
         .catchError((e) {
           _hideLoading();
           ToastService.warningToast(e.toString());
         });
+  }
+
+  Future<void> launchGlobalPayment(dynamic formRequest) async {
+    _hideLoading();
+
+    await PageNavigator(ctx: myContext).nextPage(
+      page: PaymentWebScreen(
+        paymentUrl: 'https://testsecureacceptance.cybersource.com/pay',
+        postData: formRequest,
+      ),
+    );
   }
 
   Future<void> launchPayment(CallMpuRequest request) async {
@@ -162,7 +168,7 @@ class PaymentMethodBloc extends ChangeNotifier {
       "hashValue": request.hashValue ?? '',
     };
     await PageNavigator(ctx: myContext).nextPage(
-      page: MpuPaymentScreen(
+      page: PaymentWebScreen(
         paymentUrl: 'https://www.mpuecomuat.com/UAT/Payment/Payment/pay',
         postData: formRequest,
       ),
