@@ -1,5 +1,6 @@
 import 'package:app_links/app_links.dart' show AppLinks;
 import 'package:flutter/cupertino.dart';
+import 'package:movie_obs/data/persistence/persistence_data.dart';
 import 'package:movie_obs/main.dart';
 import 'package:movie_obs/screens/profile/payment_status_screen.dart';
 
@@ -17,7 +18,7 @@ class AppLinkServices {
       debugPrint('onAppLink: ${uri.pathSegments.first}');
       if (uri.path == '/payment') {
         final status = uri.queryParameters['status'];
-
+        if (PersistenceData.shared.getToken() == '') return;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           navigatorKey.currentState?.pushAndRemoveUntil(
             CupertinoPageRoute(
