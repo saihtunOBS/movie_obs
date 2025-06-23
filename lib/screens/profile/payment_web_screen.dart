@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/l10n/app_localizations.dart';
+import 'package:movie_obs/screens/profile/payment_status_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -57,12 +59,15 @@ class _PaymentWebScreenState extends State<PaymentWebScreen> {
                 final url = request.url.toLowerCase();
 
                 if (url.contains("loadingmerchant") ||
-                    url.contains('canceled')) {
+                    url.contains('canceled') ||
+                    url.contains(('sessionexpired'))) {
                   Navigator.pop(context, 'cancel');
                   return NavigationDecision.prevent;
                 }
                 if (url.contains("success")) {
-                  Navigator.pop(context, 'success');
+                  PageNavigator(
+                    ctx: context,
+                  ).nextPageOnly(page: PaymentStatusScreen(status: 'success'));
                 } else if (url.contains("fail")) {
                   Navigator.pop(context, 'fail');
                 }
