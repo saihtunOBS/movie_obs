@@ -58,6 +58,8 @@ class _PaymentWebScreenState extends State<PaymentWebScreen> {
               onNavigationRequest: (request) {
                 final url = request.url.toLowerCase();
 
+                print('your payment is......$url');
+
                 if (url.contains("loadingmerchant") ||
                     url.contains('canceled') ||
                     url.contains(('sessionexpired'))) {

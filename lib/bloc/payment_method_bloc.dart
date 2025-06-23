@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/data/model/movie_model.dart';
 import 'package:movie_obs/data/model/movie_model_impl.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
-import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/network/requests/call_mpu_request.dart';
 import 'package:movie_obs/network/requests/mpu_payment_request_.dart';
 import 'package:movie_obs/network/requests/payment_request.dart';
@@ -152,11 +151,17 @@ class PaymentMethodBloc extends ChangeNotifier {
   Future<void> launchGlobalPayment(dynamic formRequest) async {
     _hideLoading();
 
-    await PageNavigator(ctx: myContext).nextPage(
-      page: PaymentWebScreen(
-        paymentUrl: 'https://testsecureacceptance.cybersource.com/pay',
-        postData: formRequest,
-      ),
+    showDialog(
+      context: myContext!,
+      useSafeArea: true,
+
+      barrierColor: Colors.transparent,
+      builder: (context) {
+        return PaymentWebScreen(
+          paymentUrl: 'https://testsecureacceptance.cybersource.com/pay',
+          postData: formRequest,
+        );
+      },
     );
   }
 
@@ -171,11 +176,18 @@ class PaymentMethodBloc extends ChangeNotifier {
       "invoiceNo": request.invoiceNo ?? '',
       "hashValue": request.hashValue ?? '',
     };
-    await PageNavigator(ctx: myContext).nextPage(
-      page: PaymentWebScreen(
-        paymentUrl: 'https://www.mpuecomuat.com/UAT/Payment/Payment/pay',
-        postData: formRequest,
-      ),
+
+    showDialog(
+      context: myContext!,
+      useSafeArea: true,
+
+      barrierColor: Colors.transparent,
+      builder: (context) {
+        return PaymentWebScreen(
+          paymentUrl: 'https://www.mpuecomuat.com/UAT/Payment/Payment/pay',
+          postData: formRequest,
+        );
+      },
     );
   }
 
