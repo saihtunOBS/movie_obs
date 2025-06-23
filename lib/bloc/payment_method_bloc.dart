@@ -39,6 +39,10 @@ class PaymentMethodBloc extends ChangeNotifier {
     notifyListeners();
   }
 
+  void show() {
+    _showLoading();
+  }
+
   selectedInAppOrQr(String type) {
     digitalWalletPayment = type;
     notifyListeners();

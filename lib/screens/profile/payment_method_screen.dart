@@ -176,9 +176,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   bloc.isLoading
                       ? Center(
                         child: SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: LoadingView(),
+                          width: 100,
+                          height: 100,
+                          child: LoadingView(radius: 10),
                         ),
                       )
                       : SizedBox.shrink(),

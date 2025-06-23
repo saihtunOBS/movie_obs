@@ -30,11 +30,21 @@ class _PaymentWebScreenState extends State<PaymentWebScreen> {
             NavigationDelegate(
               onHttpError: (error) {
                 setState(() => _isLoading = false);
-                Center(child: Text(error.toString()));
+                Center(
+                  child: Text(
+                    error.toString(),
+                    style: TextStyle(color: kBlackColor),
+                  ),
+                );
               },
               onWebResourceError: (error) {
                 setState(() => _isLoading = false);
-                Center(child: Text(error.toString()));
+                Center(
+                  child: Text(
+                    error.toString(),
+                    style: TextStyle(color: kBlackColor),
+                  ),
+                );
               },
               onPageStarted: (_) {
                 setState(() => _isLoading = true);
