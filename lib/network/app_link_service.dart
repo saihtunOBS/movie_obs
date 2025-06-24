@@ -18,7 +18,7 @@ class AppLinkServices {
       debugPrint('onAppLink: ${uri.pathSegments.first}');
       if (uri.path == '/payment') {
         final status = uri.queryParameters['status']?.toLowerCase();
-        if (PersistenceData.shared.getToken() == '' || status == 'CANCELED') {
+        if (PersistenceData.shared.getToken() == '') {
           return;
         }
 
