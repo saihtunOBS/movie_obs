@@ -51,15 +51,36 @@ class _PaymentWebScreenState extends State<PaymentWebScreen> {
               onPageStarted: (_) {
                 setState(() => _isLoading = true);
               },
-              onPageFinished: (_) {
+              onPageFinished: (String url) async {
                 setState(() => _isLoading = false);
+
+                try {
+                  final result = await _controller.runJavaScriptReturningResult(
+                    """
+      document.body.innerText
+    """,
+                  );
+
+                  final pageText = result.toString().toLowerCase();
+                  print("WebView body text: $pageText");
+
+                  if (pageText.contains('reject')) {
+                    PageNavigator(
+                      ctx: context,
+                    ).nextPageOnly(page: PaymentStatusScreen(status: 'fail'));
+                  } else if (pageText.contains('success') ||
+                      pageText.contains('approved')) {
+                    PageNavigator(ctx: context).nextPageOnly(
+                      page: PaymentStatusScreen(status: 'success'),
+                    );
+                  }
+                } catch (e) {
+                  print("Error extracting WebView text: $e");
+                }
               },
 
               onNavigationRequest: (request) {
                 final url = request.url.toLowerCase();
-
-                print('your payment is......$url');
-
                 if (url.contains("loadingmerchant") ||
                     url.contains('canceled') ||
                     url.contains(('sessionexpired'))) {

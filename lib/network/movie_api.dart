@@ -40,7 +40,7 @@ import 'package:retrofit/http.dart';
 
 part 'movie_api.g.dart';
 
-@RestApi(baseUrl: kBaseUrl)
+@RestApi(baseUrl: kUatUrl)
 abstract class MovieApi {
   factory MovieApi(Dio dio) = _MovieApi;
 

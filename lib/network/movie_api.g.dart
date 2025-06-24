@@ -10,7 +10,7 @@ part of 'movie_api.dart';
 
 class _MovieApi implements MovieApi {
   _MovieApi(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'https://movie-b.origin.com.mm/api';
+    baseUrl ??= 'https://admin-uat-b.toototv.com/api';
   }
 
   final Dio _dio;
