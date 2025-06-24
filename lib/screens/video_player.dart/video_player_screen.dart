@@ -131,7 +131,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     if (_connectionStatus.first == ConnectivityResult.none) {
       videoPlayerController?.pause();
       chewieControllerNotifier?.pause();
-      ToastService.warningToast('Connection lost!');
     }
   }
 
@@ -258,7 +257,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       builder: (context, value, child) {
         return Scaffold(
           appBar: AppBar(
-            toolbarHeight: bloc.isFullScreen ? 50 : 60,
+            toolbarHeight: 60,
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
             title:
@@ -740,7 +739,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         child: SliderTheme(
           data: SliderTheme.of(context).copyWith(
             allowedInteraction: SliderInteraction.slideThumb,
-            // trackHeight: bloc.isFullScreen ? 2.0 : 3.0,
+            trackHeight: 3.0,
             inactiveTrackColor: Colors.white.withValues(alpha: 0.5),
             activeTrackColor: kPrimaryColor,
             padding: EdgeInsets.zero,
