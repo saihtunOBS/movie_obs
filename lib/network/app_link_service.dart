@@ -17,8 +17,11 @@ class AppLinkServices {
     appLinks.uriLinkStream.listen((uri) {
       debugPrint('onAppLink: ${uri.pathSegments.first}');
       if (uri.path == '/payment') {
-        final status = uri.queryParameters['status'];
-        if (PersistenceData.shared.getToken() == '') return;
+        final status = uri.queryParameters['status']?.toLowerCase();
+        if (PersistenceData.shared.getToken() == '' || status == 'CANCELED') {
+          return;
+        }
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
           navigatorKey.currentState?.pushAndRemoveUntil(
             CupertinoPageRoute(
