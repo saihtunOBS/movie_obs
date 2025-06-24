@@ -4,6 +4,7 @@ import 'package:movie_obs/l10n/app_localizations.dart';
 import 'package:movie_obs/screens/profile/payment_status_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
+import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PaymentWebScreen extends StatefulWidget {
@@ -62,25 +63,25 @@ class _PaymentWebScreenState extends State<PaymentWebScreen> {
                   );
 
                   final pageText = result.toString().toLowerCase();
-                  print("WebView body text: $pageText");
 
                   if (pageText.contains('reject')) {
                     PageNavigator(
                       ctx: context,
                     ).nextPageOnly(page: PaymentStatusScreen(status: 'fail'));
                   } else if (pageText.contains('success') ||
-                      pageText.contains('approved')) {
+                      pageText.contains('approve')) {
                     PageNavigator(ctx: context).nextPageOnly(
                       page: PaymentStatusScreen(status: 'success'),
                     );
                   }
                 } catch (e) {
-                  print("Error extracting WebView text: $e");
+                  ToastService.warningToast(e.toString());
                 }
               },
 
               onNavigationRequest: (request) {
                 final url = request.url.toLowerCase();
+
                 if (url.contains("loadingmerchant") ||
                     url.contains('canceled') ||
                     url.contains(('sessionexpired'))) {
