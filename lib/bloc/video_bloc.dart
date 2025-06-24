@@ -190,6 +190,7 @@ class VideoBloc extends ChangeNotifier {
           return const LoadingView();
         },
       );
+      playerStatus.value = 1;
       fetchQualityOptions();
     });
 

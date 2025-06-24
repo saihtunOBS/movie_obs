@@ -290,34 +290,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     );
   }
 
-  void _onVerticalDragEnd(DragEndDetails details) {
-    startDragOffset = null;
-  }
-
-  Offset? startDragOffset;
+  double lastVolume = 0.5;
 
   void _onVerticalDragStart(DragStartDetails details) {
-    startDragOffset = details.localPosition;
-  }
+    volumeController?.showSystemUI = true;
 
-  void _onVerticalDragUpdate(
-    DragUpdateDetails details,
-    String side,
-    double height,
-  ) {
-    if (startDragOffset == null) return;
-
-    final dy = details.globalPosition.dy;
-
-    final deltaY = dy - details.globalPosition.dy;
-    final newValue = (deviceVolume + deltaY / 300).clamp(0.0, 1.0);
-
-    if (side == 'left') {
-      setState(() {
-        deviceVolume = newValue;
-        volumeController?.setVolume(deviceVolume);
-      });
-    }
+    // Toggle volume slightly to trigger system UI
+    double newVolume = lastVolume == 0.5 ? 0.51 : 0.5;
+    volumeController?.setVolume(newVolume);
+    lastVolume = newVolume;
   }
 
   Widget _buildVideoPlayerSection() {
@@ -325,13 +306,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       builder:
           (context, bloc, child) => LayoutBuilder(
             builder: (context, constraints) {
-              double screenHeight = constraints.maxHeight;
-              final screenWidth = constraints.maxWidth;
-              final leftZone = screenWidth * 0.3;
               return Container(
                 color: Colors.transparent,
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
+                  onVerticalDragStart: _onVerticalDragStart,
                   onTap: () {
                     if (_connectionStatus.first == ConnectivityResult.none) {
                       ToastService.warningToast('Please check your connection');
@@ -341,22 +320,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                   child: Stack(
                     children: [
                       _buildVideoPlayer(),
-                      Positioned(
-                        left: 0,
-                        width: leftZone,
-                        height: screenHeight,
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onVerticalDragStart: _onVerticalDragStart,
-                          onVerticalDragUpdate:
-                              (details) => _onVerticalDragUpdate(
-                                details,
-                                'left',
-                                screenHeight,
-                              ),
-                          onVerticalDragEnd: _onVerticalDragEnd,
-                        ),
-                      ),
                       bloc.isLoading == true ||
                               !(videoPlayerController?.value.isInitialized ??
                                   true) ||
