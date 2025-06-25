@@ -107,7 +107,7 @@ class _GiftCartScreenState extends State<GiftCartScreen> {
                           reload: () {
                             bloc.getGift();
                           },
-                          title: 'There is no Gift to show.',
+                          title: AppLocalizations.of(context)?.noGift ?? '',
                         ),
               ),
         ),

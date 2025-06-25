@@ -523,6 +523,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'There is no notification right now..'**
   String get noNotification;
+
+  /// No description provided for @noGift.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no gift right now.'**
+  String get noGift;
+
+  /// No description provided for @noPromotion.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no promotion right now.'**
+  String get noPromotion;
 }
 
 class _AppLocalizationsDelegate

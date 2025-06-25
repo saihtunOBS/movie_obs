@@ -6,6 +6,7 @@ import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/promotion_list_items.dart';
 import 'package:movie_obs/screens/profile/payment_method_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
+import 'package:movie_obs/widgets/empty_view.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:provider/provider.dart';
@@ -189,39 +190,46 @@ class _PromotionScreenState extends State<PromotionScreen> {
   }
 
   Widget _buildListView(BuildContext context, PackageBloc bloc) {
-    return ListView.builder(
-      physics: ClampingScrollPhysics(),
-      padding: EdgeInsets.only(
-        top: 0,
-        left:
-            getDeviceType() == 'phone'
-                ? kMarginMedium2
-                : MediaQuery.of(context).size.width * 0.15,
-        right:
-            getDeviceType() == 'phone'
-                ? kMarginMedium2
-                : MediaQuery.of(context).size.width * 0.15,
-        bottom: kMarginMedium2,
-      ),
-      itemCount: bloc.packages?.length,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            bloc.choosePackage(
-              bloc.packages?[index].id ?? '',
-              bloc.packages?[index] ?? PackageVO(),
+    return bloc.packages?.isNotEmpty ?? true
+        ? ListView.builder(
+          physics: ClampingScrollPhysics(),
+          padding: EdgeInsets.only(
+            top: 0,
+            left:
+                getDeviceType() == 'phone'
+                    ? kMarginMedium2
+                    : MediaQuery.of(context).size.width * 0.15,
+            right:
+                getDeviceType() == 'phone'
+                    ? kMarginMedium2
+                    : MediaQuery.of(context).size.width * 0.15,
+            bottom: kMarginMedium2,
+          ),
+          itemCount: bloc.packages?.length,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () {
+                bloc.choosePackage(
+                  bloc.packages?[index].id ?? '',
+                  bloc.packages?[index] ?? PackageVO(),
+                );
+              },
+              child: promotionListItem(
+                false,
+                context,
+                bloc.packages?[index] ?? PackageVO(),
+                bloc.packageId == bloc.packages?[index].id,
+                bloc.packages?[index].promotion == null ? 13 : 30,
+              ),
             );
           },
-          child: promotionListItem(
-            false,
-            context,
-            bloc.packages?[index] ?? PackageVO(),
-            bloc.packageId == bloc.packages?[index].id,
-            bloc.packages?[index].promotion == null ? 13 : 30,
-          ),
+        )
+        : EmptyView(
+          reload: () {
+            bloc.getPackage();
+          },
+          title: AppLocalizations.of(context)?.noPromotion ?? '',
         );
-      },
-    );
   }
 
   shareGift(dynamic data) {

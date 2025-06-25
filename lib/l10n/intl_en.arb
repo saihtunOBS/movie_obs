@@ -70,5 +70,7 @@
   "logout": "Logout",
   "logoutQuestion": "Are you sure to logout?",
   "notification": "Notifications",
-  "noNotification": "There is no notification right now.."
+  "noNotification": "There is no notification right now..",
+  "noGift": "There is no gift right now.",
+  "noPromotion": "There is no promotion right now."
 }

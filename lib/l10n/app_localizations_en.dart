@@ -226,4 +226,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noNotification => 'There is no notification right now..';
+
+  @override
+  String get noGift => 'There is no gift right now.';
+
+  @override
+  String get noPromotion => 'There is no promotion right now.';
 }

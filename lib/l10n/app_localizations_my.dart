@@ -224,4 +224,10 @@ class AppLocalizationsMy extends AppLocalizations {
 
   @override
   String get noNotification => 'ယခု အသိပေးချက်မရှိပါ..';
+
+  @override
+  String get noGift => 'ယခု လက်ဆောင်ကဒ်မရှိပါ..';
+
+  @override
+  String get noPromotion => 'ယခု ပရိုမိုးရှင်းမရှိပါ..';
 }
