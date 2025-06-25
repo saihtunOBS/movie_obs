@@ -129,6 +129,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       _connectionStatus = result;
     });
     if (_connectionStatus.first == ConnectivityResult.none) {
+      playerStatus.value = 1;
       videoPlayerController?.pause();
       chewieControllerNotifier?.pause();
     }
