@@ -25,6 +25,7 @@ import 'package:movie_obs/screens/auth/splash_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/route_observer.dart';
+import 'package:no_screenshot/no_screenshot.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -73,9 +74,17 @@ class MovieOBS extends StatefulWidget {
 }
 
 class _MovieOBSState extends State<MovieOBS> {
+  final _noScreenshot = NoScreenshot.instance;
+
   @override
   void initState() {
     super.initState();
+    disableScreenshot();
+  }
+
+  void disableScreenshot() async {
+    bool result = await _noScreenshot.screenshotOff();
+    debugPrint('Screenshot Off: $result');
   }
 
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
