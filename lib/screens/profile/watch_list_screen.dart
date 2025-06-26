@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/watchlist_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
+import 'package:movie_obs/network/responses/movie_detail_response.dart';
+import 'package:movie_obs/screens/series/season_episode_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/movie_filter_sheet.dart';
@@ -199,16 +201,42 @@ class _WatchListScreenState extends State<WatchListScreen> {
                               itemBuilder: (context, index) {
                                 return GestureDetector(
                                   onTap: () {
-                                    bloc.watchLists[index].type == 'MOVIE'
-                                        ? PageNavigator(ctx: context).nextPage(
-                                          page: MovieDetailScreen(
-                                            movie:
+                                    if (bloc.watchLists[index].type ==
+                                        'MOVIE') {
+                                      PageNavigator(ctx: context).nextPage(
+                                        page: MovieDetailScreen(
+                                          movie:
+                                              bloc.watchLists[index].reference,
+                                        ),
+                                      );
+                                    } else {
+                                      if (bloc
+                                              .watchLists[index]
+                                              .reference
+                                              ?.seasons
+                                              ?.length ==
+                                          1) {
+                                        PageNavigator(ctx: context).nextPage(
+                                          page: SeasonEpisodeScreen(
+                                            seriesResponse:
+                                                bloc.watchLists[index].reference
+                                                    ?.toDetail() ??
+                                                MovieDetailResponse(),
+                                            seriesId:
                                                 bloc
                                                     .watchLists[index]
-                                                    .reference,
+                                                    .reference
+                                                    ?.id,
+                                            season:
+                                                bloc
+                                                    .watchLists[index]
+                                                    .reference
+                                                    ?.seasons
+                                                    ?.first,
                                           ),
-                                        )
-                                        : PageNavigator(ctx: context).nextPage(
+                                        );
+                                      } else {
+                                        PageNavigator(ctx: context).nextPage(
                                           page: SeriesDetailScreen(
                                             series:
                                                 bloc
@@ -216,6 +244,8 @@ class _WatchListScreenState extends State<WatchListScreen> {
                                                     .reference,
                                           ),
                                         );
+                                      }
+                                    }
                                   },
                                   child: movieListItem(
                                     movies: bloc.watchLists[index].reference,
@@ -275,21 +305,47 @@ class _WatchListScreenState extends State<WatchListScreen> {
                                         width: double.infinity,
                                         child: GestureDetector(
                                           onTap: () {
-                                            value.type == 'MOVIE'
-                                                ? PageNavigator(
+                                            if (value.type == 'MOVIE') {
+                                              PageNavigator(
+                                                ctx: context,
+                                              ).nextPage(
+                                                page: MovieDetailScreen(
+                                                  movie: value.reference,
+                                                ),
+                                              );
+                                            } else {
+                                              if (value
+                                                      .reference
+                                                      ?.seasons
+                                                      ?.length ==
+                                                  1) {
+                                                PageNavigator(
                                                   ctx: context,
                                                 ).nextPage(
-                                                  page: MovieDetailScreen(
-                                                    movie: value.reference,
+                                                  page: SeasonEpisodeScreen(
+                                                    seriesResponse:
+                                                        value.reference
+                                                            ?.toDetail() ??
+                                                        MovieDetailResponse(),
+                                                    seriesId:
+                                                        value.reference?.id,
+                                                    season:
+                                                        value
+                                                            .reference
+                                                            ?.seasons
+                                                            ?.first,
                                                   ),
-                                                )
-                                                : PageNavigator(
+                                                );
+                                              } else {
+                                                PageNavigator(
                                                   ctx: context,
                                                 ).nextPage(
                                                   page: SeriesDetailScreen(
                                                     series: value.reference,
                                                   ),
                                                 );
+                                              }
+                                            }
                                           },
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(

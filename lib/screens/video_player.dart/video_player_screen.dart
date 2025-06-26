@@ -683,7 +683,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             bloc.formatDuration(value.position),
             style: const TextStyle(
               color: Colors.white,
-              // fontSize: 12,
               fontWeight: FontWeight.bold,
             ),
           ),

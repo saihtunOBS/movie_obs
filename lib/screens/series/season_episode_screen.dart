@@ -314,24 +314,32 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
                       ),
                     )
                     .whenComplete(() {
-                      setState(() {
-                        context
-                            .read<HomeBloc>()
-                            .updateViewCount(
-                              'Episode',
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        setState(() {
+                          context
+                              .read<HomeBloc>()
+                              .updateViewCount(
+                                'Episode',
+                                bloc
+                                        .seasonEpisodeResponse
+                                        ?.episodes?[index]
+                                        .id ??
+                                    '',
+                              )
+                              .then((_) {
+                                WidgetsBinding.instance.addPostFrameCallback((
+                                  _,
+                                ) {
+                                  bloc.getSeasonEpisode();
+                                });
+                              });
+                        });
+                        AnalyticsService().logEpisodeView(
+                          episodeId:
                               bloc.seasonEpisodeResponse?.episodes?[index].id ??
-                                  '',
-                            )
-                            .then((_) {
-                              bloc.getSeasonEpisode();
-                            });
+                              '',
+                        );
                       });
-
-                      AnalyticsService().logEpisodeView(
-                        episodeId:
-                            bloc.seasonEpisodeResponse?.episodes?[index].id ??
-                            '',
-                      );
                     });
                 // PageNavigator(ctx: context)
                 //     .nextPage(

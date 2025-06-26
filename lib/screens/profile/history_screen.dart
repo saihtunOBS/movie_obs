@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/history_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
+import 'package:movie_obs/network/responses/movie_detail_response.dart';
+import 'package:movie_obs/screens/series/season_episode_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/shimmer_loading.dart';
@@ -73,6 +75,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     left: kMarginMedium2,
                                     right: kMarginMedium2,
                                     bottom: 60,
+                                    top: kMarginMedium2,
                                   ),
                                   controller:
                                       scrollController..addListener(() {
@@ -88,18 +91,48 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   itemBuilder: (context, index) {
                                     return GestureDetector(
                                       onTap: () {
-                                        bloc.historyList[index].type == 'MOVIE'
-                                            ? PageNavigator(
+                                        if (bloc.historyList[index].type ==
+                                            'MOVIE') {
+                                          PageNavigator(ctx: context).nextPage(
+                                            page: MovieDetailScreen(
+                                              movie:
+                                                  bloc
+                                                      .historyList[index]
+                                                      .reference,
+                                            ),
+                                          );
+                                        } else {
+                                          if (bloc
+                                                  .historyList[index]
+                                                  .reference
+                                                  ?.seasons
+                                                  ?.length ==
+                                              1) {
+                                            PageNavigator(
                                               ctx: context,
                                             ).nextPage(
-                                              page: MovieDetailScreen(
-                                                movie:
+                                              page: SeasonEpisodeScreen(
+                                                seriesResponse:
                                                     bloc
                                                         .historyList[index]
-                                                        .reference,
+                                                        .reference
+                                                        ?.toDetail() ??
+                                                    MovieDetailResponse(),
+                                                seriesId:
+                                                    bloc
+                                                        .historyList[index]
+                                                        .reference
+                                                        ?.id,
+                                                season:
+                                                    bloc
+                                                        .historyList[index]
+                                                        .reference
+                                                        ?.seasons
+                                                        ?.first,
                                               ),
-                                            )
-                                            : PageNavigator(
+                                            );
+                                          } else {
+                                            PageNavigator(
                                               ctx: context,
                                             ).nextPage(
                                               page: SeriesDetailScreen(
@@ -109,6 +142,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                         .reference,
                                               ),
                                             );
+                                          }
+                                        }
                                       },
                                       child: movieListItem(
                                         movies:

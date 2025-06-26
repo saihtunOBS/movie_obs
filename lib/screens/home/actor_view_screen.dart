@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/actor_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
+import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/screens/home/movie_detail_screen.dart';
+import 'package:movie_obs/screens/series/season_episode_screen.dart';
 import 'package:movie_obs/screens/series/series_detail_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -41,13 +43,11 @@ class ActorViewScreen extends StatelessWidget {
                             _buildActorView(context, bloc),
                             1.vGap,
                             bloc.actorData?.movieCounts == 0
-                                ? Center(
-                                  child: Text('There is no movies to show.'),
-                                )
+                                ? SizedBox.shrink()
                                 : _buildMovieView(context, bloc),
                             bloc.actorData?.seasons?.isEmpty ?? true
-                                ? Center(child: Text(''))
-                                : _builSeasonView(context, bloc),
+                                ? SizedBox.shrink()
+                                : _builSeriesView(context, bloc),
                             20.vGap,
                           ],
                         ),
@@ -108,7 +108,7 @@ class ActorViewScreen extends StatelessWidget {
     );
   }
 
-  Widget _builSeasonView(BuildContext context, ActorBloc bloc) {
+  Widget _builSeriesView(BuildContext context, ActorBloc bloc) {
     return Column(
       spacing: 2,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,11 +141,23 @@ class ActorViewScreen extends StatelessWidget {
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () {
-                PageNavigator(ctx: context).nextPage(
-                  page: SeriesDetailScreen(
-                    series: bloc.actorData?.seasons?[index],
-                  ),
-                );
+                if (bloc.actorData?.seasons?[index].seasons?.length == 1) {
+                  PageNavigator(ctx: context).nextPage(
+                    page: SeasonEpisodeScreen(
+                      seriesResponse:
+                          bloc.actorData?.seasons?[index].toDetail() ??
+                          MovieDetailResponse(),
+                      seriesId: bloc.actorData?.seasons?[index].id,
+                      season: bloc.actorData?.seasons?[index].seasons?.first,
+                    ),
+                  );
+                } else {
+                  PageNavigator(ctx: context).nextPage(
+                    page: SeriesDetailScreen(
+                      series: bloc.actorData?.seasons?[index],
+                    ),
+                  );
+                }
               },
               child: movieListItem(
                 isHomeScreen: true,

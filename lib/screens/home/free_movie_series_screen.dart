@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/home_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
+import 'package:movie_obs/screens/series/season_episode_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/empty_view.dart';
@@ -157,14 +158,39 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                                               ),
                                             );
                                           } else {
-                                            PageNavigator(
-                                              ctx: context,
-                                            ).nextPage(
-                                              page: SeriesDetailScreen(
-                                                series:
-                                                    bloc.freeMovieLists[index],
-                                              ),
-                                            );
+                                            if (bloc
+                                                    .freeMovieLists[index]
+                                                    .seasons
+                                                    ?.length ==
+                                                1) {
+                                              PageNavigator(
+                                                ctx: context,
+                                              ).nextPage(
+                                                page: SeasonEpisodeScreen(
+                                                  seriesResponse:
+                                                      bloc.freeMovieLists[index]
+                                                          .toDetail(),
+                                                  seriesId:
+                                                      bloc
+                                                          .freeMovieLists[index]
+                                                          .id,
+                                                  season:
+                                                      bloc
+                                                          .freeMovieLists[index]
+                                                          .seasons
+                                                          ?.first,
+                                                ),
+                                              );
+                                            } else {
+                                              PageNavigator(
+                                                ctx: context,
+                                              ).nextPage(
+                                                page: SeriesDetailScreen(
+                                                  series:
+                                                      bloc.freeMovieLists[index],
+                                                ),
+                                              );
+                                            }
                                           }
                                         },
                                         child: movieListItem(

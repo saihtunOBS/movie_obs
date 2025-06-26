@@ -279,13 +279,25 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                           width: double.infinity,
                                           child: GestureDetector(
                                             onTap: () {
-                                              PageNavigator(
-                                                ctx: context,
-                                              ).nextPage(
-                                                page: SeriesDetailScreen(
-                                                  series: value,
-                                                ),
-                                              );
+                                              value.seasons?.length == 1
+                                                  ? PageNavigator(
+                                                    ctx: context,
+                                                  ).nextPage(
+                                                    page: SeasonEpisodeScreen(
+                                                      seriesResponse:
+                                                          value.toDetail(),
+                                                      seriesId: value.id,
+                                                      season:
+                                                          value.seasons?.first,
+                                                    ),
+                                                  )
+                                                  : PageNavigator(
+                                                    ctx: context,
+                                                  ).nextPage(
+                                                    page: SeriesDetailScreen(
+                                                      series: value,
+                                                    ),
+                                                  );
                                             },
                                             child: Padding(
                                               padding:

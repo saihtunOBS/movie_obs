@@ -8,12 +8,14 @@ import 'package:movie_obs/data/vos/movie_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
+import 'package:movie_obs/network/responses/movie_detail_response.dart';
 import 'package:movie_obs/screens/home/collection_detail_screen.dart';
 import 'package:movie_obs/screens/home/free_movie_series_screen.dart';
 import 'package:movie_obs/screens/home/notification_screen.dart';
 import 'package:movie_obs/screens/home/search_screen.dart';
 import 'package:movie_obs/screens/profile/promotion_screen.dart';
 import 'package:movie_obs/screens/profile/watch_list_screen.dart';
+import 'package:movie_obs/screens/series/season_episode_screen.dart';
 import 'package:movie_obs/screens/series/series_detail_screen.dart';
 import 'package:movie_obs/utils/images.dart';
 import 'package:movie_obs/widgets/banner_image_animation.dart';
@@ -396,9 +398,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   ctx: context,
                 ).nextPage(page: MovieDetailScreen(movie: movies[index]));
               } else {
-                PageNavigator(
-                  ctx: context,
-                ).nextPage(page: SeriesDetailScreen(series: movies[index]));
+                if (movies[index].seasons?.length == 1) {
+                  PageNavigator(ctx: context).nextPage(
+                    page: SeasonEpisodeScreen(
+                      seriesResponse: movies[index].toDetail(),
+                      seriesId: movies[index].id,
+                      season: movies[index].seasons?.first,
+                    ),
+                  );
+                } else {
+                  PageNavigator(
+                    ctx: context,
+                  ).nextPage(page: SeriesDetailScreen(series: movies[index]));
+                }
               }
             },
             child: SizedBox(
@@ -431,9 +443,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   page: MovieDetailScreen(movie: movies[index].reference),
                 );
               } else {
-                PageNavigator(ctx: context).nextPage(
-                  page: SeriesDetailScreen(series: movies[index].reference),
-                );
+                if (movies[index].reference?.seasons?.length == 1) {
+                  PageNavigator(ctx: context).nextPage(
+                    page: SeasonEpisodeScreen(
+                      seriesResponse:
+                          movies[index].reference?.toDetail() ??
+                          MovieDetailResponse(),
+                      seriesId: movies[index].reference?.id,
+                      season: movies[index].reference?.seasons?.first,
+                    ),
+                  );
+                } else {
+                  PageNavigator(ctx: context).nextPage(
+                    page: SeriesDetailScreen(series: movies[index].reference),
+                  );
+                }
               }
             },
             child: SizedBox(
@@ -464,9 +488,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 ctx: context,
               ).nextPage(page: MovieDetailScreen(movie: movies[index]));
             } else {
-              PageNavigator(
-                ctx: context,
-              ).nextPage(page: SeriesDetailScreen(series: movies[index]));
+              if (movies[index].seasons?.length == 1) {
+                PageNavigator(ctx: context).nextPage(
+                  page: SeasonEpisodeScreen(
+                    seriesResponse: movies[index].toDetail(),
+                    seriesId: movies[index].id,
+                    season: movies[index].seasons?.first,
+                  ),
+                );
+              } else {
+                PageNavigator(
+                  ctx: context,
+                ).nextPage(page: SeriesDetailScreen(series: movies[index]));
+              }
             }
           },
           child: movieListItem(

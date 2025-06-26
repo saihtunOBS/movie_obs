@@ -400,7 +400,12 @@ class VideoBloc extends ChangeNotifier {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     String minutes = twoDigits(duration.inMinutes.remainder(60));
     String seconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$minutes:$seconds";
+
+    if (duration.inHours > 0) {
+      return "${duration.inHours}:$minutes:$seconds"; // No leading zero for hour
+    } else {
+      return "$minutes:$seconds";
+    }
   }
 
   Duration _seekOffset = Duration.zero;

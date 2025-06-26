@@ -6,6 +6,7 @@ import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/genre_list_item.dart';
 import 'package:movie_obs/screens/home/filter_screen.dart';
 import 'package:movie_obs/screens/home/movie_detail_screen.dart';
+import 'package:movie_obs/screens/series/season_episode_screen.dart';
 import 'package:movie_obs/screens/series/series_detail_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -173,13 +174,25 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
-                        value.type == 'movie'
-                            ? PageNavigator(
-                              ctx: context,
-                            ).nextPage(page: MovieDetailScreen(movie: value))
-                            : PageNavigator(
+                        if (value.type == 'movie') {
+                          PageNavigator(
+                            ctx: context,
+                          ).nextPage(page: MovieDetailScreen(movie: value));
+                        } else {
+                          if (value.seasons?.length == 1) {
+                            PageNavigator(ctx: context).nextPage(
+                              page: SeasonEpisodeScreen(
+                                seriesResponse: value.toDetail(),
+                                seriesId: value.id,
+                                season: value.seasons?.first,
+                              ),
+                            );
+                          } else {
+                            PageNavigator(
                               ctx: context,
                             ).nextPage(page: SeriesDetailScreen(series: value));
+                          }
+                        }
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
