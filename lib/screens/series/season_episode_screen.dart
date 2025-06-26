@@ -5,7 +5,6 @@ import 'package:movie_obs/bloc/season_episode_bloc.dart';
 import 'package:movie_obs/data/vos/season_vo.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/network/responses/movie_detail_response.dart';
-import 'package:movie_obs/screens/series/episode_screen.dart';
 import 'package:movie_obs/utils/calculate_time.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -303,17 +302,50 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
               onTap: () {
                 PageNavigator(ctx: context)
                     .nextPage(
-                      page: EpisodeScreen(
-                        seasonResponse: bloc.seasonEpisodeResponse,
-                        episodeData:
-                            bloc.seasonEpisodeResponse?.episodes?[index],
-                        seriesId: widget.seriesId ?? '',
-                        seasonId: widget.season?.id ?? '',
+                      page: VideoPlayerScreen(
+                        url:
+                            bloc
+                                .seasonEpisodeResponse
+                                ?.episodes?[index]
+                                .videoUrl,
+                        isFirstTime: true,
+                        type: 'SERIES',
+                        videoId: widget.seriesId,
                       ),
                     )
                     .whenComplete(() {
-                      bloc.getSeasonEpisode();
+                      setState(() {
+                        context
+                            .read<HomeBloc>()
+                            .updateViewCount(
+                              'Episode',
+                              bloc.seasonEpisodeResponse?.episodes?[index].id ??
+                                  '',
+                            )
+                            .then((_) {
+                              bloc.getSeasonEpisode();
+                            });
+                      });
+
+                      AnalyticsService().logEpisodeView(
+                        episodeId:
+                            bloc.seasonEpisodeResponse?.episodes?[index].id ??
+                            '',
+                      );
                     });
+                // PageNavigator(ctx: context)
+                //     .nextPage(
+                //       page: EpisodeScreen(
+                //         seasonResponse: bloc.seasonEpisodeResponse,
+                //         episodeData:
+                //             bloc.seasonEpisodeResponse?.episodes?[index],
+                //         seriesId: widget.seriesId ?? '',
+                //         seasonId: widget.season?.id ?? '',
+                //       ),
+                //     )
+                //     .whenComplete(() {
+                //       bloc.getSeasonEpisode();
+                //     });
               },
               child: episodeListItem(
                 imageUrl: bloc.seasonEpisodeResponse?.bannerImageUrl,

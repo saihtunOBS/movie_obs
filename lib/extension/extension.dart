@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_obs/data/vos/movie_vo.dart';
+import 'package:movie_obs/network/responses/movie_detail_response.dart';
 
 extension Gap on num {
   SizedBox get vGap => SizedBox(height: toDouble());
@@ -33,5 +35,22 @@ extension DurationClamp on Duration {
     if (this < min) return min;
     if (this > max) return max;
     return this;
+  }
+}
+
+extension MovieVOMapper on MovieVO {
+  MovieDetailResponse toDetail() {
+    return MovieDetailResponse(
+      id: id,
+      name: name,
+      description: description,
+      posterImageUrl: posterImageUrl,
+      isWatchlist: isWatchlist,
+      duration: duration,
+      payPerViewPrice: payPerViewPrice,
+      genres: genres,
+      director: director,
+      plan: plan,
+    );
   }
 }

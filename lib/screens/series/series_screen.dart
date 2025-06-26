@@ -4,6 +4,7 @@ import 'package:movie_obs/bloc/series_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/list_items/movie_list_item.dart';
+import 'package:movie_obs/screens/series/season_episode_screen.dart';
 import 'package:movie_obs/screens/series/series_detail_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -196,11 +197,30 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                 itemBuilder: (context, index) {
                                   return GestureDetector(
                                     onTap: () {
-                                      PageNavigator(ctx: context).nextPage(
-                                        page: SeriesDetailScreen(
-                                          series: bloc.seriesLists[index],
-                                        ),
-                                      );
+                                      bloc.seriesLists[index].seasons?.length ==
+                                              1
+                                          ? PageNavigator(
+                                            ctx: context,
+                                          ).nextPage(
+                                            page: SeasonEpisodeScreen(
+                                              seriesResponse:
+                                                  bloc.seriesLists[index]
+                                                      .toDetail(),
+                                              seriesId:
+                                                  bloc.seriesLists[index].id,
+                                              season:
+                                                  bloc
+                                                      .seriesLists[index]
+                                                      .seasons?[index],
+                                            ),
+                                          )
+                                          : PageNavigator(
+                                            ctx: context,
+                                          ).nextPage(
+                                            page: SeriesDetailScreen(
+                                              series: bloc.seriesLists[index],
+                                            ),
+                                          );
                                     },
                                     child: movieListItem(
                                       isHomeScreen: true,

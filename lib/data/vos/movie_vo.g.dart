@@ -22,6 +22,10 @@ MovieVO _$MovieVOFromJson(Map<String, dynamic> json) => MovieVO(
   tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
   scriptWriter: json['scriptWriter'] as String?,
   viewCount: (json['viewCount'] as num?)?.toInt(),
+  seasons:
+      (json['seasons'] as List<dynamic>?)
+          ?.map((e) => SeasonVO.fromJson(e as Map<String, dynamic>))
+          .toList(),
   duration: (json['duration'] as num?)?.toInt(),
   publishedYear: json['publishedYear'] as String?,
   scheduleAt: json['scheduleAt'] as String?,
@@ -63,6 +67,7 @@ Map<String, dynamic> _$MovieVOToJson(MovieVO instance) => <String, dynamic>{
   'tags': instance.tags,
   'scriptWriter': instance.scriptWriter,
   'viewCount': instance.viewCount,
+  'seasons': instance.seasons,
   'duration': instance.duration,
   'publishedYear': instance.publishedYear,
   'scheduleAt': instance.scheduleAt,

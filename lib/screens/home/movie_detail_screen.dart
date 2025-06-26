@@ -68,7 +68,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                   bottomRight: Radius.circular(35),
                                 ),
                                 child: cacheImage(
-                                  widget.movie?.posterImageUrl ?? '',
+                                  widget.movie?.bannerImageUrl ?? '',
                                 ),
                               ),
                             ),

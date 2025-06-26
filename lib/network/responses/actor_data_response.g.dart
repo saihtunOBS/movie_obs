@@ -23,7 +23,7 @@ ActorDataResponse _$ActorDataResponseFromJson(Map<String, dynamic> json) =>
               ?.map((e) => MovieVO.fromJson(e as Map<String, dynamic>))
               .toList(),
       seasons:
-          (json['seasons'] as List<dynamic>?)
+          (json['series'] as List<dynamic>?)
               ?.map((e) => MovieVO.fromJson(e as Map<String, dynamic>))
               .toList(),
     );
@@ -38,5 +38,5 @@ Map<String, dynamic> _$ActorDataResponseToJson(ActorDataResponse instance) =>
       'updatedAt': instance.updatedAt,
       'movieCounts': instance.movieCounts,
       'movies': instance.movies?.map((e) => e.toJson()).toList(),
-      'seasons': instance.seasons?.map((e) => e.toJson()).toList(),
+      'series': instance.seasons?.map((e) => e.toJson()).toList(),
     };

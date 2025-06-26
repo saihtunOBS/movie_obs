@@ -72,6 +72,7 @@ class UserBloc extends ChangeNotifier {
           notifyListeners();
         })
         .catchError((e) {
+          tab.value = false;
           PersistenceData.shared.clearToken();
           PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
           ToastService.warningToast(e.toString());

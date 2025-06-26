@@ -69,7 +69,7 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
                               bottomRight: Radius.circular(35),
                             ),
                             child: cacheImage(
-                              widget.series?.posterImageUrl ?? '',
+                              widget.series?.bannerImageUrl ?? '',
                             ),
                           ),
                         ),

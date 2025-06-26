@@ -33,7 +33,29 @@ Widget episodeListItem({
               child: SizedBox(
                 height: 80,
                 width: 120,
-                child: cacheImage(imageUrl),
+                child: Stack(
+                  fit: StackFit.passthrough,
+                  children: [
+                    cacheImage(imageUrl),
+                    Center(
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black45,
+                        ),
+                        child: Center(
+                          child: Icon(
+                            CupertinoIcons.play,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Expanded(

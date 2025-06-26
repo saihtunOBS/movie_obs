@@ -192,6 +192,7 @@ abstract class MovieApi {
     @Query('page') int page,
     @Query('getAll') bool getAll,
     @Query('status') String status,
+    @Query('includeSeasons') bool isSeasonInclude,
   );
 
   @GET(kEndPointPackage)

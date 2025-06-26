@@ -5,6 +5,7 @@ import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/l10n/app_localizations.dart';
 import 'package:movie_obs/list_items/noti_list_item.dart';
 import 'package:movie_obs/screens/auth/login_screen.dart';
+import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/screens/home/noti_details_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
@@ -27,6 +28,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NotificationBloc>().updateToken();
       context.read<NotificationBloc>().getNotifications().catchError((e) {
+        tab.value = false;
         PersistenceData.shared.clearToken();
         PageNavigator(ctx: context).nextPageOnly(page: LoginScreen());
         ToastService.warningToast(e.toString());

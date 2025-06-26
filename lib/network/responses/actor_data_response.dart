@@ -29,7 +29,7 @@ class ActorDataResponse {
   @JsonKey(name: "movies")
   final List<MovieVO>? movies;
 
-  @JsonKey(name: "seasons")
+  @JsonKey(name: "series")
   final List<MovieVO>? seasons;
 
   ActorDataResponse({

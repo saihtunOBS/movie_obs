@@ -766,6 +766,7 @@ class _MovieApi implements MovieApi {
     int page,
     bool getAll,
     String status,
+    bool isSeasonInclude,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -775,6 +776,7 @@ class _MovieApi implements MovieApi {
       r'page': page,
       r'getAll': getAll,
       r'status': status,
+      r'includeSeasons': isSeasonInclude,
     };
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);

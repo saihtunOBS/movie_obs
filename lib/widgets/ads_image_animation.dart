@@ -83,7 +83,7 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
                   bloc.adsLists.isEmpty
                       ? SizedBox.shrink()
                       : SizedBox(
-                        height: MediaQuery.sizeOf(context).height * 0.6,
+                        height: MediaQuery.sizeOf(context).height,
                         width: double.infinity,
                         child: FadeTransition(
                           opacity: _animation,
@@ -91,6 +91,7 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
                             borderRadius: BorderRadius.circular(10),
                             child: cacheImage(
                               bloc.adsLists[currentIndex].image ?? '',
+                              boxFit: BoxFit.fill,
                             ),
                           ),
                         ),

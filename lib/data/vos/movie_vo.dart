@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:movie_obs/data/vos/season_vo.dart';
 
 import '../../network/responses/movie_detail_response.dart';
 part 'movie_vo.g.dart';
@@ -50,8 +51,8 @@ class MovieVO {
   @JsonKey(name: "viewCount")
   final int? viewCount;
 
-  // @JsonKey(name: "category")
-  // final CategoryVO? category;
+  @JsonKey(name: "seasons")
+  final List<SeasonVO>? seasons;
 
   @JsonKey(name: "duration")
   final int? duration;
@@ -102,7 +103,7 @@ class MovieVO {
     this.tags,
     this.scriptWriter,
     this.viewCount,
-    //this.category,
+    this.seasons,
     this.duration,
     this.publishedYear,
     this.scheduleAt,

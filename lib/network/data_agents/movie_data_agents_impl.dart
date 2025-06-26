@@ -159,7 +159,7 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     int page,
   ) {
     return movieApi
-        .getSeries(token, plan, 10, genre, page, getAll, 'PUBLISHED')
+        .getSeries(token, plan, 10, genre, page, getAll, 'PUBLISHED', true)
         .asStream()
         .map((response) => response)
         .first
