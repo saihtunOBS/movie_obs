@@ -4,6 +4,7 @@ import 'package:movie_obs/bloc/user_bloc.dart';
 import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/profile/edit_profile_screen.dart';
+import 'package:movie_obs/screens/profile/promotion_screen.dart';
 import 'package:movie_obs/widgets/cache_image.dart';
 
 import '../../utils/colors.dart';
@@ -28,6 +29,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBackgroundColor,
+
       body: ValueListenableBuilder(
         valueListenable: userDataListener,
         builder:
@@ -35,7 +37,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildAppBar(context),
-                20.vGap,
                 _buildUserInfo(
                   AppLocalizations.of(context)?.username ?? '',
                   data.name ?? '',
@@ -67,7 +68,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           (context, data, child) => Stack(
             children: [
               Padding(
-                padding: EdgeInsets.only(top: 40, left: 8, right: 8),
+                padding: EdgeInsets.only(top: 56, left: 8, right: 8),
                 child: Row(
                   spacing: 10,
                   children: [
@@ -145,22 +146,35 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     ),
                     Align(
                       alignment: Alignment.center,
-                      child: Container(
-                        // height: 26,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.grey.withValues(alpha: 0.3),
-                        ),
-                        child: Text(
-                          'Upgrade Premium',
-                          style: TextStyle(
-                            color: kWhiteColor,
-                            fontSize: kTextSmall,
-                            fontWeight: FontWeight.w700,
+                      child: GestureDetector(
+                        onTap: () {
+                          PageNavigator(
+                            ctx: context,
+                          ).nextPage(page: PromotionScreen());
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: Colors.grey.withValues(alpha: 0.3),
+                          ),
+                          child: ValueListenableBuilder(
+                            valueListenable: userDataListener,
+                            builder: (context, userData, child) {
+                              return Text(
+                                userData.status == 'FREE'
+                                    ? 'Upgrade Premium'
+                                    : 'View All Plans',
+                                style: TextStyle(
+                                  color: kWhiteColor,
+                                  fontSize: kTextSmall,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),

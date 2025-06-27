@@ -43,6 +43,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       create: (context) => UserBloc(context: context),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
+
         body: Consumer<UserBloc>(
           builder:
               (context, bloc, child) => Stack(
@@ -99,7 +100,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Stack(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 40, left: 8, right: 8),
+          padding: EdgeInsets.only(top: 56, left: 8, right: 8),
           child: Row(
             spacing: 10,
             children: [
@@ -177,7 +178,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
         ),
         Positioned(
-          top: 50,
+          top: 60,
           right: kMarginMedium2,
           child: Row(
             spacing: 10,

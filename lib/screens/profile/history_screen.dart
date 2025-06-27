@@ -75,7 +75,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     left: kMarginMedium2,
                                     right: kMarginMedium2,
                                     bottom: 60,
-                                    top: kMarginMedium2,
+                                    top: kMargin12,
                                   ),
                                   controller:
                                       scrollController..addListener(() {

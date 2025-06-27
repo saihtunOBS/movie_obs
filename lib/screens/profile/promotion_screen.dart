@@ -127,7 +127,7 @@ class _PromotionScreenState extends State<PromotionScreen> {
     return Stack(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 40, left: 8, right: 8),
+          padding: EdgeInsets.only(top: 56, left: 8, right: 8),
           child: Row(
             spacing: 10,
             children: [
@@ -154,11 +154,7 @@ class _PromotionScreenState extends State<PromotionScreen> {
         ),
 
         Padding(
-          padding: EdgeInsets.only(
-            top: getDeviceType() == 'phone' ? 70 : 50,
-            left: 30,
-            right: 30,
-          ),
+          padding: EdgeInsets.only(top: 80, left: 30, right: 30),
           child: Align(
             alignment: Alignment.bottomCenter,
             child: Column(
