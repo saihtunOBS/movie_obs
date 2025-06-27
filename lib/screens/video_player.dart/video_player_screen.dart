@@ -144,7 +144,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   @override
   void initState() {
     super.initState();
-    selectedQuality = 'Auto';
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
@@ -198,11 +198,14 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
         } else {
           _loadCurrentPosition();
         }
-      } else {}
+      } else {
+        bloc.resetControlVisibility();
+      }
     });
   }
 
   Future<void> _loadCurrentPosition() async {
+    selectedQuality = 'Auto';
     final savedProgressList = await loadVideoProgress();
     _savedVideo = savedProgressList.firstWhere(
       (progress) => progress.videoId == widget.videoId,
