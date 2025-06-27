@@ -65,18 +65,20 @@ class AuthBloc extends ChangeNotifier {
     );
     _movieModel
         .googleLogin(request)
-        .then((response) {
+        .then((response) async {
+          await FirebaseAuth.instance.signOut();
           PersistenceData.shared.saveToken(response.accessToken ?? '');
           tab.value = true;
           PageNavigator(ctx: context).nextPageOnly(page: BottomNavScreen());
         })
-        .catchError((error) {
+        .catchError((error) async {
+          hideLoading();
+          await FirebaseAuth.instance.signOut();
           ToastService.warningToast(error.toString());
         });
   }
 
   void loginGoogle(BuildContext context) async {
-    _showLoading();
     isSocialLogin = true;
     String? fcmToken = await FirebaseMessaging.instance.getToken();
     GoogleSignIn googleSignIn = GoogleSignIn();
@@ -88,6 +90,7 @@ class AuthBloc extends ChangeNotifier {
             hideLoading();
             return;
           }
+          _showLoading();
           var request = GoogleLoginRequest(
             response?.email ?? '',
             response?.displayName ?? '',
