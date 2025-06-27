@@ -56,7 +56,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 },
                 child:
                     bloc.isLoading
-                        ? shimmerLoading(isVertical: true)
+                        ? Padding(
+                          padding: EdgeInsets.only(top: kMargin12),
+                          child: shimmerLoading(isVertical: true),
+                        )
                         : Stack(
                           children: [
                             bloc.historyList.isNotEmpty

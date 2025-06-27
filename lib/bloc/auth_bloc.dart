@@ -90,6 +90,7 @@ class AuthBloc extends ChangeNotifier {
             hideLoading();
             return;
           }
+          googleSignIn.signOut();
           _showLoading();
           var request = GoogleLoginRequest(
             response?.email ?? '',
