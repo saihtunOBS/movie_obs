@@ -197,30 +197,32 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                 itemBuilder: (context, index) {
                                   return GestureDetector(
                                     onTap: () {
-                                      bloc.seriesLists[index].seasons?.length ==
-                                              1
-                                          ? PageNavigator(
-                                            ctx: context,
-                                          ).nextPage(
-                                            page: SeasonEpisodeScreen(
-                                              seriesResponse:
-                                                  bloc.seriesLists[index]
-                                                      .toDetail(),
-                                              seriesId:
-                                                  bloc.seriesLists[index].id,
-                                              season:
-                                                  bloc
-                                                      .seriesLists[index]
-                                                      .seasons?[index],
-                                            ),
-                                          )
-                                          : PageNavigator(
-                                            ctx: context,
-                                          ).nextPage(
-                                            page: SeriesDetailScreen(
-                                              series: bloc.seriesLists[index],
-                                            ),
-                                          );
+                                      if (bloc
+                                              .seriesLists[index]
+                                              .seasons
+                                              ?.length ==
+                                          1) {
+                                        PageNavigator(ctx: context).nextPage(
+                                          page: SeasonEpisodeScreen(
+                                            seriesResponse:
+                                                bloc.seriesLists[index]
+                                                    .toDetail(),
+                                            seriesId:
+                                                bloc.seriesLists[index].id,
+                                            season:
+                                                bloc
+                                                    .seriesLists[index]
+                                                    .seasons
+                                                    ?.first,
+                                          ),
+                                        );
+                                      } else {
+                                        PageNavigator(ctx: context).nextPage(
+                                          page: SeriesDetailScreen(
+                                            series: bloc.seriesLists[index],
+                                          ),
+                                        );
+                                      }
                                     },
                                     child: movieListItem(
                                       isHomeScreen: true,

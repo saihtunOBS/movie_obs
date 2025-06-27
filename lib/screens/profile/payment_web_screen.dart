@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/l10n/app_localizations.dart';
-import 'package:movie_obs/screens/profile/payment_status_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/widgets/show_loading.dart';
-import 'package:movie_obs/widgets/toast_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PaymentWebScreen extends StatefulWidget {
@@ -55,46 +52,47 @@ class _PaymentWebScreenState extends State<PaymentWebScreen> {
               onPageFinished: (String url) async {
                 setState(() => _isLoading = false);
 
-                try {
-                  final result = await _controller.runJavaScriptReturningResult(
-                    """
-      document.body.innerText
-    """,
-                  );
+                //             try {
+                //               final result = await _controller.runJavaScriptReturningResult(
+                //                 """
+                //   document.body.innerText
+                // """,
+                //               );
 
-                  final pageText = result.toString().toLowerCase();
+                //               final pageText = result.toString().toLowerCase();
 
-                  if (pageText.contains('reject')) {
-                    PageNavigator(
-                      ctx: context,
-                    ).nextPageOnly(page: PaymentStatusScreen(status: 'fail'));
-                  } else if (pageText.contains('success') ||
-                      pageText.contains('approve')) {
-                    PageNavigator(ctx: context).nextPageOnly(
-                      page: PaymentStatusScreen(status: 'success'),
-                    );
-                  }
-                } catch (e) {
-                  ToastService.warningToast(e.toString());
-                }
+                //               if (pageText.contains('reject')) {
+                //                 PageNavigator(
+                //                   ctx: context,
+                //                 ).nextPageOnly(page: PaymentStatusScreen(status: 'fail'));
+                //               } else if (pageText.contains('success') ||
+                //                   pageText.contains('approve')) {
+                //                 PageNavigator(ctx: context).nextPageOnly(
+                //                   page: PaymentStatusScreen(status: 'success'),
+                //                 );
+                //               }
+                //             } catch (e) {
+                //               ToastService.warningToast(e.toString());
+                //             }
+
+                //url.contains("loadingmerchant") ||
               },
 
               onNavigationRequest: (request) {
                 final url = request.url.toLowerCase();
 
-                if (url.contains("loadingmerchant") ||
-                    url.contains('canceled') ||
+                if (url.contains('canceled') ||
                     url.contains(('sessionexpired'))) {
                   Navigator.pop(context, 'cancel');
                   return NavigationDecision.prevent;
                 }
-                if (url.contains("success")) {
-                  PageNavigator(
-                    ctx: context,
-                  ).nextPageOnly(page: PaymentStatusScreen(status: 'success'));
-                } else if (url.contains("fail")) {
-                  Navigator.pop(context, 'fail');
-                }
+                // if (url.contains("success")) {
+                //   PageNavigator(
+                //     ctx: context,
+                //   ).nextPageOnly(page: PaymentStatusScreen(status: 'success'));
+                // } else if (url.contains("fail")) {
+                //   Navigator.pop(context, 'fail');
+                // }
 
                 return NavigationDecision.navigate;
               },

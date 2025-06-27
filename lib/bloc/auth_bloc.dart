@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -11,6 +12,7 @@ import 'package:movie_obs/network/requests/verify_otp_request.dart';
 import 'package:movie_obs/network/responses/otp_response.dart';
 import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/widgets/toast_service.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthBloc extends ChangeNotifier {
   bool isLoading = false;
@@ -33,6 +35,44 @@ class AuthBloc extends ChangeNotifier {
     if (!isDisposed) {
       notifyListeners();
     }
+  }
+
+  void loginWithApple(BuildContext context) async {
+    final credential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+    );
+
+    final oauthCredential = OAuthProvider("apple.com").credential(
+      idToken: credential.identityToken,
+      accessToken: credential.authorizationCode,
+    );
+
+    final UserCredential userCredential = await FirebaseAuth.instance
+        .signInWithCredential(oauthCredential);
+
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+    _showLoading();
+    var request = GoogleLoginRequest(
+      userCredential.user?.email,
+      credential.givenName == null
+          ? 'User'
+          : '${credential.givenName} ${credential.familyName}',
+      fcmToken,
+    );
+    _movieModel
+        .googleLogin(request)
+        .then((response) {
+          PersistenceData.shared.saveToken(response.accessToken ?? '');
+          tab.value = true;
+          PageNavigator(ctx: context).nextPageOnly(page: BottomNavScreen());
+        })
+        .catchError((error) {
+          ToastService.warningToast(error.toString());
+        });
   }
 
   void loginGoogle(BuildContext context) async {

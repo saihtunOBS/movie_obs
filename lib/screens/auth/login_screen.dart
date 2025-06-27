@@ -321,6 +321,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     5.vGap,
                     GestureDetector(
+                      onTap: () {
+                        bloc.loginWithApple(context);
+                      },
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(
