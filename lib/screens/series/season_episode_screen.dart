@@ -300,6 +300,7 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
+                bloc.onSelectEpisode(index);
                 PageNavigator(ctx: context)
                     .nextPage(
                       page: VideoPlayerScreen(
@@ -362,6 +363,10 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
                         (bloc.seasonEpisodeResponse?.episodes?.length ?? 0) -
                             1),
                 isSeries: false,
+                color:
+                    bloc.selectedIndex == index
+                        ? kSecondaryColor.withValues(alpha: 0.3)
+                        : Colors.transparent,
                 data: bloc.seasonEpisodeResponse?.episodes?[index],
               ),
             );

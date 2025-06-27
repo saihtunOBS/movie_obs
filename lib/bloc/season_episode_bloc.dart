@@ -13,6 +13,7 @@ class SeasonEpisodeBloc extends ChangeNotifier {
   bool isLoading = false;
   bool isDisposed = false;
   String token = '';
+  int selectedIndex = -1;
   SeasonEpisodeResponse? seasonEpisodeResponse;
 
   List<ActorVO> castsLists = [];
@@ -48,6 +49,11 @@ class SeasonEpisodeBloc extends ChangeNotifier {
         .catchError((_) {
           _hideLoading();
         });
+  }
+
+  onSelectEpisode(int index) {
+    selectedIndex = index;
+    notifyListeners();
   }
 
   _showLoading() {
