@@ -68,6 +68,7 @@ class _NewReleaseScreenState extends State<NewReleaseScreen> {
                                                   BorderRadius.circular(20),
                                               child: cacheImage(
                                                 data.posterImageUrl ?? '',
+                                                boxFit: BoxFit.cover,
                                               ),
                                             ),
                                           );

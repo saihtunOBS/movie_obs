@@ -29,7 +29,10 @@ Widget movieListItem({
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(kMargin10),
-                child: cacheImage(movies?.posterImageUrl ?? ''),
+                child: cacheImage(
+                  movies?.posterImageUrl ?? '',
+                  // boxFit: BoxFit.fill,
+                ),
               ),
               Positioned(
                 left: 10,
