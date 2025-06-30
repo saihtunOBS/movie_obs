@@ -35,7 +35,6 @@ class HomeBloc extends ChangeNotifier {
     String? collectionId,
   }) {
     token = PersistenceData.shared.getToken();
-
     getBanner();
 
     if (isCollectionDetail == true) {

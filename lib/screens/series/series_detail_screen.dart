@@ -44,6 +44,12 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
       create: (context) => SeriesDetailBloc(widget.series?.id, context),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
+        appBar: AppBar(
+          centerTitle: false,
+          title: Text(AppLocalizations.of(context)?.back ?? ''),
+          surfaceTintColor: kBlackColor,
+          backgroundColor: kBlackColor,
+        ),
         body: Consumer<SeriesDetailBloc>(
           builder:
               (context, bloc, child) => CustomScrollView(
@@ -53,8 +59,8 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
                     automaticallyImplyLeading: false,
                     foregroundColor: Colors.white,
                     backgroundColor: kBackgroundColor,
-                    pinned: true,
-                    stretch: true,
+                    pinned: false,
+                    stretch: false,
                     floating: true,
                     flexibleSpace: Stack(
                       clipBehavior: Clip.none,
@@ -63,38 +69,18 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
                         SizedBox(
                           height: double.infinity,
                           width: double.infinity,
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(35),
-                              bottomRight: Radius.circular(35),
-                            ),
-                            child: cacheImage(
-                              widget.series?.bannerImageUrl ?? '',
-                            ),
+                          child: cacheImage(
+                            widget.series?.bannerImageUrl ?? '',
                           ),
                         ),
-                        Positioned(
-                          left: 20,
-                          top: 45,
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              height: 35,
-                              width: 35,
-                              decoration: BoxDecoration(
-                                color: kWhiteColor,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Icon(
-                                  CupertinoIcons.arrow_left,
-                                  size: 20,
-                                  color: kBlackColor,
-                                ),
-                              ),
+                        Container(
+                          height: double.infinity,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.center,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, Colors.black45],
                             ),
                           ),
                         ),

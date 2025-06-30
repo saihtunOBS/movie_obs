@@ -413,7 +413,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildMovieOptions(List<MovieVO> movies, {bool? isNewrelease}) {
     return SizedBox(
-      height: 210,
+      height: 200,
       width: double.infinity,
       child: ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: kMarginMedium2),
@@ -443,7 +443,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             },
             child: SizedBox(
-              width: MediaQuery.of(context).size.width / 3.1,
+              width: MediaQuery.of(context).size.width / 3.35,
               child: movieListItem(
                 isHomeScreen: true,
                 movies: movies[index],

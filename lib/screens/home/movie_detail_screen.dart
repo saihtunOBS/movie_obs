@@ -43,6 +43,12 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         builder:
             (context, bloc, child) => Scaffold(
               backgroundColor: kBackgroundColor,
+              appBar: AppBar(
+                centerTitle: false,
+                title: Text(AppLocalizations.of(context)?.back ?? ''),
+                surfaceTintColor: kBlackColor,
+                backgroundColor: kBlackColor,
+              ),
               body: Stack(
                 children: [
                   CustomScrollView(
@@ -52,8 +58,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         automaticallyImplyLeading: false,
                         foregroundColor: Colors.white,
                         backgroundColor: kBackgroundColor,
-                        pinned: true,
-                        stretch: true,
+                        pinned: false,
+                        stretch: false,
                         floating: true,
                         flexibleSpace: Stack(
                           clipBehavior: Clip.none,
@@ -62,13 +68,18 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             SizedBox(
                               height: double.infinity,
                               width: double.infinity,
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(35),
-                                  bottomRight: Radius.circular(35),
-                                ),
-                                child: cacheImage(
-                                  widget.movie?.bannerImageUrl ?? '',
+                              child: cacheImage(
+                                widget.movie?.bannerImageUrl ?? '',
+                              ),
+                            ),
+                            Container(
+                              height: double.infinity,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.center,
+                                  end: Alignment.bottomCenter,
+                                  colors: [Colors.transparent, Colors.black45],
                                 ),
                               ),
                             ),
@@ -97,31 +108,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                   child: _buildWatchTrailerView(
                                     context,
                                     widget.movie?.trailerUrl ?? '',
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              left: 20,
-                              top: 45,
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Container(
-                                  height: 35,
-                                  width: 35,
-                                  decoration: BoxDecoration(
-                                    color: kWhiteColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Icon(
-                                      CupertinoIcons.arrow_left,
-                                      size: 20,
-                                      color: kBlackColor,
-                                    ),
                                   ),
                                 ),
                               ),

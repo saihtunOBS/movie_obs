@@ -63,6 +63,12 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
           ),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
+        appBar: AppBar(
+          centerTitle: false,
+          title: Text(AppLocalizations.of(context)?.back ?? ''),
+          surfaceTintColor: kBlackColor,
+          backgroundColor: kBlackColor,
+        ),
         body: Consumer<SeasonEpisodeBloc>(
           builder:
               (context, bloc, child) => CustomScrollView(
@@ -72,8 +78,8 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
                     automaticallyImplyLeading: false,
                     foregroundColor: Colors.white,
                     backgroundColor: kBackgroundColor,
-                    pinned: true,
-                    stretch: true,
+                    pinned: false,
+                    stretch: false,
                     floating: true,
                     flexibleSpace: Stack(
                       clipBehavior: Clip.none,
@@ -82,13 +88,18 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
                         SizedBox(
                           height: double.infinity,
                           width: double.infinity,
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(35),
-                              bottomRight: Radius.circular(35),
-                            ),
-                            child: cacheImage(
-                              widget.season?.bannerImageUrl ?? '',
+                          child: cacheImage(
+                            widget.season?.bannerImageUrl ?? '',
+                          ),
+                        ),
+                        Container(
+                          height: double.infinity,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.center,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, Colors.black45],
                             ),
                           ),
                         ),
@@ -117,31 +128,6 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
                               child: _buildWatchTrailerView(
                                 context,
                                 widget.season?.trailerUrl ?? '',
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 20,
-                          top: 45,
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              height: 35,
-                              width: 35,
-                              decoration: BoxDecoration(
-                                color: kWhiteColor,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Icon(
-                                  CupertinoIcons.arrow_left,
-                                  size: 20,
-                                  color: kBlackColor,
-                                ),
                               ),
                             ),
                           ),
@@ -276,7 +262,7 @@ class _SeasonEpisodeScreenState extends State<SeasonEpisodeScreen> {
           bloc.seasonEpisodeResponse?.episodes?.isEmpty ?? true
               ? SizedBox.shrink()
               : Text(
-                'Episodes (${bloc.seasonEpisodeResponse?.episodes?.length})',
+                'Total Episodes (${bloc.seasonEpisodeResponse?.episodes?.length})',
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: kTextRegular18,

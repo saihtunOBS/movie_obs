@@ -34,6 +34,7 @@ Widget shimmerLoading({bool? isVertical}) {
 
 Widget homeShimmerLoading({bool? isVertical}) {
   return SingleChildScrollView(
+    physics: ClampingScrollPhysics(),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
