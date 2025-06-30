@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
             spacing: 10,
             children: [
               kMarginMedium.hGap,
-              Image.asset(kAppIcon, width: 40, height: 40),
+              Image.asset(kAppIcon, width: 45, height: 45),
               Image.asset(kAppTextLogo, height: 15),
             ],
           ),

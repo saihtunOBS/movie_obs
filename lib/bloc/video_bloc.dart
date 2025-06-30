@@ -177,7 +177,6 @@ class VideoBloc extends ChangeNotifier {
       videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: true),
     );
     videoPlayerController?.initialize().then((_) {
-      videoPlayerController?.seekTo(duration ?? Duration.zero);
       chewieControllerNotifier = ChewieController(
         videoPlayerController: videoPlayerController!,
         showControls: false,
@@ -190,7 +189,14 @@ class VideoBloc extends ChangeNotifier {
           return const LoadingView();
         },
       );
-      playerStatus.value = 1;
+
+      videoPlayerController?.seekTo(duration ?? Duration.zero).whenComplete(() {
+        playerStatus.value = 2;
+        videoPlayerController?.play();
+        chewieControllerNotifier?.play();
+        notifyListeners();
+      });
+
       fetchQualityOptions();
     });
 

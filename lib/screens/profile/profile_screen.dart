@@ -96,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 physics: ClampingScrollPhysics(),
                 child: Column(
                   children: [
-                    10.vGap,
+                    0.vGap,
                     ListView.builder(
                       padding: EdgeInsets.zero,
                       physics: NeverScrollableScrollPhysics(),
@@ -216,7 +216,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             padding:
                                 userData.profilePictureUrl == ''
-                                    ? EdgeInsets.all(10)
+                                    ? EdgeInsets.all(0)
                                     : EdgeInsets.all(0),
                             decoration: BoxDecoration(
                               color: Colors.grey.withValues(alpha: 0.3),
@@ -229,12 +229,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   userData.profilePictureUrl == ''
                                       ? Image.asset(
                                         kAppIcon,
-                                        width: 30,
-                                        height: 30,
+                                        width: 45,
+                                        height: 45,
                                       )
                                       : SizedBox(
-                                        width: 50,
-                                        height: 50,
+                                        width: 45,
+                                        height: 45,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(
                                             kMarginMedium + 8,
