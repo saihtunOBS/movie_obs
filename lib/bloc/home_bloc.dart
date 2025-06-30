@@ -14,7 +14,8 @@ class HomeBloc extends ChangeNotifier {
   bool isLoadMore = false;
   String token = '';
   List<MovieVO> movieLists = [];
-  List<MovieVO> freeMovieLists = [];
+  List<MovieVO> lastedMoviesLists = [];
+  List<MovieVO> lastedSeriesLists = [];
   int page = 1;
   String? moviePlan;
   String? movieGenre;
@@ -36,6 +37,7 @@ class HomeBloc extends ChangeNotifier {
     token = PersistenceData.shared.getToken();
 
     getBanner();
+
     if (isCollectionDetail == true) {
       getCollectionDetail(collectionId ?? '');
     }
@@ -58,30 +60,58 @@ class HomeBloc extends ChangeNotifier {
 
   getAllMovieAndSeries() {
     _movieModel
-        .getAllMovieAndSeries(token, '', '', 'BOTH', false, 1)
+        .getAllMovieAndSeries(token, '', '', 'BOTH', false, 1, '', '')
         .then((response) {
           movieLists = response.data ?? [];
+          _hideLoading();
           getTopTrending();
-          notifyListeners();
         })
         .catchError((_) {});
   }
 
-  getFreeMovieAndSeries() {
+  getLastedMovies() {
     page = 1;
     moviePlan = '';
     movieGenre = '';
     movieContentType = '';
-    _showLoading();
     _movieModel
-        .getAllMovieAndSeries(token, 'FREE', '', 'BOTH', false, 1)
+        .getAllMovieAndSeries(
+          token,
+          'FREE',
+          '',
+          'MOVIE',
+          false,
+          1,
+          'createdAt',
+          'desc',
+        )
         .then((response) {
-          freeMovieLists = response.data ?? [];
-          getAllMovieAndSeries();
-          _hideLoading();
-        })
-        .whenComplete(() {
-          _hideLoading();
+          lastedMoviesLists = response.data ?? [];
+          getLastedSeries();
+          notifyListeners();
+        });
+  }
+
+  getLastedSeries() {
+    page = 1;
+    moviePlan = '';
+    movieGenre = '';
+    movieContentType = '';
+    _movieModel
+        .getAllMovieAndSeries(
+          token,
+          'FREE',
+          '',
+          'SERIES',
+          false,
+          1,
+          'createdAt',
+          'desc',
+        )
+        .then((response) {
+          lastedSeriesLists = response.data ?? [];
+          notifyListeners();
+          getNewRelease();
         });
   }
 
@@ -91,9 +121,18 @@ class HomeBloc extends ChangeNotifier {
     movieContentType = contentType;
     _showLoading();
     _movieModel
-        .getAllMovieAndSeries(token, 'FREE', genre, contentType, false, 1)
+        .getAllMovieAndSeries(
+          token,
+          'FREE',
+          genre,
+          contentType,
+          false,
+          1,
+          '',
+          '',
+        )
         .then((response) {
-          freeMovieLists = response.data ?? [];
+          lastedMoviesLists = response.data ?? [];
           _hideLoading();
         })
         .whenComplete(() {
@@ -127,8 +166,10 @@ class HomeBloc extends ChangeNotifier {
           movieContentType ?? '',
           false,
           page,
+          '',
+          '',
         )
-        .then((response) => freeMovieLists.addAll(response.data ?? []))
+        .then((response) => lastedMoviesLists.addAll(response.data ?? []))
         .whenComplete(() => _hideLoadMoreLoading());
   }
 
@@ -149,8 +190,8 @@ class HomeBloc extends ChangeNotifier {
   getTopTrending() {
     _movieModel.getTopTrending(token).then((response) {
       topTrendingMoviesList = response.data ?? [];
-      getNewRelease();
-      notifyListeners();
+
+      _hideLoading();
     });
   }
 
@@ -165,6 +206,7 @@ class HomeBloc extends ChangeNotifier {
   getCategoryCollections() async {
     _movieModel.getCategoryCollection(token).then((response) {
       categoryCollectionLists = response.data ?? [];
+      getAllMovieAndSeries();
       notifyListeners();
     });
   }
@@ -173,8 +215,7 @@ class HomeBloc extends ChangeNotifier {
     _showLoading();
     _movieModel.getBanner(token).then((response) {
       bannerList = response.data ?? [];
-      getFreeMovieAndSeries();
-      notifyListeners();
+      getLastedMovies();
     });
   }
 

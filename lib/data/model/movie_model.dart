@@ -67,6 +67,8 @@ abstract class MovieModel {
     String type,
     bool getAll,
     int page,
+    String sortBy,
+    String sortOrder,
   );
   Future<MovieResponse> getTopTrending(String token);
   Future<MovieResponse> getNewRelease(String token, String plan);

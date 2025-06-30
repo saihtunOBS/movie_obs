@@ -97,7 +97,6 @@ class ActorViewScreen extends StatelessWidget {
                 );
               },
               child: movieListItem(
-                isHomeScreen: true,
                 movies: bloc.actorData?.movies?[index],
                 type: 'movie',
               ),
@@ -160,7 +159,6 @@ class ActorViewScreen extends StatelessWidget {
                 }
               },
               child: movieListItem(
-                isHomeScreen: true,
                 movies: bloc.actorData?.seasons?[index],
                 type: bloc.actorData?.seasons?[index].plan,
               ),

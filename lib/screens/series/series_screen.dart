@@ -225,7 +225,6 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                       }
                                     },
                                     child: movieListItem(
-                                      isHomeScreen: true,
                                       movies: bloc.seriesLists[index],
                                       type: bloc.seriesLists[index].plan,
                                     ),

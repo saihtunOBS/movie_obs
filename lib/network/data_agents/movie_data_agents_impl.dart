@@ -106,6 +106,8 @@ class MovieDataAgentsImpl extends MovieDataAgents {
     String type,
     bool getAll,
     int page,
+    String sortBy,
+    String sortOrder,
   ) {
     return movieApi
         .getAllMoviesAndSeries(
@@ -117,6 +119,8 @@ class MovieDataAgentsImpl extends MovieDataAgents {
           getAll,
           page,
           'PUBLISHED',
+          sortBy,
+          sortOrder,
         )
         .asStream()
         .map((response) => response)

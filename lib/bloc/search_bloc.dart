@@ -26,7 +26,7 @@ class SearchBloc extends ChangeNotifier {
   getMovieByGenre() async {
     _showLoading();
     await _movieModel
-        .getAllMovieAndSeries(token, '', id, 'BOTH', true, 1)
+        .getAllMovieAndSeries(token, '', id, 'BOTH', true, 1, '', '')
         .then((response) {
           movieSeriesLists = response.data ?? [];
           _hideLoading();
@@ -68,7 +68,7 @@ class SearchBloc extends ChangeNotifier {
   filter(String type, String contextType) async {
     _showLoading();
     await _movieModel
-        .getAllMovieAndSeries(token, type, id, contextType, false, 1)
+        .getAllMovieAndSeries(token, type, id, contextType, false, 1, '', '')
         .then((response) {
           movieSeriesLists = response.data ?? [];
         })

@@ -21,7 +21,7 @@ import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/firebase_options.dart';
 import 'package:movie_obs/network/notification_service/notification_service.dart';
 import 'package:movie_obs/network/app_link_service.dart';
-import 'package:movie_obs/screens/auth/splash_screen.dart';
+import 'package:movie_obs/screens/auth/video_splash_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
 import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/utils/route_observer.dart';
@@ -153,7 +153,7 @@ class _MovieOBSState extends State<MovieOBS> {
             ),
             fontFamily: GoogleFonts.poppins().fontFamily,
           ),
-          home: SplashScreen(),
+          home: VideoSplashScreen(),
         );
       },
     );

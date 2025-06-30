@@ -200,7 +200,6 @@ class _MovieScreenState extends State<MovieScreen> {
                                       );
                                     },
                                     child: movieListItem(
-                                      isHomeScreen: true,
                                       movies: bloc.movieLists[index],
                                       type: bloc.movieLists[index].plan,
                                     ),

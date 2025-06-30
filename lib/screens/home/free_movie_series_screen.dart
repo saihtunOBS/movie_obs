@@ -102,7 +102,7 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
           builder:
               (context, bloc, child) => RefreshIndicator(
                 onRefresh: () async {
-                  bloc.getFreeMovieAndSeries();
+                  bloc.getLastedMovies();
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10),
@@ -111,10 +111,10 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                           ? shimmerLoading(isVertical: true)
                           : Stack(
                             children: [
-                              bloc.freeMovieLists.isNotEmpty
+                              bloc.lastedMoviesLists.isNotEmpty
                                   ? GridView.builder(
                                     physics: AlwaysScrollableScrollPhysics(),
-                                    itemCount: bloc.freeMovieLists.length,
+                                    itemCount: bloc.lastedMoviesLists.length,
                                     gridDelegate:
                                         SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount:
@@ -138,7 +138,7 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                                               scrollController
                                                   .position
                                                   .maxScrollExtent) {
-                                            if (bloc.freeMovieLists.length >=
+                                            if (bloc.lastedMoviesLists.length >=
                                                 10) {
                                               bloc.loadMoreFreeMovieAndSeries();
                                             }
@@ -147,19 +147,21 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                                     itemBuilder: (context, index) {
                                       return GestureDetector(
                                         onTap: () {
-                                          if (bloc.freeMovieLists[index].type ==
+                                          if (bloc
+                                                  .lastedMoviesLists[index]
+                                                  .type ==
                                               'movie') {
                                             PageNavigator(
                                               ctx: context,
                                             ).nextPage(
                                               page: MovieDetailScreen(
                                                 movie:
-                                                    bloc.freeMovieLists[index],
+                                                    bloc.lastedMoviesLists[index],
                                               ),
                                             );
                                           } else {
                                             if (bloc
-                                                    .freeMovieLists[index]
+                                                    .lastedMoviesLists[index]
                                                     .seasons
                                                     ?.length ==
                                                 1) {
@@ -168,15 +170,15 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                                               ).nextPage(
                                                 page: SeasonEpisodeScreen(
                                                   seriesResponse:
-                                                      bloc.freeMovieLists[index]
+                                                      bloc.lastedMoviesLists[index]
                                                           .toDetail(),
                                                   seriesId:
                                                       bloc
-                                                          .freeMovieLists[index]
+                                                          .lastedMoviesLists[index]
                                                           .id,
                                                   season:
                                                       bloc
-                                                          .freeMovieLists[index]
+                                                          .lastedMoviesLists[index]
                                                           .seasons
                                                           ?.first,
                                                 ),
@@ -187,23 +189,25 @@ class _FreeMovieSeriesScreenState extends State<FreeMovieSeriesScreen> {
                                               ).nextPage(
                                                 page: SeriesDetailScreen(
                                                   series:
-                                                      bloc.freeMovieLists[index],
+                                                      bloc.lastedMoviesLists[index],
                                                 ),
                                               );
                                             }
                                           }
                                         },
                                         child: movieListItem(
-                                          isHomeScreen: true,
-                                          movies: bloc.freeMovieLists[index],
-                                          type: bloc.freeMovieLists[index].type,
+                                          movies: bloc.lastedMoviesLists[index],
+                                          type:
+                                              bloc
+                                                  .lastedMoviesLists[index]
+                                                  .type,
                                         ),
                                       );
                                     },
                                   )
                                   : EmptyView(
                                     reload: () {
-                                      bloc.getFreeMovieAndSeries();
+                                      bloc.getLastedMovies();
                                     },
                                     title: 'There is no free movies & series',
                                   ),

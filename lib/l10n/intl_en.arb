@@ -72,5 +72,7 @@
   "notification": "Notifications",
   "noNotification": "There is no notification right now..",
   "noGift": "There is no gift right now.",
-  "noPromotion": "There is no promotion right now."
+  "noPromotion": "There is no promotion right now.",
+  "lastedMovies": "Lasted Movies",
+  "lastedSeries": "Lasted Series"
 }

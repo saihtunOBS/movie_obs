@@ -114,6 +114,8 @@ abstract class MovieApi {
     @Query('getAll') bool getAll,
     @Query('page') int page,
     @Query('status') String status,
+    @Query('sortBy') String sortBy,
+    @Query('sortOrder') String sortOrder,
   );
 
   @GET(kEndPointAds)

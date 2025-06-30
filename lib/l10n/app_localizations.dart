@@ -535,6 +535,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'There is no promotion right now.'**
   String get noPromotion;
+
+  /// No description provided for @lastedMovies.
+  ///
+  /// In en, this message translates to:
+  /// **'Lasted Movies'**
+  String get lastedMovies;
+
+  /// No description provided for @lastedSeries.
+  ///
+  /// In en, this message translates to:
+  /// **'Lasted Series'**
+  String get lastedSeries;
 }
 
 class _AppLocalizationsDelegate

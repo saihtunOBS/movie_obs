@@ -232,4 +232,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noPromotion => 'There is no promotion right now.';
+
+  @override
+  String get lastedMovies => 'Lasted Movies';
+
+  @override
+  String get lastedSeries => 'Lasted Series';
 }

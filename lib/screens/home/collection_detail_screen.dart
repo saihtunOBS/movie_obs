@@ -55,7 +55,7 @@ class _CollectionDetailScreenState extends State<CollectionDetailScreen> {
           builder:
               (context, bloc, child) => RefreshIndicator(
                 onRefresh: () async {
-                  bloc.getFreeMovieAndSeries();
+                  bloc.getLastedMovies();
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10),
@@ -64,7 +64,7 @@ class _CollectionDetailScreenState extends State<CollectionDetailScreen> {
                           ? shimmerLoading(isVertical: true)
                           : Stack(
                             children: [
-                              bloc.freeMovieLists.isNotEmpty
+                              bloc.lastedMoviesLists.isNotEmpty
                                   ? GridView.builder(
                                     physics: AlwaysScrollableScrollPhysics(),
                                     itemCount:
@@ -128,7 +128,6 @@ class _CollectionDetailScreenState extends State<CollectionDetailScreen> {
                                           }
                                         },
                                         child: movieListItem(
-                                          isHomeScreen: true,
                                           movies:
                                               bloc
                                                   .collectionDetail
@@ -145,7 +144,7 @@ class _CollectionDetailScreenState extends State<CollectionDetailScreen> {
                                   )
                                   : EmptyView(
                                     reload: () {
-                                      bloc.getFreeMovieAndSeries();
+                                      bloc.getLastedMovies();
                                     },
                                     title: 'There is no free movies & series',
                                   ),

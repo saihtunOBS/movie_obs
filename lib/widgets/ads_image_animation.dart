@@ -91,7 +91,7 @@ class _ImageFadeAnimationState extends State<ImageFadeAnimation>
                             borderRadius: BorderRadius.circular(10),
                             child: cacheImage(
                               bloc.adsLists[currentIndex].image ?? '',
-                              boxFit: BoxFit.fill,
+                              boxFit: BoxFit.fitWidth,
                             ),
                           ),
                         ),

@@ -346,6 +346,8 @@ class _MovieApi implements MovieApi {
     bool getAll,
     int page,
     String status,
+    String sortBy,
+    String sortOrder,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -356,6 +358,8 @@ class _MovieApi implements MovieApi {
       r'getAll': getAll,
       r'page': page,
       r'status': status,
+      r'sortBy': sortBy,
+      r'sortOrder': sortOrder,
     };
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);

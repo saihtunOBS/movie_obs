@@ -128,7 +128,6 @@ class _FilterScreenState extends State<FilterScreen> {
                                         );
                                       },
                                       child: movieListItem(
-                                        isHomeScreen: true,
                                         movies: bloc.movieSeriesLists[index],
                                         type: bloc.movieSeriesLists[index].plan,
                                       ),

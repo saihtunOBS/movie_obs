@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movie_obs/extension/page_navigator.dart';
+import 'package:movie_obs/screens/auth/ads_screen.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoSplashScreen extends StatefulWidget {
@@ -25,8 +27,7 @@ class _VideoSplashScreenState extends State<VideoSplashScreen> {
       });
     _controller.addListener(() {
       if (_controller.value.isCompleted) {
-        ///
-        print('hello');
+        PageNavigator(ctx: context).nextPageOnly(page: const AdsScreen());
       }
     });
   }

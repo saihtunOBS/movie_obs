@@ -67,6 +67,8 @@ abstract class MovieDataAgents {
     String type,
     bool getAll,
     int page,
+    String sortBy,
+    String sortOrder,
   );
   Future<MovieResponse> getTopTrending(String token, String plan);
   Future<MovieResponse> getNewRelease(String token, String plan);

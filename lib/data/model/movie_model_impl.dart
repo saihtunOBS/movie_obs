@@ -63,6 +63,8 @@ class MovieModelImpl extends MovieModel {
     String type,
     bool getAll,
     int page,
+    String sortBy,
+    String sortOrder,
   ) {
     return movieDataAgent.getAllMovieAndSeries(
       token,
@@ -71,6 +73,8 @@ class MovieModelImpl extends MovieModel {
       type,
       getAll,
       page,
+      sortBy,
+      sortOrder,
     );
   }
 

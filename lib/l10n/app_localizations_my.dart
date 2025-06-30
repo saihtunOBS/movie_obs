@@ -230,4 +230,10 @@ class AppLocalizationsMy extends AppLocalizations {
 
   @override
   String get noPromotion => 'ယခု ပရိုမိုးရှင်းမရှိပါ..';
+
+  @override
+  String get lastedMovies => 'ဇာတ်ကားအသစ်';
+
+  @override
+  String get lastedSeries => 'စီးရီးအသစ်';
 }

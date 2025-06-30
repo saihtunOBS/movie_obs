@@ -2,10 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:movie_obs/bloc/ads_bloc.dart';
 import 'package:movie_obs/data/persistence/persistence_data.dart';
+import 'package:movie_obs/extension/extension.dart';
 import 'package:movie_obs/extension/page_navigator.dart';
 import 'package:movie_obs/screens/auth/auth_screen.dart';
 import 'package:movie_obs/screens/bottom_nav/bottom_nav_screen.dart';
 import 'package:movie_obs/utils/colors.dart';
+import 'package:movie_obs/utils/dimens.dart';
 import 'package:movie_obs/widgets/ads_image_animation.dart';
 import 'package:provider/provider.dart';
 
@@ -66,24 +68,15 @@ class _AdsScreenState extends State<AdsScreen> {
       create: (_) => AdsBloc(),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
-        body: Stack(
-          fit: StackFit.expand,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              height: MediaQuery.sizeOf(context).height,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: AdsImageAnimation(),
-            ),
             GestureDetector(
               onTap: _navigateNext,
               child: Align(
                 alignment: Alignment.topRight,
                 child: Container(
-                  margin: EdgeInsets.only(right: 24, top: 60),
+                  margin: EdgeInsets.only(right: kMarginMedium2, top: 60),
                   height: 30,
                   width: 80,
                   decoration: BoxDecoration(
@@ -98,6 +91,17 @@ class _AdsScreenState extends State<AdsScreen> {
                   ),
                 ),
               ),
+            ),
+            20.vGap,
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: kMarginMedium2),
+              height: MediaQuery.sizeOf(context).height * 0.6,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: AdsImageAnimation(),
             ),
           ],
         ),
